@@ -3,7 +3,7 @@ from src import gui
 import subprocess
 from pathlib import Path
 
-tosc = toscEdit.Design(directory = "scripts/pixels")
+tosc = toscEdit.Design(directory="")
 
 cwd = Path.cwd()
 input = cwd / "input"

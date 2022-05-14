@@ -1,42 +1,52 @@
 # Python 3.9
 # Alberto Valdez
-# 
 import xml.etree.ElementTree as ET
 from uuid import uuid4
 from pathlib import Path
+from src import toscNav
+import re
 
-def isParent(element):
-    return True if element.find("children") != None else False
+def main(inputFile, outputFile):
 
+    # Fast Stream pull
+    script = toscNav.pullTarget(
+                    filePath = inputFile, 
+                    key = "name", 
+                    value = "source",
+                    targetKey = "script")
 
-def getObjectName(object):
-    for prop in object.find("properties"):
-        if prop.find("key").text == "name":
-            return prop.find("value").text
-        
+    # Slow Tree based edits
+    tree = ET.parse(inputFile)
+    root = tree.getroot()
+    main = toscNav.getBases(root)
 
-file = "test.xml"
-path = Path.cwd() / "copy-scripts" / file
+    for child in main["children"]:
 
-xmlTree = ET.parse(path)
-root = xmlTree.getroot()
-template = root[0]
-children = template.find("children")
+        name = toscNav.getValueFromKey(
+                        element = child, 
+                        base = "properties", 
+                        key = "name")
 
-ET.indent(children, "  ")
+        if not re.fullmatch(name, "targets"):
+            continue
 
-for child in children:
-    # print(ET.tostring(child, encoding='unicode'), "\n")
-    print(child.get("type"))
-    name = getObjectName(child)
-    print(name)
+        for c in child.find("children").findall("*"):
+            if not c.find("properties"):
+                continue
+            _retval = toscNav.createValueKey(
+                            element = c,
+                            base = "properties",
+                            subBase = "property",
+                            attributes = {"type":"s"},
+                            key = "script",
+                            value = script)
 
-    # for property in child.find("properties"):
-    #     key = property[0]
-    #     value = property[1]
-    #     print(key.text)
+            print("Failed to create") if not _retval else None
 
-        # print(property.find("key"), property.find("value"))
+    tree.write(outputFile)
 
-    # if isParent(child):
-    #     [print(c) for c in child.find("children")]
+if __name__ == "__main__":
+    
+    path = Path.cwd() / "copy-scripts"
+
+    main(path / "test.xml", path / "out.xml")

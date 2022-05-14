@@ -13,7 +13,7 @@ Find a source object by name, copies its script and adds it to all children obje
 2. Tweak and run copy-scripts.py
 3. Open output with Touch OSC editor and save once.
 
-All the tosc related xml functions are in toscNav.py. For example, fast stream pull:
+All the tosc related xml functions are in toscNav.py. For example:
 ```python
 parser = ET.XMLPullParser()
 with open(filePath, "r") as file:

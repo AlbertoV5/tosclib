@@ -34,7 +34,7 @@ parser.close()
 
 ## image-tosc
 
-Convert a .jpg image to .tosc using small boxes as pixels. Currently using fixed inputs but in the future will generate from scratch.
+Convert a .jpg image to .tosc using small boxes as pixels. Currently using extra .xml files as reference but will generate from scratch in the future.
 
 ### Usage
 

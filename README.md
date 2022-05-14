@@ -5,7 +5,7 @@ Currently prototyping with python but I want to move to a performant Rust + JS s
 
 ## copy-scripts
 
-Find a source object by name, copies grabs its script and adds it to all children objects of a target object.
+Find a source object by name, copies its script and adds it to all children objects of a target object.
 
 ### Usage
 

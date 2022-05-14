@@ -9,9 +9,9 @@ Find a source object by name, copies its script and adds it to all children obje
 
 ### Usage
 
-1. Open and run copy-scripts.py
-2. Open output/out.tosc with Touch OSC
-3. Edit the script to fit your template.
+1. Set up a template so you have a source object and a target group.
+2. Tweak and run copy-scripts.py
+3. Open output with Touch OSC editor and save once.
 
 All the tosc related xml functions are in toscNav.py. For example, fast stream pull:
 ```python

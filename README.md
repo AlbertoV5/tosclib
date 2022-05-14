@@ -15,7 +15,6 @@ Find a source object by name, copies its script and adds it to all children obje
 
 All the tosc related xml functions are in toscNav.py. For example, fast stream pull:
 ```python
-parser = ET.XMLPullParser()
 with open(filePath, "r") as file:
     parser.feed(file.read())
     for _, e in parser.read_events(): # event, element
@@ -23,8 +22,6 @@ with open(filePath, "r") as file:
             continue
         if re.fullmatch(getValueFromKey(e, "properties", key),value):
             return getValueFromKey(e, "properties", targetKey)
-
-    parser.close()
 
 ```
 ### Example source and targets

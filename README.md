@@ -27,9 +27,8 @@ with open(filePath, "r") as file:
         
 parser.close()
 ```
-### Example source and targets
+### Example source and targets:
 ![dlme2](https://user-images.githubusercontent.com/58243333/168412916-70d5f2ba-90b2-4f46-bc84-bce338ec3e1d.jpg)
-
 
 
 
@@ -57,5 +56,3 @@ I don't recommend going above 128x128 for image_size as performance and filesize
 
 ![deleteme](https://user-images.githubusercontent.com/58243333/168332352-cb848b15-13fc-4573-861d-27b47f6da2ee.jpg)
 
-
-To do: Working on other XML generation scripts that could simplify the template creation workflow.

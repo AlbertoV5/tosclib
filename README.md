@@ -1,7 +1,7 @@
 # tosc-generate
  Using XML trees to generate simple Touch OSC XML templates.
 
-Currently prototyping with python but I want to move to a performant Rust + JS stack in the future and adding Reaper -> xml -> tosc -> Reaper support. 
+Currently prototyping with Python but I want to move to a more performant Rust + JS or something stack in the future and adding Reaper -> xml -> tosc -> Reaper support. 
 
 ## copy-scripts
 

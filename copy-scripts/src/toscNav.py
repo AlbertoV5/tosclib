@@ -102,12 +102,10 @@ def pullTarget(
         key : str,  
         value : str,
         targetKey : str,) -> str:
-    """ Find a value from a known 
+    """ Find a value from a known key, value and target key
     
     Attributes
     ----------
-    filePath
-        location of the xml
     key
         Known key string to get value
     value
@@ -118,7 +116,7 @@ def pullTarget(
     Returns
     -------
     targetValue
-        The unknown value to get with targetKey
+        Value that corresponds to targetKey
     """
     parser = ET.XMLPullParser()
     with open(filePath, "r") as file:
@@ -133,7 +131,7 @@ def pullTarget(
     return ""
 
 if __name__ == "__main__":
-    path = "copy-scripts"
+    path = "copy-scripts/input/"
 
     print(pullTarget(
             f"{path}/test.xml",

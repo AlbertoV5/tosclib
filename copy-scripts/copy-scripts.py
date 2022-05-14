@@ -1,21 +1,24 @@
 # Python 3.9
 # Alberto Valdez
 import xml.etree.ElementTree as ET
-from uuid import uuid4
 from pathlib import Path
 from src import toscNav
 import re
 
-def main(inputFile, outputFile):
+def copyScripts(
+        inputFile : Path, 
+        outputFile: Path, 
+        script : str,
+        targetName : str,):
+    """ Finds target and add a script object to all its children
 
-    # Fast Stream pull
-    script = toscNav.pullTarget(
-                    filePath = inputFile, 
-                    key = "name", 
-                    value = "source",
-                    targetKey = "script")
-
-    # Slow Tree based edits
+    Attributes
+    ----------
+    script
+        complete script string
+    targetName
+        name of group whose children will receive the script copy
+    """
     tree = ET.parse(inputFile)
     root = tree.getroot()
     main = toscNav.getBases(root)
@@ -27,7 +30,7 @@ def main(inputFile, outputFile):
                         base = "properties", 
                         key = "name")
 
-        if not re.fullmatch(name, "targets"):
+        if not re.fullmatch(name, targetName):
             continue
 
         for c in child.find("children").findall("*"):
@@ -43,10 +46,22 @@ def main(inputFile, outputFile):
 
             print("Failed to create") if not _retval else None
 
-    tree.write(outputFile)
+    tree.write(f"{outputFile}.xml")
+    tree.write(f"{outputFile}.tosc")
+
 
 if __name__ == "__main__":
     
     path = Path.cwd() / "copy-scripts"
+    inputFile = path / "input" / "test.xml"
+    outputFile = path / "output" / "out" # xml and tosc
 
-    main(path / "test.xml", path / "out.xml")
+    # Fast Stream pull
+    script = toscNav.pullTarget(
+                    filePath = inputFile, 
+                    key = "name", 
+                    value = "source",
+                    targetKey = "script")
+
+    # Tree based object insertion
+    copyScripts(inputFile, outputFile, script, "targets")

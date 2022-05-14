@@ -125,14 +125,15 @@ def pullTarget(
             if not e.find("properties"):
                 continue
             if re.fullmatch(getValueFromKey(e, "properties", key),value):
+                parser.close()
                 return getValueFromKey(e, "properties", targetKey)
             
-        parser.close()
+    parser.close()
     return ""
 
 if __name__ == "__main__":
     path = "copy-scripts/input/"
-
+    
     print(pullTarget(
             f"{path}/test.xml",
             key = "name",

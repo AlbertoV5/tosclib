@@ -1,10 +1,12 @@
+"""
+Generic ui 
+"""
 import tkinter
 from tkinter import ttk
 from tkinter import filedialog
 from PIL import ImageTk, Image
 from pathlib import Path
 from tkinter.messagebox import showinfo
-import os
 
 class Menubar(ttk.Frame):
     """Builds a menu bar for the top of the main window"""
@@ -12,37 +14,17 @@ class Menubar(ttk.Frame):
         ''' Constructor'''
         ttk.Frame.__init__(self, parent, *args, **kwargs)
         self.root = parent
-        self.init_menubar()
 
     def on_exit(self):
         '''Exits program'''
         quit()
 
-    def display_about(self):
-        '''Displays help document'''
-        #self.new_win = tkinter.Toplevel(self.root) # Set parent
-        os.system("start " + "about.txt")
-        pass
-
-
-    def init_menubar(self):
-        self.menubar = tkinter.Menu(self.root)
-        self.menu_file = tkinter.Menu(self.menubar) # Creates a "File" menu
-        self.menu_file.add_command(label='Exit', command=self.on_exit) # Adds an option to the menu
-        self.menubar.add_cascade(menu=self.menu_file, label='File') # Adds File menu to the bar. Can also be used to create submenus.
-
-        self.menu_help = tkinter.Menu(self.menubar)
-        self.menu_help.add_command(label='Open About .txt', command=self.display_about)
-        self.menubar.add_cascade(menu=self.menu_help, label='About')
-
-        self.root.config(menu=self.menubar)
-
-
 def browseFiles():
-    workingdir = Path.cwd()
-    filename = filedialog.askopenfilename(initialdir = workingdir,
-                                          title = "Select a File",
-                                          filetypes = (("Images","*.jpg*"), ("Images","*.jpeg*"))
+    filename = filedialog.askopenfilename(
+                                            initialdir = Path.cwd(),
+                                            title = "Select a File",
+                                            filetypes = (("Images","*.jpg*"), 
+                                            ("Images","*.jpeg*"))
                                         )
     return str(filename)
 
@@ -54,12 +36,11 @@ class GUI(ttk.Frame):
         self.tosc = tosc
         self.root = parent
         self.fileName = ""
-        self.fileNameBom = ""
         self.init_gui()
 
     def browseImage(self):
         self.fileName = browseFiles()
-        self.tosc.image_path = self.fileName.split(".")[0]
+        self.tosc.image_path = self.fileName
         self.renderImage()
 
     def renderImage(self):
@@ -78,9 +59,7 @@ class GUI(ttk.Frame):
 
     def convert(self):
         self.tosc.pixelateImage()
-        self.tosc.draw()
-        self.tosc.save()
-
+        self.tosc.drawPixelBoxes()
         self.render = ImageTk.PhotoImage(self.tosc.image_pixelated)
         self.img = ttk.Label(self, image=self.render)
         self.img.place(x=0,y=0)
@@ -111,13 +90,13 @@ class GUI(ttk.Frame):
 
         self.button_convert = ttk.Button(self, text='Convert', command= self.convert)
 
-        self.fileName = f"{self.tosc.image_path}.jpg"
+        self.fileName = f"{self.tosc.image_path}"
         self.renderImage()
         self.gridLayout()
 
             
-
-def start(tosc):    
+def start(tosc):
+    """ Start tkinter process with the tosc config object as argument"""
     root = tkinter.Tk()
     GUI(root, tosc)
     root.mainloop()

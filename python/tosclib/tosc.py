@@ -1,16 +1,14 @@
 """
-Simplify navigating through .tosc files with XML
+Simplify navigating, editing and generating .tosc files
 
 Requires python 3.9
 
-Author
-------
 github.com/AlbertoV5
+
 """
 import xml.etree.ElementTree as ET
 from pathlib import Path
 import re, zlib, uuid
-
 
 def load(inputPath : str = None) -> ET.Element:
     """ Reads .tosc file and returns the xml root"""
@@ -187,6 +185,4 @@ class Util():
                             box["node"], "b", 
                             "background", "1"
                         )
-
-
-
+  

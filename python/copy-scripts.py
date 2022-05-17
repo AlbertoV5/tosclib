@@ -15,18 +15,20 @@ def CopyScripts(
                         targetKey = "script")
                         
     root = tosc.load(inputFile)
-    main = tosc.node.getMainElements(root[0])
+    main = tosc.Node.getMainElements(root[0])
 
     for child in main["children"]:
         
         if not tosc.Property.getValueFromKey(child, "name") == target:
             continue
-        target = tosc.node.getMainElements(child)
+        target = tosc.Node.getMainElements(child)
 
         for box in target["children"]:
             tosc.Property.create(box, "s", "script", script)
         
-        return tosc.write(root, outputFile)
+        tosc.write(root, outputFile)
+        return print(f"\nWrote: \n{script}\nTo file: {outputFile}")
+
 
 if __name__ == "__main__":
 
@@ -39,6 +41,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     args.Output = args.Input if args.Output == None else args.Output
+    args.Source = "source" if args.Source == None else args.Source
+    args.Target = "target" if args.Target == None else args.Target
+
+    print(args)
     
     CopyScripts(args.Input, args.Output, args.Source, args.Target)
-    print(f"\nWrote to file: {args.Output}")
+    

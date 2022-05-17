@@ -1,5 +1,51 @@
 # tosc-generate
- Using XML trees to generate simple Touch OSC XML templates.
+Using XML trees to generate simple Touch OSC XML templates.
+
+./python/tosclib has a few handy functions that help dealing with .tosc files.
+
+Examples: 
+```python
+def pullValueFromKey(inputFile : str, key : str, value : str, targetKey : str) -> str:
+    """ Find a value from a known key, value and target key"""
+    parser = ET.XMLPullParser()
+    if not inputFile:
+        inputFile = input("Enter the input .tosc file: ")
+    with open(inputFile, "rb") as file:
+        parser.feed(zlib.decompress(file.read()))
+        for _, e in parser.read_events(): # event, element
+            if not e.find("properties"):
+                continue
+            if re.fullmatch(Property.getValueFromKey(e, key),value):
+                parser.close()
+                return Property.getValueFromKey(e, targetKey)
+
+    parser.close()
+    return ""
+```
+
+```python
+class Node():
+    """ Methods to build and handle <node>"""
+    @staticmethod
+    def create(parent : ET.Element, type : str):
+        """Create a node element and main elements and return dict"""
+        
+        children = parent.find("children")
+        attrib = {
+                    "ID":str(uuid.uuid5(uuid.NAMESPACE_DNS, "tosc")), 
+                    "type":type
+                }
+        node = ET.SubElement(children, "node", attrib = attrib)
+
+        return ({
+                    "node":node,
+                    "properties":ET.SubElement(node, "properties"),
+                    "values":ET.SubElement(node, "values"),
+                    "children":ET.SubElement(node, "children")
+                })
+
+```
+
 
 Currently prototyping with Python but I want to move to a more performant Rust + JS or something stack in the future and adding Reaper -> xml -> tosc -> Reaper support. 
 
@@ -18,22 +64,6 @@ Example:
 python python/copy-scripts.py -i "test.tosc" -o "out.tosc" -s "source" -t "target"
 ```
 
-All the tosc related xml functions are in toscNav.py. For example, fast stream pull:
-```python
-parser = ET.XMLPullParser()
-        if not inputFile:
-            inputFile = input("Enter the input .tosc file: ")
-        with open(inputFile, "rb") as file:
-            parser.feed(zlib.decompress(file.read()))
-            for _, e in parser.read_events(): # event, element
-                if not e.find("properties"):
-                    continue
-                if re.fullmatch(Property.getValueFromKey(e, key),value):
-                    parser.close()
-                    return Property.getValueFromKey(e, targetKey)
-        
-parser.close()
-```
 ### Example source and targets
 ![dlme2](https://user-images.githubusercontent.com/58243333/168412916-70d5f2ba-90b2-4f46-bc84-bce338ec3e1d.jpg)
 

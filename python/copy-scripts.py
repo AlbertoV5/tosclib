@@ -1,33 +1,31 @@
 from tosclib import tosc
-import argparse
+import argparse, re
 
-def CopyScripts(
-                    inputFile : str, 
-                    outputFile : str, 
-                    source : str = "source", 
-                    target : str = "target") -> bool:
+def CopyScripts(input : str, output : str, source : str = "source", target : str = "target"):
     """Find the script in source and copy it to all children in target"""
     
-    script = tosc.Property.pullValueFromKey(
-                        inputFile = inputFile,
+    script = tosc.pullValueFromKey(
+                        inputFile = input,
                         key = "name",
                         value = source,
                         targetKey = "script")
                         
-    root = tosc.load(inputFile)
-    main = tosc.Node.getMainElements(root[0])
+    root = tosc.load(input)
+    main = tosc.ElementTOSC(root[0])
 
-    for child in main["children"]:
-        
-        if not tosc.Property.getValueFromKey(child, "name") == target:
+    for primary in main.children:
+        primary = tosc.ElementTOSC(primary)
+
+        if re.fullmatch(primary.getPropertyValue("name").text, target):
             continue
-        target = tosc.Node.getMainElements(child)
-
-        for box in target["children"]:
-            tosc.Property.create(box, "s", "script", script)
         
-        tosc.write(root, outputFile)
-        return print(f"\nWrote: \n{script}\nTo file: {outputFile}")
+        for secondary in primary.children:
+            secondary = tosc.ElementTOSC(secondary)
+            secondary.createProperty("s", "script", script)
+ 
+        tosc.write(root, output)
+
+        return print(f"\nWrote: \n{script}\nTo file: {output}")
 
 
 if __name__ == "__main__":
@@ -44,7 +42,4 @@ if __name__ == "__main__":
     args.Source = "source" if args.Source == None else args.Source
     args.Target = "target" if args.Target == None else args.Target
 
-    print(args)
-    
     CopyScripts(args.Input, args.Output, args.Source, args.Target)
-    

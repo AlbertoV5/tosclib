@@ -3,6 +3,14 @@ Using XML trees to generate simple Touch OSC XML templates.
 
 ./python/tosclib has a few handy functions that help dealing with .tosc files.
 
+Requirements:
+
+```
+python>=3.9
+numpy==1.22.3
+Pillow==9.1.0
+```
+
 Examples: 
 ```python
 def pullValueFromKey(inputFile : str, key : str, value : str, targetKey : str) -> str:

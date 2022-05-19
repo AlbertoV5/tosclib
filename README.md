@@ -16,42 +16,32 @@ Examples:
 def pullValueFromKey(inputFile : str, key : str, value : str, targetKey : str) -> str:
     """ Find a value from a known key, value and target key"""
     parser = ET.XMLPullParser()
-    if not inputFile:
-        inputFile = input("Enter the input .tosc file: ")
     with open(inputFile, "rb") as file:
         parser.feed(zlib.decompress(file.read()))
         for _, e in parser.read_events(): # event, element
             if not e.find("properties"):
                 continue
-            if re.fullmatch(Property.getValueFromKey(e, key),value):
+            if re.fullmatch(getTextValueFromKey(e.find("properties"), key),value):
                 parser.close()
-                return Property.getValueFromKey(e, targetKey)
+                return getTextValueFromKey(e.find("properties"), targetKey)
 
     parser.close()
     return ""
 ```
 
 ```python
-class Node():
-    """ Methods to build and handle <node>"""
-    @staticmethod
-    def create(parent : ET.Element, type : str):
-        """Create a node element and main elements and return dict"""
-        
-        children = parent.find("children")
-        attrib = {
-                    "ID":str(uuid.uuid5(uuid.NAMESPACE_DNS, "tosc")), 
-                    "type":type
-                }
-        node = ET.SubElement(children, "node", attrib = attrib)
+    def setPropertyValue(self, key : str, text : str = "", params : dict = {}) -> bool:
+        """ Set the key's value.text and/or value's {<element> : element.text} """
+        for property in self.properties:
+            if re.fullmatch(property.find("key").text, key):
+                value = property.find("value")
+                for paramKey in params:
+                    param = ET.SubElement(value, paramKey)
+                    param.text = params[paramKey]
 
-        return ({
-                    "node":node,
-                    "properties":ET.SubElement(node, "properties"),
-                    "values":ET.SubElement(node, "values"),
-                    "children":ET.SubElement(node, "children")
-                })
-
+                value.text = text if text else ""
+                return True
+        return False
 ```
 
 

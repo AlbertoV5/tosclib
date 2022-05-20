@@ -6,6 +6,8 @@ Requires python 3.9.
 github.com/AlbertoV5
 
 """
+__version__ = "0.1.0"
+
 import xml.etree.ElementTree as ET
 import re, zlib, uuid
 

@@ -1,5 +1,5 @@
 docs/build
-python/__pycache__/
+__pycache__/
 tosclib
 notes.txt
 ./tosclib

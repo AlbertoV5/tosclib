@@ -1,7 +1,7 @@
 """
-Simplify navigating, editing and generating .tosc files
+Simplify navigating, editing and generating .tosc files.
 
-Requires python 3.9
+Requires python 3.9.
 
 github.com/AlbertoV5
 
@@ -92,15 +92,13 @@ class ElementTOSC:
                 ET.indent(property, "  ")
                 print(ET.tostring(property).decode("utf-8"))
         
-
 """
-STATIC FUNCTIONS
+FUNCTIONS
 """
 def load(inputPath : str = None) -> ET.Element:
-    """ Reads .tosc file and returns the xml root"""
+    """ Reads .tosc file as bytes and returns the xml root element"""
     with open (inputPath, "rb") as file:
-        root = ET.fromstring(zlib.decompress(file.read()))
-        return root
+        return ET.fromstring(zlib.decompress(file.read()))
 
 def write(root : ET.Element, outputPath : str = None) -> bool:
     """ Encodes a root element directly to UTF-8 and compresses to .tosc"""
@@ -108,11 +106,6 @@ def write(root : ET.Element, outputPath : str = None) -> bool:
         treeFile = ET.tostring(root, encoding = "UTF-8", method = "xml")
         file.write(zlib.compress(treeFile))
         return True
-
-def show(element : ET.Element):
-    """ Print indented XML as UTF-8 """
-    ET.indent(element, "  ")
-    print(ET.tostring(element, encoding="UTF-8"))
 
 def findChildByName(element : ET.Element, name : str) -> ET.Element:
     """ Returns the first child element by name """

@@ -27,7 +27,6 @@ def CopyScripts(input : str, output : str, source : str = "source", target : str
 
         return print(f"\nWrote: \n{script}\nTo file: {output}")
 
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()

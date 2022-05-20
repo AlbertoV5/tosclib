@@ -80,6 +80,18 @@ class ElementTOSC:
                                             "type":type
                                         }
                             )
+    def show(self):
+        """ Print indented XML as UTF-8 """
+        ET.indent(self.node, "  ")
+        print(ET.tostring(self.node).decode("utf-8"))
+
+    def showProperty(self, name : str):
+        """ Print indented XML of a single property by name as utf-8"""
+        for property in self.properties:
+            if re.fullmatch(property.find("key").text, name):
+                ET.indent(property, "  ")
+                print(ET.tostring(property).decode("utf-8"))
+        
 
 """
 STATIC FUNCTIONS

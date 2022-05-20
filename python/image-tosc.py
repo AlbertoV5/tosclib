@@ -69,16 +69,15 @@ class ImageConverter():
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--Input", help = ".tosc file")
-    parser.add_argument("-o", "--Output", help = ".tosc file")
+    parser.add_argument("-i", "--Input", help = ".tosc file", required=True)
+    parser.add_argument("-o", "--Output", help = ".tosc file", required=True)
     parser.add_argument("-j", "--Image", help = ".jpg file")
     parser.add_argument("-t", "--Target", help = "Name of the Touch OSC object in top layer")
 
     args = parser.parse_args()
-
-    args.Input = input("Enter input .tosc: ") if args.Input == None else args.Input
-    args.Output = input("Enter output .tosc: ") if args.Output == None else args.Output
-    args.Image = "logo.jpg" if args.Image == None else args.Image
+    
+    #For testing purposes
+    args.Image = "tests/logo.jpg" if args.Image == None else args.Image
     args.Target = "canvas" if args.Target == None else args.Target
 
     converter = ImageConverter(args.Input, args.Output, args.Image, args.Target)

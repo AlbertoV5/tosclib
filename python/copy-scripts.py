@@ -31,14 +31,14 @@ def CopyScripts(input : str, output : str, source : str = "source", target : str
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--Input", help = ".tosc file")
-    parser.add_argument("-o", "--Output", help = ".tosc file")
-    parser.add_argument("-s", "--Source", help = "Source name")
-    parser.add_argument("-t", "--Target", help = "Target name")
+    parser.add_argument("-i", "--Input", help = ".tosc input file", required = True)
+    parser.add_argument("-o", "--Output", help = ".tosc input file", required = True)
+    parser.add_argument("-s", "--Source", help = "Tosc object source name")
+    parser.add_argument("-t", "--Target", help = "Tosc object target name")
 
     args = parser.parse_args()
 
-    args.Output = args.Input if args.Output == None else args.Output
+    # For testing purposes
     args.Source = "source" if args.Source == None else args.Source
     args.Target = "target" if args.Target == None else args.Target
 

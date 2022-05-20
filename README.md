@@ -1,7 +1,5 @@
 # tosc-generate
-Using XML trees to generate simple Touch OSC XML templates.
-
-./python/tosclib has a few handy functions that help dealing with .tosc files.
+Using XML trees to generate simple Touch OSC XML templates. Make sure to backup your .tosc files before hacking them.
 
 Requirements:
 
@@ -10,75 +8,57 @@ python>=3.9
 numpy==1.22.3
 Pillow==9.1.0
 ```
-
-Examples: 
+## python/tosclib
+Custom classes and functions that help navigate the structure of the .tosc file.
 ```python
-def pullValueFromKey(inputFile : str, key : str, value : str, targetKey : str) -> str:
-    """ Find a value from a known key, value and target key"""
-    parser = ET.XMLPullParser()
-    with open(inputFile, "rb") as file:
-        parser.feed(zlib.decompress(file.read()))
-        for _, e in parser.read_events(): # event, element
-            if not e.find("properties"):
-                continue
-            if re.fullmatch(getTextValueFromKey(e.find("properties"), key),value):
-                parser.close()
-                return getTextValueFromKey(e.find("properties"), targetKey)
+def setPropertyValue(self, key : str, text : str = "", params : dict = {}) -> bool:
+    """ Set the key's value.text and/or value's {<element> : element.text} """
+    for property in self.properties:
+        if re.fullmatch(property.find("key").text, key):
+            value = property.find("value")
+            for paramKey in params:
+                param = ET.SubElement(value, paramKey)
+                param.text = params[paramKey]
 
-    parser.close()
-    return ""
+            value.text = text if text else ""
+            return True
+    return False
 ```
 
-```python
-    def setPropertyValue(self, key : str, text : str = "", params : dict = {}) -> bool:
-        """ Set the key's value.text and/or value's {<element> : element.text} """
-        for property in self.properties:
-            if re.fullmatch(property.find("key").text, key):
-                value = property.find("value")
-                for paramKey in params:
-                    param = ET.SubElement(value, paramKey)
-                    param.text = params[paramKey]
-
-                value.text = text if text else ""
-                return True
-        return False
+## python/custom-property.py
+```console
+python python/custom-property.py -i tests/test2.tosc -o tests/customProp.tosc --Property CustomProperty --Value Update --Type s
 ```
+Turns out you can insert your own XML elements into Touch OSC files and the Editor will respect that. This means you can access those properties in lua and they will keep their values after you save and exit. For example:
+```lua
+function onValueChanged(key, value)
+  if key == "touch" and self.values.touch == true then
+    print(self.parent.CustomProperty)
+    self.parent.CustomProperty = self.parent.children.label2.values.text
+  end
+end
+```
+You can use custom-property.py to insert new properties in your .tosc file and use them as globals or config parameters. 
 
-
-Currently prototyping with Python but I want to move to a more performant Rust + JS or something stack in the future and adding Reaper -> xml -> tosc -> Reaper support. 
-
-## copy-scripts
-
+## python/copy-scripts.py
+```console
+python python/copy-scripts.py -i "tests/test.tosc" -o "tests/out.tosc" --Source "source" --Target "target"
+```
 Find a source object by name, copies its script and adds it to all children objects of a target object.
 
-### Usage
-
-1. Set up a template so you have a source object and a target group.
+1. Set up a template where you a source object and a target group in top level.
 2. Open or run copy-scripts.py with arguments.
 3. Open .tosc file.
 
-Example:
+## python/image-tosc.py
 ```console
-python python/copy-scripts.py -i "test.tosc" -o "out.tosc" -s "source" -t "target"
+python python/image-tosc.py -i "tests/test.tosc" -o "tests/out.tosc" --Image "tests/logo.jpg" --Target "canvas"
 ```
+Convert a .jpg image to .tosc using small boxes as pixels. This will look for a Target group object to place the boxes into.
 
-### Example source and targets:
-![dlme2](https://user-images.githubusercontent.com/58243333/168412916-70d5f2ba-90b2-4f46-bc84-bce338ec3e1d.jpg)
-
-## image-tosc
-
-Convert a .jpg image to .tosc using small boxes as pixels. Currently using extra .xml files as reference but will generate from scratch in the future.
-
-### Usage
-
-1. Set up a template where you have a "canvas" object on top level.
-2. Open or Run image-tosc.py with arguments.
+1. Set up a template where you have a "canvas" group on top level.
+2. Open or run image-tosc.py with arguments.
 3. Open .tosc file.
-
-Example:
-```console
-python python/image-tosc.py -i "test.tosc" -o "out.tosc" -j "logo.jpg" -t "canvas"
-```
 
 Use these for setting the image size.
 ```python
@@ -92,3 +72,5 @@ I don't recommend going above 256x256 for image_size as performance and filesize
 
 ![deleteme](https://user-images.githubusercontent.com/58243333/168332352-cb848b15-13fc-4573-861d-27b47f6da2ee.jpg)
 
+## TO DO
+Currently prototyping with Python but I want to move to a more performant Rust + JS or something stack in the future and adding Reaper -> xml -> tosc -> Reaper support. 

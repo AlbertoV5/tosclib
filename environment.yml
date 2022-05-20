@@ -1,6 +1,0 @@
-name: py39
-channels:
-  - defaults
-dependencies:
-  - python=3.9
-  - tosclib=0.1

@@ -1,17 +1,15 @@
 Welcome to tosclib!
 ===================================
 
-**tosclib** Uses XML trees to generate simple Touch OSC XML templates. 
-Make sure to backup your .tosc files before editing them.
-
-For more info about .tosc go to the `Touch OSC website. <https://hexler.net/touchosc/>`_
-
-Check out the :doc:`usage` section for further information, including
-how to :ref:`installation` the project.
+This library uses XML trees to generate and edit Touch OSC templates with a few custom classes and functions that help navigate the structure of the .tosc file.
 
 .. note::
 
-   This project is under active development.
+   **Disclaimer**: This project has no relation to Hexler, the developer of TouchOSC. Backup your templates before editing them with third party tools.
+
+For demos: https://github.com/AlbertoV5/tosc-generate
+
+For documentation: https://tosc-generate.readthedocs.io/en/latest/
 
 Contents
 --------

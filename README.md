@@ -1,20 +1,20 @@
 # tosc-generate
 
-This repo contains info about **[tosclib](https://pypi.org/project/tosclib)** as well as demo projects that use it.
-
-# [tosclib](https://tosc-generate.readthedocs.io/en/latest/)
+This repo contains info about **[tosclib](https://pypi.org/project/tosclib/)** as well as demo projects that use it.
 
 ```console
 pip install tosclib
 ```
+## [tosclib documentation here](https://tosc-generate.readthedocs.io/en/latest/)
+
+**Disclaimer**: This project has no relation to Hexler, the developer of TouchOSC. Backup your templates before editing them with third party tools.
 
 ## Demo Projects:
 
 Start with:
 ```console
 $ git clone https://github.com/AlbertoV5/tosc-generate.git
-$ cd tosc-generate
-$ cd demos
+$ cd tosc-generate\demos
 $ pip install -r requirements.txt
 ```
 ## custom-property.py

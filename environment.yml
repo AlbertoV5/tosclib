@@ -2,5 +2,5 @@ name: py39
 channels:
   - defaults
 dependencies:
-  - python=3.9.12
-  - tosclib==0.1
+  - python=3.9
+  - tosclib=0.1

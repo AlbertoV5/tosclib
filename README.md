@@ -1,17 +1,28 @@
-# tosc-generate
+# tosclib: 
 
-This repo contains info about **[tosclib](https://pypi.org/project/tosclib/)** as well as demo projects that use it.
+This repo contains info and src of **[tosclib](https://pypi.org/project/tosclib/)** as well as demo projects for it.
 
 ```console
-pip install tosclib
+$ pip install tosclib
 ```
-## [tosclib documentation here](https://tosc-generate.readthedocs.io/en/latest/)
+### [Documentation here!](https://tosc-generate.readthedocs.io/en/latest/)
 
 **Disclaimer**: This project has no relation to Hexler, the developer of TouchOSC. Backup your templates before editing them with third party tools.
 
-## Demo Projects:
+# Contribute:
 
-Start with:
+1. Fork this repo
+2. 
+```console
+$ git clone https://github.com/{your-name}/tosc-generate.git
+$ cd tosclib\src\tosclib
+```
+3. Make your changes.
+4. Make a pull request :)
+
+
+# Demo Projects:
+
 ```console
 $ git clone https://github.com/AlbertoV5/tosc-generate.git
 $ cd tosc-generate\demos
@@ -30,14 +41,13 @@ end
 ```
 You can use custom-property.py to insert new properties in your .tosc file and use them as globals or config parameters. Console:
 ```console
-$ python custom-property.py -i "files/test2.tosc" -o "files/customProp.tosc" --Property "CustomProperty" --Value "1612" --Type s
+$ python custom-property.py -i "files/test2.tosc" -o "files/customProp.tosc" --Property "CustomProperty" --Value "1612" --Type "s"
 ```
 
 ## copy-scripts.py
 Find a source object by name in the top level of the template, copies its script and adds it to all children objects of a target object.
 1. Set up a template where you a source object and a target group in top level.
-Open or run copy-scripts.py with arguments.
-2. Console:
+2. 
 ```console
 $ python copy-scripts.py -i "files/test.tosc" -o "files/out.tosc" --Source "source" --Target "target"
 ```
@@ -56,7 +66,7 @@ $ python image-tosc.py -i "files/test.tosc" -o "files/out.tosc" --Image "files/l
 3. Use the user interface to find new image and convert. 
 4. Open .tosc file.
 
-You want to change these if you want to change the image size.
+Change these if you want to change the image size.
 ```python
 converter.image_size = 64
 converter.pixel_size = 8

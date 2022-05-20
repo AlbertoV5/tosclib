@@ -1,5 +1,6 @@
-docs/build
 __pycache__/
-tosclib
+docs/build
+tosclib/*
+!tosclib/src
+tosclib.egg-info
 notes.txt
-./tosclib

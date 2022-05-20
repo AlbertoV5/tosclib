@@ -27,14 +27,15 @@ def setPropertyValue(self, key : str, text : str = "", params : dict = {}) -> bo
 
 ## python/custom-property.py
 ```console
-python python/custom-property.py -i tests/test2.tosc -o tests/customProp.tosc --Property CustomProperty --Value Update --Type s
+python python/custom-property.py -i tests/test2.tosc -o tests/customProp.tosc --Property CustomProperty --Value 1612 --Type s
 ```
 Turns out you can insert your own XML elements into Touch OSC files and the Editor will respect that. This means you can access those properties in lua and they will keep their values after you save and exit. For example:
 ```lua
+--This is code inside the touch osc editor
 function onValueChanged(key, value)
   if key == "touch" and self.values.touch == true then
-    print(self.parent.CustomProperty)
-    self.parent.CustomProperty = self.parent.children.label2.values.text
+    print(self.parent.CustomProperty) --prints 1612 to console
+    self.parent.CustomProperty = self.parent.children.label2.values.text -- replaces 1612 with whatever value label2 has
   end
 end
 ```

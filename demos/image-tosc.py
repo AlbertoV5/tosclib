@@ -78,7 +78,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     #For testing purposes
-    args.Image = "tests/logo.jpg" if args.Image == None else args.Image
+    args.Image = "files/logo.jpg" if args.Image == None else args.Image
     args.Target = "canvas" if args.Target == None else args.Target
 
     converter = ImageConverter(args.Input, args.Output, args.Image, args.Target)

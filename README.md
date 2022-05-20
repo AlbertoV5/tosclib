@@ -1,67 +1,62 @@
 # tosc-generate
-Using XML trees to generate simple Touch OSC XML templates. Make sure to backup your .tosc files before hacking them.
 
-Requirements:
+This repo contains info about **[tosclib](https://pypi.org/project/tosclib)** as well as demo projects that use it.
 
-```
-python>=3.9
-numpy==1.22.3
-Pillow==9.1.0
-```
-## python/tosclib
-Custom classes and functions that help navigate the structure of the .tosc file.
-```python
-def setPropertyValue(self, key : str, text : str = "", params : dict = {}) -> bool:
-    """ Set the key's value.text and/or value's {<element> : element.text} """
-    for property in self.properties:
-        if re.fullmatch(property.find("key").text, key):
-            value = property.find("value")
-            for paramKey in params:
-                param = ET.SubElement(value, paramKey)
-                param.text = params[paramKey]
+# [tosclib](https://tosc-generate.readthedocs.io/en/latest/)
 
-            value.text = text if text else ""
-            return True
-    return False
-```
-
-## python/custom-property.py
 ```console
-python python/custom-property.py -i demos/test2.tosc -o demos/customProp.tosc --Property CustomProperty --Value 1612 --Type s
+pip install tosclib
 ```
-Turns out you can insert your own XML elements into Touch OSC files and the Editor will respect that. This means you can access those properties in lua and they will keep their values after you save and exit. For example:
+
+## Demo Projects:
+
+Start with:
+```console
+$ git clone https://github.com/AlbertoV5/tosc-generate.git
+$ cd tosc-generate
+$ cd demos
+$ pip install -r requirements.txt
+```
+## custom-property.py
+You can insert your own XML elements into Touch OSC files and the Editor will respect them. This means you can access those properties in lua and they will keep their values after you save and exit the Touch OSC editor. For example:
 ```lua
---This is code inside the touch osc editor
+--This is lua code inside the touch osc editor--
 function onValueChanged(key, value)
   if key == "touch" and self.values.touch == true then
-    print(self.parent.CustomProperty) --prints 1612 to console
-    self.parent.CustomProperty = self.parent.children.label2.values.text -- replaces 1612 with whatever value label2 has
+    print(self.parent.CustomProperty)
+    self.parent.CustomProperty = self.parent.children.label2.values.text
   end
 end
 ```
-You can use custom-property.py to insert new properties in your .tosc file and use them as globals or config parameters. 
-
-## python/copy-scripts.py
+You can use custom-property.py to insert new properties in your .tosc file and use them as globals or config parameters. Console:
 ```console
-python python/copy-scripts.py -i "demos/test.tosc" -o "demos/out.tosc" --Source "source" --Target "target"
+$ python custom-property.py -i "files/test2.tosc" -o "files/customProp.tosc" --Property "CustomProperty" --Value "1612" --Type s
 ```
-Find a source object by name, copies its script and adds it to all children objects of a target object.
 
+## copy-scripts.py
+Find a source object by name in the top level of the template, copies its script and adds it to all children objects of a target object.
 1. Set up a template where you a source object and a target group in top level.
-2. Open or run copy-scripts.py with arguments.
+Open or run copy-scripts.py with arguments.
+2. Console:
+```console
+$ python copy-scripts.py -i "files/test.tosc" -o "files/out.tosc" --Source "source" --Target "target"
+```
 3. Open .tosc file.
 
-## python/image-tosc.py
-```console
-python python/image-tosc.py -i "demos/test.tosc" -o "demos/out.tosc" --Image "demos/logo.jpg" --Target "canvas"
-```
+
+## image-tosc.py
+
 Convert a .jpg image to .tosc using small boxes as pixels. This will look for a Target group object to place the boxes into.
 
 1. Set up a template where you have a "canvas" group on top level.
-2. Open or run image-tosc.py with arguments.
-3. Open .tosc file.
+2. Console:
+```console
+$ python image-tosc.py -i "files/test.tosc" -o "files/out.tosc" --Image "files/logo.jpg" --Target "canvas"
+```
+3. Use the user interface to find new image and convert. 
+4. Open .tosc file.
 
-Use these for setting the image size.
+You want to change these if you want to change the image size.
 ```python
 converter.image_size = 64
 converter.pixel_size = 8

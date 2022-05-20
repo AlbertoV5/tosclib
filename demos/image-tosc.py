@@ -1,4 +1,5 @@
-from tosclib import tosc, gui
+from tosclib import tosc
+import genericUI
 from PIL import Image
 import numpy as np
 import argparse
@@ -84,4 +85,4 @@ if __name__ == "__main__":
     converter.image_size = 64
     converter.pixel_size = 4
 
-    gui.start(converter)
+    genericUI.start(converter)

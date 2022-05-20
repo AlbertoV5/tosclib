@@ -98,7 +98,11 @@ class ElementTOSC:
 FUNCTIONS
 """
 def load(inputPath : str = None) -> ET.Element:
-    """ Reads .tosc file as bytes and returns the xml root element"""
+    """ Reads .tosc file as bytes and returns the xml root element
+    
+    :param inputPath: the path to the .tosc file,
+            defaults to None
+    """
     with open (inputPath, "rb") as file:
         return ET.fromstring(zlib.decompress(file.read()))
 

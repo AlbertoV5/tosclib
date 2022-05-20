@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+src/tosclib/__init__.py
+src/tosclib/tosc.py
+src/tosclib.egg-info/PKG-INFO
+src/tosclib.egg-info/SOURCES.txt
+src/tosclib.egg-info/dependency_links.txt
+src/tosclib.egg-info/top_level.txt

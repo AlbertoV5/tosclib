@@ -6,19 +6,18 @@ Usage
 Installation
 ------------
 
-To use Lumache, first install it using pip:
+Install it using pip:
 
 .. code-block:: console
 
-   (.venv) $ pip install lumache
+   (.venv) $ pip install tosclib
 
-Creating recipes
+Creating a script
 ----------------
 
-To retrieve a list of random ingredients,
-you can use the ``lumache.get_random_ingredients()`` function:
+To load a .tosc file you can use the ``tosclib.tosc.load()`` function:
 
-.. autofunction:: lumache.get_random_ingredients
+.. autofunction:: tosclib.tosc.load()
 
 The ``kind`` parameter should be either ``"meat"``, ``"fish"``,
 or ``"veggies"``. Otherwise, :py:func:`lumache.get_random_ingredients`
@@ -28,7 +27,7 @@ will raise an exception.
 
 For example:
 
->>> import lumache
->>> lumache.get_random_ingredients()
+>>> from tosclib import tosc
+>>> tosc.load("stuff/test.tosc")
 ['shells', 'gorgonzola', 'parsley']
 

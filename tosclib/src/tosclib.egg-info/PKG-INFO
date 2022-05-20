@@ -1,0 +1,33 @@
+Metadata-Version: 2.1
+Name: tosclib
+Version: 0.1.1
+Summary: Generate and edit Touch OSC .tosc files
+Home-page: https://github.com/AlbertoV5/tosc-generate
+Author: Alberto Valdez
+Author-email: avq5ac1@gmail.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# tosc-generate
+Using XML trees to generate simple Touch OSC XML templates. Make sure to backup your .tosc files before editing them.
+
+Custom classes and functions that help navigate the structure of the .tosc file. Example:
+
+```python
+def setPropertyValue(self, key : str, text : str = "", params : dict = {}) -> bool:
+    """ Set the key's value.text and/or value's {<element> : element.text} """
+    for property in self.properties:
+        if re.fullmatch(property.find("key").text, key):
+            value = property.find("value")
+            for paramKey in params:
+                param = ET.SubElement(value, paramKey)
+                param.text = params[paramKey]
+
+            value.text = text if text else ""
+            return True
+    return False
+```

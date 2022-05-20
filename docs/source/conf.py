@@ -1,6 +1,7 @@
 # Configuration file for the Sphinx documentation builder.
 
 # -- Project information
+from tosclib import tosc
 
 project = 'tosclib'
 copyright = '2022, Alberto Valdez'

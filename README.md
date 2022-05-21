@@ -1,3 +1,4 @@
+[![Documentation Status](https://readthedocs.org/projects/tosc-generate/badge/?version=latest)](https://tosc-generate.readthedocs.io/en/latest/?badge=latest)
 # tosclib: 
 
 This repo contains info and src of **[tosclib](https://pypi.org/project/tosclib/)** as well as demo projects for it.

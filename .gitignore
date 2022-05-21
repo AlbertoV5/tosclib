@@ -1,6 +1,7 @@
 __pycache__/
 docs/build
-tosclib/*
-!tosclib/src
+tosclib/dist
+tosclib/LICENSE
+tosclib/README.md
 tosclib.egg-info
 notes.txt

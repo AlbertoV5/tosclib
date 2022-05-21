@@ -10,17 +10,32 @@ Install it using pip:
 
 .. code-block:: console
 
-   (.venv) $ pip install tosclib
+   $ pip install tosclib
 
-Loading a .tosc file
-------------------------
+Working with .tosc files
+-----------------------------
 
-To load a .tosc file you can use the ``tosclib.tosc.load()`` function:
+We want to load an .tosc file first, then we can handle it with tosclib. You can import xml.etree.ElementTree too.
 
-.. autofunction:: tosclib.tosc.load()
+.. autofunction:: tosclib.tosc.load
 
-For example:
+Our main class is ElementTOSC, which is designed to address the basic structure of Touch OSC objects.
 
->>> from tosclib import tosc
->>> tosc.load("stuff/test.tosc")
+.. autoclass:: tosclib.tosc.ElementTOSC
+
+**Example:**
+   
+.. code-block:: py
+
+   from tosclib import tosc
+   root = tosc.load(args.Input)
+   parent = tosc.ElementTOSC(root[0])
+   parent.createProperty(
+                           type = "s", 
+                           key = "Username", 
+                           text = "Geoff")
+
+   print("Added Property: ")
+   parent.showProperty(args.Property)
+   tosc.write(root, args.Output)
 

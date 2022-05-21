@@ -1,37 +1,27 @@
 """
 Simplify navigating, editing and generating .tosc files.
 
-Requires python 3.9.
+Requires python 3.9
 
 github.com/AlbertoV5
 
-"""
-__version__ = "0.1.0"
+Documentation: https://tosc-generate.readthedocs.io/en/latest/
 
+"""
 import xml.etree.ElementTree as ET
 import re, zlib, uuid
 
 class ElementTOSC:
+    """ 
+    Wrapper for the essential TOSC elements. 
+    Creates new sub elements if not found.
+
+    :ivar node: The Element used to initialize the instance
+    :ivar properties: Find <properties>
+    :ivar values: Find <values>
+    :ivar children: Find <children>
+    """
     def __init__(self, e : ET.Element):
-        """ 
-        Wrapper for the essential TOSC elements. 
-        Creates empty SubElements if not found.
-
-        <node>
-            <properties>
-                <property>
-                    <key>
-                        text
-                    <value>
-                        text
-                        
-                        <paramKey> 
-                            paramValue
-
-            <values>
-
-            <children>
-        """
         self.node : ET.Element = e
         self.properties : ET.Element = e.find("properties") if e.find("properties") else ET.SubElement(e, "properties")
         self.values : ET.Element = e.find("values") if e.find("values") else ET.SubElement(e, "values")
@@ -97,11 +87,10 @@ class ElementTOSC:
 """
 FUNCTIONS
 """
-def load(inputPath : str = None) -> ET.Element:
-    """ Reads .tosc file as bytes and returns the xml root element
+def load(inputPath : str) -> ET.Element:
+    """ Reads .tosc and returns the xml root element
     
-    :param inputPath: the path to the .tosc file,
-            defaults to None
+    :param inputPath: the path to the .tosc file
     """
     with open (inputPath, "rb") as file:
         return ET.fromstring(zlib.decompress(file.read()))

@@ -5,3 +5,5 @@ API
    :toctree: generated
 
    tosclib
+   tosclib.tosc
+

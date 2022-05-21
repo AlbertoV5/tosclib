@@ -1,1 +1,1 @@
-tosclib>=0.1.0
+tosclib>=0.1.2

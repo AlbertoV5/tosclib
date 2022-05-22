@@ -1,4 +1,4 @@
-from tosclib import tosc
+import tosclib as tosc
 import genericUI
 from PIL import Image
 import numpy as np

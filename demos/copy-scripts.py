@@ -1,4 +1,4 @@
-from tosclib import tosc
+import tosclib as tosc
 import argparse, re
 
 def CopyScripts(input : str, output : str, source : str = "source", target : str = "target"):

@@ -1,4 +1,4 @@
-from tosclib import tosc
+import tosclib as tosc
 import argparse
 
 def addProperty(args):

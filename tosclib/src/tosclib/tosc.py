@@ -1,31 +1,56 @@
 """
 Simplify navigating, editing and generating .tosc files.
 
-Requires python 3.9
-
-github.com/AlbertoV5
-
 Documentation: https://tosc-generate.readthedocs.io/en/latest/
 
 """
+from xml.dom.minidom import Element
 import xml.etree.ElementTree as ET
 import re, zlib, uuid
+from enum import Enum, unique
+
+@unique
+class Items(Enum):
+    """ Enum for the default items in <node> 
+    
+    :cvar PROPERTIES: Find <properties> of Element.
+    :cvar VALUES: Find <values> of Element.
+    :cvar CHILDREN: Find <children> of Element.
+    """
+    PROPERTIES = "properties"
+    VALUES = "values"
+    CHILDREN = "children"
+
+    @classmethod
+    def new(cls, name : str, args : dict) -> Enum:
+        return Enum(name, {item.name:item.value for item in cls} | args)
 
 class ElementTOSC:
     """ 
-    Wrapper for the essential TOSC elements. 
-    Creates new sub elements if not found.
+    Wrapper for the basic .tosc Elements and SubElements.
+    Creates new SubElements if they are not found.
 
-    :ivar node: The Element used to initialize the instance
-    :ivar properties: Find <properties>
-    :ivar values: Find <values>
-    :ivar children: Find <children>
+    :param e: This is a <node> Element
+    :param enum: These are the items of the <node> Element
+
+    :cvar node: Node is always equal to the e parameter
+    :ivar enum.value1: SubElement
+    :ivar enum...: Find SubElements of node from Enum values
+
+    :returns: ElementTOSC
     """
-    def __init__(self, e : ET.Element):
-        self.node : ET.Element = e
-        self.properties : ET.Element = e.find("properties") if e.find("properties") else ET.SubElement(e, "properties")
-        self.values : ET.Element = e.find("values") if e.find("values") else ET.SubElement(e, "values")
-        self.children : ET.Element = e.find("children") if e.find("children") else ET.SubElement(e, "children")
+    def __init__(self, e : ET.Element, enum : Enum = Items):
+        self.node = e
+        [
+            setattr(self, item.value, e.find(item.value)) 
+            if e.find(item.value) else
+            setattr(self, item.value, ET.SubElement(e, item.value))
+            for item in enum
+        ]
+    @classmethod
+    def fromFile(cls, file : str, enum : Enum = Items):
+        """ Returns ElementTOSC Debug purposes """
+        return cls(load(file)[0], enum)
 
     def getPropertyValue(self, key : str) -> ET.Element:
         """ Find the value.text from a known key """
@@ -77,16 +102,29 @@ class ElementTOSC:
         ET.indent(self.node, "  ")
         print(ET.tostring(self.node).decode("utf-8"))
 
+    def showValues(self):
+        """ Print indented XML as UTF-8 """
+        ET.indent(self.values, "  ")
+        print(ET.tostring(self.values).decode("utf-8"))
+
     def showProperty(self, name : str):
         """ Print indented XML of a single property by name as utf-8"""
         for property in self.properties:
             if re.fullmatch(property.find("key").text, name):
                 ET.indent(property, "  ")
                 print(ET.tostring(property).decode("utf-8"))
-        
-"""
-FUNCTIONS
-"""
+    
+    def display(self):
+        """ Print a tree like structure """
+        etosc = self.node
+        print(etosc)
+        print("|")
+        for item, val in zip(self.Items, self.__dict__.values):
+            print("_", item.value, "_", val )
+
+"""ElementTOSC alias"""
+e : ElementTOSC = ElementTOSC #: ElementTOSC alias
+
 def load(inputPath : str) -> ET.Element:
     """ Reads .tosc and returns the xml root element
     

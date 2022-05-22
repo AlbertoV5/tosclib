@@ -3,4 +3,5 @@ tosclib/dist
 tosclib/LICENSE
 tosclib/README.md
 tosclib.egg-info
+.vscode/
 notes.txt

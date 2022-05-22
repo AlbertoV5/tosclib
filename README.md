@@ -5,7 +5,7 @@ This repo contains info and src of **[tosclib](https://pypi.org/project/tosclib/
 ```console
 $ pip install tosclib
 ```
-### [Documentation here!](https://tosc-generate.readthedocs.io/en/latest/)
+### [Documentation here!](https://albertov5.github.io/tosc-generate/docs/build/html/index.html)
 
 **Disclaimer**: This project has no relation to Hexler, the developer of TouchOSC. Backup your templates before editing them with third party tools.
 

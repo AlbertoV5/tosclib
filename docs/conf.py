@@ -16,7 +16,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
-    # 'sphinx.ext.viewcode'
+    'sphinx.ext.viewcode',
+    'sphinx.ext.napoleon'
 ]
 
 intersphinx_mapping = {
@@ -25,19 +26,27 @@ intersphinx_mapping = {
 }
 intersphinx_disabled_domains = ['std']
 
+# Napoleon Ext
+napoleon_google_docstring = True
+napoleon_numpy_docstring = False
+napoleon_attr_annotations = True
+
+autodoc_typehints = "description"
+autodoc_class_signature = "separated"
 # -- Options for HTML output
 # https://docs.readthedocs.io/en/latest/guides/adding-custom-css.html
 
-html_theme = 'sphinx_rtd_theme'
+# html_theme = 'sphinx_rtd_theme'
 # html_theme_options = {
 #     "style_nav_header_background" : '#2d2d2d',
 # }
 
-html_theme = 'furo'
+# html_theme = 'furo'
 html_theme = 'sphinx_book_theme'
-html_theme = 'insegel' # https://sphinx-themes.org/sample-sites/insegel/kitchen-sink/admonitions/
+# html_theme = 'insegel' # https://sphinx-themes.org/sample-sites/insegel/kitchen-sink/admonitions/
+# html_theme = 'press'
 
 # -- Options for EPUB output
-epub_show_urls = 'footnote'
+# epub_show_urls = 'footnote'
 
 

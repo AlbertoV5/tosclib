@@ -1,0 +1,427 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tosclib.tosc &#8212; tosclib 0.1 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">tosclib 0.1 documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../usage.html">
+   Usage
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../usage/toscfiles.html">
+     Understanding .tosc files
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../usage/tosclib.html">
+     Using tosclib
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../api.html">
+   API
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../generated/tosclib.tosc.html">
+     tosclib.tosc
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for tosclib.tosc</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Simplify navigating, editing and generating .tosc files.</span>
+
+<span class="sd">Documentation: https://albertov5.github.io/tosc-generate/docs/build/html/</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">import</span> <span class="nn">re</span><span class="o">,</span> <span class="nn">zlib</span><span class="o">,</span> <span class="nn">uuid</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">unique</span>
+
+<div class="viewcode-block" id="SubElements"><a class="viewcode-back" href="../../usage/tosclib.html#tosclib.tosc.SubElements">[docs]</a><span class="nd">@unique</span>
+<span class="k">class</span> <span class="nc">SubElements</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Enum for the default SubElements in &lt;node&gt; </span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        PROPERTIES: Find &lt;properties&gt; of Element.</span>
+<span class="sd">        VALUES: Find &lt;values&gt; of Element.</span>
+<span class="sd">        CHILDREN: Find &lt;children&gt; of Element.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PROPERTIES</span> <span class="o">=</span> <span class="s2">&quot;properties&quot;</span>
+    <span class="n">VALUES</span> <span class="o">=</span> <span class="s2">&quot;values&quot;</span>
+    <span class="n">CHILDREN</span> <span class="o">=</span> <span class="s2">&quot;children&quot;</span>
+
+<div class="viewcode-block" id="SubElements.new"><a class="viewcode-back" href="../../usage/tosclib.html#tosclib.tosc.SubElements.new">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">attributes</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Enum</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Create new Subs enum with added attributes&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Enum</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">{</span><span class="n">sub</span><span class="o">.</span><span class="n">name</span><span class="p">:</span><span class="n">sub</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">cls</span><span class="p">}</span> <span class="o">|</span> <span class="n">attributes</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="ElementTOSC"><a class="viewcode-back" href="../../usage/tosclib.html#tosclib.tosc.ElementTOSC">[docs]</a><span class="k">class</span> <span class="nc">ElementTOSC</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Contains a Node Element and its SubElements.</span>
+<span class="sd">    You can pass a custom Enum in order to define new SubElements.</span>
+<span class="sd">    Creates Enum SubElements if they are not found in the Node.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        e: Node element.</span>
+<span class="sd">        subs: SubElements defined in the Enum.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        node (ET.Element): Gets the passed Element.</span>
+<span class="sd">        subelements (ET.Element): Creates attributes from subs Enum.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ElementTOSC.__init__"><a class="viewcode-back" href="../../usage/tosclib.html#tosclib.tosc.ElementTOSC.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">subs</span> <span class="p">:</span> <span class="n">Enum</span> <span class="o">=</span> <span class="n">SubElements</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">e</span>
+        <span class="p">[</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">))</span> 
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="k">else</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs</span>
+        <span class="p">]</span></div>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">enum</span> <span class="p">:</span> <span class="n">Enum</span> <span class="o">=</span> <span class="n">SubElements</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns ElementTOSC Debug purposes &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">enum</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getPropertyValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span> <span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Find the value.text from a known key &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">setPropertyValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">params</span> <span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{})</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Set the key&#39;s value.text and/or value&#39;s {&lt;element&gt; : element.text} &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="nb">property</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="nb">property</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
+                    <span class="nb">property</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">paramKey</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+                        <span class="nb">property</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">paramKey</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">paramKey</span><span class="p">]</span>
+                    <span class="k">return</span> <span class="kc">True</span>                
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">createProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span> <span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{})</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Add a new property with key, value and/or value&#39;s {&lt;element&gt; : element.text} &quot;&quot;&quot;</span>
+        <span class="nb">property</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span> <span class="s2">&quot;property&quot;</span><span class="p">,</span> <span class="n">attrib</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span><span class="nb">type</span><span class="p">})</span>
+        <span class="n">keyElement</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="s2">&quot;key&quot;</span><span class="p">)</span> 
+        <span class="n">valueElement</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
+        <span class="n">keyElement</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="n">valueElement</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+
+        <span class="k">for</span> <span class="n">paramKey</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">subElement</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">valueElement</span><span class="p">,</span> <span class="n">paramKey</span><span class="p">)</span>
+            <span class="n">subElement</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">paramKey</span><span class="p">]</span>
+        
+        <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">iselement</span><span class="p">(</span><span class="nb">property</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">findChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Look for a Child Node by name&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">child</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;properties&quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span>
+                <span class="n">getTextValueFromKey</span><span class="p">(</span>
+                    <span class="n">child</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;properties&quot;</span><span class="p">),</span> <span class="s2">&quot;name&quot;</span><span class="p">),</span> <span class="n">name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">child</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">createNode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span> <span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create and return a children Element with attrib = {&#39;ID&#39; : str(uuid4()), &#39;type&#39; : type}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">,</span> 
+                                <span class="s2">&quot;node&quot;</span><span class="p">,</span>
+                                <span class="n">attrib</span> <span class="o">=</span> <span class="p">{</span>
+                                            <span class="s2">&quot;ID&quot;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> 
+                                            <span class="s2">&quot;type&quot;</span><span class="p">:</span><span class="nb">type</span>
+                                        <span class="p">}</span>
+                            <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Print indented XML as UTF-8 &quot;&quot;&quot;</span>
+        <span class="n">ET</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">showValues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Print indented XML as UTF-8 &quot;&quot;&quot;</span>
+        <span class="n">ET</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">showProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span> <span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Print indented XML of a single property by name as utf-8&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="nb">property</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="nb">property</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+                <span class="n">ET</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="nb">property</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    
+    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Print a tree like structure &quot;&quot;&quot;</span>
+        <span class="n">etosc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">etosc</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Items</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">val</span> <span class="p">)</span></div>
+
+<span class="sd">&quot;&quot;&quot;ElementTOSC alias&quot;&quot;&quot;</span>
+<span class="n">e</span> <span class="p">:</span> <span class="n">ElementTOSC</span> <span class="o">=</span> <span class="n">ElementTOSC</span> <span class="c1">#: ElementTOSC alias</span>
+
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../usage/tosclib.html#tosclib.tosc.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">inputPath</span> <span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Reads .tosc and returns the xml root element</span>
+<span class="sd">    </span>
+<span class="sd">    :param inputPath: the path to the .tosc file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span> <span class="p">(</span><span class="n">inputPath</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">zlib</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span></div>
+
+<span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">root</span> <span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">outputPath</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Encodes a root element directly to UTF-8 and compresses to .tosc&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span> <span class="p">(</span><span class="n">outputPath</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">treeFile</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;xml&quot;</span><span class="p">)</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">zlib</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">treeFile</span><span class="p">))</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+<span class="k">def</span> <span class="nf">findChildByName</span><span class="p">(</span><span class="n">element</span> <span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">name</span> <span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Returns the first child element by name &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;children&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">child</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;properties&quot;</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">getTextValueFromKey</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;properties&quot;</span><span class="p">),</span> <span class="s2">&quot;name&quot;</span><span class="p">),</span> <span class="n">name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">child</span>
+            
+<span class="k">def</span> <span class="nf">getTextValueFromKey</span><span class="p">(</span><span class="n">properties</span> <span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">key</span> <span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Find the value.text from a known key &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="nb">property</span> <span class="ow">in</span> <span class="n">properties</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="nb">property</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">property</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+
+<span class="k">def</span> <span class="nf">pullValueFromKey</span><span class="p">(</span><span class="n">inputFile</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">targetKey</span> <span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Find a value from a known key, value and target key&quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">XMLPullParser</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inputFile</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span><span class="n">zlib</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">read_events</span><span class="p">():</span> <span class="c1"># event, element</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;properties&quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">getTextValueFromKey</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;properties&quot;</span><span class="p">),</span> <span class="n">key</span><span class="p">),</span><span class="n">value</span><span class="p">):</span>
+                <span class="n">parser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">getTextValueFromKey</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;properties&quot;</span><span class="p">),</span> <span class="n">targetKey</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Alberto Valdez<br/>
+  
+      &copy; Copyright 2022, Alberto Valdez.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

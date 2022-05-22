@@ -34,7 +34,7 @@
    .. autosummary::
    
       ElementTOSC
-      Items
+      SubElements
       e
    
    

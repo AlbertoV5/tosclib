@@ -1,54 +1,56 @@
 """
 Simplify navigating, editing and generating .tosc files.
 
-Documentation: https://tosc-generate.readthedocs.io/en/latest/
+Documentation: https://albertov5.github.io/tosc-generate/docs/build/html/
 
 """
-from xml.dom.minidom import Element
 import xml.etree.ElementTree as ET
 import re, zlib, uuid
 from enum import Enum, unique
 
 @unique
-class Items(Enum):
-    """ Enum for the default items in <node> 
+class SubElements(Enum):
+    """ Enum for the default SubElements in <node> 
     
-    :cvar PROPERTIES: Find <properties> of Element.
-    :cvar VALUES: Find <values> of Element.
-    :cvar CHILDREN: Find <children> of Element.
+    Attributes:
+        PROPERTIES: Find <properties> of Element.
+        VALUES: Find <values> of Element.
+        CHILDREN: Find <children> of Element.
     """
     PROPERTIES = "properties"
     VALUES = "values"
     CHILDREN = "children"
 
     @classmethod
-    def new(cls, name : str, args : dict) -> Enum:
-        return Enum(name, {item.name:item.value for item in cls} | args)
+    def new(cls, name : str, attributes : dict) -> Enum:
+        """ Create new Subs enum with added attributes"""
+        return Enum(name, {sub.name:sub.value for sub in cls} | attributes)
 
 class ElementTOSC:
     """ 
-    Wrapper for the basic .tosc Elements and SubElements.
-    Creates new SubElements if they are not found.
+    Contains a Node Element and its SubElements.
+    You can pass a custom Enum in order to define new SubElements.
+    Creates Enum SubElements if they are not found in the Node.
 
-    :param e: This is a <node> Element
-    :param enum: These are the items of the <node> Element
+    Args:
+        e: Node element.
+        subs: SubElements defined in the Enum.
 
-    :cvar node: Node is always equal to the e parameter
-    :ivar enum.value1: SubElement
-    :ivar enum...: Find SubElements of node from Enum values
+    Attributes:
+        node (ET.Element): Gets the passed Element.
+        subelements (ET.Element): Creates attributes from subs Enum.
 
-    :returns: ElementTOSC
     """
-    def __init__(self, e : ET.Element, enum : Enum = Items):
+    def __init__(self, e : ET.Element, subs : Enum = SubElements):
         self.node = e
         [
-            setattr(self, item.value, e.find(item.value)) 
-            if e.find(item.value) else
-            setattr(self, item.value, ET.SubElement(e, item.value))
-            for item in enum
+            setattr(self, sub.value, e.find(sub.value)) 
+            if e.find(sub.value) else
+            setattr(self, sub.value, ET.SubElement(e, sub.value))
+            for sub in subs
         ]
     @classmethod
-    def fromFile(cls, file : str, enum : Enum = Items):
+    def fromFile(cls, file : str, enum : Enum = SubElements):
         """ Returns ElementTOSC Debug purposes """
         return cls(load(file)[0], enum)
 
@@ -62,13 +64,13 @@ class ElementTOSC:
         """ Set the key's value.text and/or value's {<element> : element.text} """
         for property in self.properties:
             if re.fullmatch(property.find("key").text, key):
-                value = property.find("value")
-                for paramKey in params:
-                    param = ET.SubElement(value, paramKey)
-                    param.text = params[paramKey]
-
-                value.text = text if text else ""
-                return True
+                if text:
+                    property.find("value").text = text
+                    return True
+                else:
+                    for paramKey in params:
+                        property.find("value").find(paramKey).text = params[paramKey]
+                    return True                
         return False
 
     def createProperty(self, type : str, key : str, text : str, params : dict = {}) -> bool:
@@ -84,6 +86,17 @@ class ElementTOSC:
             subElement.text = params[paramKey]
         
         return ET.iselement(property)
+
+    def findChild(self, name: str) -> ET.Element:
+        """Look for a Child Node by name"""
+        for child in self.children:
+            if not child.find("properties"):
+                continue
+            if re.fullmatch(
+                getTextValueFromKey(
+                    child.find("properties"), "name"), name):
+                return child
+        return None
 
     def createNode(self, type : str) -> ET.Element:
         """

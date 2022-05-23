@@ -6,7 +6,7 @@ copyright = '2022, Alberto Valdez'
 author = 'Alberto Valdez'
 
 release = '0.1'
-version = '0.1.3'
+version = '0.1.4'
 
 # -- General configuration
 
@@ -17,8 +17,18 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon'
+    'sphinx.ext.napoleon',
+    'jupyter_sphinx',
+    # 'nbsphinx',
+    'sphinx_copybutton',
 ]
+
+# https://nbsphinx.readthedocs.io/en/0.8.8/usage.html#Sphinx-Configuration-Values
+# source_suffix = [".rst", ".md"]
+exclude_patterns = ['build']
+
+# Jupyter
+# https://ipywidgets.readthedocs.io/en/latest/embedding.html#embedding-widgets-in-the-sphinx-html-documentation
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),

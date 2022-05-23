@@ -21,6 +21,9 @@
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
@@ -29,7 +32,12 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/thebelab-helper.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -80,8 +88,8 @@
     <div class="bd-toc-item active">
         <ul class="nav bd-sidenav">
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="usage.html">
-   Usage
+  <a class="reference internal" href="guide.html">
+   Guide
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
   <label for="toctree-checkbox-1">
@@ -90,20 +98,25 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="usage/toscfiles.html">
+    <a class="reference internal" href="guide/1-tosc-files.html">
      Understanding .tosc files
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="usage/tosclib.html">
+    <a class="reference internal" href="guide/2-tosc-msgs.html">
+     Message Elements
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="guide/3-tosclib.html">
      Using tosclib
     </a>
    </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="api.html">
-   API
+  <a class="reference internal" href="demos.html">
+   Demos
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
   <label for="toctree-checkbox-2">
@@ -112,7 +125,29 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="generated/tosclib.tosc.html">
+    <a class="reference internal" href="demos/enumDemo.html">
+     Enum Demo
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="demos/test.html">
+     Test
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="api.html">
+   API
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="api/tosclib.tosc.html">
      tosclib.tosc
     </a>
    </li>
@@ -225,11 +260,11 @@ title="Fullscreen mode"
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="usage/tosclib.html#tosclib.tosc.ElementTOSC.__init__">__init__() (tosclib.tosc.ElementTOSC method)</a>
+      <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.__init__">__init__() (tosclib.tosc.ElementTOSC method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="usage/tosclib.html#tosclib.tosc.ElementTOSC.__new__">__new__() (tosclib.tosc.ElementTOSC method)</a>
+      <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.__new__">__new__() (tosclib.tosc.ElementTOSC method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -237,7 +272,7 @@ title="Fullscreen mode"
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="usage/tosclib.html#tosclib.SubElements.CHILDREN">CHILDREN (tosclib.SubElements attribute)</a>
+      <li><a href="guide/3-tosclib.html#tosclib.tosc.SubElements.CHILDREN">CHILDREN (tosclib.tosc.SubElements attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -245,7 +280,7 @@ title="Fullscreen mode"
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="usage/tosclib.html#tosclib.tosc.ElementTOSC">ElementTOSC (class in tosclib.tosc)</a>
+      <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC">ElementTOSC (class in tosclib.tosc)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -253,7 +288,7 @@ title="Fullscreen mode"
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="usage/tosclib.html#tosclib.tosc.load">load() (in module tosclib.tosc)</a>
+      <li><a href="guide/3-tosclib.html#tosclib.tosc.load">load() (in module tosclib.tosc)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -261,13 +296,15 @@ title="Fullscreen mode"
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="guide/3-tosclib.html#tosclib.tosc.SubElements.MESSAGES">MESSAGES (tosclib.tosc.SubElements attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     module
 
       <ul>
-        <li><a href="generated/tosclib.html#module-tosclib">tosclib</a>
-</li>
-        <li><a href="generated/tosclib.tosc.html#module-tosclib.tosc">tosclib.tosc</a>
+        <li><a href="api/tosclib.tosc.html#module-tosclib.tosc">tosclib.tosc</a>
 </li>
       </ul></li>
   </ul></td>
@@ -276,11 +313,11 @@ title="Fullscreen mode"
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="usage/tosclib.html#tosclib.SubElements.new">new() (tosclib.SubElements class method)</a>
+      <li><a href="guide/3-tosclib.html#tosclib.tosc.SubElements.new">new() (tosclib.tosc.SubElements class method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="usage/tosclib.html#tosclib.tosc.ElementTOSC.node">node (tosclib.tosc.ElementTOSC attribute)</a>
+      <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.node">node (tosclib.tosc.ElementTOSC attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -288,7 +325,7 @@ title="Fullscreen mode"
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="usage/tosclib.html#tosclib.SubElements.PROPERTIES">PROPERTIES (tosclib.SubElements attribute)</a>
+      <li><a href="guide/3-tosclib.html#tosclib.tosc.SubElements.PROPERTIES">PROPERTIES (tosclib.tosc.SubElements attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -296,11 +333,11 @@ title="Fullscreen mode"
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="usage/tosclib.html#tosclib.SubElements">SubElements (class in tosclib)</a>
+      <li><a href="guide/3-tosclib.html#tosclib.tosc.SubElements">SubElements (class in tosclib.tosc)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="usage/tosclib.html#tosclib.tosc.ElementTOSC.subelements">subelements (tosclib.tosc.ElementTOSC attribute)</a>
+      <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.subelements">subelements (tosclib.tosc.ElementTOSC attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -309,19 +346,10 @@ title="Fullscreen mode"
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
-    tosclib
-
-      <ul>
-        <li><a href="generated/tosclib.html#module-tosclib">module</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
     tosclib.tosc
 
       <ul>
-        <li><a href="generated/tosclib.tosc.html#module-tosclib.tosc">module</a>
+        <li><a href="api/tosclib.tosc.html#module-tosclib.tosc">module</a>
 </li>
       </ul></li>
   </ul></td>
@@ -330,7 +358,7 @@ title="Fullscreen mode"
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="usage/tosclib.html#tosclib.SubElements.VALUES">VALUES (tosclib.SubElements attribute)</a>
+      <li><a href="guide/3-tosclib.html#tosclib.tosc.SubElements.VALUES">VALUES (tosclib.tosc.SubElements attribute)</a>
 </li>
   </ul></td>
 </tr></table>

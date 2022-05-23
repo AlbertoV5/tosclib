@@ -1,0 +1,635 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Using tosclib &#8212; tosclib 0.1 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Demos" href="../demos.html" />
+    <link rel="prev" title="Message Elements" href="2-tosc-msgs.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">tosclib 0.1 documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="../guide.html">
+   Guide
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="1-tosc-files.html">
+     Understanding .tosc files
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="2-tosc-msgs.html">
+     Message Elements
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     Using tosclib
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../demos.html">
+   Demos
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../demos/enumDemo.html">
+     Enum Demo
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../demos/test.html">
+     Test
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../api.html">
+   API
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../api/tosclib.tosc.html">
+     tosclib.tosc
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/guide/3-tosclib.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#installation">
+   Installation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#guide">
+   Guide
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#working-with-tosc-files">
+   Working with .tosc files
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Using tosclib</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#installation">
+   Installation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#guide">
+   Guide
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#working-with-tosc-files">
+   Working with .tosc files
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="using-tosclib">
+<h1>Using tosclib<a class="headerlink" href="#using-tosclib" title="Permalink to this headline">#</a></h1>
+<section id="installation">
+<span id="id1"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h2>
+<p>Requires python &gt;= 3.9</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip install tosclib
+</pre></div>
+</div>
+</section>
+<section id="guide">
+<h2>Guide<a class="headerlink" href="#guide" title="Permalink to this headline">#</a></h2>
+<p>Tosclib tries to simplify editing and generating .tosc files.</p>
+<p>Once you learn the structure of the .tosc file and the structure of tosclib, it becomes easier to focus on the algorithm of whatever you want to do rather than dealing with XML Element Trees that try to find a needle in a haystack in an inefficient way.</p>
+<p>For example, changing the colors of a specific Node Element:</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
+
+<span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;../demos/files/test.tosc&quot;</span><span class="p">)</span>
+<span class="n">parent</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">e</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">e</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">findChild</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">))</span>
+<span class="n">target</span><span class="o">.</span><span class="n">showProperty</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;property type=&quot;c&quot;&gt;
+  &lt;key&gt;color&lt;/key&gt;
+  &lt;value&gt;
+    &lt;r&gt;0.25&lt;/r&gt;
+    &lt;g&gt;0.25&lt;/g&gt;
+    &lt;b&gt;0.25&lt;/b&gt;
+    &lt;a&gt;1&lt;/a&gt;
+  &lt;/value&gt;
+&lt;/property&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">colors</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;r&quot;</span><span class="p">:</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">:</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">:</span><span class="s2">&quot;1&quot;</span><span class="p">}</span>
+<span class="n">target</span><span class="o">.</span><span class="n">setPropertyValue</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">colors</span><span class="p">)</span>
+<span class="n">target</span><span class="o">.</span><span class="n">showProperty</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;property type=&quot;c&quot;&gt;
+  &lt;key&gt;color&lt;/key&gt;
+  &lt;value&gt;
+    &lt;r&gt;0&lt;/r&gt;
+    &lt;g&gt;0&lt;/g&gt;
+    &lt;b&gt;1&lt;/b&gt;
+    &lt;a&gt;1&lt;/a&gt;
+  &lt;/value&gt;
+&lt;/property&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;../demos/files/out.tosc&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-none notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="working-with-tosc-files">
+<h2>Working with .tosc files<a class="headerlink" href="#working-with-tosc-files" title="Permalink to this headline">#</a></h2>
+<p>Load a .tosc file directly into a root Element and handle it with <strong>tosclib</strong> or <strong>xml</strong>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tosclib.tosc.load">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputPath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.load" title="Permalink to this definition">#</a></dt>
+<dd><p>Reads .tosc and returns the xml root element</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inputPath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – the path to the .tosc file</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element" title="(in Python v3.10)">xml.etree.ElementTree.Element</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Then pass the parent Node to the ElementTOSC class to get its SubElements.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">ElementTOSC</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#ElementTOSC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.ElementTOSC" title="Permalink to this definition">#</a></dt>
+<dd><p>Contains a Node Element and its SubElements.
+You can pass a custom Enum in order to define new SubElements.
+Creates Enum SubElements if they are not found in the Node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> – Node element.</p></li>
+<li><p><strong>subs</strong> – SubElements defined in the Enum.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.node">
+<span class="sig-name descname"><span class="pre">node</span></span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.node" title="Permalink to this definition">#</a></dt>
+<dd><p>Gets the passed Element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ET.Element</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.subelements">
+<span class="sig-name descname"><span class="pre">subelements</span></span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.subelements" title="Permalink to this definition">#</a></dt>
+<dd><p>Creates attributes from subs Enum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ET.Element</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subs=&lt;enum</span> <span class="pre">'SubElements'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#ElementTOSC.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.ElementTOSC.__init__" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<a class="reference external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element" title="(in Python v3.10)"><em>xml.etree.ElementTree.Element</em></a>) – </p></li>
+<li><p><strong>subs</strong> (<a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.10)"><em>enum.Enum</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.__new__">
+<span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.__new__" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tosclib.tosc.SubElements">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">SubElements</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#SubElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.SubElements" title="Permalink to this definition">#</a></dt>
+<dd><p>Enum for the default SubElements in &lt;node&gt;</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.SubElements.PROPERTIES">
+<span class="sig-name descname"><span class="pre">PROPERTIES</span></span><a class="headerlink" href="#tosclib.tosc.SubElements.PROPERTIES" title="Permalink to this definition">#</a></dt>
+<dd><p>Find &lt;properties&gt; of Element.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.SubElements.VALUES">
+<span class="sig-name descname"><span class="pre">VALUES</span></span><a class="headerlink" href="#tosclib.tosc.SubElements.VALUES" title="Permalink to this definition">#</a></dt>
+<dd><p>Find &lt;values&gt; of Element.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.SubElements.MESSAGES">
+<span class="sig-name descname"><span class="pre">MESSAGES</span></span><a class="headerlink" href="#tosclib.tosc.SubElements.MESSAGES" title="Permalink to this definition">#</a></dt>
+<dd><p>Find &lt;messages&gt; of Element.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.SubElements.CHILDREN">
+<span class="sig-name descname"><span class="pre">CHILDREN</span></span><a class="headerlink" href="#tosclib.tosc.SubElements.CHILDREN" title="Permalink to this definition">#</a></dt>
+<dd><p>Find &lt;children&gt; of Element.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.SubElements.new">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#SubElements.new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.SubElements.new" title="Permalink to this definition">#</a></dt>
+<dd><p>Create new Subs enum with added attributes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
+<li><p><strong>attributes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.10)">enum.Enum</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p><strong>Example:</strong></p>
+<p>Create a new Property</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;../demos/files/test.tosc&quot;</span><span class="p">)</span>
+<span class="n">parent</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Creating Property in parent Node</span>
+<span class="n">parent</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span>
+                        <span class="nb">type</span> <span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+                        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+                        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;geoff&quot;</span>
+                     <span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Added Property: &quot;</span><span class="p">)</span>
+<span class="n">parent</span><span class="o">.</span><span class="n">showProperty</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+<span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;../demos/files/out.tosc&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Added Property: 
+&lt;property type=&quot;s&quot;&gt;
+  &lt;key&gt;name&lt;/key&gt;
+  &lt;value&gt;group&lt;/value&gt;
+&lt;/property&gt;
+&lt;property type=&quot;s&quot;&gt;
+  &lt;key&gt;name&lt;/key&gt;
+  &lt;value&gt;geoff&lt;/value&gt;
+&lt;/property&gt;
+</pre></div>
+</div>
+<div class="output text_plain highlight-none notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="2-tosc-msgs.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Message Elements</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../demos.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Demos</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Alberto Valdez<br/>
+  
+      &copy; Copyright 2022, Alberto Valdez.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

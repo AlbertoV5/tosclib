@@ -22,6 +22,9 @@
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
@@ -30,10 +33,15 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/thebelab-helper.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Usage" href="usage.html" />
+    <link rel="next" title="Guide" href="guide.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -82,8 +90,8 @@
     <div class="bd-toc-item active">
         <ul class="nav bd-sidenav">
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="usage.html">
-   Usage
+  <a class="reference internal" href="guide.html">
+   Guide
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
   <label for="toctree-checkbox-1">
@@ -92,20 +100,25 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="usage/toscfiles.html">
+    <a class="reference internal" href="guide/1-tosc-files.html">
      Understanding .tosc files
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="usage/tosclib.html">
+    <a class="reference internal" href="guide/2-tosc-msgs.html">
+     Message Elements
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="guide/3-tosclib.html">
      Using tosclib
     </a>
    </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="api.html">
-   API
+  <a class="reference internal" href="demos.html">
+   Demos
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
   <label for="toctree-checkbox-2">
@@ -114,7 +127,29 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="generated/tosclib.tosc.html">
+    <a class="reference internal" href="demos/enumDemo.html">
+     Enum Demo
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="demos/test.html">
+     Test
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="api.html">
+   API
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="api/tosclib.tosc.html">
      tosclib.tosc
     </a>
    </li>
@@ -299,23 +334,29 @@ title="Print to PDF"
 <p><strong>Disclaimer</strong>: This project has no relation to Hexler, the developer of TouchOSC. Backup your templates before editing them with third party tools.</p>
 </div>
 <p>For demos: <a class="reference external" href="https://github.com/AlbertoV5/tosc-generate">https://github.com/AlbertoV5/tosc-generate</a></p>
-<p>For documentation: <a class="reference external" href="https://tosc-generate.readthedocs.io/en/latest/">https://tosc-generate.readthedocs.io/en/latest/</a></p>
+<p>For documentation: <a class="reference external" href="https://albertoV5.github.io/tosc-generate">https://albertoV5.github.io/tosc-generate</a></p>
 <section id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">#</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="usage/toscfiles.html">Understanding .tosc files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage/tosclib.html">Using tosclib</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="usage/tosclib.html#installation">Installation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="usage/tosclib.html#usage">Usage</a></li>
-<li class="toctree-l3"><a class="reference internal" href="usage/tosclib.html#working-with-tosc-files">Working with .tosc files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide/1-tosc-files.html">Understanding .tosc files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/2-tosc-msgs.html">Message Elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/3-tosclib.html">Using tosclib</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="guide/3-tosclib.html#installation">Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="guide/3-tosclib.html#guide">Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="guide/3-tosclib.html#working-with-tosc-files">Working with .tosc files</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="demos.html">Demos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="demos/enumDemo.html">Enum Demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/test.html">Test</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="generated/tosclib.tosc.html">tosclib.tosc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/tosclib.tosc.html">tosclib.tosc</a></li>
 </ul>
 </li>
 </ul>
@@ -331,10 +372,10 @@ title="Print to PDF"
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='right-next' id="next-link" href="usage.html" title="next page">
+    <a class='right-next' id="next-link" href="guide.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Usage</p>
+        <p class="prev-next-title">Guide</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

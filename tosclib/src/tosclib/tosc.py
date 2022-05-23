@@ -1,8 +1,5 @@
 """
 Simplify navigating, editing and generating .tosc files.
-
-Documentation: https://albertov5.github.io/tosc-generate/docs/build/html/
-
 """
 import xml.etree.ElementTree as ET
 import re, zlib, uuid
@@ -15,10 +12,12 @@ class SubElements(Enum):
     Attributes:
         PROPERTIES: Find <properties> of Element.
         VALUES: Find <values> of Element.
+        MESSAGES: Find <messages> of Element.
         CHILDREN: Find <children> of Element.
     """
     PROPERTIES = "properties"
     VALUES = "values"
+    MESSAGES = "messages"
     CHILDREN = "children"
 
     @classmethod
@@ -41,6 +40,7 @@ class ElementTOSC:
         subelements (ET.Element): Creates attributes from subs Enum.
 
     """
+
     def __init__(self, e : ET.Element, subs : Enum = SubElements):
         self.node = e
         [
@@ -49,13 +49,14 @@ class ElementTOSC:
             setattr(self, sub.value, ET.SubElement(e, sub.value))
             for sub in subs
         ]
+
     @classmethod
     def fromFile(cls, file : str, enum : Enum = SubElements):
-        """ Returns ElementTOSC Debug purposes """
+        """ Returns ElementTOSC, for debugging purposes """
         return cls(load(file)[0], enum)
 
     def getPropertyValue(self, key : str) -> ET.Element:
-        """ Find the value.text from a known key """
+        """ Find <value> from a known <key> """
         for p in self.properties:
             if re.fullmatch(p.find("key").text, key):
                 return p.find("value")

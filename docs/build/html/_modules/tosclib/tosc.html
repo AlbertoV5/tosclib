@@ -21,6 +21,9 @@
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
@@ -29,7 +32,12 @@
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -80,8 +88,8 @@
     <div class="bd-toc-item active">
         <ul class="nav bd-sidenav">
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../../usage.html">
-   Usage
+  <a class="reference internal" href="../../guide.html">
+   Guide
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
   <label for="toctree-checkbox-1">
@@ -90,20 +98,20 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="../../usage/toscfiles.html">
+    <a class="reference internal" href="../../guide/1-tosc-files.html">
      Understanding .tosc files
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="../../usage/tosclib.html">
+    <a class="reference internal" href="../../guide/2-tosclib.html">
      Using tosclib
     </a>
    </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../../api.html">
-   API
+  <a class="reference internal" href="../../demos.html">
+   Demos
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
   <label for="toctree-checkbox-2">
@@ -112,7 +120,29 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="../../generated/tosclib.tosc.html">
+    <a class="reference internal" href="../../demos/enumDemo.html">
+     Enum Demo
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../demos/test.html">
+     Test
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../api.html">
+   API
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../api/tosclib.tosc.html">
      tosclib.tosc
     </a>
    </li>
@@ -209,33 +239,32 @@ title="Fullscreen mode"
   <h1>Source code for tosclib.tosc</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Simplify navigating, editing and generating .tosc files.</span>
-
-<span class="sd">Documentation: https://albertov5.github.io/tosc-generate/docs/build/html/</span>
-
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
 <span class="kn">import</span> <span class="nn">re</span><span class="o">,</span> <span class="nn">zlib</span><span class="o">,</span> <span class="nn">uuid</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">unique</span>
 
-<div class="viewcode-block" id="SubElements"><a class="viewcode-back" href="../../usage/tosclib.html#tosclib.tosc.SubElements">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="SubElements"><a class="viewcode-back" href="../../guide/2-tosclib.html#tosclib.tosc.SubElements">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">SubElements</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Enum for the default SubElements in &lt;node&gt; </span>
 <span class="sd">    </span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        PROPERTIES: Find &lt;properties&gt; of Element.</span>
 <span class="sd">        VALUES: Find &lt;values&gt; of Element.</span>
+<span class="sd">        MESSAGES: Find &lt;messages&gt; of Element.</span>
 <span class="sd">        CHILDREN: Find &lt;children&gt; of Element.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">PROPERTIES</span> <span class="o">=</span> <span class="s2">&quot;properties&quot;</span>
     <span class="n">VALUES</span> <span class="o">=</span> <span class="s2">&quot;values&quot;</span>
+    <span class="n">MESSAGES</span> <span class="o">=</span> <span class="s2">&quot;messages&quot;</span>
     <span class="n">CHILDREN</span> <span class="o">=</span> <span class="s2">&quot;children&quot;</span>
 
-<div class="viewcode-block" id="SubElements.new"><a class="viewcode-back" href="../../usage/tosclib.html#tosclib.tosc.SubElements.new">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SubElements.new"><a class="viewcode-back" href="../../guide/2-tosclib.html#tosclib.tosc.SubElements.new">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">attributes</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Enum</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Create new Subs enum with added attributes&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Enum</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">{</span><span class="n">sub</span><span class="o">.</span><span class="n">name</span><span class="p">:</span><span class="n">sub</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">cls</span><span class="p">}</span> <span class="o">|</span> <span class="n">attributes</span><span class="p">)</span></div></div>
 
-<div class="viewcode-block" id="ElementTOSC"><a class="viewcode-back" href="../../usage/tosclib.html#tosclib.tosc.ElementTOSC">[docs]</a><span class="k">class</span> <span class="nc">ElementTOSC</span><span class="p">:</span>
+<div class="viewcode-block" id="ElementTOSC"><a class="viewcode-back" href="../../guide/2-tosclib.html#tosclib.tosc.ElementTOSC">[docs]</a><span class="k">class</span> <span class="nc">ElementTOSC</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Contains a Node Element and its SubElements.</span>
 <span class="sd">    You can pass a custom Enum in order to define new SubElements.</span>
@@ -250,7 +279,8 @@ title="Fullscreen mode"
 <span class="sd">        subelements (ET.Element): Creates attributes from subs Enum.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="ElementTOSC.__init__"><a class="viewcode-back" href="../../usage/tosclib.html#tosclib.tosc.ElementTOSC.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">subs</span> <span class="p">:</span> <span class="n">Enum</span> <span class="o">=</span> <span class="n">SubElements</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ElementTOSC.__init__"><a class="viewcode-back" href="../../guide/2-tosclib.html#tosclib.tosc.ElementTOSC.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">subs</span> <span class="p">:</span> <span class="n">Enum</span> <span class="o">=</span> <span class="n">SubElements</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">e</span>
         <span class="p">[</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">))</span> 
@@ -258,13 +288,14 @@ title="Fullscreen mode"
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs</span>
         <span class="p">]</span></div>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">enum</span> <span class="p">:</span> <span class="n">Enum</span> <span class="o">=</span> <span class="n">SubElements</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns ElementTOSC Debug purposes &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Returns ElementTOSC, for debugging purposes &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">enum</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">getPropertyValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span> <span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Find the value.text from a known key &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Find &lt;value&gt; from a known &lt;key&gt; &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
@@ -347,7 +378,7 @@ title="Fullscreen mode"
 <span class="sd">&quot;&quot;&quot;ElementTOSC alias&quot;&quot;&quot;</span>
 <span class="n">e</span> <span class="p">:</span> <span class="n">ElementTOSC</span> <span class="o">=</span> <span class="n">ElementTOSC</span> <span class="c1">#: ElementTOSC alias</span>
 
-<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../usage/tosclib.html#tosclib.tosc.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">inputPath</span> <span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../guide/2-tosclib.html#tosclib.tosc.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">inputPath</span> <span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Reads .tosc and returns the xml root element</span>
 <span class="sd">    </span>
 <span class="sd">    :param inputPath: the path to the .tosc file</span>

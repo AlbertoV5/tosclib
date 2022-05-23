@@ -9,13 +9,14 @@ This library uses XML trees to generate and edit Touch OSC templates with a few 
 
 For demos: https://github.com/AlbertoV5/tosc-generate
 
-For documentation: https://tosc-generate.readthedocs.io/en/latest/
+For documentation: https://albertoV5.github.io/tosc-generate
 
 Contents
 --------
 
 .. toctree::
    
-   usage
+   guide
+   demos
    api
    

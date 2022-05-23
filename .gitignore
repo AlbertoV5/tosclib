@@ -1,7 +1,3 @@
 __pycache__/
 tosclib/dist
-tosclib/LICENSE
-tosclib/README.md
 tosclib.egg-info
-.vscode/
-notes.txt

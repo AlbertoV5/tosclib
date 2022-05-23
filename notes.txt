@@ -1,0 +1,27 @@
+Manual Release
+
+Update version number in:
+    - tosclib/setup.py
+    - docs/requirements.txt 
+    - docs/source/conf.py release, version
+
+Development:
+
+make new git branch
+
+python -m pip install -e tosclib
+
+docs\make html
+
+commit to branch
+
+Release:
+
+cd tosclib
+
+python -m build
+
+twine upload dist/*
+
+merge branch to main
+

@@ -38,11 +38,11 @@ parent = tosc.ElementTOSC(root[0])
 # Creating Property in parent Node
 parent.createProperty(
                         type ="s",
-                        key = "name",
-                        text = "geoff"
+                        key = "GlobalVariable",
+                        text = "1007"
                      )
 
 print("Added Property: ")
-parent.showProperty("name")
+parent.showProperty("GlobalVariable")
 tosc.write(root, "../demos/files/out.tosc")
 

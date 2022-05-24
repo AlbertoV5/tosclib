@@ -1,3 +1,17 @@
+Metadata-Version: 2.1
+Name: tosclib
+Version: 0.1.5
+Summary: Generate and edit Touch OSC .tosc files
+Home-page: https://github.com/AlbertoV5/tosclib
+Author: Alberto Valdez
+Author-email: avq5ac1@gmail.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # tosclib
 This library uses XML trees to generate and edit Touch OSC templates with a few custom classes and functions that help navigate the structure of the .tosc file.
 

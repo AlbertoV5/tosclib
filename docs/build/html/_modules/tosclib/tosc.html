@@ -103,7 +103,12 @@
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="../../guide/2-tosclib.html">
+    <a class="reference internal" href="../../guide/2-tosc-msgs.html">
+     Message Elements
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../guide/3-tosclib.html">
      Using tosclib
     </a>
    </li>
@@ -244,7 +249,7 @@ title="Fullscreen mode"
 <span class="kn">import</span> <span class="nn">re</span><span class="o">,</span> <span class="nn">zlib</span><span class="o">,</span> <span class="nn">uuid</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">unique</span>
 
-<div class="viewcode-block" id="SubElements"><a class="viewcode-back" href="../../guide/2-tosclib.html#tosclib.tosc.SubElements">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="SubElements"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.tosc.SubElements">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">SubElements</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Enum for the default SubElements in &lt;node&gt; </span>
 <span class="sd">    </span>
@@ -259,12 +264,12 @@ title="Fullscreen mode"
     <span class="n">MESSAGES</span> <span class="o">=</span> <span class="s2">&quot;messages&quot;</span>
     <span class="n">CHILDREN</span> <span class="o">=</span> <span class="s2">&quot;children&quot;</span>
 
-<div class="viewcode-block" id="SubElements.new"><a class="viewcode-back" href="../../guide/2-tosclib.html#tosclib.tosc.SubElements.new">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SubElements.new"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.tosc.SubElements.new">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">attributes</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Enum</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Create new Subs enum with added attributes&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Enum</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">{</span><span class="n">sub</span><span class="o">.</span><span class="n">name</span><span class="p">:</span><span class="n">sub</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">cls</span><span class="p">}</span> <span class="o">|</span> <span class="n">attributes</span><span class="p">)</span></div></div>
 
-<div class="viewcode-block" id="ElementTOSC"><a class="viewcode-back" href="../../guide/2-tosclib.html#tosclib.tosc.ElementTOSC">[docs]</a><span class="k">class</span> <span class="nc">ElementTOSC</span><span class="p">:</span>
+<div class="viewcode-block" id="ElementTOSC"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.tosc.ElementTOSC">[docs]</a><span class="k">class</span> <span class="nc">ElementTOSC</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Contains a Node Element and its SubElements.</span>
 <span class="sd">    You can pass a custom Enum in order to define new SubElements.</span>
@@ -280,7 +285,7 @@ title="Fullscreen mode"
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ElementTOSC.__init__"><a class="viewcode-back" href="../../guide/2-tosclib.html#tosclib.tosc.ElementTOSC.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">subs</span> <span class="p">:</span> <span class="n">Enum</span> <span class="o">=</span> <span class="n">SubElements</span><span class="p">):</span>
+<div class="viewcode-block" id="ElementTOSC.__init__"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.tosc.ElementTOSC.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span> <span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">subs</span> <span class="p">:</span> <span class="n">Enum</span> <span class="o">=</span> <span class="n">SubElements</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">e</span>
         <span class="p">[</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">))</span> 
@@ -378,7 +383,7 @@ title="Fullscreen mode"
 <span class="sd">&quot;&quot;&quot;ElementTOSC alias&quot;&quot;&quot;</span>
 <span class="n">e</span> <span class="p">:</span> <span class="n">ElementTOSC</span> <span class="o">=</span> <span class="n">ElementTOSC</span> <span class="c1">#: ElementTOSC alias</span>
 
-<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../guide/2-tosclib.html#tosclib.tosc.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">inputPath</span> <span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.tosc.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">inputPath</span> <span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Reads .tosc and returns the xml root element</span>
 <span class="sd">    </span>
 <span class="sd">    :param inputPath: the path to the .tosc file</span>

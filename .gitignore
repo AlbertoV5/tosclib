@@ -1,3 +1,2 @@
 __pycache__/
-tosclib/dist
-tosclib.egg-info
+dist

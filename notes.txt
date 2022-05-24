@@ -17,8 +17,6 @@ commit to branch
 
 Release:
 
-cd tosclib
-
 python -m build
 
 twine upload dist/*

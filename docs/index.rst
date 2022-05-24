@@ -7,9 +7,9 @@ This library uses XML trees to generate and edit Touch OSC templates with a few 
 
    **Disclaimer**: This project has no relation to Hexler, the developer of TouchOSC. Backup your templates before editing them with third party tools.
 
-For demos: https://github.com/AlbertoV5/tosc-generate
+For demos: https://github.com/AlbertoV5/tosclib
 
-For documentation: https://albertoV5.github.io/tosc-generate
+For documentation: https://albertoV5.github.io/tosclib
 
 Contents
 --------

@@ -1,10 +1,8 @@
 Elements from Json
 -------------------
 
-1. Create a new .tosc template from scratch.
-2. Create a GROUP element to store FADER elements.
-3. Read a Json file and create the FADER elements.
-4. Write the new .tosc template.
+This creates a new .tosc template from scratch, then creates a new GROUP Node with n FADER children and gives them Properties from the .json file.
 
 .. literalinclude:: from-json.py
     :language: python
+

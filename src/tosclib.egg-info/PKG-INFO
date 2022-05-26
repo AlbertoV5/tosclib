@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: tosclib
-Version: 0.1.5
+Version: 0.1.6
 Summary: Generate and edit Touch OSC .tosc files
 Home-page: https://github.com/AlbertoV5/tosclib
 Author: Alberto Valdez

@@ -136,6 +136,11 @@
      Copy Scripts
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../demos/from-json.html">
+     Elements from Json
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toctree-l1 current active has-children">
@@ -311,19 +316,22 @@ title="Print to PDF"
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">findChildByName</span></code>(element, name)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">createTemplate</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">findChildByName</span></code>(element, name)</p></td>
 <td><p>Returns the first child element by name</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">getTextValueFromKey</span></code>(properties, key)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">getTextValueFromKey</span></code>(properties, key)</p></td>
 <td><p>Find the value.text from a known key</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.load" title="tosclib.tosc.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(inputPath)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.load" title="tosclib.tosc.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(inputPath)</p></td>
 <td><p>Reads .tosc and returns the xml root element</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pullValueFromKey</span></code>(inputFile, key, value, ...)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pullValueFromKey</span></code>(inputFile, key, value, ...)</p></td>
 <td><p>Find a value from a known key, value and target key</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code>(root[, outputPath])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code>(root[, outputPath])</p></td>
 <td><p>Encodes a root element directly to UTF-8 and compresses to .tosc</p></td>
 </tr>
 </tbody>
@@ -338,10 +346,19 @@ title="Print to PDF"
 <tr class="row-odd"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.ElementTOSC" title="tosclib.tosc.ElementTOSC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElementTOSC</span></code></a></p></td>
 <td><p>Contains a Node Element and its SubElements.</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">OSC</span></code></p></td>
+<td><p>Legal OSC Message Elements</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Partial</span></code></p></td>
+<td><p>Legal Partial Values</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.SubElements" title="tosclib.tosc.SubElements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubElements</span></code></a></p></td>
 <td><p>Enum for the default SubElements in &lt;node&gt;</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">e</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trigger</span></code></p></td>
+<td><p>Legal Trigger Values</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">e</span></code></p></td>
 <td><p>ElementTOSC alias</p></td>
 </tr>
 </tbody>

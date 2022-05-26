@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Valid Elements &#8212; tosclib 0.1 documentation</title>
+    <title>Config Property &#8212; tosclib 0.1 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -41,8 +41,8 @@
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Demos" href="../demos.html" />
-    <link rel="prev" title="Using tosclib" href="3-tosclib.html" />
+    <link rel="next" title="Copy Scripts" href="copy-scripts.html" />
+    <link rel="prev" title="Demos" href="../demos.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -90,56 +90,56 @@
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item active">
         <ul class="current nav bd-sidenav">
- <li class="toctree-l1 current active has-children">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../guide.html">
    Guide
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
   <label for="toctree-checkbox-1">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul class="current">
-   <li class="toctree-l2">
-    <a class="reference internal" href="1-tosc-files.html">
-     Understanding .tosc files
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="2-tosc-msgs.html">
-     Message Elements
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="3-tosclib.html">
-     Using tosclib
-    </a>
-   </li>
-   <li class="toctree-l2 current active">
-    <a class="current reference internal" href="#">
-     Valid Elements
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../demos.html">
-   Demos
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
    <i class="fas fa-chevron-down">
    </i>
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="../demos/copy-scripts.html">
-     Copy Scripts
+    <a class="reference internal" href="../guide/1-tosc-files.html">
+     Understanding .tosc files
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="../demos/from-json.html">
-     Elements from Json
+    <a class="reference internal" href="../guide/2-tosc-msgs.html">
+     Message Elements
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../guide/3-tosclib.html">
+     Using tosclib
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../guide/4-tosc-valid.html">
+     Valid Elements
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="../demos.html">
+   Demos
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     Config Property
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="copy-scripts.html">
+     Copy Scripts
     </a>
    </li>
   </ul>
@@ -234,7 +234,7 @@ title="Fullscreen mode"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="../_sources/guide/4-tosc-valid.rst.txt"
+        <a href="../_sources/demos/config-property.rst.txt"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -283,7 +283,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Valid Elements</h1>
+                <h1>Config Property</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -295,65 +295,13 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="valid-elements">
-<h1>Valid Elements<a class="headerlink" href="#valid-elements" title="Permalink to this headline">#</a></h1>
-<p>Touch OSC allows you to add any new Property to a .tosc file. It doesn’t allow adding new Values or Sub Element categories. This means that you can’t add a <span class="guilabel">&lt;Style&gt;</span> Element under <span class="guilabel">&lt;Node&gt;</span> but you can add a <span class="guilabel">&lt;Property&gt;&lt;key&gt;Style</span> Element under <span class="guilabel">&lt;Properties&gt;</span>.</p>
-<p>You can’t add new functions to the script Property either, as Touch OSC only allows <a class="reference external" href="https://hexler.net/touchosc/manual/script-objects-control#functions">these functions.</a></p>
-<p>You can always add new messages as long as they belong to OSC, MIDI, LOCAL, <a class="reference external" href="https://hexler.net/touchosc/manual/script-functions-global#message">etc</a>.</p>
-<p><strong>Example:</strong></p>
-<p>Creating a new Property directly in the parent Node.</p>
-<div class="jupyter_cell jupyter_container docutils container">
-<div class="cell_input code_cell docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
-
-<span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;../demos/files/test.tosc&quot;</span><span class="p">)</span>
-<span class="n">parent</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-<span class="n">parent</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;CustomProperty&quot;</span><span class="p">,</span> <span class="s2">&quot;1007&quot;</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Added Property:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">parent</span><span class="o">.</span><span class="n">showProperty</span><span class="p">(</span><span class="s2">&quot;CustomProperty&quot;</span><span class="p">)</span>
-
-<span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;../demos/files/out.tosc&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Added Property:
-
-&lt;property type=&quot;s&quot;&gt;
-  &lt;key&gt;CustomProperty&lt;/key&gt;
-  &lt;value&gt;1007&lt;/value&gt;
-&lt;/property&gt;
-</pre></div>
-</div>
-<div class="output text_plain highlight-none notranslate"><div class="highlight"><pre><span></span>True
-</pre></div>
-</div>
-</div>
-</div>
-<p>Adding a Child Node and then adding a Property to the empty Child.</p>
-<div class="jupyter_cell jupyter_container docutils container">
-<div class="cell_input code_cell docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">box</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">createNode</span><span class="p">(</span><span class="s2">&quot;BOX&quot;</span><span class="p">))</span>
-
-<span class="n">box</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="p">{</span>
-                     <span class="s2">&quot;r&quot;</span> <span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-                     <span class="s2">&quot;g&quot;</span> <span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-                     <span class="s2">&quot;b&quot;</span> <span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-                     <span class="s2">&quot;a&quot;</span> <span class="p">:</span> <span class="s2">&quot;1&quot;</span>
-                  <span class="p">})</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">box</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;node&#39;: &lt;Element &#39;node&#39; at 0x000001F939E6FCC0&gt;, &#39;properties&#39;: &lt;Element &#39;properties&#39; at 0x000001F93A006180&gt;, &#39;values&#39;: &lt;Element &#39;values&#39; at 0x000001F939FFF860&gt;, &#39;messages&#39;: &lt;Element &#39;messages&#39; at 0x000001F939FFF8B0&gt;, &#39;children&#39;: &lt;Element &#39;children&#39; at 0x000001F939FFC400&gt;}
-</pre></div>
-</div>
-</div>
-</div>
+  <section id="config-property">
+<h1>Config Property<a class="headerlink" href="#config-property" title="Permalink to this headline">#</a></h1>
+<ol class="arabic simple">
+<li><p>Read a Json file and convert it to tosclib Nodes and Properties.</p></li>
+<li><p>Append those Nodes and Properties to the XML tree.</p></li>
+<li><p>Save XML tree as .tosc</p></li>
+</ol>
 </section>
 
 
@@ -364,17 +312,17 @@ title="Print to PDF"
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="3-tosclib.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="../demos.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Using tosclib</p>
+            <p class="prev-next-title">Demos</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="../demos.html" title="next page">
+    <a class='right-next' id="next-link" href="copy-scripts.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Demos</p>
+        <p class="prev-next-title">Copy Scripts</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

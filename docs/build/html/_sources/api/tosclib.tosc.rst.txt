@@ -19,6 +19,7 @@
 
    .. autosummary::
    
+      createTemplate
       findChildByName
       getTextValueFromKey
       load
@@ -34,7 +35,10 @@
    .. autosummary::
    
       ElementTOSC
+      OSC
+      Partial
       SubElements
+      Trigger
       e
    
    

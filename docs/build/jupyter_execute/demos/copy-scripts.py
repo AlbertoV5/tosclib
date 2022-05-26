@@ -7,38 +7,44 @@
 import tosclib as tosc
 import re
 
-def CopyScripts(input : str, output : str, source : str = "source", target : str = "target"):
-    """Find the script in source and copy it to all children in target"""
+def main(inputFile, outputFile, sourceName, targetName):
 
+    # Find the script string with a streaming parser
     script = tosc.pullValueFromKey(
-                        inputFile = input,
-                        key = "name",
-                        value = source,
-                        targetKey = "script")
+                                        inputFile = inputFile,
+                                        key = "name",
+                                        value = sourceName,
+                                        targetKey = "script"
+                                    )
 
-    root = tosc.load(input)
+    root = tosc.load(inputFile)
     main = tosc.ElementTOSC(root[0])
 
-    for primary in main.children:
-        primary = tosc.ElementTOSC(primary)
+    for group in main.children:
+        group = tosc.ElementTOSC(group)
 
-        if re.fullmatch(primary.getPropertyValue("name").text, target):
+        # Move on if the Property is not the target
+        if not re.fullmatch(group.getPropertyValue("name").text, targetName):
             continue
 
-        for secondary in primary.children:
-            secondary = tosc.ElementTOSC(secondary)
-            secondary.createProperty("s", "script", script)
+        # Assuming the Element is the target, iterate through children
+        for box in group.children:
+            box = tosc.ElementTOSC(box)
+            if box.isProperty("script"):
+                box.setPropertyValue("script", script)
+            else:
+                box.createProperty("s", "script", script)
 
-        tosc.write(root, output)
+        tosc.write(root, outputFile)
 
-        return print(f"Wrote:\n \n{script}\nTo file: {output}")
+        return print(f"Wrote:\n \n{script}\n\nTo file: {outputFile}")
 
 if __name__ == "__main__":
 
-    CopyScripts(
-                    "../demos/files/test.tosc",
-                    "../demos/files/out.tosc",
-                    "source",
-                    "target"
-                )
+    main(
+            "../demos/files/test.tosc",
+            "../demos/files/out.tosc",
+            "source",
+            "target"
+        )
 

@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Copy Scripts &#8212; tosclib 0.1 documentation</title>
+    <title>Elements from Json &#8212; tosclib 0.1 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -41,8 +41,8 @@
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Elements from Json" href="from-json.html" />
-    <link rel="prev" title="Demos" href="../demos.html" />
+    <link rel="next" title="API" href="../api.html" />
+    <link rel="prev" title="Copy Scripts" href="copy-scripts.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -132,13 +132,13 @@
    </i>
   </label>
   <ul class="current">
-   <li class="toctree-l2 current active">
-    <a class="current reference internal" href="#">
+   <li class="toctree-l2">
+    <a class="reference internal" href="copy-scripts.html">
      Copy Scripts
     </a>
    </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="from-json.html">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
      Elements from Json
     </a>
    </li>
@@ -234,7 +234,7 @@ title="Fullscreen mode"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="../_sources/demos/copy-scripts.rst.txt"
+        <a href="../_sources/demos/from-json.rst.txt"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -283,7 +283,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Copy Scripts</h1>
+                <h1>Elements from Json</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -295,82 +295,66 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="copy-scripts">
-<h1>Copy Scripts<a class="headerlink" href="#copy-scripts" title="Permalink to this headline">#</a></h1>
-<p>Copy Scripts of one Element to all the Child Elements of another.</p>
+  <section id="elements-from-json">
+<h1>Elements from Json<a class="headerlink" href="#elements-from-json" title="Permalink to this headline">#</a></h1>
+<ol class="arabic simple">
+<li><p>Create a new .tosc template from scratch.</p></li>
+<li><p>Create a GROUP element to store FADER elements.</p></li>
+<li><p>Read a Json file and create the FADER elements.</p></li>
+<li><p>Write the new .tosc template.</p></li>
+</ol>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
-<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">json</span>
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">inputFile</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">,</span> <span class="n">sourceName</span><span class="p">,</span> <span class="n">targetName</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">frame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="s2">&quot;h&quot;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">h</span><span class="p">)}</span>
 
-    <span class="c1"># Find the script string with a streaming parser</span>
-    <span class="n">script</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">pullValueFromKey</span><span class="p">(</span>
-                                        <span class="n">inputFile</span> <span class="o">=</span> <span class="n">inputFile</span><span class="p">,</span>
-                                        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
-                                        <span class="n">value</span> <span class="o">=</span> <span class="n">sourceName</span><span class="p">,</span>
-                                        <span class="n">targetKey</span> <span class="o">=</span> <span class="s2">&quot;script&quot;</span>
-                                    <span class="p">)</span>
+<span class="k">def</span> <span class="nf">getJson</span><span class="p">(</span><span class="n">fileName</span> <span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 
-    <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">inputFile</span><span class="p">)</span>
-    <span class="n">main</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">createFader</span><span class="p">(</span><span class="n">e</span> <span class="p">:</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+    <span class="n">fader</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">createNode</span><span class="p">(</span><span class="s2">&quot;FADER&quot;</span><span class="p">))</span>
+    <span class="n">fader</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">fader</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="n">width</span><span class="o">*</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="mi">1080</span><span class="p">)</span>
+    <span class="n">fader</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">i</span><span class="o">/</span><span class="n">limit</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="o">/</span><span class="n">limit</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">fader</span><span class="o">.</span><span class="n">createOSC</span><span class="p">()</span> <span class="c1"># Default OSC message</span>
 
-    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">main</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-        <span class="n">group</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">jsonFile</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">):</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">createTemplate</span><span class="p">()</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">base</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;template&quot;</span><span class="p">)</span>
+    <span class="n">base</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">)</span>
 
-        <span class="c1"># Move on if the Property is not the target</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">getPropertyValue</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">targetName</span><span class="p">):</span>
-            <span class="k">continue</span>
+    <span class="c1"># Group container for the faders</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">createNode</span><span class="p">(</span><span class="s2">&quot;GROUP&quot;</span><span class="p">))</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;Controls&quot;</span><span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="mi">420</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1080</span><span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="c1"># Assuming the Element is the target, iterate through children</span>
-        <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-            <span class="n">box</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">box</span><span class="o">.</span><span class="n">isProperty</span><span class="p">(</span><span class="s2">&quot;script&quot;</span><span class="p">):</span>
-                <span class="n">box</span><span class="o">.</span><span class="n">setPropertyValue</span><span class="p">(</span><span class="s2">&quot;script&quot;</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">box</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;script&quot;</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span>
+    <span class="c1"># Create faders based on Json data</span>
+    <span class="n">jsonData</span> <span class="o">=</span> <span class="n">getJson</span><span class="p">(</span><span class="n">jsonFile</span><span class="p">)</span>
+    <span class="n">limit</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">getPropertyParam</span><span class="p">(</span><span class="s2">&quot;frame&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">/</span><span class="n">limit</span>
 
-        <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">jsonData</span><span class="p">):</span>
+        <span class="n">createFader</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">param</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">width</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">limit</span><span class="p">:</span>
+            <span class="k">break</span>
 
-        <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrote:</span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="si">{</span><span class="n">script</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">To file: </span><span class="si">{</span><span class="n">outputFile</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-
     <span class="n">main</span><span class="p">(</span>
-            <span class="s2">&quot;../demos/files/test.tosc&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;../demos/files/out.tosc&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;source&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;target&quot;</span>
+        <span class="s2">&quot;../demos/files/Pro-C 2 (FabFilter).json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;../demos/files/newTemplate.tosc&quot;</span>
         <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Wrote:
- 
-function init()
-  local r = self.frame.x / self.parent.frame.x
-  local g = self.frame.y / self.parent.frame.y
-  local b = 0
-  
-  self.color = Color(r,g,b)
-  
-end
-
-function onReceiveNotify(key,value)
-  local r = self.frame.x / self.parent.frame.x
-  local g = self.frame.y / self.parent.frame.y
-  local b = 0
-  
-  local x = value
-  self.color = Color(r * x, 1 - (g * x), x)
-  
-end
-
-To file: ../demos/files/out.tosc
-</pre></div>
-</div>
 </div>
 </div>
 </section>
@@ -383,17 +367,17 @@ To file: ../demos/files/out.tosc
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="../demos.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="copy-scripts.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Demos</p>
+            <p class="prev-next-title">Copy Scripts</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="from-json.html" title="next page">
+    <a class='right-next' id="next-link" href="../api.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Elements from Json</p>
+        <p class="prev-next-title">API</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

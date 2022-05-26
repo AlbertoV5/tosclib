@@ -9,7 +9,7 @@ Development:
 
 make new git branch
 
-python -m pip install -e tosclib
+python -m pip install -e .
 
 docs\make html
 
@@ -17,9 +17,8 @@ commit to branch
 
 Release:
 
+merge branch to main
+
 python -m build
 
 twine upload dist/*
-
-merge branch to main
-

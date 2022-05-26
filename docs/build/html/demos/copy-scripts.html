@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Test &#8212; tosclib 0.1 documentation</title>
+    <title>Copy Scripts &#8212; tosclib 0.1 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -134,7 +134,7 @@
   <ul class="current">
    <li class="toctree-l2 current active">
     <a class="current reference internal" href="#">
-     Test
+     Copy Scripts
     </a>
    </li>
   </ul>
@@ -229,7 +229,7 @@ title="Fullscreen mode"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="../_sources/demos/test.rst.txt"
+        <a href="../_sources/demos/copy-scripts.rst.txt"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -278,7 +278,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Test</h1>
+                <h1>Copy Scripts</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -290,35 +290,73 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="test">
-<h1>Test<a class="headerlink" href="#test" title="Permalink to this headline">#</a></h1>
-<p>Test</p>
+  <section id="copy-scripts">
+<h1>Copy Scripts<a class="headerlink" href="#copy-scripts" title="Permalink to this headline">#</a></h1>
+<p>Copy Scripts of one Element to all the Child Elements of another.</p>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
+<span class="kn">import</span> <span class="nn">re</span>
 
-<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">CopyScripts</span><span class="p">(</span><span class="nb">input</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="n">target</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;target&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find the script in source and copy it to all children in target&quot;&quot;&quot;</span>
+
+    <span class="n">script</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">pullValueFromKey</span><span class="p">(</span>
+                        <span class="n">inputFile</span> <span class="o">=</span> <span class="nb">input</span><span class="p">,</span>
+                        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">source</span><span class="p">,</span>
+                        <span class="n">targetKey</span> <span class="o">=</span> <span class="s2">&quot;script&quot;</span><span class="p">)</span>
+
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    <span class="n">main</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">primary</span> <span class="ow">in</span> <span class="n">main</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">primary</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">primary</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">getPropertyValue</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="k">for</span> <span class="n">secondary</span> <span class="ow">in</span> <span class="n">primary</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="n">secondary</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">secondary</span><span class="p">)</span>
+            <span class="n">secondary</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;script&quot;</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span>
+
+        <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrote:</span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="si">{</span><span class="n">script</span><span class="si">}</span><span class="se">\n</span><span class="s2">To file: </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">CopyScripts</span><span class="p">(</span>
+                    <span class="s2">&quot;../demos/files/test.tosc&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;../demos/files/out.tosc&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;source&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;target&quot;</span>
+                <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>__module__
-__doc__
-__init__
-fromFile
-getPropertyValue
-setPropertyValue
-createProperty
-findChild
-createNode
-show
-showValues
-showProperty
-showValue
-display
-__dict__
-__weakref__
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Wrote:
+ 
+function init()
+  local r = self.frame.x / self.parent.frame.x
+  local g = self.frame.y / self.parent.frame.y
+  local b = 0
+  
+  self.color = Color(r,g,b)
+  
+end
+
+function onReceiveNotify(key,value)
+  local r = self.frame.x / self.parent.frame.x
+  local g = self.frame.y / self.parent.frame.y
+  local b = 0
+  
+  local x = value
+  self.color = Color(r * x, 1 - (g * x), x)
+  
+end
+To file: ../demos/files/out.tosc
 </pre></div>
 </div>
 </div>

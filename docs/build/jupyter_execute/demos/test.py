@@ -6,6 +6,6 @@
 
 import tosclib as tosc
 
-for v in tosc.SubElements:
+for v in tosc.ElementTOSC.__dict__:
     print(v)
 

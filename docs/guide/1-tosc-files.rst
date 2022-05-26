@@ -56,3 +56,5 @@ The editor tree view only displays the Nodes in each Children SubElement.
 The rest of the Elements are displayed in the Control, Values, Messages and Script tabs.
 
 .. figure:: ../images/toscOtherElements.JPG
+
+`Here <https://hexler.net/touchosc/manual/script-properties-and-values>`_ is a list of the available Properties and Values.

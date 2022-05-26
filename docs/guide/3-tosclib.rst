@@ -22,7 +22,7 @@ Once you learn the structure of the .tosc file and the structure of tosclib, it 
 For example, changing the colors of a specific Node Element:
 
 .. jupyter-execute::
-
+   
    import tosclib as tosc
    
    root = tosc.load("../demos/files/test.tosc")
@@ -53,27 +53,3 @@ Then pass the parent Node to the ElementTOSC class to get its SubElements.
 
 .. autoclass:: tosclib.tosc.SubElements
    :members:
-
-**Example:**
-   
-Create a new Property
-
-.. jupyter-execute::
-
-   import tosclib as tosc
-   import argparse
-
-   root = tosc.load("../demos/files/test.tosc")
-   parent = tosc.ElementTOSC(root[0])
-
-   # Creating Property in parent Node
-   parent.createProperty(
-                           type ="s", 
-                           key = "GlobalVariable", 
-                           text = "1007"
-                        )
-
-   print("Added Property: ")
-   parent.showProperty("GlobalVariable")
-   tosc.write(root, "../demos/files/out.tosc")
-

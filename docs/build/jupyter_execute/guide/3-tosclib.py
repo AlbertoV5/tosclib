@@ -25,24 +25,3 @@ target.showProperty("color")
 
 tosc.write(root, "../demos/files/out.tosc")
 
-
-# In[4]:
-
-
-import tosclib as tosc
-import argparse
-
-root = tosc.load("../demos/files/test.tosc")
-parent = tosc.ElementTOSC(root[0])
-
-# Creating Property in parent Node
-parent.createProperty(
-                        type ="s",
-                        key = "GlobalVariable",
-                        text = "1007"
-                     )
-
-print("Added Property: ")
-parent.showProperty("GlobalVariable")
-tosc.write(root, "../demos/files/out.tosc")
-

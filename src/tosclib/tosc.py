@@ -8,40 +8,18 @@ from enum import Enum, unique
 @unique
 class SubElements(Enum):
     """ Enum for the default SubElements in <node> 
-    
-    Attributes:
-        PROPERTIES: Find <properties> of Element.
-        VALUES: Find <values> of Element.
-        MESSAGES: Find <messages> of Element.
-        CHILDREN: Find <children> of Element.
     """
-    PROPERTIES = "properties"
-    VALUES = "values"
-    MESSAGES = "messages"
-    CHILDREN = "children"
-
-    @classmethod
-    def new(cls, name : str, attributes : dict) -> Enum:
-        """ Create new Subs enum with added attributes"""
-        return Enum(name, {sub.name:sub.value for sub in cls} | attributes)
+    PROPERTIES = "properties" #: Find <properties> of Element.
+    VALUES = "values" #: Find <values> of Element.
+    MESSAGES = "messages" #: Find <messages> of Element.
+    CHILDREN = "children" #: Find <children> of Element.
 
 class ElementTOSC:
     """ 
     Contains a Node Element and its SubElements.
-    You can pass a custom Enum in order to define new SubElements.
     Creates Enum SubElements if they are not found in the Node.
-
-    Args:
-        e: Node element.
-        subs: SubElements defined in the Enum.
-
-    Attributes:
-        node (ET.Element): Gets the passed Element.
-        subelements (ET.Element): Creates attributes from subs Enum.
-
     """
-
-    def __init__(self, e : ET.Element, subs : Enum = SubElements):
+    def __init__(self, e : ET.Element, subs : SubElements = SubElements):
         self.node = e
         [
             setattr(self, sub.value, e.find(sub.value)) 
@@ -98,7 +76,7 @@ class ElementTOSC:
                     child.find("properties"), "name"), name):
                 return child
         return None
-
+    
     def createNode(self, type : str) -> ET.Element:
         """
         Create and return a children Element with attrib = {'ID' : str(uuid4()), 'type' : type}
@@ -127,6 +105,13 @@ class ElementTOSC:
             if re.fullmatch(property.find("key").text, name):
                 ET.indent(property, "  ")
                 print(ET.tostring(property).decode("utf-8"))
+
+    def showValue(self, name : str):
+        """ Print indented XML of a single property by name as utf-8"""
+        for value in self.values:
+            if re.fullmatch(value.find("key").text, name):
+                ET.indent(value, "  ")
+                print(ET.tostring(value).decode("utf-8"))
     
     def display(self):
         """ Print a tree like structure """
@@ -140,10 +125,7 @@ class ElementTOSC:
 e : ElementTOSC = ElementTOSC #: ElementTOSC alias
 
 def load(inputPath : str) -> ET.Element:
-    """ Reads .tosc and returns the xml root element
-    
-    :param inputPath: the path to the .tosc file
-    """
+    """ Reads .tosc and returns the xml root element"""
     with open (inputPath, "rb") as file:
         return ET.fromstring(zlib.decompress(file.read()))
 

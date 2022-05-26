@@ -5,12 +5,6 @@
 
    
    
-   .. rubric:: Module Attributes
-
-   .. autosummary::
-   
-      e
-   
    
 
    
@@ -19,6 +13,7 @@
 
    .. autosummary::
    
+      createTemplate
       findChildByName
       getTextValueFromKey
       load
@@ -34,8 +29,10 @@
    .. autosummary::
    
       ElementTOSC
+      OSC
+      Partial
       SubElements
-      e
+      Trigger
    
    
 

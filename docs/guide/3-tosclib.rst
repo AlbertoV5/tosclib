@@ -21,24 +21,24 @@ Once you learn the structure of the .tosc file and the structure of tosclib, it 
 
 For example, changing the colors of a specific Node Element:
 
-.. jupyter-execute::
-
+.. code-block::
+   
    import tosclib as tosc
    
-   root = tosc.load("../demos/files/test.tosc")
-   parent = tosc.e(root[0])
-   target = tosc.e(parent.findChild("target"))
+   root = tosc.load("demos/files/test.tosc")
+   parent = tosc.ElementTOSC(root[0])
+   target = tosc.ElementTOSC(parent.findChild("target"))
    target.showProperty("color")
 
-.. jupyter-execute::
+.. code-block::
 
    colors = {"r":"0", "g":"0", "b":"1", "a":"1"}
    target.setPropertyValue("color", params = colors)
    target.showProperty("color")
 
-.. jupyter-execute::
+.. code-block::
 
-   tosc.write(root, "../demos/files/out.tosc")
+   tosc.write(root, "demos/files/out.tosc")
 
 Working with .tosc files
 -----------------------------
@@ -53,27 +53,3 @@ Then pass the parent Node to the ElementTOSC class to get its SubElements.
 
 .. autoclass:: tosclib.tosc.SubElements
    :members:
-
-**Example:**
-   
-Create a new Property
-
-.. jupyter-execute::
-
-   import tosclib as tosc
-   import argparse
-
-   root = tosc.load("../demos/files/test.tosc")
-   parent = tosc.ElementTOSC(root[0])
-
-   # Creating Property in parent Node
-   parent.createProperty(
-                           type ="s", 
-                           key = "GlobalVariable", 
-                           text = "1007"
-                        )
-
-   print("Added Property: ")
-   parent.showProperty("GlobalVariable")
-   tosc.write(root, "../demos/files/out.tosc")
-

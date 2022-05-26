@@ -36,8 +36,8 @@ def main(inputFile, outputFile, sourceName, targetName):
 if __name__ == "__main__":
 
     main(
-            "../demos/files/test.tosc", 
-            "../demos/files/out.tosc", 
+            "demos/files/test.tosc", 
+            "demos/files/out.tosc", 
             "source",
             "target"
         )

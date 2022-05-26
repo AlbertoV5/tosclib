@@ -1,7 +1,0 @@
-Config Property
--------------------
-
-1. Read a Json file and convert it to tosclib Nodes and Properties.
-2. Append those Nodes and Properties to the XML tree.
-3. Save XML tree as .tosc
-

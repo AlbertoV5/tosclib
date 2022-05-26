@@ -6,4 +6,5 @@ Elements from Json
 3. Read a Json file and create the FADER elements.
 4. Write the new .tosc template.
 
-.. jupyter-execute:: from-json.py
+.. literalinclude:: from-json.py
+    :language: python

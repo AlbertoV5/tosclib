@@ -11,11 +11,11 @@ You can always add new messages as long as they belong to OSC, MIDI, LOCAL, `etc
    
 Creating a new Property directly in the parent Node.
 
-.. jupyter-execute::
+.. code-block::
 
    import tosclib as tosc
 
-   root = tosc.load("../demos/files/test.tosc")
+   root = tosc.load("demos/files/test.tosc")
    parent = tosc.ElementTOSC(root[0])
 
    parent.createProperty("s", "CustomProperty", "1007")
@@ -23,12 +23,12 @@ Creating a new Property directly in the parent Node.
    print("Added Property:\n")
    parent.showProperty("CustomProperty")
    
-   tosc.write(root, "../demos/files/out.tosc")
+   tosc.write(root, "demos/files/out.tosc")
 
 
 Adding a Child Node and then adding a Property to the empty Child.
 
-.. jupyter-execute::
+.. code-block::
 
    box = tosc.ElementTOSC(parent.createNode("BOX"))
 

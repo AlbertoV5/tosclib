@@ -18,7 +18,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
-    'jupyter_sphinx',
+    # 'jupyter_sphinx',
     # 'nbsphinx',
     'sphinx_copybutton',
 ]
@@ -51,10 +51,12 @@ autodoc_class_signature = "separated"
 #     "style_nav_header_background" : '#2d2d2d',
 # }
 
-# html_theme = 'furo'
-html_theme = 'sphinx_book_theme'
+html_theme = 'furo'
+# html_theme = 'sphinx_book_theme'
 # html_theme = 'insegel' # https://sphinx-themes.org/sample-sites/insegel/kitchen-sink/admonitions/
 # html_theme = 'press'
+# html_theme = 'karma_sphinx_theme'
+# html_theme = 'piccolo_theme'
 
 # -- Options for EPUB output
 # epub_show_urls = 'footnote'

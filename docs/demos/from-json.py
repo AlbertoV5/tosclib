@@ -1,19 +1,26 @@
 import tosclib as tosc
 import json
 
-def frame(x,y,w,h) -> dict:
-    return {"x":str(x), "y":str(y), "w":str(w), "h":str(h)}
-
 def getJson(fileName : str): 
     with open(fileName, "r") as file:
         return json.loads(file.read())
     
-def createFader(e : tosc.ElementTOSC, name, width, limit, i):
+def oscMsg() -> tosc.OSC:
+    return tosc.OSC(
+                path = [
+                        tosc.Partial(), # Default is the constant '/'
+                        tosc.Partial(typ = "PROPERTY", val = "parent.name"),
+                        tosc.Partial(),
+                        tosc.Partial(typ = "PROPERTY", val = "name")
+                ]
+    )
+    
+def createFader(e : tosc.ElementTOSC, name, width, limit, i, msg):
     fader = tosc.ElementTOSC(e.createNode("FADER"))
     fader.createProperty("s", "name", name)
     fader.setFrame(width*i, 0, width, 1080)
     fader.setColor(i/limit, 0, 1 - i/limit, 1)
-    fader.createOSC() # Default OSC message
+    fader.createOSC(oscMessage=msg) # Creates a new message from custom tosc.OSC
 
 def main(jsonFile, outputFile):
     root = tosc.createTemplate()
@@ -31,9 +38,10 @@ def main(jsonFile, outputFile):
     jsonData = getJson(jsonFile)
     limit = 10
     width = int(group.getPropertyParam("frame", "w").text)/limit
+    msg = oscMsg()
     
     for i, param in enumerate(jsonData):
-        createFader(group, param["name"], width, limit, i)
+        createFader(group, param["name"], width, limit, i, msg)
         if i == limit:
             break
     
@@ -41,6 +49,6 @@ def main(jsonFile, outputFile):
 
 if __name__ == "__main__":
     main(
-        "../demos/files/Pro-C 2 (FabFilter).json",
-        "../demos/files/newTemplate.tosc"
+        "demos/files/Pro-C 2 (FabFilter).json",
+        "demos/files/newTemplate.tosc"
         )

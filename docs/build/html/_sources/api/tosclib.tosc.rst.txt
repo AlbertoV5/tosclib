@@ -5,12 +5,6 @@
 
    
    
-   .. rubric:: Module Attributes
-
-   .. autosummary::
-   
-      e
-   
    
 
    
@@ -39,7 +33,6 @@
       Partial
       SubElements
       Trigger
-      e
    
    
 

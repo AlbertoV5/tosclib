@@ -14,7 +14,7 @@ class SubElements(Enum):
     CHILDREN = "children" #: Find <children> of Element.
 
 class Partial():
-    """ Legal Partial Values """
+    """ Valid Partial Values """
     def __init__(
                     self, 
                     typ = "CONSTANT", 
@@ -31,7 +31,7 @@ class Partial():
         self.scaleMax = smax
         
 class Trigger():
-    """ Legal Trigger Values"""
+    """ Valid Trigger Values"""
     def __init__(
                     self, 
                     var = "x",
@@ -41,7 +41,7 @@ class Trigger():
         self.condition = con
     
 class OSC():
-    """ Legal OSC Message Elements """
+    """ Valid OSC Message Elements """
     def __init__(
                     self, 
                     enabled = "1",
@@ -165,7 +165,7 @@ class ElementTOSC:
             return self.setPropertyValue("color", "", params)
         return self.createProperty("c", "color", "", params)
     
-    def createOSC(self, oscMessage : OSC = OSC()):
+    def createOSC(self, oscMessage : OSC = OSC()) -> ET.Element:
         """ Create new OSC message from dict """
         osc = ET.SubElement(self.messages, "osc")
         for key in vars(oscMessage):
@@ -218,10 +218,8 @@ class ElementTOSC:
         for item, val in zip(self.Items, self.__dict__.values):
             print("_", item.value, "_", val )
 
-"""ElementTOSC alias"""
-e : ElementTOSC = ElementTOSC #: ElementTOSC alias
-
 def createTemplate() -> ET.Element:
+    """ Generates a root Element for your .tosc file """
     root = ET.Element("lexml", attrib = {"version":"3"})
     ET.SubElement(root, "node",
                                 attrib = {

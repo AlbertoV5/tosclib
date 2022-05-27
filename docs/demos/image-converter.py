@@ -15,7 +15,7 @@ class ImageConverter:
         self.pixels = None
 
     def pixelateImage(self):
-        """Pixelates image and converts it into a numpy array of size (2,3) of x y and rgb."""
+        """Pixelates image and converts it into a numpy array of size (h,w,3)"""
         img = Image.open(self.image_path)
         ratio = min(img.size) / self.image_size
         xyr = int(img.size[0] / ratio), int(img.size[1] / ratio)
@@ -32,23 +32,13 @@ class ImageConverter:
         canvas = tosc.findChildByName(main.node, self.canvas_name)
         canvas = tosc.ElementTOSC(canvas)
 
-        for x in range(int(self.pixels[0].size / 3)):
-            for y in range(int(self.pixels.size / (self.pixels[0].size))):
-
-                box = tosc.ElementTOSC(canvas.createNode("BOX"))
-
-                box.setColor(
-                    self.pixels[y][x][0], self.pixels[y][x][1], self.pixels[y][x][2], 1
-                )
-                box.setFrame(
-                    x * self.pixel_size,
-                    y * self.pixel_size,
-                    self.pixel_size,
-                    self.pixel_size,
-                )
-
-                box.createProperty("s", "name", f"p{x}{y}")
-                box.createProperty("b", "background", "1")
+        pxs = self.pixel_size
+        for iy, ix in np.ndindex(self.pixels.shape[:2]):
+            box = tosc.ElementTOSC(canvas.createNode("BOX"))
+            box.createProperty("s", "name", f"p{ix}{iy}")
+            (r, g, b) = self.pixels[iy, ix]
+            box.setColor(r, g, b, 1)
+            box.setFrame(ix * pxs, iy * pxs, pxs, pxs)
 
         return tosc.write(root, self.output_path)
 

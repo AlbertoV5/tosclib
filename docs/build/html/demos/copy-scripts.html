@@ -167,6 +167,7 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../demos.html">Demos</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Copy Scripts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="from-json.html">Elements from Json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-converter.html">Image Converter</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -211,16 +212,14 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
+
 <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">inputFile</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">,</span> <span class="n">sourceName</span><span class="p">,</span> <span class="n">targetName</span><span class="p">):</span>
 
     <span class="c1"># Find the script string with a streaming parser</span>
     <span class="n">script</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">pullValueFromKey</span><span class="p">(</span>
-                                        <span class="n">inputFile</span> <span class="o">=</span> <span class="n">inputFile</span><span class="p">,</span>
-                                        <span class="n">key</span> <span class="o">=</span> <span class="s2">"name"</span><span class="p">,</span>
-                                        <span class="n">value</span> <span class="o">=</span> <span class="n">sourceName</span><span class="p">,</span>
-                                        <span class="n">targetKey</span> <span class="o">=</span> <span class="s2">"script"</span>
-                                    <span class="p">)</span>
-                        
+        <span class="n">inputFile</span><span class="o">=</span><span class="n">inputFile</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">sourceName</span><span class="p">,</span> <span class="n">targetKey</span><span class="o">=</span><span class="s2">"script"</span>
+    <span class="p">)</span>
+
     <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">inputFile</span><span class="p">)</span>
     <span class="n">main</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
@@ -230,7 +229,7 @@
         <span class="c1"># Move on if the Property is not the target</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">getPropertyValue</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">targetName</span><span class="p">):</span>
             <span class="k">continue</span>
-        
+
         <span class="c1"># Assuming the Element is the target, iterate through children</span>
         <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
             <span class="n">box</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
@@ -238,19 +237,15 @@
                 <span class="n">box</span><span class="o">.</span><span class="n">setPropertyValue</span><span class="p">(</span><span class="s2">"script"</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">box</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="s2">"script"</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span>
- 
+
         <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Wrote:</span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="si">{</span><span class="n">script</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">To file: </span><span class="si">{</span><span class="n">outputFile</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
 
-    <span class="n">main</span><span class="p">(</span>
-            <span class="s2">"demos/files/test.tosc"</span><span class="p">,</span> 
-            <span class="s2">"demos/files/out.tosc"</span><span class="p">,</span> 
-            <span class="s2">"source"</span><span class="p">,</span>
-            <span class="s2">"target"</span>
-        <span class="p">)</span>
+    <span class="n">main</span><span class="p">(</span><span class="s2">"demos/files/test.tosc"</span><span class="p">,</span> <span class="s2">"demos/files/out.tosc"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

@@ -1,40 +1,40 @@
 # Configuration file for the Sphinx documentation builder.
 
 # -- Project information
-project = 'tosclib'
-copyright = '2022, Alberto Valdez'
-author = 'Alberto Valdez'
+project = "tosclib"
+copyright = "2022, Alberto Valdez"
+author = "Alberto Valdez"
 
-release = '0.1'
-version = '0.1.6'
+release = "0.1"
+version = "0.1.6"
 
 # -- General configuration
 
 extensions = [
-    'sphinx.ext.duration',
-    'sphinx.ext.doctest',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon',
+    "sphinx.ext.duration",
+    "sphinx.ext.doctest",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.napoleon",
     # 'jupyter_sphinx',
     # 'nbsphinx',
-    'sphinx_copybutton',
+    "sphinx_copybutton",
 ]
 
 # https://nbsphinx.readthedocs.io/en/0.8.8/usage.html#Sphinx-Configuration-Values
 # source_suffix = [".rst", ".md"]
-exclude_patterns = ['build']
+exclude_patterns = ["build"]
 
 # Jupyter
 # https://ipywidgets.readthedocs.io/en/latest/embedding.html#embedding-widgets-in-the-sphinx-html-documentation
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3/', None),
-    'sphinx': ('https://www.sphinx-doc.org/en/master/', None),
+    "python": ("https://docs.python.org/3/", None),
+    "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
 }
-intersphinx_disabled_domains = ['std']
+intersphinx_disabled_domains = ["std"]
 
 # Napoleon Ext
 napoleon_google_docstring = True
@@ -51,7 +51,7 @@ autodoc_class_signature = "separated"
 #     "style_nav_header_background" : '#2d2d2d',
 # }
 
-html_theme = 'furo'
+html_theme = "furo"
 # html_theme = 'sphinx_book_theme'
 # html_theme = 'insegel' # https://sphinx-themes.org/sample-sites/insegel/kitchen-sink/admonitions/
 # html_theme = 'press'
@@ -60,5 +60,3 @@ html_theme = 'furo'
 
 # -- Options for EPUB output
 # epub_show_urls = 'footnote'
-
-

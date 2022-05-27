@@ -1,17 +1,6 @@
 Using tosclib
 ====================
 
-.. _installation:
-
-Installation
-------------------
-
-Requires python >= 3.9
-
-.. code-block:: console
-
-   $ pip install tosclib
-
 Guide
 ---------------
 

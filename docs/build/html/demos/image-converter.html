@@ -213,9 +213,10 @@
 <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="k">class</span> <span class="nc">ImageConverter</span><span class="p">():</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputFile</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">,</span> <span class="n">imagePath</span><span class="p">,</span> <span class="n">canvasName</span> <span class="o">=</span> <span class="s2">"canvas"</span><span class="p">):</span>
-        <span class="sd">""" Stores the conversion settings """</span>
+
+<span class="k">class</span> <span class="nc">ImageConverter</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputFile</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">,</span> <span class="n">imagePath</span><span class="p">,</span> <span class="n">canvasName</span><span class="o">=</span><span class="s2">"canvas"</span><span class="p">):</span>
+        <span class="sd">"""Stores the conversion settings"""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_path</span> <span class="o">=</span> <span class="n">inputFile</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="o">=</span> <span class="n">outputFile</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image_path</span> <span class="o">=</span> <span class="n">imagePath</span>
@@ -225,15 +226,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">pixelateImage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">""" Pixelates image and converts it into a numpy array of size (2,3) of x y and rgb."""</span>
+        <span class="sd">"""Pixelates image and converts it into a numpy array of size (2,3) of x y and rgb."""</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_path</span><span class="p">)</span>
         <span class="n">ratio</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_size</span>
-        <span class="n">xyr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">ratio</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span><span class="n">ratio</span><span class="p">)</span>
+        <span class="n">xyr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">ratio</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">ratio</span><span class="p">)</span>
         <span class="n">imagePixelated</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">xyr</span><span class="p">,</span> <span class="n">resample</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">Resampling</span><span class="o">.</span><span class="n">BILINEAR</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">imagePixelated</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">imagePixelated</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span>
 
     <span class="k">def</span> <span class="nf">drawPixelBoxes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">""" Draws an array of pixels as box objects in a 'canvas' object.</span>
+        <span class="sd">"""Draws an array of pixels as box objects in a 'canvas' object.</span>
 <span class="sd">        The canvas is any {self.canvas_name} named object in the top layer.</span>
 <span class="sd">        """</span>
         <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_path</span><span class="p">)</span>
@@ -241,29 +242,17 @@
 
         <span class="n">canvas</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">findChildByName</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">canvas_name</span><span class="p">)</span>
         <span class="n">canvas</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
-        
-        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="o">/</span><span class="mi">3</span><span class="p">)):</span>
-            <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">size</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">))):</span>
-                
-                <span class="n">box</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">createNode</span><span class="p">(</span><span class="s2">"BOX"</span><span class="p">))</span>
 
-                <span class="n">box</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="n">x</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="n">x</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="n">x</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>
-                                <span class="mi">1</span>
-                            <span class="p">)</span>
-                <span class="n">box</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span>
-                                <span class="n">x</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">pixel_size</span><span class="p">,</span>
-                                <span class="n">y</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">pixel_size</span><span class="p">,</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">pixel_size</span><span class="p">,</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">pixel_size</span>
-                            <span class="p">)</span>
-
-                <span class="n">box</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"p</span><span class="si">{</span><span class="n">x</span><span class="si">}{</span><span class="n">y</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-                <span class="n">box</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">"b"</span><span class="p">,</span> <span class="s2">"background"</span><span class="p">,</span> <span class="s2">"1"</span><span class="p">)</span>
+        <span class="n">pxs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixel_size</span>
+        <span class="k">for</span> <span class="n">iy</span><span class="p">,</span> <span class="n">ix</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ndindex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]):</span>
+            <span class="n">box</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">createNode</span><span class="p">(</span><span class="s2">"BOX"</span><span class="p">))</span>
+            <span class="n">box</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"p</span><span class="si">{</span><span class="n">ix</span><span class="si">}{</span><span class="n">iy</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">[</span><span class="n">iy</span><span class="p">,</span> <span class="n">ix</span><span class="p">]</span>
+            <span class="n">box</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">box</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="n">ix</span> <span class="o">*</span> <span class="n">pxs</span><span class="p">,</span> <span class="n">iy</span> <span class="o">*</span> <span class="n">pxs</span><span class="p">,</span> <span class="n">pxs</span><span class="p">,</span> <span class="n">pxs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">inputFile</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">,</span> <span class="n">imageFile</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
     <span class="n">converter</span> <span class="o">=</span> <span class="n">ImageConverter</span><span class="p">(</span><span class="n">inputFile</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">,</span> <span class="n">imageFile</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
@@ -272,13 +261,14 @@
     <span class="n">converter</span><span class="o">.</span><span class="n">pixelateImage</span><span class="p">()</span>
     <span class="n">converter</span><span class="o">.</span><span class="n">drawPixelBoxes</span><span class="p">()</span>
 
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
 
     <span class="n">main</span><span class="p">(</span>
-            <span class="s2">"demos/files/test.tosc"</span><span class="p">,</span>
-            <span class="s2">"demos/files/out.tosc"</span><span class="p">,</span>
-            <span class="s2">"demos/files/logo.jpg"</span><span class="p">,</span>
-            <span class="s2">"canvas"</span>
+        <span class="s2">"demos/files/test.tosc"</span><span class="p">,</span>
+        <span class="s2">"demos/files/out.tosc"</span><span class="p">,</span>
+        <span class="s2">"demos/files/logo.jpg"</span><span class="p">,</span>
+        <span class="s2">"canvas"</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
 </div>

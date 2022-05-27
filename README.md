@@ -17,22 +17,33 @@ $ pip install tosclib
 
 # Contribute:
 
-1. Clone Repo
-```console
-$ git clone https://github.com/{your-name}/tosclib.git
-$ cd tosclib\src\tosclib
+Feel free to make a fork and contribute to the tosclib or documentation or whatever.
+
+Requirements dev:
+
+```python
+tox==3.25.0
+numpy==1.22.3
+Pillow==9.1.1
+pytest==7.1.2
+setuptools==61.2.0
+pytest-cov==3.0.0
 ```
-2. Make your changes.
-3. Make a pull request :)
-
-
+Requirements docs:
+```
+sphinx==4.5.0
+furo==2022.4.7
+sphinx_copybutton==0.5.0
+```
+For testing run:
+```console
+$ tox
+```
 # Demo Projects:
 
-```console
-$ git clone https://github.com/AlbertoV5/tosclib.git
-$ cd tosc-generate\demos
-$ pip install -r requirements.txt
-```
+New location for Demo Projects is [here](https://albertov5.github.io/tosclib/docs/build/html/demos.html).
+
+
 ## custom-property.py
 You can insert your own XML elements into Touch OSC files and the Editor will respect them. This means you can access those properties in lua and they will keep their values after you save and exit the Touch OSC editor. For example:
 ```lua
@@ -48,6 +59,7 @@ You can use custom-property.py to insert new properties in your .tosc file and u
 ```console
 $ python custom-property.py -i "files/test2.tosc" -o "files/customProp.tosc" --Property "CustomProperty" --Value "1612" --Type "s"
 ```
+
 
 ## copy-scripts.py
 Find a source object by name in the top level of the template, copies its script and adds it to all children objects of a target object.

@@ -2,10 +2,11 @@
 <html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Elements from Json" href="3-from-json.html" /><link rel="prev" title="Custom Property" href="1-custom-property.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>Overview: module code - tosclib 0.1 documentation</title>
+        <title>Copy Scripts - tosclib 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -154,7 +155,7 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../guide/1-tosc-files.html">Understanding .tosc files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/2-tosc-msgs.html">Message Elements</a></li>
@@ -163,11 +164,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../guide/5-tosc-msg.html">OSC Message Elements</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../demos.html">Demos</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../demos/1-custom-property.html">Custom Property</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../demos/2-copy-scripts.html">Copy Scripts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../demos/3-from-json.html">Elements from Json</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../demos/4-image-converter.html">Image Converter</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../demos.html">Demos</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="1-custom-property.html">Custom Property</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Copy Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3-from-json.html">Elements from Json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4-image-converter.html">Image Converter</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -206,16 +207,80 @@
           </label>
         </div>
         <article role="main">
-          <h1>All modules for which code is available</h1>
-<ul><li><a href="tosclib/tosc.html">tosclib.tosc</a></li>
+          <section id="copy-scripts">
+<h1>Copy Scripts<a class="headerlink" href="#copy-scripts" title="Permalink to this headline">#</a></h1>
+<p>Copy Scripts of one Element to all the Child Elements of another.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">inputFile</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">,</span> <span class="n">sourceName</span><span class="p">,</span> <span class="n">targetName</span><span class="p">):</span>
+
+    <span class="c1"># Find the script string with a streaming parser</span>
+    <span class="n">script</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">pullValueFromKey</span><span class="p">(</span>
+        <span class="n">inputFile</span><span class="o">=</span><span class="n">inputFile</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">sourceName</span><span class="p">,</span> <span class="n">targetKey</span><span class="o">=</span><span class="s2">"script"</span>
+    <span class="p">)</span>
+
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">inputFile</span><span class="p">)</span>
+    <span class="n">main</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">main</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+        <span class="c1"># Move on if the Property is not the target</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">getPropertyValue</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">targetName</span><span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Assuming the Element is the target, iterate through children</span>
+        <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="n">box</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">box</span><span class="o">.</span><span class="n">isProperty</span><span class="p">(</span><span class="s2">"script"</span><span class="p">):</span>
+                <span class="n">box</span><span class="o">.</span><span class="n">setPropertyValue</span><span class="p">(</span><span class="s2">"script"</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">box</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="s2">"script"</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span>
+
+        <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Wrote:</span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="si">{</span><span class="n">script</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">To file: </span><span class="si">{</span><span class="n">outputFile</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+
+    <span class="n">main</span><span class="p">(</span><span class="s2">"demos/files/test.tosc"</span><span class="p">,</span> <span class="s2">"demos/files/out.tosc"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Demo Files:</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/AlbertoV5/tosclib/blob/main/demos/files/test.tosc">Input .tosc</a></p></li>
+<li><p><a class="reference external" href="https://github.com/AlbertoV5/tosclib/blob/main/demos/files/out.tosc">Output .tosc</a></p></li>
 </ul>
+</section>
+
         </article>
       </div>
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="3-from-json.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Elements from Json</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="1-custom-property.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Custom Property</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">

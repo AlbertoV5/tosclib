@@ -15,13 +15,15 @@ Description-Content-Type: text/markdown
 License-File: LICENSE
 
 # tosclib
-This library uses XML trees to generate and edit Touch OSC templates with a few custom classes and functions that help navigate the structure of the .tosc file.
+Generate and edit Touch OSC templates with XML trees through a few custom classes and functions that help navigate the structure of the .tosc file.
 
 **Disclaimer**: This project has no relation to Hexler, the developer of TouchOSC. Backup your templates before editing them with third party tools.
 
-For demos: https://github.com/AlbertoV5/tosclib
+![Test](https://github.com/albertov5/tosclib/actions/workflows/tests.yaml/badge.svg) ![pypi](https://img.shields.io/pypi/v/tosclib)
+![License](https://img.shields.io/github/license/albertov5/tosclib)
 
-For documentation: https://albertov5.github.io/tosclib
+
+## [Documentation here!](https://albertov5.github.io/tosclib)
 
 Requires python >= 3.9
 

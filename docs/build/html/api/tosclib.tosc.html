@@ -223,14 +223,20 @@
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">findChildByName</span></code>(element, name)</p></td>
 <td><p>Returns the first child element by name</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">getTextValueFromKey</span></code>(properties, key)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">findKey</span></code>(elements, key)</p></td>
+<td><p>Iterate through element with children and return child whose key matches</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">getTextValueFromKey</span></code>(properties, key)</p></td>
 <td><p>Find the value.text from a known key</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.load" title="tosclib.tosc.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(inputPath)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.load" title="tosclib.tosc.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(inputPath)</p></td>
 <td><p>Reads a .tosc file and returns the XML root Element</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pullValueFromKey</span></code>(inputFile, key, value, ...)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pullValueFromKey</span></code>(inputFile, key, value, ...)</p></td>
 <td><p>Find a value from a known key, value and target key</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">showElement</span></code>(e)</p></td>
+<td><p>Generic show function, UTF-8, indented 2 spaces</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.write" title="tosclib.tosc.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a>(root[, outputPath])</p></td>
 <td><p>Encodes a root Element to .tosc</p></td>

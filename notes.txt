@@ -15,3 +15,8 @@ Release:
 python -m build
 
 twine upload dist/*
+
+
+Virtual Envs:
+
+py -3.8 -m venv venv\38

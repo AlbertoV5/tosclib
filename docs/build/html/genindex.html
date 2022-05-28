@@ -157,7 +157,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="guide/1-tosc-files.html">Understanding .tosc files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/2-tosc-msgs.html">Message Elements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide/3-tosclib.html">Using tosclib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/3-tosclib.html">Working with .tosc files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/4-tosc-valid.html">Valid Elements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/5-tosc-msg.html">OSC Message Elements</a></li>
 </ul>
@@ -208,7 +208,7 @@
           
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#V"><strong>V</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a></div>
 </section>
 <section id="_" class="genindex-section">
   <h2>_</h2>
@@ -242,7 +242,7 @@
   <h2>C</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="guide/3-tosclib.html#tosclib.tosc.SubElements.CHILDREN">CHILDREN (tosclib.tosc.SubElements attribute)</a>
+        <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.children">children (tosclib.tosc.ElementTOSC attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
@@ -276,7 +276,7 @@
   <h2>M</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="guide/3-tosclib.html#tosclib.tosc.SubElements.MESSAGES">MESSAGES (tosclib.tosc.SubElements attribute)</a>
+        <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.messages">messages (tosclib.tosc.ElementTOSC attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
@@ -309,7 +309,7 @@
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="guide/3-tosclib.html#tosclib.tosc.SubElements.PROPERTIES">PROPERTIES (tosclib.tosc.SubElements attribute)</a>
+        <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.properties">properties (tosclib.tosc.ElementTOSC attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -319,7 +319,11 @@
   <h2>S</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="guide/3-tosclib.html#tosclib.tosc.SubElements">SubElements (class in tosclib.tosc)</a>
+        <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.setColor">setColor() (in module tosclib.tosc.ElementTOSC)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.setPropertyValue">setPropertyValue() (in module tosclib.tosc.ElementTOSC)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -348,7 +352,17 @@
   <h2>V</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="guide/3-tosclib.html#tosclib.tosc.SubElements.VALUES">VALUES (tosclib.tosc.SubElements attribute)</a>
+        <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.values">values (tosclib.tosc.ElementTOSC attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="W" class="genindex-section">
+  <h2>W</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="guide/3-tosclib.html#tosclib.tosc.write">write() (in module tosclib.tosc)</a>
 </li>
     </ul></td>
   </tr></table>

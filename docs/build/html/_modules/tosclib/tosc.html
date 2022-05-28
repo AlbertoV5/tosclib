@@ -158,7 +158,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/1-tosc-files.html">Understanding .tosc files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/2-tosc-msgs.html">Message Elements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guide/3-tosclib.html">Using tosclib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/3-tosclib.html">Working with .tosc files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/4-tosc-valid.html">Valid Elements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/5-tosc-msg.html">OSC Message Elements</a></li>
 </ul>
@@ -214,21 +214,10 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">zlib</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">unique</span>
-
-
-<div class="viewcode-block" id="SubElements"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.tosc.SubElements">[docs]</a><span class="nd">@unique</span>
-<span class="k">class</span> <span class="nc">SubElements</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">"""Enum for the default SubElements in &lt;node&gt;"""</span>
-
-    <span class="n">PROPERTIES</span> <span class="o">=</span> <span class="s2">"properties"</span>  <span class="c1">#: Find &lt;properties&gt; of Element.</span>
-    <span class="n">VALUES</span> <span class="o">=</span> <span class="s2">"values"</span>  <span class="c1">#: Find &lt;values&gt; of Element.</span>
-    <span class="n">MESSAGES</span> <span class="o">=</span> <span class="s2">"messages"</span>  <span class="c1">#: Find &lt;messages&gt; of Element.</span>
-    <span class="n">CHILDREN</span> <span class="o">=</span> <span class="s2">"children"</span>  <span class="c1">#: Find &lt;children&gt; of Element.</span></div>
 
 
 <div class="viewcode-block" id="Partial"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.Partial">[docs]</a><span class="k">class</span> <span class="nc">Partial</span><span class="p">:</span>
-    <span class="sd">"""Valid Partial Values"""</span>
+    <span class="sd">"""Valid Partial Elements"""</span>
 
 <div class="viewcode-block" id="Partial.__init__"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.Partial.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -247,7 +236,7 @@
 
 
 <div class="viewcode-block" id="Trigger"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.Trigger">[docs]</a><span class="k">class</span> <span class="nc">Trigger</span><span class="p">:</span>
-    <span class="sd">"""Valid Trigger Values"""</span>
+    <span class="sd">"""Valid Trigger Elements"""</span>
 
 <div class="viewcode-block" id="Trigger.__init__"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.Trigger.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">con</span><span class="o">=</span><span class="s2">"ANY"</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">var</span>
@@ -268,6 +257,7 @@
         <span class="n">path</span><span class="o">=</span><span class="p">[</span><span class="n">Partial</span><span class="p">(),</span> <span class="n">Partial</span><span class="p">(</span><span class="n">typ</span><span class="o">=</span><span class="s2">"PROPERTY"</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="s2">"name"</span><span class="p">)],</span>
         <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="n">Partial</span><span class="p">(</span><span class="n">typ</span><span class="o">=</span><span class="s2">"VALUE"</span><span class="p">,</span> <span class="n">con</span><span class="o">=</span><span class="s2">"FLOAT"</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="s2">"x"</span><span class="p">)],</span>
     <span class="p">):</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="n">enabled</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span> <span class="o">=</span> <span class="n">send</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">receive</span> <span class="o">=</span> <span class="n">receive</span>
@@ -284,19 +274,29 @@
 <span class="sd">    Creates Enum SubElements if they are not found in the Node.</span>
 <span class="sd">    """</span>
 
-<div class="viewcode-block" id="ElementTOSC.__init__"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.tosc.ElementTOSC.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">subs</span><span class="p">:</span> <span class="n">SubElements</span> <span class="o">=</span> <span class="n">SubElements</span><span class="p">):</span>
+<div class="viewcode-block" id="ElementTOSC.__init__"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.tosc.ElementTOSC.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+        <span class="sd">"""Find SubElements on init</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            e (ET.Element): &lt;node&gt; Element</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            properties (ET.Element): Find &lt;properties&gt;</span>
+<span class="sd">            values (ET.Element): Find &lt;values&gt;</span>
+<span class="sd">            messages (ET.Element): Find &lt;messages&gt;</span>
+<span class="sd">            children (ET.Element): Find &lt;children&gt;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">e</span>
-        <span class="p">[</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-            <span class="k">else</span> <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">sub</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs</span>
-        <span class="p">]</span></div>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">else</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="s2">"values"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="s2">"messages"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="s2">"children"</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">enum</span><span class="p">:</span> <span class="n">Enum</span> <span class="o">=</span> <span class="n">SubElements</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">"""Returns ElementTOSC, for debugging purposes"""</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">enum</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">getPropertyValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
         <span class="sd">"""Find &lt;value&gt; from a known &lt;key&gt;"""</span>
@@ -391,14 +391,14 @@
                 <span class="n">e</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">a</span>
         <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">iselement</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">setFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">setFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">w</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">"""Create a Frame Property, if already exists, then modify it."""</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s2">"y"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="s2">"w"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="s2">"h"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">h</span><span class="p">)}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isProperty</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">setPropertyValue</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">"r"</span><span class="p">,</span> <span class="s2">"frame"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">setColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">setColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">"""Create a Color Property, if already exists, then modify it."""</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"r"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="s2">"g"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="s2">"b"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="s2">"a"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isProperty</span><span class="p">(</span><span class="s2">"color"</span><span class="p">):</span>
@@ -459,17 +459,17 @@
 
 
 <div class="viewcode-block" id="load"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.tosc.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">inputPath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
-    <span class="sd">"""Reads .tosc and returns the xml root element"""</span>
+    <span class="sd">"""Reads a .tosc file and returns the XML root Element"""</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inputPath</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">zlib</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span></div>
 
 
-<span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">root</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">outputPath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">"""Encodes a root element directly to UTF-8 and compresses to .tosc"""</span>
+<div class="viewcode-block" id="write"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.tosc.write">[docs]</a><span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">root</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">outputPath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">"""Encodes a root Element to .tosc"""</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outputPath</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="n">treeFile</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"UTF-8"</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"xml"</span><span class="p">)</span>
         <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">zlib</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">treeFile</span><span class="p">))</span>
-        <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
 
 
 <span class="k">def</span> <span class="nf">findChildByName</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>

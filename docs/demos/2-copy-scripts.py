@@ -22,7 +22,7 @@ def main(inputFile, outputFile, sourceName, targetName):
         # Assuming the Element is the target, iterate through children
         for box in group.children:
             box = tosc.ElementTOSC(box)
-            if box.isProperty("script"):
+            if box.hasProperty("script"):
                 box.setPropertyValue("script", script)
             else:
                 box.createProperty("s", "script", script)

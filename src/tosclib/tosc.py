@@ -1,25 +1,16 @@
 """
 Simplify navigating, editing and generating .tosc files.
 """
+import sys
+from tkinter import E
 import xml.etree.ElementTree as ET
 import re
 import zlib
 import uuid
-from enum import Enum, unique
-
-
-@unique
-class SubElements(Enum):
-    """Enum for the default SubElements in <node>"""
-
-    PROPERTIES = "properties"  #: Find <properties> of Element.
-    VALUES = "values"  #: Find <values> of Element.
-    MESSAGES = "messages"  #: Find <messages> of Element.
-    CHILDREN = "children"  #: Find <children> of Element.
 
 
 class Partial:
-    """Valid Partial Values"""
+    """Valid Partial Elements"""
 
     def __init__(
         self,
@@ -38,7 +29,7 @@ class Partial:
 
 
 class Trigger:
-    """Valid Trigger Values"""
+    """Valid Trigger Elements"""
 
     def __init__(self, var="x", con="ANY"):
         self.var = var
@@ -59,6 +50,7 @@ class OSC:
         path=[Partial(), Partial(typ="PROPERTY", val="name")],
         arguments=[Partial(typ="VALUE", con="FLOAT", val="x")],
     ):
+
         self.enabled = enabled
         self.send = send
         self.receive = receive
@@ -75,19 +67,29 @@ class ElementTOSC:
     Creates Enum SubElements if they are not found in the Node.
     """
 
-    def __init__(self, e: ET.Element, subs: SubElements = SubElements):
+    def __init__(self, e: ET.Element):
+        """Find SubElements on init
+
+        Args:
+            e (ET.Element): <node> Element
+
+        Attributes:
+            properties (ET.Element): Find <properties>
+            values (ET.Element): Find <values>
+            messages (ET.Element): Find <messages>
+            children (ET.Element): Find <children>
+        """
         self.node = e
-        [
-            setattr(self, sub.value, e.find(sub.value))
-            if e.find(sub.value)
-            else setattr(self, sub.value, ET.SubElement(e, sub.value))
-            for sub in subs
-        ]
+        f = lambda v: e.find(v) if e.find(v) else ET.SubElement(e, v)
+        self.properties = f("properties")
+        self.values = f("values")
+        self.messages = f("messages")
+        self.children = f("children")
 
     @classmethod
-    def fromFile(cls, file: str, enum: Enum = SubElements):
+    def fromFile(cls, file: str):
         """Returns ElementTOSC, for debugging purposes"""
-        return cls(load(file)[0], enum)
+        return cls(load(file)[0])
 
     def getPropertyValue(self, key: str) -> ET.Element:
         """Find <value> from a known <key>"""
@@ -114,7 +116,7 @@ class ElementTOSC:
                     return True
         return False
 
-    def isProperty(self, key: str):
+    def hasProperty(self, key: str):
         for property in self.properties:
             if re.fullmatch(property.find("key").text, key):
                 return True
@@ -123,7 +125,7 @@ class ElementTOSC:
     def createProperty(self, type: str, key: str, text: str, params: dict = {}) -> bool:
         """Add a new property with key, value and/or value's {<element> : element.text}"""
 
-        if self.isProperty(key):
+        if self.hasProperty(key):
             raise ValueError(f"Property '{key}' already exists")
 
         property = ET.SubElement(self.properties, "property", attrib={"type": type})
@@ -157,7 +159,7 @@ class ElementTOSC:
             self.children, "node", attrib={"ID": str(uuid.uuid4()), "type": type}
         )
 
-    def isValue(self, key: str):
+    def hasValue(self, key: str):
         for value in self.values:
             if re.fullmatch(value.find("key").text, key):
                 return True
@@ -172,27 +174,44 @@ class ElementTOSC:
         defaultPull: str,
     ) -> bool:
         """Create a Value element in <values>"""
-        if self.isValue(key):
+        if self.hasValue(key):
             raise ValueError(f"Value '{key}' already exists")
-
+        items = locals().items()
         value = ET.SubElement(self.values, "value")
-        for i, a in locals().items():
-            if i != "self" and i != "value":
-                e = ET.SubElement(value, i)
-                e.text = a
+        for k, v in items:
+            if k != "self":
+                e = ET.SubElement(value, k)
+                e.text = v
         return ET.iselement(value)
 
-    def setFrame(self, x, y, w, h) -> bool:
+    def setValue(
+        self,
+        key: str,
+        locked: str,
+        lockedDefaultCurrent: str,
+        default: str,
+        defaultPull: str,
+    ) -> bool:
+        items = locals().items()
+        for value in self.values:
+            if re.fullmatch(value.find("key").text, key):
+                for k, v in items:
+                    if k != "self":
+                        value.find(k).text = v
+                return True
+        return False
+
+    def setFrame(self, x: float, y: float, w: float, h: float) -> bool:
         """Create a Frame Property, if already exists, then modify it."""
         params = {"x": str(x), "y": str(y), "w": str(w), "h": str(h)}
-        if self.isProperty("frame"):
+        if self.hasProperty("frame"):
             return self.setPropertyValue("frame", "", params)
         return self.createProperty("r", "frame", "", params)
 
-    def setColor(self, r, g, b, a) -> bool:
+    def setColor(self, r: float, g: float, b: float, a: float) -> bool:
         """Create a Color Property, if already exists, then modify it."""
         params = {"r": str(r), "g": str(g), "b": str(b), "a": str(a)}
-        if self.isProperty("color"):
+        if self.hasProperty("color"):
             return self.setPropertyValue("color", "", params)
         return self.createProperty("c", "color", "", params)
 
@@ -213,33 +232,39 @@ class ElementTOSC:
         return osc
 
     def show(self):
-        """Print indented XML as UTF-8"""
-        ET.indent(self.node, "  ")
-        print(ET.tostring(self.node).decode("utf-8"))
+        showElement(self.node)
+
+    def showProperties(self):
+        showElement(self.properties)
 
     def showValues(self):
-        """Print indented XML as UTF-8"""
-        ET.indent(self.values, "  ")
-        print(ET.tostring(self.values).decode("utf-8"))
+        showElement(self.values)
 
     def showMessages(self):
-        for message in self.messages:
-            ET.indent(message, "  ")
-            print(ET.tostring(message).decode("utf-8"))
+        showElement(self.messages)
+
+    def showChildren(self):
+        showElement(self.children)
 
     def showProperty(self, name: str):
-        """Print indented XML of a single property by name as utf-8"""
-        for property in self.properties:
-            if re.fullmatch(property.find("key").text, name):
-                ET.indent(property, "  ")
-                print(ET.tostring(property).decode("utf-8"))
+        showElement(findKey(self.properties, name))
 
     def showValue(self, name: str):
-        """Print indented XML of a single property by name as utf-8"""
-        for value in self.values:
-            if re.fullmatch(value.find("key").text, name):
-                ET.indent(value, "  ")
-                print(ET.tostring(value).decode("utf-8"))
+        showElement(findKey(self.values, name))
+
+
+def findKey(elements: ET.Element, key: str):
+    """Iterate through element with children and return child whose key matches"""
+    for e in elements:
+        if re.fullmatch(e.find("key").text, key):
+            return e
+
+
+def showElement(e: ET.Element):
+    """Generic show function, UTF-8, indented 2 spaces"""
+    if sys.version_info[0] == 3 and sys.version_info[1] >= 9:
+        ET.indent(e, "  ")
+    print(ET.tostring(e).decode("utf-8"))
 
 
 def createTemplate() -> ET.Element:
@@ -250,13 +275,13 @@ def createTemplate() -> ET.Element:
 
 
 def load(inputPath: str) -> ET.Element:
-    """Reads .tosc and returns the xml root element"""
+    """Reads a .tosc file and returns the XML root Element"""
     with open(inputPath, "rb") as file:
         return ET.fromstring(zlib.decompress(file.read()))
 
 
 def write(root: ET.Element, outputPath: str = None) -> bool:
-    """Encodes a root element directly to UTF-8 and compresses to .tosc"""
+    """Encodes a root Element to .tosc"""
     with open(outputPath, "wb") as file:
         treeFile = ET.tostring(root, encoding="UTF-8", method="xml")
         file.write(zlib.compress(treeFile))

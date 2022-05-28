@@ -3,14 +3,29 @@ import pytest
 import sys
 
 
-def test_print_enum(capture_stdout):
-    """ """
-    enum = tosc.SubElements
-    print(enum.PROPERTIES.value)
-    print(enum.VALUES.value)
-    print(enum.MESSAGES.value)
-    print(enum.CHILDREN.value)
-    assert capture_stdout["stdout"] == "properties\nvalues\nmessages\nchildren\n"
+def test_print_attributes(capture_stdout):
+
+    partial = tosc.Partial()
+    print(
+        partial.type,
+        partial.conversion,
+        partial.value,
+        partial.scaleMin,
+        partial.scaleMax,
+    )
+    assert capture_stdout["stdout"] == "CONSTANT STRING / 0 1\n"
+    capture_stdout["stdout"] = ""
+
+    trigger = tosc.Trigger()
+    print(trigger.var, trigger.condition)
+    assert capture_stdout["stdout"] == "x ANY\n"
+    capture_stdout["stdout"] = ""
+
+    e = tosc.ElementTOSC(tosc.createTemplate())
+    for attribute, value in e.__dict__.items():
+        print(attribute)
+    assert capture_stdout["stdout"] == "node\nproperties\nvalues\nmessages\nchildren\n"
+    capture_stdout["stdout"] = ""
 
 
 @pytest.fixture

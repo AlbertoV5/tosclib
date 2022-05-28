@@ -15,9 +15,11 @@
    
       createTemplate
       findChildByName
+      findKey
       getTextValueFromKey
       load
       pullValueFromKey
+      showElement
       write
    
    

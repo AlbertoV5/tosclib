@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
     
     
 
@@ -230,7 +231,7 @@
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">Finally we can modify the Elements, for example changing the ‘color’ Property.</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">colors</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"r"</span><span class="p">:</span><span class="s2">"0"</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">:</span><span class="s2">"0"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">:</span><span class="s2">"1"</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">:</span><span class="s2">"1"</span><span class="p">}</span>
-<span class="n">target</span><span class="o">.</span><span class="n">setPropertyValue</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">colors</span><span class="p">)</span>
+<span class="n">target</span><span class="o">.</span><span class="n">setProperty</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">colors</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -324,10 +325,9 @@ Creates Enum SubElements if they are not found in the Node.</p>
 <dd></dd></dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setPropertyValue">
-<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setPropertyValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setPropertyValue" title="Permalink to this definition">#</a></dt>
-<dd><p>Set the key’s value.text and/or value’s {&lt;element&gt; : element.text}</p>
-<dl class="field-list simple">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setProperty">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setProperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setProperty" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>

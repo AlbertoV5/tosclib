@@ -12,19 +12,19 @@ def oscMsg() -> tosc.OSC:
     return tosc.OSC(
         path=[
             tosc.Partial(),  # Default is the constant '/'
-            tosc.Partial(typ="PROPERTY", val="parent.name"),
+            tosc.Partial(type="PROPERTY", value="parent.name"),
             tosc.Partial(),
-            tosc.Partial(typ="PROPERTY", val="name"),
+            tosc.Partial(type="PROPERTY", value="name"),
         ]
     )
 
 
 def createFader(e: tosc.ElementTOSC, name, width, limit, i, msg):
-    fader = tosc.ElementTOSC(e.createNode("FADER"))
+    fader = tosc.ElementTOSC(e.createChild("FADER"))
     fader.createProperty("s", "name", name)
     fader.setFrame(width * i, 0, width, 1080)
     fader.setColor(i / limit, 0, 1 - i / limit, 1)
-    fader.createOSC(oscMessage=msg)  # Creates a new message from custom tosc.OSC
+    fader.createOSC(message=msg)  # Creates a new message from custom tosc.OSC
 
 
 def main(jsonFile, outputFile):
@@ -34,7 +34,7 @@ def main(jsonFile, outputFile):
     base.setFrame(0, 0, 1920, 1080)
 
     # Group container for the faders
-    group = tosc.ElementTOSC(base.createNode("GROUP"))
+    group = tosc.ElementTOSC(base.createChild("GROUP"))
     group.createProperty("s", "name", "Controls")
     group.setFrame(420, 0, 1080, 1080)
     group.setColor(0.25, 0.25, 0.25, 1)

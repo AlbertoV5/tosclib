@@ -57,6 +57,6 @@ html_theme = "furo"
 # html_theme = 'press'
 # html_theme = 'karma_sphinx_theme'
 # html_theme = 'piccolo_theme'
-
+html_css_files   = ['custom.css']
 # -- Options for EPUB output
 # epub_show_urls = 'footnote'

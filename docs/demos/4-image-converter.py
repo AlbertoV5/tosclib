@@ -34,7 +34,7 @@ class ImageConverter:
 
         pxs = self.pixel_size
         for iy, ix in np.ndindex(self.pixels.shape[:2]):
-            box = tosc.ElementTOSC(canvas.createNode("BOX"))
+            box = tosc.ElementTOSC(canvas.createChild("BOX"))
             box.createProperty("s", "name", f"p{ix}{iy}")
             (r, g, b) = self.pixels[iy, ix]
             box.setColor(r, g, b, 1)

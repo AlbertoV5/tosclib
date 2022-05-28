@@ -47,7 +47,7 @@ class ImageConverter:
         for x in range(int(self.pixels[0].size / 3)):
             for y in range(int(self.pixels.size / (self.pixels[0].size))):
 
-                box = tosc.ElementTOSC(canvas.createNode("BOX"))
+                box = tosc.ElementTOSC(canvas.createChild("BOX"))
 
                 box.createProperty(
                     "c",

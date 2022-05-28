@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="OSC Message Elements" href="5-tosc-msg.html" /><link rel="prev" title="Using tosclib" href="3-tosclib.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="OSC Message Elements" href="5-tosc-msg.html" /><link rel="prev" title="Working with .tosc files" href="3-tosclib.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
         <title>Valid Elements - tosclib 0.1 documentation</title>
@@ -159,7 +159,7 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../guide.html">Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="1-tosc-files.html">Understanding .tosc files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="2-tosc-msgs.html">Message Elements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="3-tosclib.html">Using tosclib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3-tosclib.html">Working with .tosc files</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Valid Elements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="5-tosc-msg.html">OSC Message Elements</a></li>
 </ul>
@@ -210,10 +210,11 @@
           <section id="valid-elements">
 <h1>Valid Elements<a class="headerlink" href="#valid-elements" title="Permalink to this headline">#</a></h1>
 <p>Touch OSC allows you to add any new Property to a .tosc file. It doesn’t allow adding new Values or Sub Element categories. This means that you can’t add a <span class="guilabel">&lt;Style&gt;</span> Element under <span class="guilabel">&lt;Node&gt;</span> but you can add a <span class="guilabel">&lt;Property&gt;&lt;key&gt;Style</span> Element under <span class="guilabel">&lt;Properties&gt;</span>.</p>
-<p>You can’t add new functions to the script Property either, as Touch OSC only allows <a class="reference external" href="https://hexler.net/touchosc/manual/script-objects-control#functions">these functions.</a></p>
+<p>You can’t add new ‘functions’ to the ‘script’ Property either, as Touch OSC only allows <a class="reference external" href="https://hexler.net/touchosc/manual/script-objects-control#functions">these functions.</a></p>
 <p>You can always add new messages as long as they belong to OSC, MIDI, LOCAL, <a class="reference external" href="https://hexler.net/touchosc/manual/script-functions-global#message">etc</a>.</p>
-<p><strong>Example:</strong></p>
-<p>Creating a new Property directly in the parent Node.</p>
+<p><strong>Example for creating custom properties:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Creating a new Property directly in the parent Node.</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
 
 <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"demos/files/test.tosc"</span><span class="p">)</span>
@@ -221,25 +222,56 @@
 
 <span class="n">parent</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="s2">"CustomProperty"</span><span class="p">,</span> <span class="s2">"1007"</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Added Property:</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-<span class="n">parent</span><span class="o">.</span><span class="n">showProperty</span><span class="p">(</span><span class="s2">"CustomProperty"</span><span class="p">)</span>
+<span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">"demos/files/out.tosc"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>You can then access the property from .lua inside the TouchOSC Editor.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Lua code in the editor.</span><a class="headerlink" href="#id2" title="Permalink to this code">#</a></div>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span> <span class="kr">function</span> <span class="nf">init</span><span class="p">()</span>
+     <span class="n">self</span><span class="p">.</span><span class="n">values</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parent</span><span class="p">.</span><span class="n">CustomProperty</span>
+ <span class="kr">end</span>
+</pre></div>
+</div>
+</div>
+<p>Adding a non-valid Element would look like this:</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Trying to add a &lt;styles&gt; sub element to &lt;node&gt;</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
+
+<span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"demos/files/test.tosc"</span><span class="p">)</span>
+<span class="n">node</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="n">styles</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="s2">"styles"</span><span class="p">)</span>
+<span class="n">styles</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">"CustomProperty"</span>
 
 <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">"demos/files/out.tosc"</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Adding a Child Node and then adding a Property to the empty Child.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">box</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">createNode</span><span class="p">(</span><span class="s2">"BOX"</span><span class="p">))</span>
+</div>
+<p>Even if the code is correct, Touch OSC won’t accept the new Sub Element when loading the template in the Editor.</p>
+<p>You could add a &lt;property&gt; under &lt;properties&gt; manually too.</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Using ET to add a &lt;property&gt;</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
 
-<span class="n">box</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">"c"</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="p">{</span>
-                     <span class="s2">"r"</span> <span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-                     <span class="s2">"g"</span> <span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-                     <span class="s2">"b"</span> <span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-                     <span class="s2">"a"</span> <span class="p">:</span> <span class="s2">"1"</span>
-                  <span class="p">})</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"demos/files/test.tosc"</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">box</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+<span class="n">properties</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">)</span>
+<span class="n">prop</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">properties</span><span class="p">,</span> <span class="s2">"property"</span><span class="p">)</span>
+<span class="n">key</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="s2">"key"</span><span class="p">)</span>
+<span class="n">key</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">"CustomProperty"</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">)</span>
+<span class="n">value</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">"1007"</span>
+
+<span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">"demos/files/out.tosc"</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<p>Or just use tosclib instead.</p>
 </section>
 
         </article>
@@ -263,7 +295,7 @@
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Using tosclib</div>
+                <div class="title">Working with .tosc files</div>
                 
               </div>
             </a>

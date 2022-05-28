@@ -9,8 +9,6 @@ Generate and edit Touch OSC templates with XML trees through a few custom classe
 
 ## [Documentation here!](https://albertov5.github.io/tosclib)
 
-Requires python >= 3.9
-
 ```console
 $ pip install tosclib
 ```

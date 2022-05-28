@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Valid Elements" href="4-tosc-valid.html" /><link rel="prev" title="Message Elements" href="2-tosc-msgs.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>Using tosclib - tosclib 0.1 documentation</title>
+        <title>Working with .tosc files - tosclib 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -159,7 +159,7 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../guide.html">Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="1-tosc-files.html">Understanding .tosc files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="2-tosc-msgs.html">Message Elements</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Using tosclib</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Working with .tosc files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4-tosc-valid.html">Valid Elements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="5-tosc-msg.html">OSC Message Elements</a></li>
 </ul>
@@ -207,37 +207,53 @@
           </label>
         </div>
         <article role="main">
-          <section id="using-tosclib">
-<h1>Using tosclib<a class="headerlink" href="#using-tosclib" title="Permalink to this headline">#</a></h1>
-<section id="guide">
-<h2>Guide<a class="headerlink" href="#guide" title="Permalink to this headline">#</a></h2>
-<p>Tosclib tries to simplify editing and generating .tosc files.</p>
-<p>Once you learn the structure of the .tosc file and the structure of tosclib, it becomes easier to focus on the algorithm of whatever you want to do rather than dealing with XML Element Trees that try to find a needle in a haystack in an inefficient way.</p>
-<p>For example, changing the colors of a specific Node Element:</p>
+          <section id="working-with-tosc-files">
+<h1>Working with .tosc files<a class="headerlink" href="#working-with-tosc-files" title="Permalink to this headline">#</a></h1>
+<p>Once you have learned the structure of the .tosc file and tosclib, it becomes easier to focus on the algorithm of whatever you want to do rather than dealing with raw XML Element Tree functions and parsing.</p>
+<p>The basic concept is to load a regular XML Element and create a new ElementTOSC instance with it. Then you can handle it with <strong>tosclib</strong> and regular <strong>xml</strong>.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">We can start by loading a root Element and passing it’s first child to ElementTOSC.</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
 
 <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"demos/files/test.tosc"</span><span class="p">)</span>
 <span class="n">parent</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">target</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">findChild</span><span class="p">(</span><span class="s2">"target"</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Then we can use ElementTOSC methods to find navigate through the tree.</span><a class="headerlink" href="#id2" title="Permalink to this code">#</a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">findChild</span><span class="p">(</span><span class="s2">"target"</span><span class="p">))</span>
 <span class="n">target</span><span class="o">.</span><span class="n">showProperty</span><span class="p">(</span><span class="s2">"color"</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Finally we can modify the Elements, for example changing the ‘color’ Property.</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">colors</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"r"</span><span class="p">:</span><span class="s2">"0"</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">:</span><span class="s2">"0"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">:</span><span class="s2">"1"</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">:</span><span class="s2">"1"</span><span class="p">}</span>
 <span class="n">target</span><span class="o">.</span><span class="n">setPropertyValue</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">colors</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Alternatively, we can use a shortcut instead to set the color property directly:</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">target</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">target</span><span class="o">.</span><span class="n">showProperty</span><span class="p">(</span><span class="s2">"color"</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">In order to write back to .tosc, we use the original root Element with the tosclib write function.</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">"demos/files/out.tosc"</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="working-with-tosc-files">
-<h2>Working with .tosc files<a class="headerlink" href="#working-with-tosc-files" title="Permalink to this headline">#</a></h2>
-<p>Load a .tosc file directly into a root Element and handle it with <strong>tosclib</strong> or <strong>xml</strong>.</p>
+</div>
+<section id="classes-and-functions">
+<h2>Classes and Functions<a class="headerlink" href="#classes-and-functions" title="Permalink to this headline">#</a></h2>
+<p>Here are more details on the functions and methods we used:</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tosclib.tosc.load">
 <span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputPath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.load" title="Permalink to this definition">#</a></dt>
-<dd><p>Reads .tosc and returns the xml root element</p>
+<dd><p>Reads a .tosc file and returns the XML root Element</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>inputPath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p>
@@ -247,7 +263,6 @@
 </dd>
 </dl>
 </dd></dl>
-<p>Then pass the parent Node to the ElementTOSC class to get its SubElements.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">ElementTOSC</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#ElementTOSC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.ElementTOSC" title="Permalink to this definition">#</a></dt>
@@ -255,45 +270,109 @@
 Creates Enum SubElements if they are not found in the Node.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subs=&lt;enum</span> <span class="pre">'SubElements'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#ElementTOSC.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.ElementTOSC.__init__" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#ElementTOSC.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.ElementTOSC.__init__" title="Permalink to this definition">#</a></dt>
+<dd><p>Find SubElements on init</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>e</strong> (<a class="reference external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element" title="(in Python v3.10)"><em>xml.etree.ElementTree.Element</em></a>) – </p></li>
-<li><p><strong>subs</strong> (<a class="reference internal" href="#tosclib.tosc.SubElements" title="tosclib.tosc.SubElements"><em>tosclib.tosc.SubElements</em></a>) – </p></li>
-</ul>
+<dd class="field-odd"><p><strong>e</strong> (<em>ET.Element</em>) – &lt;node&gt; Element</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.properties">
+<span class="sig-name descname"><span class="pre">properties</span></span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.properties" title="Permalink to this definition">#</a></dt>
+<dd><p>Find &lt;properties&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ET.Element</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.values">
+<span class="sig-name descname"><span class="pre">values</span></span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.values" title="Permalink to this definition">#</a></dt>
+<dd><p>Find &lt;values&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ET.Element</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.messages">
+<span class="sig-name descname"><span class="pre">messages</span></span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.messages" title="Permalink to this definition">#</a></dt>
+<dd><p>Find &lt;messages&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ET.Element</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.children">
+<span class="sig-name descname"><span class="pre">children</span></span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.children" title="Permalink to this definition">#</a></dt>
+<dd><p>Find &lt;children&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ET.Element</p>
+</dd>
+</dl>
+</dd></dl>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.__new__">
 <span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.__new__" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 </dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="tosclib.tosc.SubElements">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">SubElements</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#SubElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.SubElements" title="Permalink to this definition">#</a></dt>
-<dd><p>Enum for the default SubElements in &lt;node&gt;</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.SubElements.CHILDREN">
-<span class="sig-name descname"><span class="pre">CHILDREN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'children'</span></em><a class="headerlink" href="#tosclib.tosc.SubElements.CHILDREN" title="Permalink to this definition">#</a></dt>
-<dd><p>Find &lt;children&gt; of Element.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setPropertyValue">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setPropertyValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setPropertyValue" title="Permalink to this definition">#</a></dt>
+<dd><p>Set the key’s value.text and/or value’s {&lt;element&gt; : element.text}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
+<li><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
+</dd>
+</dl>
 </dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.SubElements.MESSAGES">
-<span class="sig-name descname"><span class="pre">MESSAGES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'messages'</span></em><a class="headerlink" href="#tosclib.tosc.SubElements.MESSAGES" title="Permalink to this definition">#</a></dt>
-<dd><p>Find &lt;messages&gt; of Element.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setColor">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setColor" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a Color Property, if already exists, then modify it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
+<li><p><strong>g</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
+<li><p><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
+</dd>
+</dl>
 </dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.SubElements.PROPERTIES">
-<span class="sig-name descname"><span class="pre">PROPERTIES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'properties'</span></em><a class="headerlink" href="#tosclib.tosc.SubElements.PROPERTIES" title="Permalink to this definition">#</a></dt>
-<dd><p>Find &lt;properties&gt; of Element.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.SubElements.VALUES">
-<span class="sig-name descname"><span class="pre">VALUES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'values'</span></em><a class="headerlink" href="#tosclib.tosc.SubElements.VALUES" title="Permalink to this definition">#</a></dt>
-<dd><p>Find &lt;values&gt; of Element.</p>
-</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="tosclib.tosc.write">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.write" title="Permalink to this definition">#</a></dt>
+<dd><p>Encodes a root Element to .tosc</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element" title="(in Python v3.10)"><em>xml.etree.ElementTree.Element</em></a>) – </p></li>
+<li><p><strong>outputPath</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><em>Optional</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
+</dd>
+</dl>
 </dd></dl>
 </section>
 </section>
@@ -355,9 +434,8 @@ Creates Enum SubElements if they are not found in the Node.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Using tosclib</a><ul>
-<li><a class="reference internal" href="#guide">Guide</a></li>
-<li><a class="reference internal" href="#working-with-tosc-files">Working with .tosc files</a></li>
+<li><a class="reference internal" href="#">Working with .tosc files</a><ul>
+<li><a class="reference internal" href="#classes-and-functions">Classes and Functions</a></li>
 </ul>
 </li>
 </ul>

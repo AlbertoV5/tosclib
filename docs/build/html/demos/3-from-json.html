@@ -250,7 +250,7 @@
     <span class="n">group</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"Controls"</span><span class="p">)</span>
     <span class="n">group</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="mi">420</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1080</span><span class="p">)</span>
     <span class="n">group</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-
+    
     <span class="c1"># Create faders based on Json data</span>
     <span class="n">jsonData</span> <span class="o">=</span> <span class="n">getJson</span><span class="p">(</span><span class="n">jsonFile</span><span class="p">)</span>
     <span class="n">limit</span> <span class="o">=</span> <span class="mi">10</span>
@@ -262,6 +262,7 @@
         <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">limit</span><span class="p">:</span>
             <span class="k">break</span>
 
+    <span class="nb">print</span><span class="p">([</span><span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">getPropertyValue</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">children</span><span class="p">])</span>
     <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">)</span>
 
 

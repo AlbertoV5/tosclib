@@ -15,9 +15,11 @@
    
       createTemplate
       findChildByName
+      findKey
       getTextValueFromKey
       load
       pullValueFromKey
+      showElement
       write
    
    
@@ -31,7 +33,6 @@
       ElementTOSC
       OSC
       Partial
-      SubElements
       Trigger
    
    

@@ -159,7 +159,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../guide/1-tosc-files.html">Understanding .tosc files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/2-tosc-msgs.html">Message Elements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/3-tosclib.html">Using tosclib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/3-tosclib.html">Working with .tosc files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/4-tosc-valid.html">Valid Elements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/5-tosc-msg.html">OSC Message Elements</a></li>
 </ul>
@@ -218,7 +218,7 @@
     <span class="n">parent</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="c1"># Set the property to the parent node, not the root node.</span>
-    <span class="n">parent</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"s"</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"CustomProperty"</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"1612"</span><span class="p">)</span>
+    <span class="n">parent</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"s"</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"CustomProperty"</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"Craig"</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Added Property: "</span><span class="p">)</span>
     <span class="n">parent</span><span class="o">.</span><span class="n">showProperty</span><span class="p">(</span><span class="s2">"CustomProperty"</span><span class="p">)</span>
@@ -241,6 +241,30 @@
 <li><p><a class="reference external" href="https://github.com/AlbertoV5/tosclib/blob/main/demos/files/test2.tosc">Input .tosc</a></p></li>
 <li><p><a class="reference external" href="https://github.com/AlbertoV5/tosclib/blob/main/demos/files/customProp.tosc">Output .tosc</a></p></li>
 </ul>
+<p><strong>GIFS</strong></p>
+<ol class="arabic simple">
+<li><p>Call script that changes the Custom Property, then call another one that sets the label text to the Custom Property.</p></li>
+</ol>
+<img alt="../_images/tosclib-property1.GIF" src="../_images/tosclib-property1.GIF"/>
+<ol class="arabic simple" start="2">
+<li><p>Save and close the template. Then load it again and you’ll see the label text remains, as it sets its value to the Custom Property on init.</p></li>
+</ol>
+<img alt="../_images/tosclib-property2.GIF" src="../_images/tosclib-property2.GIF"/>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">This is the lua code in the label</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kr">function</span> <span class="nf">init</span><span class="p">()</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">parent</span><span class="p">.</span><span class="n">children</span><span class="p">.</span><span class="n">label3</span><span class="p">.</span><span class="n">values</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parent</span><span class="p">.</span><span class="n">CustomProperty</span>
+<span class="kr">end</span>
+
+<span class="kr">function</span> <span class="nf">onValueChanged</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="kr">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"touch"</span> <span class="ow">and</span> <span class="n">self</span><span class="p">.</span><span class="n">values</span><span class="p">.</span><span class="n">touch</span> <span class="o">==</span> <span class="kc">true</span> <span class="kr">then</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">parent</span><span class="p">.</span><span class="n">CustomProperty</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">parent</span><span class="p">.</span><span class="n">children</span><span class="p">.</span><span class="n">label3</span><span class="p">.</span><span class="n">values</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parent</span><span class="p">.</span><span class="n">CustomProperty</span>
+    <span class="kr">end</span>
+<span class="kr">end</span>
+</pre></div>
+</div>
+</div>
 </section>
 
         </article>

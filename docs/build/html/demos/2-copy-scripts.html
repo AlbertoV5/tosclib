@@ -159,7 +159,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../guide/1-tosc-files.html">Understanding .tosc files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/2-tosc-msgs.html">Message Elements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/3-tosclib.html">Using tosclib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/3-tosclib.html">Working with .tosc files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/4-tosc-valid.html">Valid Elements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/5-tosc-msg.html">OSC Message Elements</a></li>
 </ul>
@@ -234,7 +234,7 @@
         <span class="c1"># Assuming the Element is the target, iterate through children</span>
         <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
             <span class="n">box</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">box</span><span class="o">.</span><span class="n">isProperty</span><span class="p">(</span><span class="s2">"script"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">box</span><span class="o">.</span><span class="n">hasProperty</span><span class="p">(</span><span class="s2">"script"</span><span class="p">):</span>
                 <span class="n">box</span><span class="o">.</span><span class="n">setPropertyValue</span><span class="p">(</span><span class="s2">"script"</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">box</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="s2">"script"</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span>

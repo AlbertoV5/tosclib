@@ -6,7 +6,7 @@ if __name__ == "__main__":
     parent = tosc.ElementTOSC(root[0])
 
     # Set the property to the parent node, not the root node.
-    parent.createProperty(type="s", key="CustomProperty", text="1612")
+    parent.createProperty(type="s", key="CustomProperty", text="Craig")
 
     print("Added Property: ")
     parent.showProperty("CustomProperty")

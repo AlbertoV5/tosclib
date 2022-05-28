@@ -242,7 +242,7 @@
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Value</span><span class="p">:</span>
-    <span class="sd">"""Default Value Elements for "touch".</span>
+    <span class="sd">"""Default Elements for &lt;value&gt;.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        key (str, optional): "x" or "touch". Defaults to "touch".</span>
@@ -261,7 +261,7 @@
 
 <div class="viewcode-block" id="Partial"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.Partial">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Partial</span><span class="p">:</span>
-    <span class="sd">"""Default Partial Elements for "CONSTANT"</span>
+    <span class="sd">"""Default Elements for &lt;partial&gt;</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        type (str, optional): "CONSTANT", "INDEX", "VALUE", "PROPERTY". Defaults to "CONSTANT".</span>
@@ -280,7 +280,7 @@
 
 <div class="viewcode-block" id="Trigger"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.Trigger">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Trigger</span><span class="p">:</span>
-    <span class="sd">"""Default Trigger Elements for "x"</span>
+    <span class="sd">"""Default Elements for &lt;trigger&gt;</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        var (str, optional): "x" or "touch". Defaults to "x".</span>
@@ -293,7 +293,7 @@
 
 <div class="viewcode-block" id="OSC"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.OSC">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">OSC</span><span class="p">:</span>
-    <span class="sd">"""Default OSC Elements for address "/name", arguments "x"</span>
+    <span class="sd">"""Default Elements and Sub Elements for &lt;osc&gt;</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        enabled (str, optional): Boolean. Defaults to "1".</span>
@@ -489,13 +489,11 @@
             <span class="k">return</span> <span class="n">e</span>
 
 
-<span class="k">def</span> <span class="nf">showElement</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">showElement</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
     <span class="sd">"""Generic show function, UTF-8, indented 2 spaces"""</span>
     <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">9</span><span class="p">:</span>
         <span class="n">ET</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">"  "</span><span class="p">)</span>
-    <span class="n">show</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">show</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">show</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">createTemplate</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>

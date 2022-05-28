@@ -32,7 +32,7 @@ class ControlType(Enum):
 
 @dataclass
 class Value:
-    """Default Value Elements for "touch".
+    """Default Elements for <value>.
 
     Args:
         key (str, optional): "x" or "touch". Defaults to "touch".
@@ -51,7 +51,7 @@ class Value:
 
 @dataclass
 class Partial:
-    """Default Partial Elements for "CONSTANT"
+    """Default Elements for <partial>
 
     Args:
         type (str, optional): "CONSTANT", "INDEX", "VALUE", "PROPERTY". Defaults to "CONSTANT".
@@ -70,7 +70,7 @@ class Partial:
 
 @dataclass
 class Trigger:
-    """Default Trigger Elements for "x"
+    """Default Elements for <trigger>
 
     Args:
         var (str, optional): "x" or "touch". Defaults to "x".
@@ -83,7 +83,7 @@ class Trigger:
 
 @dataclass
 class OSC:
-    """Default OSC Elements for address "/name", arguments "x"
+    """Default Elements and Sub Elements for <osc>
 
     Args:
         enabled (str, optional): Boolean. Defaults to "1".
@@ -279,13 +279,11 @@ def findKey(elements: ET.Element, key: str) -> ET.Element:
             return e
 
 
-def showElement(e: ET.Element) -> str:
+def showElement(e: ET.Element):
     """Generic show function, UTF-8, indented 2 spaces"""
     if sys.version_info[0] == 3 and sys.version_info[1] >= 9:
         ET.indent(e, "  ")
-    show = ET.tostring(e).decode("utf-8")
-    print(show)
-    return show
+    print(ET.tostring(e).decode("utf-8"))
 
 
 def createTemplate() -> ET.Element:

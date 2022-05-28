@@ -34,6 +34,7 @@
       OSC
       Partial
       Trigger
+      Value
    
    
 

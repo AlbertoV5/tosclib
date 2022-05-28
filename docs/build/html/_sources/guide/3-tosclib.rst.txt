@@ -23,7 +23,7 @@ The basic concept is to load a regular XML Element and create a new ElementTOSC 
    :caption: Finally we can modify the Elements, for example changing the 'color' Property.
    
    colors = {"r":"0", "g":"0", "b":"1", "a":"1"}
-   target.setPropertyValue("color", params = colors)
+   target.setProperty("color", params = colors)
 
 .. code-block::
    :caption: Alternatively, we can use a shortcut instead to set the color property directly:
@@ -46,7 +46,7 @@ Here are more details on the functions and methods we used:
 
 .. autoclass:: tosclib.tosc.ElementTOSC
 
-.. autofunction:: tosclib.tosc.ElementTOSC.setPropertyValue
+.. autofunction:: tosclib.tosc.ElementTOSC.setProperty
 
 .. autofunction:: tosclib.tosc.ElementTOSC.setColor
 

@@ -19,7 +19,7 @@ class TestTemplate(unittest.TestCase):
         cls.fileName = "test.tosc"
         cls.root = tosc.createTemplate()
         cls.template = tosc.ElementTOSC(cls.root[0])
-        cls.template.createNode("GROUP")
+        cls.template.createChild("GROUP")
         assert cls.template.createProperty("b", "background", "0")
         assert cls.template.setColor(0, 0, 0, 1)
         assert cls.template.createProperty("f", "cornerRadius", "0")
@@ -33,7 +33,7 @@ class TestTemplate(unittest.TestCase):
         assert cls.template.createProperty("i", "pointerPriority", "0")
         assert cls.template.createProperty("i", "shape", "1")
         assert cls.template.createProperty("b", "visible", "1")
-        assert cls.template.createValue("touch", "0", "0", "false", "0")
+        assert cls.template.createValue(tosc.Value("touch", "0", "0", "false", "0"))
         tosc.write(cls.root, cls.directory / cls.fileName)
 
     def test_change_properties(self):

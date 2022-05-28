@@ -1,17 +1,17 @@
 OSC Message Elements
 =================================
 
-This is how the valid Elements of the OSC message look like:
+In order to create a correct OSC message, we will use a few classes that set the specific Sub Elements of the <osc> Element.
 
-**OSC Message**
+We can create a message from ElementTOSC with:
+
+.. automethod:: tosclib.tosc.ElementTOSC.createOSC
+
+Then we can construct a custom osc message with the help of these classes:
 
 .. autoclass:: tosclib.tosc.OSC
-    :members:
 
 .. autoclass:: tosclib.tosc.Trigger
 
-
 .. autoclass:: tosclib.tosc.Partial
 
-
-.. automethod:: tosclib.tosc.ElementTOSC.createOSC

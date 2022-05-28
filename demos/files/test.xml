@@ -10400,7 +10400,7 @@ end]]></value>
 <send>1</send>
 <receive>1</receive>
 <feedback>0</feedback>
-<connections>00001</connections>
+<connections>00010</connections>
 <triggers>
 <trigger>
 <var><![CDATA[x]]></var>
@@ -10581,6 +10581,85 @@ end]]></value>
   print(self.parent.CustomProperty)
 
 end]]></value>
+</property>
+<property type='i'>
+<key><![CDATA[shape]]></key>
+<value>1</value>
+</property>
+<property type='b'>
+<key><![CDATA[visible]]></key>
+<value>1</value>
+</property>
+</properties>
+<values>
+<value>
+<key><![CDATA[touch]]></key>
+<locked>0</locked>
+<lockedDefaultCurrent>0</lockedDefaultCurrent>
+<default><![CDATA[false]]></default>
+<defaultPull>0</defaultPull>
+</value>
+</values>
+</node>
+<node ID='c82507d8-dc94-11ec-a034-2cf05d85548b' type='BOX'>
+<properties>
+<property type='b'>
+<key><![CDATA[background]]></key>
+<value>1</value>
+</property>
+<property type='c'>
+<key><![CDATA[color]]></key>
+<value>
+<r>1</r>
+<g>0</g>
+<b>0</b>
+<a>1</a>
+</value>
+</property>
+<property type='f'>
+<key><![CDATA[cornerRadius]]></key>
+<value>1</value>
+</property>
+<property type='r'>
+<key><![CDATA[frame]]></key>
+<value>
+<x>650</x>
+<y>350</y>
+<w>50</w>
+<h>50</h>
+</value>
+</property>
+<property type='b'>
+<key><![CDATA[grabFocus]]></key>
+<value>1</value>
+</property>
+<property type='b'>
+<key><![CDATA[interactive]]></key>
+<value>0</value>
+</property>
+<property type='b'>
+<key><![CDATA[locked]]></key>
+<value>0</value>
+</property>
+<property type='s'>
+<key><![CDATA[name]]></key>
+<value><![CDATA[boxy]]></value>
+</property>
+<property type='i'>
+<key><![CDATA[orientation]]></key>
+<value>0</value>
+</property>
+<property type='b'>
+<key><![CDATA[outline]]></key>
+<value>0</value>
+</property>
+<property type='i'>
+<key><![CDATA[outlineStyle]]></key>
+<value>1</value>
+</property>
+<property type='i'>
+<key><![CDATA[pointerPriority]]></key>
+<value>0</value>
 </property>
 <property type='i'>
 <key><![CDATA[shape]]></key>

@@ -1,11 +1,31 @@
 import tosclib as tosc
+from tosclib.tosc import Partial
 
 
 root = tosc.createTemplate()
 element = tosc.ElementTOSC(root)
 
-element.createValue("test", "1", "0", "1234", "0")
+element.createValue(tosc.Value())
 
-element.setValue("test", "0", "1", "4321", "1")
+element.setValue(tosc.Value("touch", "1", "1", "true", "1"))
 
 element.showValues()
+
+element.createOSC(
+    message=tosc.OSC(
+        "0",
+        "0",
+        "0",
+        "1",
+        "00001",
+        [tosc.Trigger()],
+        [tosc.Partial(), tosc.Partial()],
+        [Partial(), Partial()],
+    )
+)
+
+element.createProperty("f", "frame", "", {"r":"0", "g":"1", "b":"0", "a":"1"})
+element.showProperty("frame")
+element.setProperty("frame", "", {"r":"0", "g":"0", "b":"1", "a":"1"})
+
+# element.setFrame(1, 0, 0, 1)

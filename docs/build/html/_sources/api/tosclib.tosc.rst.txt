@@ -30,6 +30,7 @@
 
    .. autosummary::
    
+      ControlType
       ElementTOSC
       OSC
       Partial

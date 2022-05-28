@@ -211,6 +211,8 @@
 <span></span><span class="sd">"""</span>
 <span class="sd">Simplify navigating, editing and generating .tosc files.</span>
 <span class="sd">"""</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">unique</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -219,112 +221,103 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 
+<span class="nd">@unique</span>
+<span class="k">class</span> <span class="nc">ControlType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">"""https://hexler.net/touchosc/manual/script-enumerations#controltype"""</span>
+
+    <span class="n">BOX</span> <span class="o">=</span> <span class="s2">"BOX"</span>
+    <span class="n">BUTTON</span> <span class="o">=</span> <span class="s2">"BUTTON"</span>
+    <span class="n">LABEL</span> <span class="o">=</span> <span class="s2">"LABEL"</span>
+    <span class="n">TEXT</span> <span class="o">=</span> <span class="s2">"TEXT"</span>
+    <span class="n">FADER</span> <span class="o">=</span> <span class="s2">"FADER"</span>
+    <span class="n">XY</span> <span class="o">=</span> <span class="s2">"XY"</span>
+    <span class="n">RADIAL</span> <span class="o">=</span> <span class="s2">"RADIAL"</span>
+    <span class="n">ENCODER</span> <span class="o">=</span> <span class="s2">"ENCODER"</span>
+    <span class="n">RADAR</span> <span class="o">=</span> <span class="s2">"RADAR"</span>
+    <span class="n">RADIO</span> <span class="o">=</span> <span class="s2">"RADIO"</span>
+    <span class="n">GROUP</span> <span class="o">=</span> <span class="s2">"GROUP"</span>
+    <span class="n">PAGER</span> <span class="o">=</span> <span class="s2">"PAGER"</span>
+    <span class="n">GRID</span> <span class="o">=</span> <span class="s2">"GRID"</span>
+
+
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Value</span><span class="p">:</span>
-    <span class="sd">"""Valid &lt;value&gt; Elements"""</span>
+    <span class="sd">"""Default Value Elements for "touch".</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"touch"</span><span class="p">,</span>
-        <span class="n">locked</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">lockedDefaultCurrent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"false"</span><span class="p">,</span>
-        <span class="n">defaultPull</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">"""Default Value Elements for "touch".</span>
+<span class="sd">    Args:</span>
+<span class="sd">        key (str, optional): "x" or "touch". Defaults to "touch".</span>
+<span class="sd">        locked (str, optional): boolean. Defaults to "0".</span>
+<span class="sd">        lockedDefaultCurrent (str, optional): boolean. Defaults to "0".</span>
+<span class="sd">        default (str, optional): float or boolean. Defaults to "false".</span>
+<span class="sd">        defaultPull (str, optional): 0 to 100. Defaults to "0".</span>
+<span class="sd">    """</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            key (str, optional): "x" or "touch". Defaults to "touch".</span>
-<span class="sd">            locked (str, optional): boolean. Defaults to "0".</span>
-<span class="sd">            lockedDefaultCurrent (str, optional): boolean. Defaults to "0".</span>
-<span class="sd">            default (str, optional): float or boolean. Defaults to "false".</span>
-<span class="sd">            defaultPull (str, optional): 0 to 100. Defaults to "0".</span>
-<span class="sd">        """</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">locked</span> <span class="o">=</span> <span class="n">locked</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lockedDefaultCurrent</span> <span class="o">=</span> <span class="n">lockedDefaultCurrent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">default</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">defaultPull</span> <span class="o">=</span> <span class="n">defaultPull</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"touch"</span>
+    <span class="n">locked</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
+    <span class="n">lockedDefaultCurrent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
+    <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"false"</span>
+    <span class="n">defaultPull</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
 
 
-<div class="viewcode-block" id="Partial"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.Partial">[docs]</a><span class="k">class</span> <span class="nc">Partial</span><span class="p">:</span>
-    <span class="sd">"""Valid &lt;partial&gt; Elements"""</span>
+<div class="viewcode-block" id="Partial"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.Partial">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Partial</span><span class="p">:</span>
+    <span class="sd">"""Default Partial Elements for "CONSTANT"</span>
 
-<div class="viewcode-block" id="Partial.__init__"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.Partial.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"CONSTANT"</span><span class="p">,</span>
-        <span class="n">conversion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"STRING"</span><span class="p">,</span>
-        <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"/"</span><span class="p">,</span>
-        <span class="n">scaleMin</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">scaleMax</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">"""Default Partial Elements for "CONSTANT"</span>
+<span class="sd">    Args:</span>
+<span class="sd">        type (str, optional): "CONSTANT", "INDEX", "VALUE", "PROPERTY". Defaults to "CONSTANT".</span>
+<span class="sd">        conversion (str, optional): "BOOLEAN", "INTEGER", "FLOAT", "STRING". Defaults to "STRING".</span>
+<span class="sd">        value (str, optional): Depends on the context. Defaults to "/".</span>
+<span class="sd">        scaleMin (str, optional): If "VALUE", set range. Defaults to "0".</span>
+<span class="sd">        scaleMax (str, optional): If "VALUE", set range. Defaults to "1".</span>
+<span class="sd">    """</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            type (str, optional): "CONSTANT", "INDEX", "VALUE", "PROPERTY". Defaults to "CONSTANT".</span>
-<span class="sd">            conversion (str, optional): "BOOLEAN", "INTEGER", "FLOAT", "STRING". Defaults to "STRING".</span>
-<span class="sd">            value (str, optional): Depends on the context. Defaults to "/".</span>
-<span class="sd">            scaleMin (str, optional): If "VALUE", set range. Defaults to "0".</span>
-<span class="sd">            scaleMax (str, optional): If "VALUE", set range. Defaults to "1".</span>
-<span class="sd">        """</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">conversion</span> <span class="o">=</span> <span class="n">conversion</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scaleMin</span> <span class="o">=</span> <span class="n">scaleMin</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scaleMax</span> <span class="o">=</span> <span class="n">scaleMax</span></div></div>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"CONSTANT"</span>
+    <span class="n">conversion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"STRING"</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"/"</span>
+    <span class="n">scaleMin</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
+    <span class="n">scaleMax</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span></div>
 
 
-<div class="viewcode-block" id="Trigger"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.Trigger">[docs]</a><span class="k">class</span> <span class="nc">Trigger</span><span class="p">:</span>
-    <span class="sd">"""Valid &lt;trigger&gt; Elements"""</span>
+<div class="viewcode-block" id="Trigger"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.Trigger">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Trigger</span><span class="p">:</span>
+    <span class="sd">"""Default Trigger Elements for "x"</span>
 
-<div class="viewcode-block" id="Trigger.__init__"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.Trigger.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"x"</span><span class="p">,</span> <span class="n">con</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"ANY"</span><span class="p">):</span>
-        <span class="sd">"""Default Trigger Elements for "x"</span>
+<span class="sd">    Args:</span>
+<span class="sd">        var (str, optional): "x" or "touch". Defaults to "x".</span>
+<span class="sd">        con (str, optional): "ANY", "RISE" or "FALL". Defaults to "ANY".</span>
+<span class="sd">    """</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            var (str, optional): "x" or "touch". Defaults to "x".</span>
-<span class="sd">            con (str, optional): "ANY", "RISE" or "FALL". Defaults to "ANY".</span>
-<span class="sd">        """</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">var</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">con</span></div></div>
+    <span class="n">var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"x"</span>
+    <span class="n">condition</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"ANY"</span></div>
 
 
-<div class="viewcode-block" id="OSC"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.OSC">[docs]</a><span class="k">class</span> <span class="nc">OSC</span><span class="p">:</span>
-    <span class="sd">"""Valid &lt;osc&gt; Elements"""</span>
+<div class="viewcode-block" id="OSC"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.OSC">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">OSC</span><span class="p">:</span>
+    <span class="sd">"""Default OSC Elements for address "/name", arguments "x"</span>
 
-<div class="viewcode-block" id="OSC.__init__"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.OSC.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">enabled</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">send</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">receive</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">feedback</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">connections</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"00001"</span><span class="p">,</span>
-        <span class="n">triggers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Trigger</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Trigger</span><span class="p">()],</span>
-        <span class="n">path</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Partial</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Partial</span><span class="p">(),</span> <span class="n">Partial</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"PROPERTY"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">"name"</span><span class="p">)],</span>
-        <span class="n">arguments</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Partial</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">Partial</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"VALUE"</span><span class="p">,</span> <span class="n">conversion</span><span class="o">=</span><span class="s2">"FLOAT"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">"x"</span><span class="p">)</span>
-        <span class="p">],</span>
-    <span class="p">):</span>
-        <span class="sd">"""Default OSC Elements for address "/name", arguments "x"</span>
+<span class="sd">    Args:</span>
+<span class="sd">        enabled (str, optional): Boolean. Defaults to "1".</span>
+<span class="sd">        send (str, optional): Boolean. Defaults to "1".</span>
+<span class="sd">        receive (str, optional): Boolean. Defaults to "1".</span>
+<span class="sd">        feedback (str, optional): Boolean. Defaults to "0".</span>
+<span class="sd">        connections (str, optional): Binary. Defaults to "00001" (channel 1, "00011" means 1 and 2).</span>
+<span class="sd">        triggers (List[Trigger], optional): [Trigger]. Defaults to [Trigger()].</span>
+<span class="sd">        path (List[Partial], optional): [Partial]. Defaults to [Partial(), Partial(typ="PROPERTY", val="name")].</span>
+<span class="sd">        arguments (List[Partial], optional): [Partial]. Defaults to [Partial(typ="VALUE", con="FLOAT", val="x")].</span>
+<span class="sd">    """</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            enabled (str, optional): Boolean. Defaults to "1".</span>
-<span class="sd">            send (str, optional): Boolean. Defaults to "1".</span>
-<span class="sd">            receive (str, optional): Boolean. Defaults to "1".</span>
-<span class="sd">            feedback (str, optional): Boolean. Defaults to "0".</span>
-<span class="sd">            connections (str, optional): Binary. Defaults to "00001" (channel 1, "00011" means 1 and 2).</span>
-<span class="sd">            triggers (List[Trigger], optional): [Trigger]. Defaults to [Trigger()].</span>
-<span class="sd">            path (List[Partial], optional): [Partial]. Defaults to [Partial(), Partial(typ="PROPERTY", val="name")].</span>
-<span class="sd">            arguments (List[Partial], optional): [Partial]. Defaults to [Partial(typ="VALUE", con="FLOAT", val="x")].</span>
-<span class="sd">        """</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="n">enabled</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">send</span> <span class="o">=</span> <span class="n">send</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">receive</span> <span class="o">=</span> <span class="n">receive</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feedback</span> <span class="o">=</span> <span class="n">feedback</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">connections</span> <span class="o">=</span> <span class="n">connections</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">triggers</span> <span class="o">=</span> <span class="n">triggers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="n">arguments</span></div></div>
+    <span class="n">enabled</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span>
+    <span class="n">send</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span>
+    <span class="n">receive</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span>
+    <span class="n">feedback</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
+    <span class="n">connections</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"00001"</span>
+    <span class="n">triggers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Trigger</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="n">Trigger</span><span class="p">()])</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Partial</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="n">Partial</span><span class="p">(),</span> <span class="n">Partial</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"PROPERTY"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">"name"</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="n">arguments</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Partial</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="n">Partial</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"VALUE"</span><span class="p">,</span> <span class="n">conversion</span><span class="o">=</span><span class="s2">"FLOAT"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">"x"</span><span class="p">)]</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ElementTOSC"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.tosc.ElementTOSC">[docs]</a><span class="k">class</span> <span class="nc">ElementTOSC</span><span class="p">:</span>
@@ -378,8 +371,7 @@
             <span class="n">value</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">for</span> <span class="n">paramKey</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-            <span class="n">e</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">paramKey</span><span class="p">)</span>
-            <span class="n">e</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">paramKey</span><span class="p">]</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">paramKey</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">paramKey</span><span class="p">]</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">createProperty</span><span class="p">(</span>
@@ -397,8 +389,7 @@
             <span class="n">valueElement</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">for</span> <span class="n">paramKey</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-            <span class="n">subElement</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">valueElement</span><span class="p">,</span> <span class="n">paramKey</span><span class="p">)</span>
-            <span class="n">subElement</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">paramKey</span><span class="p">]</span>
+            <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">valueElement</span><span class="p">,</span> <span class="n">paramKey</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">paramKey</span><span class="p">]</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
@@ -415,8 +406,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Value '</span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' already exists."</span><span class="p">)</span>
         <span class="n">element</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-            <span class="n">e</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-            <span class="n">e</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">iselement</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -428,36 +418,30 @@
         <span class="k">return</span> <span class="kc">True</span>
 
 <div class="viewcode-block" id="ElementTOSC.createOSC"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.ElementTOSC.createOSC">[docs]</a>    <span class="k">def</span> <span class="nf">createOSC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="n">OSC</span> <span class="o">=</span> <span class="n">OSC</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
-        <span class="sd">"""Create new OSC message from dict"""</span>
         <span class="n">osc</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="p">,</span> <span class="s2">"osc"</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
             <span class="n">element</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">osc</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-            <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>  <span class="c1"># For Partials and Triggers</span>
-                <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
-                    <span class="n">partial</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-                    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>  <span class="c1"># Attributes of Partials/Triggers</span>
-                        <span class="n">s</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">partial</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-                        <span class="n">s</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>  <span class="c1"># For Partials and Triggers</span>
+                <span class="k">for</span> <span class="n">partialOrTrigger</span> <span class="ow">in</span> <span class="n">attribute</span><span class="p">:</span>
+                    <span class="n">subElement</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
+                        <span class="n">element</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">partialOrTrigger</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                    <span class="p">)</span>  <span class="c1"># Create &lt;partial&gt; or &lt;trigger&gt;</span>
+                    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">partialOrTrigger</span><span class="p">):</span>  <span class="c1"># Attributes of Partials/Triggers</span>
+                        <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">subElement</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">partialOrTrigger</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">element</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">osc</span></div>
 
     <span class="k">def</span> <span class="nf">findChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
-        <span class="sd">"""Look for a Child Node by name"""</span>
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">child</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">):</span>
                 <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span>
-                <span class="n">getTextValueFromKey</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">),</span> <span class="s2">"name"</span><span class="p">),</span> <span class="n">name</span>
-            <span class="p">):</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">findKey</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">),</span> <span class="s2">"name"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">child</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">createChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
-        <span class="sd">"""</span>
-<span class="sd">        Create and return a children Element with attrib = {'ID' : str(uuid4()), 'type' : type}</span>
-<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">,</span> <span class="s2">"node"</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">"ID"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="s2">"type"</span><span class="p">:</span> <span class="nb">type</span><span class="p">}</span>
         <span class="p">)</span>

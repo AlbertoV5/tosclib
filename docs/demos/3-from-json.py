@@ -38,7 +38,7 @@ def main(jsonFile, outputFile):
     group.createProperty("s", "name", "Controls")
     group.setFrame(420, 0, 1080, 1080)
     group.setColor(0.25, 0.25, 0.25, 1)
-
+    
     # Create faders based on Json data
     jsonData = getJson(jsonFile)
     limit = 10
@@ -50,6 +50,7 @@ def main(jsonFile, outputFile):
         if i == limit:
             break
 
+    print([tosc.ElementTOSC(i).getPropertyValue("name").text for i in group.children])
     tosc.write(root, outputFile)
 
 

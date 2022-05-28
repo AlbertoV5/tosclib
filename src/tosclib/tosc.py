@@ -157,6 +157,31 @@ class ElementTOSC:
             self.children, "node", attrib={"ID": str(uuid.uuid4()), "type": type}
         )
 
+    def isValue(self, key: str):
+        for value in self.values:
+            if re.fullmatch(value.find("key").text, key):
+                return True
+        return False
+
+    def createValue(
+        self,
+        key: str,
+        locked: str,
+        lockedDefaultCurrent: str,
+        default: str,
+        defaultPull: str,
+    ) -> bool:
+        """Create a Value element in <values>"""
+        if self.isValue(key):
+            raise ValueError(f"Value '{key}' already exists")
+
+        value = ET.SubElement(self.values, "value")
+        for i, a in locals().items():
+            if i != "self" and i != "value":
+                e = ET.SubElement(value, i)
+                e.text = a
+        return ET.iselement(value)
+
     def setFrame(self, x, y, w, h) -> bool:
         """Create a Frame Property, if already exists, then modify it."""
         params = {"x": str(x), "y": str(y), "w": str(w), "h": str(h)}
@@ -197,6 +222,11 @@ class ElementTOSC:
         ET.indent(self.values, "  ")
         print(ET.tostring(self.values).decode("utf-8"))
 
+    def showMessages(self):
+        for message in self.messages:
+            ET.indent(message, "  ")
+            print(ET.tostring(message).decode("utf-8"))
+
     def showProperty(self, name: str):
         """Print indented XML of a single property by name as utf-8"""
         for property in self.properties:
@@ -210,12 +240,6 @@ class ElementTOSC:
             if re.fullmatch(value.find("key").text, name):
                 ET.indent(value, "  ")
                 print(ET.tostring(value).decode("utf-8"))
-
-    def showMessages(self):
-        buff = ""
-        for message in self.messages:
-            ET.indent(message, "  ")
-            print(ET.tostring(message).decode("utf-8"))
 
 
 def createTemplate() -> ET.Element:

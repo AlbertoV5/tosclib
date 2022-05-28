@@ -2,22 +2,15 @@ Manual Release
 
 Update version number in:
     - tosclib/setup.py
-    - docs/requirements.txt 
     - docs/source/conf.py release, version
 
 Development:
-
-make new git branch
 
 python -m pip install -e .
 
 docs\make html
 
-commit to branch
-
 Release:
-
-merge branch to main
 
 python -m build
 

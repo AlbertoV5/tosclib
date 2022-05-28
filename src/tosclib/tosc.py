@@ -2,7 +2,6 @@
 Simplify navigating, editing and generating .tosc files.
 """
 import sys
-from tkinter import E
 import xml.etree.ElementTree as ET
 import re
 import zlib

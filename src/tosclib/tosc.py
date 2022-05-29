@@ -1,6 +1,8 @@
 """
 Simplify navigating, editing and generating .tosc files.
 """
+from dataclasses import dataclass, field
+from enum import Enum, unique
 import sys
 import xml.etree.ElementTree as ET
 import re
@@ -9,112 +11,103 @@ import uuid
 from typing import List
 
 
+@unique
+class ControlType(Enum):
+    """https://hexler.net/touchosc/manual/script-enumerations#controltype"""
+
+    BOX = "BOX"
+    BUTTON = "BUTTON"
+    LABEL = "LABEL"
+    TEXT = "TEXT"
+    FADER = "FADER"
+    XY = "XY"
+    RADIAL = "RADIAL"
+    ENCODER = "ENCODER"
+    RADAR = "RADAR"
+    RADIO = "RADIO"
+    GROUP = "GROUP"
+    PAGER = "PAGER"
+    GRID = "GRID"
+
+
+@dataclass
 class Value:
-    """Valid <value> Elements"""
+    """Default Elements for <value>.
 
-    def __init__(
-        self,
-        key: str = "touch",
-        locked: str = "0",
-        lockedDefaultCurrent: str = "0",
-        default: str = "false",
-        defaultPull: str = "0",
-    ):
-        """Default Value Elements for "touch".
+    Args:
+        key (str, optional): "x" or "touch". Defaults to "touch".
+        locked (str, optional): boolean. Defaults to "0".
+        lockedDefaultCurrent (str, optional): boolean. Defaults to "0".
+        default (str, optional): float or boolean. Defaults to "false".
+        defaultPull (str, optional): 0 to 100. Defaults to "0".
+    """
 
-        Args:
-            key (str, optional): "x" or "touch". Defaults to "touch".
-            locked (str, optional): boolean. Defaults to "0".
-            lockedDefaultCurrent (str, optional): boolean. Defaults to "0".
-            default (str, optional): float or boolean. Defaults to "false".
-            defaultPull (str, optional): 0 to 100. Defaults to "0".
-        """
-        self.key = key
-        self.locked = locked
-        self.lockedDefaultCurrent = lockedDefaultCurrent
-        self.default = default
-        self.defaultPull = defaultPull
+    key: str = "touch"
+    locked: str = "0"
+    lockedDefaultCurrent: str = "0"
+    default: str = "false"
+    defaultPull: str = "0"
 
 
+@dataclass
 class Partial:
-    """Valid <partial> Elements"""
+    """Default Elements for <partial>
 
-    def __init__(
-        self,
-        type: str = "CONSTANT",
-        conversion: str = "STRING",
-        value: str = "/",
-        scaleMin: str = "0",
-        scaleMax: str = "1",
-    ):
-        """Default Partial Elements for "CONSTANT"
+    Args:
+        type (str, optional): "CONSTANT", "INDEX", "VALUE", "PROPERTY". Defaults to "CONSTANT".
+        conversion (str, optional): "BOOLEAN", "INTEGER", "FLOAT", "STRING". Defaults to "STRING".
+        value (str, optional): Depends on the context. Defaults to "/".
+        scaleMin (str, optional): If "VALUE", set range. Defaults to "0".
+        scaleMax (str, optional): If "VALUE", set range. Defaults to "1".
+    """
 
-        Args:
-            type (str, optional): "CONSTANT", "INDEX", "VALUE", "PROPERTY". Defaults to "CONSTANT".
-            conversion (str, optional): "BOOLEAN", "INTEGER", "FLOAT", "STRING". Defaults to "STRING".
-            value (str, optional): Depends on the context. Defaults to "/".
-            scaleMin (str, optional): If "VALUE", set range. Defaults to "0".
-            scaleMax (str, optional): If "VALUE", set range. Defaults to "1".
-        """
-
-        self.type = type
-        self.conversion = conversion
-        self.value = value
-        self.scaleMin = scaleMin
-        self.scaleMax = scaleMax
+    type: str = "CONSTANT"
+    conversion: str = "STRING"
+    value: str = "/"
+    scaleMin: str = "0"
+    scaleMax: str = "1"
 
 
+@dataclass
 class Trigger:
-    """Valid <trigger> Elements"""
+    """Default Elements for <trigger>
 
-    def __init__(self, var: str = "x", con: str = "ANY"):
-        """Default Trigger Elements for "x"
+    Args:
+        var (str, optional): "x" or "touch". Defaults to "x".
+        con (str, optional): "ANY", "RISE" or "FALL". Defaults to "ANY".
+    """
 
-        Args:
-            var (str, optional): "x" or "touch". Defaults to "x".
-            con (str, optional): "ANY", "RISE" or "FALL". Defaults to "ANY".
-        """
-        self.var = var
-        self.condition = con
+    var: str = "x"
+    condition: str = "ANY"
 
 
+@dataclass
 class OSC:
-    """Valid <osc> Elements"""
+    """Default Elements and Sub Elements for <osc>
 
-    def __init__(
-        self,
-        enabled: str = "1",
-        send: str = "1",
-        receive: str = "1",
-        feedback: str = "0",
-        connections: str = "00001",
-        triggers: List[Trigger] = [Trigger()],
-        path: List[Partial] = [Partial(), Partial(type="PROPERTY", value="name")],
-        arguments: List[Partial] = [
-            Partial(type="VALUE", conversion="FLOAT", value="x")
-        ],
-    ):
-        """Default OSC Elements for address "/name", arguments "x"
+    Args:
+        enabled (str, optional): Boolean. Defaults to "1".
+        send (str, optional): Boolean. Defaults to "1".
+        receive (str, optional): Boolean. Defaults to "1".
+        feedback (str, optional): Boolean. Defaults to "0".
+        connections (str, optional): Binary. Defaults to "00001" (channel 1, "00011" means 1 and 2).
+        triggers (List[Trigger], optional): [Trigger]. Defaults to [Trigger()].
+        path (List[Partial], optional): [Partial]. Defaults to [Partial(), Partial(typ="PROPERTY", val="name")].
+        arguments (List[Partial], optional): [Partial]. Defaults to [Partial(typ="VALUE", con="FLOAT", val="x")].
+    """
 
-        Args:
-            enabled (str, optional): Boolean. Defaults to "1".
-            send (str, optional): Boolean. Defaults to "1".
-            receive (str, optional): Boolean. Defaults to "1".
-            feedback (str, optional): Boolean. Defaults to "0".
-            connections (str, optional): Binary. Defaults to "00001" (channel 1, "00011" means 1 and 2).
-            triggers (List[Trigger], optional): [Trigger]. Defaults to [Trigger()].
-            path (List[Partial], optional): [Partial]. Defaults to [Partial(), Partial(typ="PROPERTY", val="name")].
-            arguments (List[Partial], optional): [Partial]. Defaults to [Partial(typ="VALUE", con="FLOAT", val="x")].
-        """
-
-        self.enabled = enabled
-        self.send = send
-        self.receive = receive
-        self.feedback = feedback
-        self.connections = connections
-        self.triggers = triggers
-        self.path = path
-        self.arguments = arguments
+    enabled: str = "1"
+    send: str = "1"
+    receive: str = "1"
+    feedback: str = "0"
+    connections: str = "00001"
+    triggers: List[Trigger] = field(default_factory=lambda: [Trigger()])
+    path: List[Partial] = field(
+        default_factory = lambda: [Partial(), Partial(type="PROPERTY", value="name")]
+    )
+    arguments: List[Partial] = field(
+        default_factory = lambda: [Partial(type="VALUE", conversion="FLOAT", value="x")]
+    )
 
 
 class ElementTOSC:
@@ -168,8 +161,7 @@ class ElementTOSC:
             value.text = text
             return True
         for paramKey in params:
-            e = value.find(paramKey)
-            e.text = params[paramKey]
+            value.find(paramKey).text = params[paramKey]
         return True
 
     def createProperty(
@@ -187,8 +179,7 @@ class ElementTOSC:
             valueElement.text = text
             return True
         for paramKey in params:
-            subElement = ET.SubElement(valueElement, paramKey)
-            subElement.text = params[paramKey]
+            ET.SubElement(valueElement, paramKey).text = params[paramKey]
         return True
 
     def getValue(self, key: str) -> ET.Element:
@@ -205,8 +196,7 @@ class ElementTOSC:
             raise ValueError(f"Value '{value.key}' already exists.")
         element = ET.SubElement(self.values, "value")
         for v in vars(value):
-            e = ET.SubElement(element, v)
-            e.text = getattr(value, v)
+            ET.SubElement(element, v).text = getattr(value, v)
         return ET.iselement(element)
 
     def setValue(self, value: Value) -> bool:
@@ -218,36 +208,30 @@ class ElementTOSC:
         return True
 
     def createOSC(self, message: OSC = OSC()) -> ET.Element:
-        """Create new OSC message from dict"""
         osc = ET.SubElement(self.messages, "osc")
         for key in vars(message):
             element = ET.SubElement(osc, key)
-            obj = getattr(message, key)
-            if isinstance(obj, list):  # For Partials and Triggers
-                for val in obj:
-                    partial = ET.SubElement(element, type(val).__name__.lower())
-                    for v in vars(val):  # Attributes of Partials/Triggers
-                        s = ET.SubElement(partial, v)
-                        s.text = getattr(val, v)
+            attribute = getattr(message, key)
+            if isinstance(attribute, list):  # For Partials and Triggers
+                for partialOrTrigger in attribute:
+                    subElement = ET.SubElement(
+                        element, type(partialOrTrigger).__name__.lower()
+                    )  # Create <partial> or <trigger>
+                    for v in vars(partialOrTrigger):  # Attributes of Partials/Triggers
+                        ET.SubElement(subElement, v).text = getattr(partialOrTrigger, v)
             else:
                 element.text = getattr(message, key)
         return osc
 
     def findChild(self, name: str) -> ET.Element:
-        """Look for a Child Node by name"""
         for child in self.children:
             if not child.find("properties"):
                 continue
-            if re.fullmatch(
-                getTextValueFromKey(child.find("properties"), "name"), name
-            ):
+            if re.fullmatch(findKey(child.find("properties"), "name").text, name):
                 return child
         return None
 
     def createChild(self, type: str) -> ET.Element:
-        """
-        Create and return a children Element with attrib = {'ID' : str(uuid4()), 'type' : type}
-        """
         return ET.SubElement(
             self.children, "node", attrib={"ID": str(uuid.uuid4()), "type": type}
         )
@@ -295,13 +279,11 @@ def findKey(elements: ET.Element, key: str) -> ET.Element:
             return e
 
 
-def showElement(e: ET.Element) -> str:
+def showElement(e: ET.Element):
     """Generic show function, UTF-8, indented 2 spaces"""
     if sys.version_info[0] == 3 and sys.version_info[1] >= 9:
         ET.indent(e, "  ")
-    show = ET.tostring(e).decode("utf-8")
-    print(show)
-    return show
+    print(ET.tostring(e).decode("utf-8"))
 
 
 def createTemplate() -> ET.Element:

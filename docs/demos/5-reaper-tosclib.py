@@ -7,9 +7,10 @@ import time
 
 
 def hashSha1(actionPath: Path):
-    """Reaper current hashing as of 6.57. Ask Justin."""
-    trim = str(actionPath).upper().replace("\\", "/")
-    return f"_RS{sha1(trim.encode()).hexdigest()}"
+    """Reaper current hashing as of 6.57. Ask Justin.
+    https://askjf.com/index.php?q=6075s"""
+    fix = str(actionPath).upper().replace("\\", "/")
+    return f"_RS{sha1(fix.encode()).hexdigest()}"
 
 
 @dataclass
@@ -23,11 +24,11 @@ class REAPER:
 
 @dataclass
 class Actions:
-    """List of actions you wanna call"""
-
     pull: str = hashSha1(REAPER.lisztPath / "liszt-pull.py")
     generate: str = hashSha1(REAPER.lisztPath / "liszt-generate.py")
-    openProjPath: str = "_S&M_OPEN_PRJ_PATH"
+    openProjPath: str = (
+        "_S&M_OPEN_PRJ_PATH"  #: Optional, in case you have SWS Extensions
+    )
 
 
 async def pingReaper(*args):
@@ -41,7 +42,6 @@ async def pingReaper(*args):
 
 
 def main():
-
     start = time.time()
     asyncio.run(pingReaper(Actions.pull, Actions.generate, Actions.openProjPath))
     print("Hey Reaper!", time.time() - start)

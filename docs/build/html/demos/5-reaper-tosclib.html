@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="API" href="../api.html" /><link rel="prev" title="Image Converter" href="4-image-converter.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>Reaper to Tosclib - tosclib 0.1 documentation</title>
+        <title>Reaper to Touch OSC - tosclib 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -170,7 +170,7 @@
 <li class="toctree-l2"><a class="reference internal" href="2-copy-scripts.html">Copy Scripts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="3-from-json.html">Elements from Json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4-image-converter.html">Image Converter</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Reaper to Tosclib</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Reaper to Touch OSC</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -209,22 +209,27 @@
           </label>
         </div>
         <article role="main">
-          <section id="reaper-to-tosclib">
-<h1>Reaper to Tosclib<a class="headerlink" href="#reaper-to-tosclib" title="Permalink to this headline">#</a></h1>
-<p>This asks REAPER to execute a few commands via Web Interface.</p>
-<p>The commands will get all the Parameters of the Last Touched FX and store them in a .json. Then convert the .json to a .tosc file.</p>
+          <section id="reaper-to-touch-osc">
+<h1>Reaper to Touch OSC<a class="headerlink" href="#reaper-to-touch-osc" title="Permalink to this headline">#</a></h1>
+<p>This asks REAPER to execute a few scripts via Web Interface. The result is a .tosc file generated from the FX Params of the Last Touched FX.</p>
 <ol class="arabic simple">
 <li><p>Install Reaper, Reapack and SWS Extensions.</p></li>
-<li><p>Add this repo to Reapack:</p></li>
+<li><p>Import this repository to your Reapack:</p></li>
 </ol>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">AlbertoV5</span><span class="o">/</span><span class="n">ReaperTools</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">xml</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="3">
 <li><p>Install all LISZT scripts from AlbertoV5-ReaperTools.</p></li>
-<li><p>Setup Python in Reaper (avoid conda on Windows) and install dependencies.</p></li>
-<li><p>Setup Reaper Web Interface*.</p></li>
-<li><p>Load up a FX and run this script.</p></li>
+<li><p>Setup Python in Reaper* and install dependencies.</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tosclib</span><span class="o">&gt;=</span><span class="mf">0.1.9</span>
+<span class="n">aiohttp</span><span class="o">==</span><span class="mf">3.8.1</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>Setup Reaper Web Interface.**</p></li>
+<li><p>Load up an FX (JSFX not supported yet :/ ) and run this script.</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha1</span>
@@ -235,9 +240,10 @@
 
 
 <span class="k">def</span> <span class="nf">hashSha1</span><span class="p">(</span><span class="n">actionPath</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
-    <span class="sd">"""Reaper current hashing as of 6.57. Ask Justin."""</span>
-    <span class="n">trim</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">actionPath</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"/"</span><span class="p">)</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">"_RS</span><span class="si">{</span><span class="n">sha1</span><span class="p">(</span><span class="n">trim</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
+    <span class="sd">"""Reaper current hashing as of 6.57. Ask Justin.</span>
+<span class="sd">    https://askjf.com/index.php?q=6075s"""</span>
+    <span class="n">fix</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">actionPath</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"/"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"_RS</span><span class="si">{</span><span class="n">sha1</span><span class="p">(</span><span class="n">fix</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
 
 
 <span class="nd">@dataclass</span>
@@ -251,11 +257,11 @@
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Actions</span><span class="p">:</span>
-    <span class="sd">"""List of actions you wanna call"""</span>
-
     <span class="n">pull</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">hashSha1</span><span class="p">(</span><span class="n">REAPER</span><span class="o">.</span><span class="n">lisztPath</span> <span class="o">/</span> <span class="s2">"liszt-pull.py"</span><span class="p">)</span>
     <span class="n">generate</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">hashSha1</span><span class="p">(</span><span class="n">REAPER</span><span class="o">.</span><span class="n">lisztPath</span> <span class="o">/</span> <span class="s2">"liszt-generate.py"</span><span class="p">)</span>
-    <span class="n">openProjPath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"_S&amp;M_OPEN_PRJ_PATH"</span>
+    <span class="n">openProjPath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">"_S&amp;M_OPEN_PRJ_PATH"</span>  <span class="c1">#: Optional, in case you have SWS Extensions</span>
+    <span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">pingReaper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -269,7 +275,6 @@
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">pingReaper</span><span class="p">(</span><span class="n">Actions</span><span class="o">.</span><span class="n">pull</span><span class="p">,</span> <span class="n">Actions</span><span class="o">.</span><span class="n">generate</span><span class="p">,</span> <span class="n">Actions</span><span class="o">.</span><span class="n">openProjPath</span><span class="p">))</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Hey Reaper!"</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
@@ -279,12 +284,19 @@
     <span class="n">main</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>*Example of Web Interface settings:</p>
-<img alt="../_images/reaper_www_settings.JPG" src="../_images/reaper_www_settings.JPG"/>
-<p>The only thing you need is the port. If you are running this script from another local machine then change the host to the Reaper machine IP or use the Access URL.</p>
 <p>The result will be a template with Faders named as the FX Parameters with OSC messages named after them:</p>
-<img alt="../_images/reaper_tosc_demo_output.JPG" src="../_images/reaper_tosc_demo_output.JPG"/>
 <p>Feel free to make your own version of liszt-generate.py to fit your needs.</p>
+<img alt="../_images/reaper_tosc_demo_output.JPG" src="../_images/reaper_tosc_demo_output.JPG"/>
+<p>Here is more info on how to set up stuff:</p>
+<p><strong>*Set up Python in Reaper:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ where python
+</pre></div>
+</div>
+<p>Avoid using Anaconda environments in Windows as they have issues with Reaper. Set the path here:</p>
+<img alt="../_images/reaper_python.JPG" src="../_images/reaper_python.JPG"/>
+<p><strong>**Web Interface settings:</strong></p>
+<p>The only thing you need is the port. If you are running this script from another local machine then change the host to the Reaper machine IP or use the Access URL.</p>
+<img alt="../_images/reaper_www_settings.JPG" src="../_images/reaper_www_settings.JPG"/>
 </section>
 
         </article>

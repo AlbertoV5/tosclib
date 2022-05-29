@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Image Converter" href="4-image-converter.html" /><link rel="prev" title="Copy Scripts" href="2-copy-scripts.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="API" href="../api.html" /><link rel="prev" title="Image Converter" href="4-image-converter.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>Elements from Json - tosclib 0.1 documentation</title>
+        <title>Reaper to Tosclib - tosclib 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -168,9 +168,9 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../demos.html">Demos</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="1-custom-property.html">Custom Property</a></li>
 <li class="toctree-l2"><a class="reference internal" href="2-copy-scripts.html">Copy Scripts</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Elements from Json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3-from-json.html">Elements from Json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4-image-converter.html">Image Converter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="5-reaper-tosclib.html">Reaper to Tosclib</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Reaper to Tosclib</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -209,74 +209,82 @@
           </label>
         </div>
         <article role="main">
-          <section id="elements-from-json">
-<h1>Elements from Json<a class="headerlink" href="#elements-from-json" title="Permalink to this headline">#</a></h1>
-<p>This creates a new .tosc template from scratch, then creates a new GROUP Node with n FADER children and gives them Properties from the .json file.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
-<span class="kn">import</span> <span class="nn">json</span>
+          <section id="reaper-to-tosclib">
+<h1>Reaper to Tosclib<a class="headerlink" href="#reaper-to-tosclib" title="Permalink to this headline">#</a></h1>
+<p>This asks REAPER to execute a few commands via Web Interface.</p>
+<p>The commands will get all the Parameters of the Last Touched FX and store them in a .json. Then convert the .json to a .tosc file.</p>
+<ol class="arabic simple">
+<li><p>Install Reaper, Reapack and SWS Extensions.</p></li>
+<li><p>Add this repo to Reapack:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">AlbertoV5</span><span class="o">/</span><span class="n">ReaperTools</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">xml</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Install all LISZT scripts from AlbertoV5-ReaperTools.</p></li>
+<li><p>Setup Python in Reaper (avoid conda on Windows) and install dependencies.</p></li>
+<li><p>Setup Reaper Web Interface*.</p></li>
+<li><p>Load up a FX and run this script.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha1</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">aiohttp</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
 
-<span class="k">def</span> <span class="nf">getJson</span><span class="p">(</span><span class="n">fileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="k">def</span> <span class="nf">hashSha1</span><span class="p">(</span><span class="n">actionPath</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+    <span class="sd">"""Reaper current hashing as of 6.57. Ask Justin."""</span>
+    <span class="n">trim</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">actionPath</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"/"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"_RS</span><span class="si">{</span><span class="n">sha1</span><span class="p">(</span><span class="n">trim</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
 
 
-<span class="k">def</span> <span class="nf">oscMsg</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">tosc</span><span class="o">.</span><span class="n">OSC</span><span class="p">:</span>
-    <span class="sd">"""Create a message with a path constructed with custom Partials"""</span>
-    <span class="k">return</span> <span class="n">tosc</span><span class="o">.</span><span class="n">OSC</span><span class="p">(</span>
-        <span class="n">path</span><span class="o">=</span><span class="p">[</span>
-            <span class="n">tosc</span><span class="o">.</span><span class="n">Partial</span><span class="p">(),</span>  <span class="c1"># Default is the constant '/'</span>
-            <span class="n">tosc</span><span class="o">.</span><span class="n">Partial</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"PROPERTY"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">"parent.name"</span><span class="p">),</span>
-            <span class="n">tosc</span><span class="o">.</span><span class="n">Partial</span><span class="p">(),</span>
-            <span class="n">tosc</span><span class="o">.</span><span class="n">Partial</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"PROPERTY"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">"name"</span><span class="p">),</span>
-        <span class="p">]</span>
-    <span class="p">)</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">REAPER</span><span class="p">:</span>
+    <span class="sd">"""Reaper config values. Change them to fit your setup."""</span>
+
+    <span class="n">lisztPath</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"AlbertoV5-ReaperTools"</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"liszt"</span>
+    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"127.0.0.1"</span>
+    <span class="n">port</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"8080"</span>
 
 
-<span class="k">def</span> <span class="nf">createFader</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
-    <span class="n">fader</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">createChild</span><span class="p">(</span><span class="s2">"FADER"</span><span class="p">))</span>
-    <span class="n">fader</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-    <span class="n">fader</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="mi">1080</span><span class="p">)</span>
-    <span class="n">fader</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">fader</span><span class="o">.</span><span class="n">createOSC</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>  <span class="c1"># Creates a new message from custom tosc.OSC</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Actions</span><span class="p">:</span>
+    <span class="sd">"""List of actions you wanna call"""</span>
+
+    <span class="n">pull</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">hashSha1</span><span class="p">(</span><span class="n">REAPER</span><span class="o">.</span><span class="n">lisztPath</span> <span class="o">/</span> <span class="s2">"liszt-pull.py"</span><span class="p">)</span>
+    <span class="n">generate</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">hashSha1</span><span class="p">(</span><span class="n">REAPER</span><span class="o">.</span><span class="n">lisztPath</span> <span class="o">/</span> <span class="s2">"liszt-generate.py"</span><span class="p">)</span>
+    <span class="n">openProjPath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"_S&amp;M_OPEN_PRJ_PATH"</span>
 
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">jsonFile</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">):</span>
-    <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">createTemplate</span><span class="p">()</span>
-    <span class="n">base</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">base</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"template"</span><span class="p">)</span>
-    <span class="n">base</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">pingReaper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">"""Ask Reaper to execute commands by name or hash"""</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"http://</span><span class="si">{</span><span class="n">REAPER</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">REAPER</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">/_/</span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="k">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"UTF-8"</span><span class="p">)</span>
 
-    <span class="c1"># Group container for the faders</span>
-    <span class="n">group</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">createChild</span><span class="p">(</span><span class="s2">"GROUP"</span><span class="p">))</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"Controls"</span><span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="mi">420</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1080</span><span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-    <span class="c1"># Create faders based on Json data</span>
-    <span class="n">jsonData</span> <span class="o">=</span> <span class="n">getJson</span><span class="p">(</span><span class="n">jsonFile</span><span class="p">)</span>
-    <span class="n">limit</span> <span class="o">=</span> <span class="mi">10</span>
-    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">getPropertyParam</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">/</span> <span class="n">limit</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="n">oscMsg</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
 
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">jsonData</span><span class="p">):</span>
-        <span class="n">createFader</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">param</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">width</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">limit</span><span class="p">:</span>
-            <span class="k">break</span>
-
-    <span class="nb">print</span><span class="p">([</span><span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">getPropertyValue</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">children</span><span class="p">])</span>
-    <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">pingReaper</span><span class="p">(</span><span class="n">Actions</span><span class="o">.</span><span class="n">pull</span><span class="p">,</span> <span class="n">Actions</span><span class="o">.</span><span class="n">generate</span><span class="p">,</span> <span class="n">Actions</span><span class="o">.</span><span class="n">openProjPath</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Hey Reaper!"</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">(</span><span class="s2">"demos/files/Pro-C 2 (FabFilter).json"</span><span class="p">,</span> <span class="s2">"demos/files/newTemplate.tosc"</span><span class="p">)</span>
+    <span class="n">main</span><span class="p">()</span>
 </pre></div>
 </div>
-<p><strong>Demo Files:</strong></p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/AlbertoV5/tosclib/blob/main/demos/files/Pro-C%202%20(FabFilter).json">Json Input</a></p></li>
-<li><p><a class="reference external" href="https://github.com/AlbertoV5/tosclib/blob/main/demos/files/newTemplate.tosc">Output .tosc</a></p></li>
-</ul>
+<p>*Example of Web Interface settings:</p>
+<img alt="../_images/reaper_www_settings.JPG" src="../_images/reaper_www_settings.JPG"/>
+<p>The only thing you need is the port. If you are running this script from another local machine then change the host to the Reaper machine IP or use the Access URL.</p>
+<p>The result will be a template with Faders named as the FX Parameters with OSC messages named after them:</p>
+<img alt="../_images/reaper_tosc_demo_output.JPG" src="../_images/reaper_tosc_demo_output.JPG"/>
+<p>Feel free to make your own version of liszt-generate.py to fit your needs.</p>
 </section>
 
         </article>
@@ -284,23 +292,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="4-image-converter.html">
+          <a class="next-page" href="../api.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Image Converter</div>
+                <div class="title">API</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="2-copy-scripts.html">
+          <a class="prev-page" href="4-image-converter.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Copy Scripts</div>
+                <div class="title">Image Converter</div>
                 
               </div>
             </a>

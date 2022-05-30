@@ -30,10 +30,13 @@
 
    .. autosummary::
    
+      ControlElements
       ControlType
       ElementTOSC
       OSC
       Partial
+      Property
+      PropertyType
       Trigger
       Value
    

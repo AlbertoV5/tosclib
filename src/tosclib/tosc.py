@@ -12,8 +12,29 @@ from typing import List
 
 
 @unique
+class ControlElements(Enum):
+
+    PROPERTIES = "properties"
+    VALUES = "values"
+    MESSAGES = "messages"
+    CHILDREN = "children"
+    # Sub Elements
+    PROPERTY = "property"
+    VALUE = "value"
+    # Messages
+    OSC = "osc"
+    MIDI = "midi"
+    LOCAL = "local"
+    GAMEPAD = "gamepad"
+    # Children
+    CHILD = "node"
+
+
+@unique
 class ControlType(Enum):
-    """https://hexler.net/touchosc/manual/script-enumerations#controltype"""
+    """All the Node Types
+
+    https://hexler.net/touchosc/manual/script-enumerations#controltype"""
 
     BOX = "BOX"
     BUTTON = "BUTTON"
@@ -32,6 +53,39 @@ class ControlType(Enum):
     @classmethod
     def hasChildren(cls):
         return (cls.GROUP.value, cls.PAGER.value)
+
+
+@unique
+class PropertyType(Enum):
+    STRING = "s"
+    BOOLEAN = "b"
+    iNTEGER = "i"
+    FLOAT = "f"
+    FRAME = "r"
+    COLOR = "c"
+
+
+@dataclass
+class Property:
+    """_summary_
+
+    Args:
+        type (str): See PropertyType.
+        key (str): Arbitrary.
+        value (str, optional): Exclusive with params.
+        params (dict[str,str], optional): Exclusive with value.
+    """
+
+    type: str
+    key: str
+    value: str = ""
+    params: dict[str, str] = field(default_factory=lambda: {})
+
+    def __post_init__(self):
+        if self.value and self.params:
+            raise ValueError(f"{self} can't have both value and params.")
+        if not self.value and not self.params:
+            raise ValueError(f"{self} needs either a value or params.")
 
 
 @dataclass
@@ -130,16 +184,14 @@ class ElementTOSC:
             properties (ET.Element): Find <properties>
             values (ET.Element): Find <values>
             messages (ET.Element): Find <messages>
-            children (ET.Element): Find <children> if type GROUP
+            children (ET.Element): Find <children>
         """
         self.node = e
         f = lambda v: e.find(v) if e.find(v) else ET.SubElement(e, v)
-        self.properties = f("properties")
-        self.values = f("values")
-        self.messages = f("messages")
-        self.children = (
-            f("children") if e.attrib["type"] in ControlType.hasChildren() else None
-        )
+        self.properties = f(ControlElements.PROPERTIES.value)
+        self.values = f(ControlElements.VALUES.value)
+        self.messages = f(ControlElements.MESSAGES.value)
+        self.children = f(ControlElements.CHILDREN.value)
 
     @classmethod
     def fromFile(cls, file: str) -> "ElementTOSC":
@@ -155,37 +207,36 @@ class ElementTOSC:
         return findKey(self.properties, key).find("value").find(param)
 
     def hasProperty(self, key: str) -> bool:
-        return True if ET.iselement(findKey(self.properties, key)) else False
+        return True if findKey(self.properties, key) else False
 
-    def setProperty(self, key: str, text: str = "", params: dict = {}) -> bool:
-        if not text and not params:
-            raise ValueError(f"Missing either text or params")
+    def setProperty(
+        self, key: str, value: str = "", params: dict[str, str] = {}
+    ) -> bool:
         if not self.hasProperty(key):
-            raise ValueError(f"Property '{key}' doesn't exist.")
-        value = self.getPropertyValue(key)
-        if text:
-            value.text = text
+            raise ValueError(f"{key} doesn't exist.")
+        val = self.getPropertyValue(key)
+        if value:
+            val.text = value
             return True
         for paramKey in params:
-            value.find(paramKey).text = params[paramKey]
+            val.find(paramKey).text = params[paramKey]
         return True
 
-    def createProperty(
-        self, type: str, key: str, text: str = "", params: dict = {}
-    ) -> bool:
-        if self.hasProperty(key):
-            raise ValueError(f"Property '{key}' already exists.")
-        property = ET.SubElement(self.properties, "property", attrib={"type": type})
-        (keyElement, valueElement) = (
-            ET.SubElement(property, "key"),
-            ET.SubElement(property, "value"),
+    def createProperty(self, property: Property) -> bool:
+        if self.hasProperty(property.key):
+            raise ValueError(f"{property.key} already exists.")
+        prop = ET.SubElement(
+            self.properties,
+            ControlElements.PROPERTY.value,
+            attrib={"type": property.type},
         )
-        keyElement.text = key
-        if text:
-            valueElement.text = text
+        (key, value) = (ET.SubElement(prop, "key"), ET.SubElement(prop, "value"))
+        key.text = property.key
+        if property.value:
+            value.text = property.value
             return True
-        for paramKey in params:
-            ET.SubElement(valueElement, paramKey).text = params[paramKey]
+        for paramKey in property.params:
+            ET.SubElement(value, paramKey).text = property.params[paramKey]
         return True
 
     def getValue(self, key: str) -> ET.Element:
@@ -199,22 +250,22 @@ class ElementTOSC:
 
     def createValue(self, value: Value) -> bool:
         if self.hasValue(value.key):
-            raise ValueError(f"Value '{value.key}' already exists.")
+            raise ValueError(f"{value.key} already exists.")
         element = ET.SubElement(self.values, "value")
         for v in vars(value):
             ET.SubElement(element, v).text = getattr(value, v)
-        return ET.iselement(element)
+        return True
 
     def setValue(self, value: Value) -> bool:
         if not self.hasValue(value.key):
-            raise ValueError(f"Value '{value.key}' doesn't exist.")
+            raise ValueError(f"{value.key} doesn't exist.")
         element = findKey(self.values, value.key)
         for v in vars(value):
             element.find(v).text = getattr(value, v)
         return True
 
     def createOSC(self, message: OSC = OSC()) -> ET.Element:
-        osc = ET.SubElement(self.messages, "osc")
+        osc = ET.SubElement(self.messages, ControlElements.OSC.value)
         for key in vars(message):
             element = ET.SubElement(osc, key)
             attribute = getattr(message, key)
@@ -229,32 +280,58 @@ class ElementTOSC:
                 element.text = getattr(message, key)
         return osc
 
-    def findChild(self, name: str) -> ET.Element:
+    def findChildByName(self, name: str) -> ET.Element:
         for child in self.children:
-            if not child.find("properties"):
+            if not child.find(ControlElements.PROPERTIES.value):
                 continue
-            if re.fullmatch(findKey(child.find("properties"), "name").text, name):
+            if re.fullmatch(
+                findKey(child.find(ControlElements.PROPERTIES.value), "name").text, name
+            ):
                 return child
         return None
 
-    def createChild(self, type: str) -> ET.Element:
+    def createChild(self, type: ControlType) -> ET.Element:
         return ET.SubElement(
-            self.children, "node", attrib={"ID": str(uuid.uuid4()), "type": type}
+            self.children,
+            ControlElements.CHILD.value,
+            attrib={"ID": str(uuid.uuid4()), "type": type},
         )
 
-    def setFrame(self, x: float, y: float, w: float, h: float) -> bool:
-        """Create a Frame Property, if already exists, then modify it."""
-        params = {"x": str(x), "y": str(y), "w": str(w), "h": str(h)}
-        if not self.hasProperty("frame"):
-            return self.createProperty("r", "frame", "", params)
-        return self.setProperty("frame", "", params)
+    #
+    #
+    #   SHORTCUTS:
+    #
+    #
+    def setter(
+        self, type: str, key: str, value: str = "", params: dict[str, str] = {}
+    ) -> bool:
+        """Create a Property, if already exists, then modify its values."""
+        if not self.hasProperty(key):
+            return self.createProperty(Property(type, key, value=value, params=params))
+        return self.setProperty(key, value=value, params=params)
 
-    def setColor(self, r: float, g: float, b: float, a: float) -> bool:
-        """Create a Color Property, if already exists, then modify it."""
-        params = {"r": str(r), "g": str(g), "b": str(b), "a": str(a)}
-        if not self.hasProperty("color"):
-            return self.createProperty("c", "color", "", params)
-        return self.setProperty("color", "", params)
+    def frame(self, x: float, y: float, w: float, h: float):
+        return self.setter(
+            PropertyType.FRAME.value,
+            "frame",
+            params={"x": str(x), "y": str(y), "w": str(w), "h": str(h)},
+        )
+
+    def color(self, r: float, g: float, b: float, a: float):
+        return self.setter(
+            PropertyType.COLOR.value,
+            "color",
+            params={"r": str(r), "g": str(g), "b": str(b), "a": str(a)},
+        )
+
+    def name(self, value: str):
+        self.setter(PropertyType.STRING.value, "name", value=value)
+
+    def createBOX(self) -> ET.Element:
+        """Create Empty Box"""
+        box = ET.SubElement(self.children, ControlType.BOX.value)
+        ET.SubElement(box, ControlElements.PROPERTIES.value)
+        return
 
     def show(self):
         showElement(self.node)
@@ -283,6 +360,7 @@ def findKey(elements: ET.Element, key: str) -> ET.Element:
     for e in elements:
         if re.fullmatch(e.find("key").text, key):
             return e
+    return None
 
 
 def showElement(e: ET.Element):
@@ -295,7 +373,11 @@ def showElement(e: ET.Element):
 def createTemplate() -> ET.Element:
     """Generates a root Element for your .tosc file"""
     root = ET.Element("lexml", attrib={"version": "3"})
-    ET.SubElement(root, "node", attrib={"ID": str(uuid.uuid4()), "type": "GROUP"})
+    ET.SubElement(
+        root,
+        ControlElements.CHILD.value,
+        attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP.value},
+    )
     return root
 
 

@@ -253,7 +253,7 @@
 <p>Here are more details on the functions and methods we used:</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tosclib.tosc.load">
-<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputPath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.load" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputPath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.load" title="Permalink to this definition">#</a></dt>
 <dd><p>Reads a .tosc file and returns the XML root Element</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -266,12 +266,12 @@
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">ElementTOSC</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#ElementTOSC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.ElementTOSC" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">ElementTOSC</span></span><a class="headerlink" href="#tosclib.tosc.ElementTOSC" title="Permalink to this definition">#</a></dt>
 <dd><p>Contains a Node Element and its SubElements.
 Creates Enum SubElements if they are not found in the Node.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#ElementTOSC.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.ElementTOSC.__init__" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.__init__" title="Permalink to this definition">#</a></dt>
 <dd><p>Find SubElements on init</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -311,7 +311,7 @@ Creates Enum SubElements if they are not found in the Node.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.children">
 <span class="sig-name descname"><span class="pre">children</span></span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.children" title="Permalink to this definition">#</a></dt>
-<dd><p>Find &lt;children&gt; if type GROUP</p>
+<dd><p>Find &lt;children&gt;</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>ET.Element</p>
@@ -326,14 +326,10 @@ Creates Enum SubElements if they are not found in the Node.</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setProperty">
-<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setProperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setProperty" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setProperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setProperty" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-<li><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – </p></li>
-</ul>
+<dd class="field-odd"><p><strong>property</strong> (<em>tosclib.tosc.Property</em>) – </p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
@@ -360,7 +356,7 @@ Creates Enum SubElements if they are not found in the Node.</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="tosclib.tosc.write">
-<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.write" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.write" title="Permalink to this definition">#</a></dt>
 <dd><p>Encodes a root Element to .tosc</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

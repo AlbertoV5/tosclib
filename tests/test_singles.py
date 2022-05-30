@@ -1,14 +1,14 @@
 import tosclib as tosc
-from tosclib.tosc import Partial
+from tosclib.tosc import Partial, Value, Property, PropertyType
 
 def test_singles():
 
     root = tosc.createTemplate()
     element = tosc.ElementTOSC(root[0])
 
-    element.createValue(tosc.Value())
+    element.createValue(Value())
 
-    element.setValue(tosc.Value("touch", "1", "1", "true", "1"))
+    element.setValue(Value("touch", "1", "1", "true", "1"))
 
     element.showValues()
 
@@ -25,10 +25,10 @@ def test_singles():
         )
     )
 
-    element.createProperty("f", "frame", "", {"r":"0", "g":"1", "b":"0", "a":"1"})
+    element.color(1,0,0,1)
+    element.frame(0, 0, 1, 1)
     element.showProperty("frame")
-    element.setProperty("frame", "", {"r":"0", "g":"0", "b":"1", "a":"1"})
-
+    
     # element.setFrame(1, 0, 0, 1)
 
 if __name__ == "__main__":

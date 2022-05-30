@@ -38,7 +38,7 @@ class ImageConverter:
             box.createProperty("s", "name", f"p{ix}{iy}")
             (r, g, b) = self.pixels[iy, ix]
             box.setColor(r, g, b, 1)
-            box.setFrame(ix * pxs, iy * pxs, pxs, pxs)
+            box.frame(ix * pxs, iy * pxs, pxs, pxs)
 
         return tosc.write(root, self.output_path)
 

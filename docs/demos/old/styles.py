@@ -10,7 +10,7 @@ root = tosc.load("demos/files/test.tosc")
 
 parent = tosc.ElementTOSC(root[0])
 
-boxy = tosc.ElementTOSC(parent.findChild("boxy"))
+boxy = tosc.ElementTOSC(parent.findChildByName("boxy"))
 
 (r, g, b) = rgb("#23a9dd")
 

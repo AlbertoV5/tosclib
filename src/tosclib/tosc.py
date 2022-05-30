@@ -56,6 +56,79 @@ class ControlType(Enum):
 
 
 @unique
+class PropertyKeys(Enum):
+    """https://hexler.net/touchosc/manual/editor-control-properties"""
+
+    TYPE = "type"
+    NAME = "name"
+    TAG = "tag"
+    FRAME = "frame"
+    COLOR = "color"
+    LOCKED = "locked"
+    VISIBLE = "visible"
+    INTERACTIVE = "interactive"
+    BACKGROUND = "background"
+    OUTLINE = "outline"
+    GRAB_FOCUS = "grabFocus"
+    POINTER = "pointerPriority"
+    CORNER = "cornerRadius"
+    ORIENTATION = "orientation"
+
+
+class BOX(PropertyKeys):
+    SHAPE = "shape"
+
+
+class BUTTON(PropertyKeys):
+    SHAPE = "shape"
+    TYPE = "buttonType"
+    PRESS = "press"
+    RELEASE = "release"
+    VALUE_POSITION = "valuePosition"
+
+
+class LABEL(PropertyKeys):
+    FONT = "font"
+    SIZE = "textSize"
+    LENGTH = "textLength"
+    ALIGNMENT_H = "textAlignH"
+    ALIGNMENT_V = "textAlignV"
+    COLOR = "textColor"
+    CLIP = "textClip"
+
+
+class TEXT(PropertyKeys):
+    FONT = "font"
+    SIZE = "textSize"
+    ALIGNMENT_H = "textAlignH"
+    COLOR = "textColor"
+
+
+class FADER(PropertyKeys):
+    CURSOR = "cursor"
+    BAR = "bar"
+    BAR_DISPLAY = "barDisplay"
+    RESPONSE = "response"
+    FACTOR = "responseFactor"
+    GRID = "grid"
+    GRID_STEPS = "gridSteps"
+
+
+class XY(PropertyKeys):
+    CURSOR = "cursor"
+    LINES = "lines"
+    LINES_DISPLAY = "linesDisplay"
+    LOCK_X = "lockX"
+    LOCK_Y = "lockY"
+    RESPONSE = "response"
+    FACTOR = "responseFactor"
+    GRID_X = "gridX"
+    GRID_Y = "gridY"
+    GRID_STEPSX = "gridStepsX"
+    GRID_STEPSY = "gridStepsY"
+
+
+@unique
 class PropertyType(Enum):
     STRING = "s"
     BOOLEAN = "b"
@@ -71,7 +144,7 @@ class Property:
 
     Args:
         type (str): See PropertyType.
-        key (str): Arbitrary.
+        key (str): See PropertyKeys.
         value (str, optional): Exclusive with params.
         params (dict[str,str], optional): Exclusive with value.
     """
@@ -328,13 +401,18 @@ class ElementTOSC:
         )
 
     def setName(self, value: str):
-        self.setter(PropertyType.STRING.value, "name", value=value)
+        return self.setter(PropertyType.STRING.value, "name", value=value)
 
-    def createBOX(self) -> ET.Element:
-        """Create Empty Box"""
-        box = ET.SubElement(self.children, ControlType.BOX.value)
-        ET.SubElement(box, ControlElements.PROPERTIES.value)
-        return
+    def setScript(self, value: str):
+        return self.setter(PropertyType.STRING.value, "script", value=value)
+
+    def setBackground(self, value: bool):
+        return self.setter(
+            PropertyType.BOOLEAN.value, "background", value=str(int(value))
+        )
+
+    def setVisible(self, value: bool):
+        return self.setter(PropertyType.BOOLEAN.value, "visible", value=str(int(value)))
 
     def show(self):
         showElement(self.node)

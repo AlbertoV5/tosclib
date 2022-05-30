@@ -29,6 +29,10 @@ class ControlType(Enum):
     PAGER = "PAGER"
     GRID = "GRID"
 
+    @classmethod
+    def hasChildren(cls):
+        return (cls.GROUP.value, cls.PAGER.value)
+
 
 @dataclass
 class Value:
@@ -103,10 +107,10 @@ class OSC:
     connections: str = "00001"
     triggers: List[Trigger] = field(default_factory=lambda: [Trigger()])
     path: List[Partial] = field(
-        default_factory = lambda: [Partial(), Partial(type="PROPERTY", value="name")]
+        default_factory=lambda: [Partial(), Partial(type="PROPERTY", value="name")]
     )
     arguments: List[Partial] = field(
-        default_factory = lambda: [Partial(type="VALUE", conversion="FLOAT", value="x")]
+        default_factory=lambda: [Partial(type="VALUE", conversion="FLOAT", value="x")]
     )
 
 
@@ -126,14 +130,16 @@ class ElementTOSC:
             properties (ET.Element): Find <properties>
             values (ET.Element): Find <values>
             messages (ET.Element): Find <messages>
-            children (ET.Element): Find <children>
+            children (ET.Element): Find <children> if type GROUP
         """
         self.node = e
         f = lambda v: e.find(v) if e.find(v) else ET.SubElement(e, v)
         self.properties = f("properties")
         self.values = f("values")
         self.messages = f("messages")
-        self.children = f("children")
+        self.children = (
+            f("children") if e.attrib["type"] in ControlType.hasChildren() else None
+        )
 
     @classmethod
     def fromFile(cls, file: str) -> "ElementTOSC":

@@ -21,7 +21,7 @@ def test_print_attributes(capture_stdout):
     assert capture_stdout["stdout"] == "x ANY\n"
     capture_stdout["stdout"] = ""
 
-    e = tosc.ElementTOSC(tosc.createTemplate())
+    e = tosc.ElementTOSC(tosc.createTemplate()[0])
     for attribute, value in e.__dict__.items():
         print(attribute)
     assert capture_stdout["stdout"] == "node\nproperties\nvalues\nmessages\nchildren\n"

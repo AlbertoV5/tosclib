@@ -19,7 +19,7 @@ This asks REAPER to execute a few scripts via Web Interface. The result is a .to
     aiohttp==3.8.1
 
 5. Setup Reaper Web Interface.**
-6. Load up an FX (JSFX not supported yet :/ ) and run this script.
+6. Load up an FX and run this script.
 
 .. literalinclude:: 5-reaper-tosclib.py
     :language: python

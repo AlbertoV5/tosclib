@@ -4,7 +4,7 @@ from tosclib.tosc import Partial
 def test_singles():
 
     root = tosc.createTemplate()
-    element = tosc.ElementTOSC(root)
+    element = tosc.ElementTOSC(root[0])
 
     element.createValue(tosc.Value())
 

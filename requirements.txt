@@ -1,4 +1,0 @@
-aiohttp==3.8.1
-numpy==1.22.3
-Pillow==9.1.1
-tosclib>=0.1.10

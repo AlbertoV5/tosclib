@@ -11,7 +11,6 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
     
     
 
@@ -223,7 +222,7 @@
 <li><p>Install all LISZT scripts from AlbertoV5-ReaperTools.</p></li>
 <li><p>Setup Python in Reaper* and install dependencies.</p></li>
 </ol>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tosclib</span><span class="o">&gt;=</span><span class="mf">0.1.9</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tosclib</span><span class="o">&gt;=</span><span class="mf">0.1.10</span>
 <span class="n">aiohttp</span><span class="o">==</span><span class="mf">3.8.1</span>
 </pre></div>
 </div>
@@ -288,15 +287,20 @@
 <p>Feel free to make your own version of liszt-generate.py to fit your needs.</p>
 <img alt="../_images/reaper_tosc_demo_output.JPG" src="../_images/reaper_tosc_demo_output.JPG"/>
 <p>Here is more info on how to set up stuff:</p>
-<p><strong>*Set up Python in Reaper:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ where python
+<details>
+<summary>
+<a>*Set up Python in Reaper:</a>
+</summary><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ where python
 </pre></div>
 </div>
 <p>Avoid using Anaconda environments in Windows as they have issues with Reaper. Set the path here:</p>
 <img alt="../_images/reaper_python.JPG" src="../_images/reaper_python.JPG"/>
-<p><strong>**Web Interface settings:</strong></p>
-<p>The only thing you need is the port. If you are running this script from another local machine then change the host to the Reaper machine IP or use the Access URL.</p>
+</details><details>
+<summary>
+<a>**Web Interface settings:</a>
+</summary><p>The only thing you need is the port. If you are running this script from another local machine then change the host to the Reaper machine IP or use the Access URL.</p>
 <img alt="../_images/reaper_www_settings.JPG" src="../_images/reaper_www_settings.JPG"/>
+</details><p><a class="reference external" href="https://github.com/AlbertoV5/Reaper-Scripts/tree/main/LISZT">LISZT SCRIPTS</a></p>
 </section>
 
         </article>

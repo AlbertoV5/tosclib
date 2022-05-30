@@ -15,7 +15,7 @@ This asks REAPER to execute a few scripts via Web Interface. The result is a .to
 
 .. code-block::
     
-    tosclib>=0.1.9
+    tosclib>=0.1.10
     aiohttp==3.8.1
 
 5. Setup Reaper Web Interface.**
@@ -28,12 +28,16 @@ The result will be a template with Faders named as the FX Parameters with OSC me
 
 Feel free to make your own version of liszt-generate.py to fit your needs.
 
-
 .. image:: ../images/reaper_tosc_demo_output.JPG
 
 Here is more info on how to set up stuff:
 
-**\*Set up Python in Reaper:**
+.. raw:: html
+
+    <details>
+        <summary>
+            <a>*Set up Python in Reaper:</a>
+        </summary>
 
 .. code-block::
 
@@ -43,9 +47,25 @@ Avoid using Anaconda environments in Windows as they have issues with Reaper. Se
 
 .. image:: ../images/reaper_python.JPG
 
+.. raw:: html
 
-**\*\*Web Interface settings:**
+   </details>
+
+.. raw:: html
+
+    <details>
+        <summary>
+            <a>**Web Interface settings:</a>
+        </summary>
 
 The only thing you need is the port. If you are running this script from another local machine then change the host to the Reaper machine IP or use the Access URL.
 
 .. image:: ../images/reaper_www_settings.JPG
+
+.. raw:: html
+
+   </details>
+
+
+`LISZT SCRIPTS <https://github.com/AlbertoV5/Reaper-Scripts/tree/main/LISZT>`_
+

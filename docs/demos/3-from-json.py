@@ -21,8 +21,8 @@ def oscMsg() -> tosc.OSC:
 
 def createFader(e: tosc.ElementTOSC, name, width, limit, i, msg):
     fader = tosc.ElementTOSC(e.createChild("FADER"))
-    fader.createProperty("s", "name", name)
-    fader.frame(width * i, 0, width, 1080)
+    fader.setName(name)
+    fader.setFrame(width * i, 0, width, 1080)
     fader.setColor(i / limit, 0, 1 - i / limit, 1)
     fader.createOSC(message=msg)  # Creates a new message from custom tosc.OSC
 
@@ -30,13 +30,13 @@ def createFader(e: tosc.ElementTOSC, name, width, limit, i, msg):
 def main(jsonFile, outputFile):
     root = tosc.createTemplate()
     base = tosc.ElementTOSC(root[0])
-    base.createProperty("s", "name", "template")
-    base.frame(0, 0, 1920, 1080)
+    base.setName("template")
+    base.setFrame(0, 0, 1920, 1080)
 
     # Group container for the faders
     group = tosc.ElementTOSC(base.createChild("GROUP"))
-    group.createProperty("s", "name", "Controls")
-    group.frame(420, 0, 1080, 1080)
+    group.setName("Controls")
+    group.setFrame(420, 0, 1080, 1080)
     group.setColor(0.25, 0.25, 0.25, 1)
 
     # Create faders based on Json data
@@ -55,4 +55,4 @@ def main(jsonFile, outputFile):
 
 
 if __name__ == "__main__":
-    main("demos/files/Pro-C 2 (FabFilter).json", "demos/files/newTemplate.tosc")
+    main("docs/demos/files/Pro-C 2 (FabFilter).json", "docs/demos/files/newTemplate.tosc")

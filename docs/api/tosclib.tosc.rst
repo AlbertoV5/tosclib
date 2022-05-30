@@ -14,7 +14,6 @@
    .. autosummary::
    
       createTemplate
-      findChildByName
       findKey
       getTextValueFromKey
       load

@@ -14,12 +14,12 @@ You can always add new messages as long as they belong to OSC, MIDI, LOCAL, `etc
 
    import tosclib as tosc
 
-   root = tosc.load("demos/files/test.tosc")
+   root = tosc.load("docs/demos/files/test.tosc")
    parent = tosc.ElementTOSC(root[0])
 
-   parent.createProperty("s", "CustomProperty", "1007")
+   parent.createProperty(tosc.Property("s", "CustomProperty", "1007"))
    
-   tosc.write(root, "demos/files/out.tosc")
+   tosc.write(root, "docs/demos/files/out.tosc")
 
 You can then access the property from .lua inside the TouchOSC Editor.
 
@@ -38,15 +38,15 @@ Adding a non-valid Element would look like this:
    import xml.etree.ElementTree as ET
    import tosclib as tosc
 
-   root = tosc.load("demos/files/test.tosc")
+   root = tosc.load("docs/demos/files/test.tosc")
    node = tosc.ElementTOSC(root[0])
 
    styles = ET.SubElement(node, "styles")
    styles.text = "CustomProperty"
 
-   tosc.write(root, "demos/files/out.tosc")
+   tosc.write(root, "docs/demos/files/out.tosc")
 
-Even if the code is correct, Touch OSC won't accept the new Sub Element when loading the template in the Editor. 
+Touch OSC won't accept the new Sub Element when loading the template in the Editor. 
 
 You could add a <property> under <properties> manually too.
 
@@ -56,7 +56,7 @@ You could add a <property> under <properties> manually too.
    import xml.etree.ElementTree as ET
    import tosclib as tosc
 
-   root = tosc.load("demos/files/test.tosc")
+   root = tosc.load("docs/demos/files/test.tosc")
    
    properties = root[0].find("properties")
    prop = ET.SubElement(properties, "property")
@@ -65,6 +65,6 @@ You could add a <property> under <properties> manually too.
    value = ET.SubElement(prop, "value")
    value.text = "1007"
 
-   tosc.write(root, "demos/files/out.tosc")
+   tosc.write(root, "docs/demos/files/out.tosc")
 
 Or just use tosclib instead.

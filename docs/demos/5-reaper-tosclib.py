@@ -42,10 +42,12 @@ async def pingReaper(*args):
 
 
 def main():
-    start = time.time()
-    asyncio.run(pingReaper(Actions.pull, Actions.generate, Actions.openProjPath))
-    print("Hey Reaper!", time.time() - start)
 
+    asyncio.run(pingReaper(Actions.pull, Actions.generate, Actions.openProjPath))
 
 if __name__ == "__main__":
+    
+    start = time.process_time()
     main()
+    end = time.process_time()
+    print("Hey Reaper!", end - start)

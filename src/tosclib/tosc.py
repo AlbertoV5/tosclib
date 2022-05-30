@@ -285,7 +285,10 @@ class ElementTOSC:
             if not child.find(ControlElements.PROPERTIES.value):
                 continue
             if re.fullmatch(
-                findKey(child.find(ControlElements.PROPERTIES.value), "name").text, name
+                getTextValueFromKey(
+                    child.find(ControlElements.PROPERTIES.value), "name"
+                ),
+                name,
             ):
                 return child
         return None
@@ -310,21 +313,21 @@ class ElementTOSC:
             return self.createProperty(Property(type, key, value=value, params=params))
         return self.setProperty(key, value=value, params=params)
 
-    def frame(self, x: float, y: float, w: float, h: float):
+    def setFrame(self, x: float, y: float, w: float, h: float):
         return self.setter(
             PropertyType.FRAME.value,
             "frame",
             params={"x": str(x), "y": str(y), "w": str(w), "h": str(h)},
         )
 
-    def color(self, r: float, g: float, b: float, a: float):
+    def setColor(self, r: float, g: float, b: float, a: float):
         return self.setter(
             PropertyType.COLOR.value,
             "color",
             params={"r": str(r), "g": str(g), "b": str(b), "a": str(a)},
         )
 
-    def name(self, value: str):
+    def setName(self, value: str):
         self.setter(PropertyType.STRING.value, "name", value=value)
 
     def createBOX(self) -> ET.Element:
@@ -393,15 +396,6 @@ def write(root: ET.Element, outputPath: str = None) -> bool:
         treeFile = ET.tostring(root, encoding="UTF-8", method="xml")
         file.write(zlib.compress(treeFile))
         return True
-
-
-def findChildByName(element: ET.Element, name: str) -> ET.Element:
-    """Returns the first child element by name"""
-    for child in element.find("children"):
-        if not child.find("properties"):
-            continue
-        if re.fullmatch(getTextValueFromKey(child.find("properties"), "name"), name):
-            return child
 
 
 def getTextValueFromKey(properties: ET.Element, key: str) -> str:

@@ -23,16 +23,16 @@ def test_set_frame():
     """No Error with collisions. Replace value."""
     element = test_create_template()
     fader = tosc.ElementTOSC(element.createChild("FADER"))
-    assert fader.frame(0, -200, 40, 200)
-    assert fader.frame(0, 0, 69, 420)
+    assert fader.setFrame(0, -200, 40, 200)
+    assert fader.setFrame(0, 0, 69, 420)
 
 
 def test_set_color():
     """No Error with collisions. Replace value."""
     element = test_create_template()
     fader = tosc.ElementTOSC(element.createChild("FADER"))
-    assert fader.color(0, 0, 0, 1)
-    assert fader.color(0.25, 0.25, 1, 1)
+    assert fader.setColor(0, 0, 0, 1)
+    assert fader.setColor(0.25, 0.25, 1, 1)
 
 
 def test_osc_messages():

@@ -22,9 +22,9 @@ class TestTemplate(unittest.TestCase):
         cls.template = tosc.ElementTOSC(cls.root[0])
         cls.template.createChild("GROUP")
         assert cls.template.createProperty(Property("b", "background", "0"))
-        assert cls.template.color(0, 0, 0, 1)
+        assert cls.template.setColor(0, 0, 0, 1)
         assert cls.template.createProperty(Property("f", "cornerRadius", "0"))
-        assert cls.template.frame(0, 0, 640, 860)
+        assert cls.template.setFrame(0, 0, 640, 860)
         assert cls.template.createProperty(Property("b", "grabFocus", "0"))
         assert cls.template.createProperty(Property("b", "interactive", "0"))
         assert cls.template.createProperty(Property("b", "locked", "0"))
@@ -39,7 +39,7 @@ class TestTemplate(unittest.TestCase):
 
     def test_change_properties(self):
         (x, y, w, h) = (0, 0, 1920, 1080)
-        assert self.template.frame(x, y, w, h)
+        assert self.template.setFrame(x, y, w, h)
         self.assertEqual(self.template.getPropertyParam("frame", "w").text, str(w))
         self.assertEqual(self.template.getPropertyParam("frame", "h").text, str(h))
 

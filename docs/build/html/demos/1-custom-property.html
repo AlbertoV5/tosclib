@@ -215,16 +215,17 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
 
-    <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"demos/files/test2.tosc"</span><span class="p">)</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"docs/demos/files/test2.tosc"</span><span class="p">)</span>
     <span class="n">parent</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="c1"># Set the property to the parent node, not the root node.</span>
-    <span class="n">parent</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"s"</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"CustomProperty"</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"Craig"</span><span class="p">)</span>
+    <span class="n">prop</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Property</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="s2">"CustomProperty"</span><span class="p">,</span> <span class="s2">"Craig"</span><span class="p">)</span>
+    <span class="n">parent</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Added Property: "</span><span class="p">)</span>
     <span class="n">parent</span><span class="o">.</span><span class="n">showProperty</span><span class="p">(</span><span class="s2">"CustomProperty"</span><span class="p">)</span>
 
-    <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">"demos/files/customProp.tosc"</span><span class="p">)</span>
+    <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">"docs/demos/files/customProp.tosc"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Then you can access that Property in Touch OSC Editor with .lua like this:</p>

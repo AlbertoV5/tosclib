@@ -25,8 +25,8 @@ def test_singles():
         )
     )
 
-    element.color(1,0,0,1)
-    element.frame(0, 0, 1, 1)
+    element.setColor(1,0,0,1)
+    element.setFrame(0, 0, 1, 1)
     element.showProperty("frame")
     
     # element.setFrame(1, 0, 0, 1)

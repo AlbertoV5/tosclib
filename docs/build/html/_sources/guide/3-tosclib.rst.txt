@@ -46,7 +46,9 @@ Here are more details on the functions and methods we used:
 
 .. autoclass:: tosclib.tosc.ElementTOSC
 
-.. autofunction:: tosclib.tosc.ElementTOSC.setProperty
+.. autoclass:: tosclib.tosc.Property
+
+.. autofunction:: tosclib.tosc.ElementTOSC.createProperty
 
 .. autofunction:: tosclib.tosc.ElementTOSC.setColor
 

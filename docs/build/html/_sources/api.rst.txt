@@ -1,7 +1,7 @@
 API
 ===================================
 
-.. autosummary::
-   :toctree: api
+.. toctree:: 
+   :glob:
 
-    tosclib.tosc
+   api/*

@@ -39,7 +39,7 @@ $ tox
 ```
 # Demo Projects:
 
-New location for Demo Projects is [here](https://albertov5.github.io/tosclib/docs/build/html/demos.html).
+## New location for Demo Projects is [here](https://albertov5.github.io/tosclib/docs/build/html/demos.html).
 
 
 ## custom-property.py
@@ -54,38 +54,12 @@ function onValueChanged(key, value)
 end
 ```
 You can use custom-property.py to insert new properties in your .tosc file and use them as globals or config parameters. Console:
-```console
-$ python custom-property.py -i "files/test2.tosc" -o "files/customProp.tosc" --Property "CustomProperty" --Value "1612" --Type "s"
-```
-
-
-## copy-scripts.py
-Find a source object by name in the top level of the template, copies its script and adds it to all children objects of a target object.
-1. Set up a template where you a source object and a target group in top level.
-2. 
-```console
-$ python copy-scripts.py -i "files/test.tosc" -o "files/out.tosc" --Source "source" --Target "target"
-```
-3. Open .tosc file.
 
 
 ## image-tosc.py
 
 Convert a .jpg image to .tosc using small boxes as pixels. This will look for a Target group object to place the boxes into.
 
-1. Set up a template where you have a "canvas" group on top level.
-2. Console:
-```console
-$ python image-tosc.py -i "files/test.tosc" -o "files/out.tosc" --Image "files/logo.jpg" --Target "canvas"
-```
-3. Use the user interface to find new image and convert. 
-4. Open .tosc file.
-
-Change these if you want to change the image size.
-```python
-converter.image_size = 64
-converter.pixel_size = 8
-```
 This means the image will be scaled down to 64x64 but the "pixel" boxes in Touch OSC will be of size 8.
 I don't recommend going above 256x256 for image_size as performance and filesize take a hit. Plus the XML tree is stored in memory, not streamed, so it can cause issues when generating it.
 

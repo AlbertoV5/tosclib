@@ -33,7 +33,7 @@ class ControlElements(Enum):
 
 @dataclass
 class Property:
-    """_summary_
+    """Element structure for a <property>
 
     Args:
         type (str): See PropertyType.
@@ -236,9 +236,9 @@ class shape(Enum):
     HEXAGON = "5"
 
 
-class PropertyKeys:
+class _PropertyKeys:
     """All controls have these properties
-    https://hexler.net/touchosc/manual/editor-control-properties"""
+    https://hexler.net/touchosc/manual/script-properties-and-values"""
 
     NAME: Final[str] = "name"
     TAG: Final[str] = "tag"
@@ -257,31 +257,31 @@ class PropertyKeys:
     SCRIPT: Final[str] = "script"
 
 
-class PropertiesBox:
+class _PropertiesBox:
     SHAPE: Final[str] = shape.__name__
 
 
-class PropertiesGrid:
+class _PropertiesGrid:
     GRID: Final[str] = "grid"
     GRID_STEPS: Final[str] = "gridSteps"
 
 
-class PropertiesResponse:
+class _PropertiesResponse:
     RESPONSE: Final[str] = response.__name__
     RESPONSE_FACTOR: Final[str] = "responseFactor"
 
 
-class PropertiesCursor:
+class _PropertiesCursor:
     CURSOR: Final[str] = "cursor"
     CURSOR_DISPLAY: Final[str] = cursorDisplay.__name__
 
 
-class PropertiesLine:
+class _PropertiesLine:
     LINES: Final[str] = "lines"
     LINES_DISPLAY: Final[str] = "linesDisplay"
 
 
-class PropertiesXY:
+class _PropertiesXY:
     LOCK_X: Final[str] = "lockX"
     LOCK_Y: Final[str] = "lockY"
     GRID_X: Final[str] = "gridX"
@@ -290,7 +290,7 @@ class PropertiesXY:
     GRID_STEPSY: Final[str] = "gridStepsY"
 
 
-class PropertiesText:
+class _PropertiesText:
     FONT: Final[str] = "font"
     SIZE: Final[str] = "textSize"
     ALIGNMENT_H: Final[str] = "textAlignH"
@@ -302,63 +302,63 @@ class Controls:
 
     https://hexler.net/touchosc/manual/script-enumerations#controltype"""
 
-    class BOX(PropertyKeys, PropertiesBox):
+    class BOX(_PropertyKeys, _PropertiesBox):
         pass
 
-    class BUTTON(PropertyKeys, PropertiesBox):
+    class BUTTON(_PropertyKeys, _PropertiesBox):
         BUTTON_TYPE = buttonType.__name__
         PRESS = "press"
         RELEASE = "release"
         VALUE_POSITION = "valuePosition"
 
-    class LABEL(PropertyKeys, PropertiesText):
+    class LABEL(_PropertyKeys, _PropertiesText):
         LENGTH = "textLength"
         CLIP = "textClip"
 
-    class TEXT(PropertyKeys, PropertiesText):
+    class TEXT(_PropertyKeys, _PropertiesText):
         pass
 
-    class FADER(PropertyKeys, PropertiesResponse, PropertiesGrid, PropertiesCursor):
+    class FADER(_PropertyKeys, _PropertiesResponse, _PropertiesGrid, _PropertiesCursor):
         BAR = "bar"
         BAR_DISPLAY = "barDisplay"
 
     class XY(
-        PropertyKeys,
-        PropertiesResponse,
-        PropertiesCursor,
-        PropertiesXY,
+        _PropertyKeys,
+        _PropertiesResponse,
+        _PropertiesCursor,
+        _PropertiesXY,
     ):
         pass
 
     class RADIAL(
-        PropertyKeys,
-        PropertiesResponse,
-        PropertiesGrid,
-        PropertiesCursor,
+        _PropertyKeys,
+        _PropertiesResponse,
+        _PropertiesGrid,
+        _PropertiesCursor,
     ):
         INVERTED = "inverted"
         CENTERED = "centered"
 
-    class ENCODER(PropertyKeys, PropertiesResponse, PropertiesGrid):
+    class ENCODER(_PropertyKeys, _PropertiesResponse, _PropertiesGrid):
         pass
 
     class RADAR(
-        PropertyKeys,
-        PropertiesCursor,
-        PropertiesLine,
-        PropertiesXY,
+        _PropertyKeys,
+        _PropertiesCursor,
+        _PropertiesLine,
+        _PropertiesXY,
     ):
         pass
 
-    class RADIO(PropertyKeys):
+    class RADIO(_PropertyKeys):
         STEPS = "steps"
         RADIO_TYPE = "radioType"
         pass
 
-    class GROUP(PropertyKeys):
+    class GROUP(_PropertyKeys):
         pass
 
-    class PAGER(PropertyKeys):
+    class PAGER(_PropertyKeys):
         TAB_LABELS = "tabLabels"
         TAB_BAR = "tabbar"
         DOUBLE_TAP = "tabbarDoubleTap"
@@ -367,14 +367,14 @@ class Controls:
         TEXT_SIZE_ON = "textSizeOn"
         pass
 
-        class PAGE(PropertyKeys):
+        class PAGE(_PropertyKeys):
             TAB_COLOR_OFF = "tabColorOff"
             TAB_COLOR_ON = "tabColorOn"
             TAB_LABEL = "tabLabel"
             TEXT_COLOR_OFF = "textColorOff"
             TEXT_COLOR_ON = "textColorOn"
 
-    class GRID(PropertyKeys):
+    class GRID(_PropertyKeys):
         EXCLUSIVE = "exclusive"
         GRID_NAMING = "gridNaming"
         GRID_ORDER = "gridOrder"
@@ -538,56 +538,56 @@ class ElementTOSC:
 
     def setName(self, value: str):
         return self.overrideProperty(
-            PropertyType.STRING.value, PropertyKeys.NAME, value=value
+            PropertyType.STRING.value, _PropertyKeys.NAME, value=value
         )
 
     def setTag(self, value: str):
         return self.overrideProperty(
-            PropertyType.STRING.value, PropertyKeys.TAG, value=value
+            PropertyType.STRING.value, _PropertyKeys.TAG, value=value
         )
 
     def setFrame(self, x: float, y: float, w: float, h: float):
         return self.overrideProperty(
             PropertyType.FRAME.value,
-            PropertyKeys.FRAME,
+            _PropertyKeys.FRAME,
             params={"x": str(x), "y": str(y), "w": str(w), "h": str(h)},
         )
 
     def setColor(self, r: float, g: float, b: float, a: float):
         return self.overrideProperty(
             PropertyType.COLOR.value,
-            PropertyKeys.COLOR,
+            _PropertyKeys.COLOR,
             params={"r": str(r), "g": str(g), "b": str(b), "a": str(a)},
         )
 
     def setLocked(self, value: bool):
         return self.overrideProperty(
-            PropertyType.BOOLEAN, PropertyKeys.LOCKED, str(int(value))
+            PropertyType.BOOLEAN, _PropertyKeys.LOCKED, str(int(value))
         )
 
     def setBackground(self, value: bool):
         return self.overrideProperty(
-            PropertyType.BOOLEAN.value, PropertyKeys.BACKGROUND, value=str(int(value))
+            PropertyType.BOOLEAN.value, _PropertyKeys.BACKGROUND, value=str(int(value))
         )
 
     def setVisible(self, value: bool):
         return self.overrideProperty(
-            PropertyType.BOOLEAN.value, PropertyKeys.VISIBLE, value=str(int(value))
+            PropertyType.BOOLEAN.value, _PropertyKeys.VISIBLE, value=str(int(value))
         )
 
     def setInteractive(self, value: bool):
         return self.overrideProperty(
-            PropertyType.BOOLEAN, PropertyKeys.INTERACTIVE, value=str(int(value))
+            PropertyType.BOOLEAN, _PropertyKeys.INTERACTIVE, value=str(int(value))
         )
 
     def setOutline(self, value: bool):
         return self.overrideProperty(
-            PropertyType.BOOLEAN, PropertyKeys.OUTLINE, value=value
+            PropertyType.BOOLEAN, _PropertyKeys.OUTLINE, value=value
         )
 
     def setScript(self, value: str):
         return self.overrideProperty(
-            PropertyType.STRING.value, PropertyKeys.SCRIPT, value=value
+            PropertyType.STRING.value, _PropertyKeys.SCRIPT, value=value
         )
 
     def show(self):

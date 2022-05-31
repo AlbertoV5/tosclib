@@ -5,8 +5,8 @@ project = "tosclib"
 copyright = "2022, Alberto Valdez"
 author = "Alberto Valdez"
 
-release = "0.1"
-version = "0.1.11"
+release = "0.2"
+version = "0.2.0"
 
 # -- General configuration
 
@@ -18,17 +18,11 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
-    # 'jupyter_sphinx',
-    # 'nbsphinx',
     "sphinx_copybutton",
+    "enum_tools.autoenum"
 ]
 
-# https://nbsphinx.readthedocs.io/en/0.8.8/usage.html#Sphinx-Configuration-Values
-# source_suffix = [".rst", ".md"]
 exclude_patterns = ["build"]
-
-# Jupyter
-# https://ipywidgets.readthedocs.io/en/latest/embedding.html#embedding-widgets-in-the-sphinx-html-documentation
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
@@ -43,20 +37,5 @@ napoleon_attr_annotations = True
 
 autodoc_typehints = "description"
 autodoc_class_signature = "separated"
-# -- Options for HTML output
-# https://docs.readthedocs.io/en/latest/guides/adding-custom-css.html
-
-# html_theme = 'sphinx_rtd_theme'
-# html_theme_options = {
-#     "style_nav_header_background" : '#2d2d2d',
-# }
 
 html_theme = "furo"
-# html_theme = 'sphinx_book_theme'
-# html_theme = 'insegel' # https://sphinx-themes.org/sample-sites/insegel/kitchen-sink/admonitions/
-# html_theme = 'press'
-# html_theme = 'karma_sphinx_theme'
-# html_theme = 'piccolo_theme'
-# html_css_files = ["custom.css"]
-# -- Options for EPUB output
-# epub_show_urls = 'footnote'

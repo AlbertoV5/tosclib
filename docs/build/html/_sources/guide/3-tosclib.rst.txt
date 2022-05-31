@@ -51,5 +51,6 @@ Here are more details on the functions and methods we used:
 .. autofunction:: tosclib.tosc.ElementTOSC.createProperty
 
 .. autofunction:: tosclib.tosc.ElementTOSC.setColor
+   :noindex:
 
 .. autofunction:: tosclib.tosc.write

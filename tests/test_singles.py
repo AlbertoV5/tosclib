@@ -34,7 +34,7 @@ def test_singles():
 
     element.showProperty("frame")
 
-    print(tosc.PropertyKeys.COLOR)
+    print(tosc.Controls.BOX.FRAME)
     print(Controls.BOX.BACKGROUND)
     
     print(Controls.BOX.SHAPE)

@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="API" href="../api.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="Shortcuts" href="shortcuts.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>tosclib.tosc - tosclib 0.1 documentation</title>
+        <title>tosclib.tosc - tosclib 0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">tosclib 0.1 documentation</div></a>
+      <a href="../index.html"><div class="brand">tosclib 0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">tosclib 0.1 documentation</span>
+  <span class="sidebar-brand-text">tosclib 0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -173,6 +173,8 @@
 </ul>
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="shortcuts.html">Shortcuts</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">tosclib.tosc</a></li>
 </ul>
 </li>
@@ -257,7 +259,7 @@
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ControlType</span></code></p></td>
 <td><p>Enum of valid &lt;node type=?&gt;</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Controls</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="enums.html#tosclib.tosc.Controls" title="tosclib.tosc.Controls"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Controls</span></code></a></p></td>
 <td><p>All the Node Types and their available properties</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.ElementTOSC" title="tosclib.tosc.ElementTOSC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElementTOSC</span></code></a></p></td>
@@ -269,32 +271,8 @@
 <tr class="row-even"><td><p><a class="reference internal" href="../guide/5-tosc-msg.html#tosclib.tosc.Partial" title="tosclib.tosc.Partial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Partial</span></code></a></p></td>
 <td><p>Default Elements for &lt;partial&gt;</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesBox</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesCursor</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesGrid</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesLine</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesResponse</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesText</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesXY</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.Property" title="tosclib.tosc.Property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Property</span></code></a></p></td>
-<td><p>_summary_</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertyKeys</span></code></p></td>
-<td><p>All controls have these properties <a class="reference external" href="https://hexler.net/touchosc/manual/editor-control-properties">https://hexler.net/touchosc/manual/editor-control-properties</a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.Property" title="tosclib.tosc.Property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Property</span></code></a></p></td>
+<td><p>Element structure for a &lt;property&gt;</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertyType</span></code></p></td>
 <td><p>Enum of valid &lt;property type=?&gt;</p></td>
@@ -305,34 +283,34 @@
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Value</span></code></p></td>
 <td><p>Default Elements for &lt;value&gt;.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">buttonType</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="enums.html#tosclib.tosc.buttonType" title="tosclib.tosc.buttonType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buttonType</span></code></a></p></td>
 <td><p>An enumeration.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cursorDisplay</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="enums.html#tosclib.tosc.cursorDisplay" title="tosclib.tosc.cursorDisplay"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cursorDisplay</span></code></a></p></td>
 <td><p>An enumeration.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">font</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="enums.html#tosclib.tosc.font" title="tosclib.tosc.font"><code class="xref py py-obj docutils literal notranslate"><span class="pre">font</span></code></a></p></td>
 <td><p>An enumeration.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">orientation</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="enums.html#tosclib.tosc.orientation" title="tosclib.tosc.orientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">orientation</span></code></a></p></td>
 <td><p>An enumeration.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">outlineStyle</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="enums.html#tosclib.tosc.outlineStyle" title="tosclib.tosc.outlineStyle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outlineStyle</span></code></a></p></td>
 <td><p>An enumeration.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pointerPriority</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="enums.html#tosclib.tosc.pointerPriority" title="tosclib.tosc.pointerPriority"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pointerPriority</span></code></a></p></td>
 <td><p>An enumeration.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">response</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="enums.html#tosclib.tosc.response" title="tosclib.tosc.response"><code class="xref py py-obj docutils literal notranslate"><span class="pre">response</span></code></a></p></td>
 <td><p>An enumeration.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="enums.html#tosclib.tosc.shape" title="tosclib.tosc.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>An enumeration.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">textAlignH</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="enums.html#tosclib.tosc.textAlignH" title="tosclib.tosc.textAlignH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">textAlignH</span></code></a></p></td>
 <td><p>An enumeration.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">textAlignV</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="enums.html#tosclib.tosc.textAlignV" title="tosclib.tosc.textAlignV"><code class="xref py py-obj docutils literal notranslate"><span class="pre">textAlignV</span></code></a></p></td>
 <td><p>An enumeration.</p></td>
 </tr>
 </tbody>
@@ -345,14 +323,14 @@
         
         <div class="related-pages">
           
-          <a class="prev-page" href="../api.html">
+          <a class="prev-page" href="shortcuts.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">API</div>
+                <div class="title">Shortcuts</div>
                 
               </div>
             </a>

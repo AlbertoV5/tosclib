@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Elements from Json" href="3-from-json.html" /><link rel="prev" title="Custom Property" href="1-custom-property.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="tosclib.tosc" href="tosclib.tosc.html" /><link rel="prev" title="Enums" href="enums.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>Copy Scripts - tosclib 0.2 documentation</title>
+        <title>Shortcuts - tosclib 0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -164,18 +164,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../guide/5-tosc-msg.html">OSC Message Elements</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../demos.html">Demos</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="1-custom-property.html">Custom Property</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Copy Scripts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="3-from-json.html">Elements from Json</a></li>
-<li class="toctree-l2"><a class="reference internal" href="4-image-converter.html">Image Converter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="5-reaper-tosclib.html">Reaper to Touch OSC</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../demos.html">Demos</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../demos/1-custom-property.html">Custom Property</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../demos/2-copy-scripts.html">Copy Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../demos/3-from-json.html">Elements from Json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../demos/4-image-converter.html">Image Converter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../demos/5-reaper-tosclib.html">Reaper to Touch OSC</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/enums.html">Enums</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/shortcuts.html">Shortcuts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/tosclib.tosc.html">tosclib.tosc</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="enums.html">Enums</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tosclib.tosc.html">tosclib.tosc</a></li>
 </ul>
 </li>
 </ul>
@@ -210,54 +210,73 @@
           </label>
         </div>
         <article role="main">
-          <section id="copy-scripts">
-<h1>Copy Scripts<a class="headerlink" href="#copy-scripts" title="Permalink to this headline">#</a></h1>
-<p>Copy Scripts of one Element to all the Child Elements of another.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">msilib.schema</span> <span class="kn">import</span> <span class="n">Property</span>
-<span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
-<span class="kn">import</span> <span class="nn">re</span>
-
-
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">inputFile</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">,</span> <span class="n">sourceName</span><span class="p">,</span> <span class="n">targetName</span><span class="p">):</span>
-
-    <span class="c1"># Find the script string with a streaming parser</span>
-    <span class="n">script</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">pullValueFromKey</span><span class="p">(</span>
-        <span class="n">inputFile</span><span class="o">=</span><span class="n">inputFile</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">sourceName</span><span class="p">,</span> <span class="n">targetKey</span><span class="o">=</span><span class="s2">"script"</span>
-    <span class="p">)</span>
-
-    <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">inputFile</span><span class="p">)</span>
-    <span class="n">main</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">main</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-        <span class="n">group</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
-
-        <span class="c1"># Move on if the Property is not the target</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">getPropertyValue</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">targetName</span><span class="p">):</span>
-            <span class="k">continue</span>
-
-        <span class="c1"># Assuming the Element is the target, iterate through children</span>
-        <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-            <span class="n">box</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">box</span><span class="o">.</span><span class="n">hasProperty</span><span class="p">(</span><span class="s2">"script"</span><span class="p">):</span>
-                <span class="n">box</span><span class="o">.</span><span class="n">setProperty</span><span class="p">(</span><span class="s2">"script"</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">box</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="n">tosc</span><span class="o">.</span><span class="n">Property</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="s2">"script"</span><span class="p">,</span> <span class="n">script</span><span class="p">))</span>
-
-        <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Wrote:</span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="si">{</span><span class="n">script</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">To file: </span><span class="si">{</span><span class="n">outputFile</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-
-    <span class="n">main</span><span class="p">(</span><span class="s2">"docs/demos/files/test.tosc"</span><span class="p">,</span> <span class="s2">"docs/demos/files/out.tosc"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><strong>Demo Files:</strong></p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/AlbertoV5/tosclib/blob/main/demos/files/test.tosc">Input .tosc</a></p></li>
-<li><p><a class="reference external" href="https://github.com/AlbertoV5/tosclib/blob/main/demos/files/out.tosc">Output .tosc</a></p></li>
+          <section id="shortcuts">
+<h1>Shortcuts<a class="headerlink" href="#shortcuts" title="Permalink to this headline">#</a></h1>
+<p>Property shortcuts:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setName">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setName" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setColor">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setColor" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
+<li><p><strong>g</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
+<li><p><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setFrame">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setFrame" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
+<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
+<li><p><strong>w</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
+<li><p><strong>h</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setScript">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setScript</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setScript" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setTag">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setTag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setTag" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setBackground">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setBackground</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setBackground" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
 </section>
 
         </article>
@@ -265,23 +284,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="3-from-json.html">
+          <a class="next-page" href="tosclib.tosc.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Elements from Json</div>
+                <div class="title">tosclib.tosc</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="1-custom-property.html">
+          <a class="prev-page" href="enums.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Custom Property</div>
+                <div class="title">Enums</div>
                 
               </div>
             </a>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Demos" href="../demos.html" /><link rel="prev" title="Valid Elements" href="4-tosc-valid.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>OSC Message Elements - tosclib 0.1 documentation</title>
+        <title>OSC Message Elements - tosclib 0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">tosclib 0.1 documentation</div></a>
+      <a href="../index.html"><div class="brand">tosclib 0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">tosclib 0.1 documentation</span>
+  <span class="sidebar-brand-text">tosclib 0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -173,6 +173,8 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/shortcuts.html">Shortcuts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/tosclib.tosc.html">tosclib.tosc</a></li>
 </ul>
 </li>
@@ -214,7 +216,7 @@
 <p>We can create a message from ElementTOSC with:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.createOSC">
-<span class="sig-prename descclassname"><span class="pre">ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">createOSC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">OSC(enabled='1',</span> <span class="pre">send='1',</span> <span class="pre">receive='1',</span> <span class="pre">feedback='0',</span> <span class="pre">connections='00001',</span> <span class="pre">triggers=[Trigger(var='x',</span> <span class="pre">condition='ANY')],</span> <span class="pre">path=[Partial(type='CONSTANT',</span> <span class="pre">conversion='STRING',</span> <span class="pre">value='/',</span> <span class="pre">scaleMin='0',</span> <span class="pre">scaleMax='1'),</span> <span class="pre">Partial(type='PROPERTY',</span> <span class="pre">conversion='STRING',</span> <span class="pre">value='name',</span> <span class="pre">scaleMin='0',</span> <span class="pre">scaleMax='1')],</span> <span class="pre">arguments=[Partial(type='VALUE',</span> <span class="pre">conversion='FLOAT',</span> <span class="pre">value='x',</span> <span class="pre">scaleMin='0',</span> <span class="pre">scaleMax='1')])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.createOSC" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">createOSC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">OSC(enabled='1',</span> <span class="pre">send='1',</span> <span class="pre">receive='1',</span> <span class="pre">feedback='0',</span> <span class="pre">connections='00001',</span> <span class="pre">triggers=[Trigger(var='x',</span> <span class="pre">condition='ANY')],</span> <span class="pre">path=[Partial(type='CONSTANT',</span> <span class="pre">conversion='STRING',</span> <span class="pre">value='/',</span> <span class="pre">scaleMin='0',</span> <span class="pre">scaleMax='1'),</span> <span class="pre">Partial(type='PROPERTY',</span> <span class="pre">conversion='STRING',</span> <span class="pre">value='name',</span> <span class="pre">scaleMin='0',</span> <span class="pre">scaleMax='1')],</span> <span class="pre">arguments=[Partial(type='VALUE',</span> <span class="pre">conversion='FLOAT',</span> <span class="pre">value='x',</span> <span class="pre">scaleMin='0',</span> <span class="pre">scaleMax='1')])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#ElementTOSC.createOSC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.ElementTOSC.createOSC" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>message</strong> (<a class="reference internal" href="#tosclib.tosc.OSC" title="tosclib.tosc.OSC"><em>tosclib.tosc.OSC</em></a>) – </p>
@@ -227,7 +229,7 @@
 <p>Then we can construct a custom osc message with the help of these classes:</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.OSC">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">OSC</span></span><a class="headerlink" href="#tosclib.tosc.OSC" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">OSC</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#OSC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.OSC" title="Permalink to this definition">#</a></dt>
 <dd><p>Default Elements and Sub Elements for &lt;osc&gt;</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -271,7 +273,7 @@
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.Trigger">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">Trigger</span></span><a class="headerlink" href="#tosclib.tosc.Trigger" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">Trigger</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#Trigger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.Trigger" title="Permalink to this definition">#</a></dt>
 <dd><p>Default Elements for &lt;trigger&gt;</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -303,7 +305,7 @@
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.Partial">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">Partial</span></span><a class="headerlink" href="#tosclib.tosc.Partial" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">Partial</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#Partial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.Partial" title="Permalink to this definition">#</a></dt>
 <dd><p>Default Elements for &lt;partial&gt;</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

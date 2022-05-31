@@ -125,7 +125,7 @@
 </property>
 <property type='i'>
 <key><![CDATA[orientation]]></key>
-<value>0</value>
+<value>1</value>
 </property>
 <property type='b'>
 <key><![CDATA[outline]]></key>

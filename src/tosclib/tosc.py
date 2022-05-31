@@ -7,7 +7,7 @@ import re
 import zlib
 import uuid
 from dataclasses import dataclass, field
-from enum import Enum, unique
+from enum import Enum, auto, unique
 from typing import List, Final
 
 
@@ -144,11 +144,33 @@ class PropertyType(Enum):
     FLOAT = "f"
     FRAME = "r"
     COLOR = "c"
-    
+
+
+@unique
+class textAlignH(Enum):
+    LEFT = "0"
+    CENTER = "1"
+    RIGHT = "2"
+
+
+@unique
+class textAlignV(Enum):
+    TOP = "0"
+    MIDDLE = "1"
+    BOTTOM = "2"
+
+
+@unique
+class buttonType(Enum):
+    MOMENTARY = "0"
+    TOGGLE_RELEASE = "1"
+    TOGGLE_PRESS = "2"
+
+
 @unique
 class ControlType(Enum):
     """Enum of valid <node type=?>"""
-    
+
     BOX = "BOX"
     BUTTON = "BUTTON"
     LABEL = "LABEL"
@@ -164,6 +186,56 @@ class ControlType(Enum):
     GRID = "GRID"
 
 
+@unique
+class cursorDisplay(Enum):
+    ALWAYS = "0"
+    ACTIVE = "1"
+    INACTIVE = "2"
+
+
+@unique
+class font(Enum):
+    DEFAULT = "0"
+    MONOSPACED = "1"
+
+
+@unique
+class orientation(Enum):
+    NORTH = "0"
+    EAST = "1"
+    SOUTH = "2"
+    WEST = "3"
+
+
+@unique
+class outlineStyle(Enum):
+    FULL = "0"
+    CORNERS = "1"
+    EDGES = "2"
+
+
+@unique
+class pointerPriority(Enum):
+    OLDEST = "0"
+    NEWEST = "1"
+
+
+@unique
+class response(Enum):
+    ABSOLUTE = "0"
+    RELATIVE = "1"
+
+
+@unique
+class shape(Enum):
+    RECTANGLE = "0"
+    CIRCLE = "1"
+    TRIANGLE = "2"
+    DIAMOND = "3"
+    PENTAGON = "4"
+    HEXAGON = "5"
+
+
 class PropertyKeys:
     """All controls have these properties
     https://hexler.net/touchosc/manual/editor-control-properties"""
@@ -177,11 +249,16 @@ class PropertyKeys:
     INTERACTIVE: Final[str] = "interactive"
     BACKGROUND: Final[str] = "background"
     OUTLINE: Final[str] = "outline"
+    OUTLINE_STYLE: Final[str] = outlineStyle.__name__
     GRAB_FOCUS: Final[str] = "grabFocus"
-    POINTER: Final[str] = "pointerPriority"
+    POINTER: Final[str] = pointerPriority.__name__
     CORNER: Final[str] = "cornerRadius"
-    ORIENTATION: Final[str] = "orientation"
+    ORIENTATION: Final[str] = orientation.__name__
     SCRIPT: Final[str] = "script"
+
+
+class PropertiesBox:
+    SHAPE: Final[str] = shape.__name__
 
 
 class PropertiesGrid:
@@ -190,13 +267,13 @@ class PropertiesGrid:
 
 
 class PropertiesResponse:
-    RESPONSE: Final[str] = "response"
+    RESPONSE: Final[str] = response.__name__
     RESPONSE_FACTOR: Final[str] = "responseFactor"
 
 
 class PropertiesCursor:
     CURSOR: Final[str] = "cursor"
-    CURSOR_DISPLAY: Final[str] = "cursorDisplay"
+    CURSOR_DISPLAY: Final[str] = cursorDisplay.__name__
 
 
 class PropertiesLine:
@@ -225,12 +302,11 @@ class Controls:
 
     https://hexler.net/touchosc/manual/script-enumerations#controltype"""
 
-    class BOX(PropertyKeys):
-        SHAPE = "shape"
+    class BOX(PropertyKeys, PropertiesBox):
+        pass
 
-    class BUTTON(PropertyKeys):
-        SHAPE = "shape"
-        BUTTON_TYPE = "buttonType"
+    class BUTTON(PropertyKeys, PropertiesBox):
+        BUTTON_TYPE = buttonType.__name__
         PRESS = "press"
         RELEASE = "release"
         VALUE_POSITION = "valuePosition"
@@ -242,14 +318,9 @@ class Controls:
     class TEXT(PropertyKeys, PropertiesText):
         pass
 
-    class FADER(PropertyKeys):
-        CURSOR = "cursor"
+    class FADER(PropertyKeys, PropertiesResponse, PropertiesGrid, PropertiesCursor):
         BAR = "bar"
         BAR_DISPLAY = "barDisplay"
-        RESPONSE = "response"
-        RESPONSE_FACTOR = "responseFactor"
-        GRID = "grid"
-        GRID_STEPS = "gridSteps"
 
     class XY(
         PropertyKeys,
@@ -460,7 +531,8 @@ class ElementTOSC:
             return self.createProperty(Property(type, key, value=value, params=params))
         return self.setProperty(key, value=value, params=params)
 
-    def setType(self, value: ControlType):
+    def setType(self, value: str):
+        """See ControlType Element"""
         self.node.attrib = {"type": value}
         return True
 
@@ -521,24 +593,17 @@ class ElementTOSC:
     def show(self):
         showElement(self.node)
 
-    def showProperties(self):
-        showElement(self.properties)
-
-    def showValues(self):
-        showElement(self.values)
-
-    def showMessages(self):
-        showElement(self.messages)
-
-    def showChildren(self):
-        showElement(self.children)
-
     def showProperty(self, name: str):
         showElement(findKey(self.properties, name))
 
     def showValue(self, name: str):
         showElement(findKey(self.values, name))
 
+###
+#
+#   GLOBAL FUNCTIONS
+#
+###
 
 def findKey(elements: ET.Element, key: str) -> ET.Element:
     """Iterate through element with children and return child whose key matches"""
@@ -588,7 +653,19 @@ def getTextValueFromKey(properties: ET.Element, key: str) -> str:
 
 
 def pullValueFromKey(inputFile: str, key: str, value: str, targetKey: str) -> str:
-    """Find a value from a known key, value and target key"""
+    """If you know the name of an element but don't know its other properties.
+    This function uses a .tosc file and gets its root.
+    For passing an element see pullValueFromKey2
+
+    Args:
+        inputFile (str): File to parse.
+        key (str): Known key.
+        value (str): Known value.
+        targetKey (str): Known key of unknown value.
+
+    Returns:
+        str: Value
+    """
     parser = ET.XMLPullParser()
     with open(inputFile, "rb") as file:
         parser.feed(zlib.decompress(file.read()))
@@ -601,3 +678,24 @@ def pullValueFromKey(inputFile: str, key: str, value: str, targetKey: str) -> st
 
     parser.close()
     return ""
+
+def pullValueFromKey2(root: ET.Element, key : str, value : str, targetKey : str) -> str:
+    """If you know the name of an element but don't know its other properties.
+
+    Args:
+        root (ET.Element): Parses the whole element, so you can feed the root.
+        key (str): Known key.
+        value (str): Known value.
+        targetKey (str): Known key of unknown value.
+
+    Returns:
+        str: Value
+    """
+    parser = ET.XMLPullParser()
+    parser.feed(ET.tostring(root, encoding = "UTF-8"))
+    for _, e in parser.read_events():  # event, element
+        if not e.find("properties"):
+            continue
+        if re.fullmatch(getTextValueFromKey(e.find("properties"), key), value):
+            parser.close()
+            return getTextValueFromKey(e.find("properties"), targetKey)

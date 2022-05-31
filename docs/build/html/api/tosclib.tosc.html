@@ -231,12 +231,15 @@
 <td><p>Reads a .tosc file and returns the XML root Element</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pullValueFromKey</span></code>(inputFile, key, value, ...)</p></td>
-<td><p>Find a value from a known key, value and target key</p></td>
+<td><p>If you know the name of an element but don't know its other properties.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">showElement</span></code>(e)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pullValueFromKey2</span></code>(root, key, value, targetKey)</p></td>
+<td><p>If you know the name of an element but don't know its other properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">showElement</span></code>(e)</p></td>
 <td><p>Generic show function, UTF-8, indented 2 spaces</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.write" title="tosclib.tosc.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a>(root[, outputPath])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.write" title="tosclib.tosc.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a>(root[, outputPath])</p></td>
 <td><p>Encodes a root Element to .tosc</p></td>
 </tr>
 </tbody>
@@ -249,31 +252,88 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ControlElements</span></code></p></td>
-<td><p>An enumeration.</p></td>
+<td><p>Enum of valid Sub Elements for a Node</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ControlType</span></code></p></td>
-<td><p>All the Node Types</p></td>
+<td><p>Enum of valid &lt;node type=?&gt;</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.ElementTOSC" title="tosclib.tosc.ElementTOSC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElementTOSC</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Controls</span></code></p></td>
+<td><p>All the Node Types and their available properties</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.ElementTOSC" title="tosclib.tosc.ElementTOSC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElementTOSC</span></code></a></p></td>
 <td><p>Contains a Node Element and its SubElements.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../guide/5-tosc-msg.html#tosclib.tosc.OSC" title="tosclib.tosc.OSC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OSC</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../guide/5-tosc-msg.html#tosclib.tosc.OSC" title="tosclib.tosc.OSC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OSC</span></code></a></p></td>
 <td><p>Default Elements and Sub Elements for &lt;osc&gt;</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../guide/5-tosc-msg.html#tosclib.tosc.Partial" title="tosclib.tosc.Partial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Partial</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../guide/5-tosc-msg.html#tosclib.tosc.Partial" title="tosclib.tosc.Partial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Partial</span></code></a></p></td>
 <td><p>Default Elements for &lt;partial&gt;</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesBox</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesCursor</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesGrid</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesLine</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesResponse</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesText</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesXY</span></code></p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.Property" title="tosclib.tosc.Property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Property</span></code></a></p></td>
 <td><p>_summary_</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertyType</span></code></p></td>
-<td><p>An enumeration.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertyKeys</span></code></p></td>
+<td><p>All controls have these properties <a class="reference external" href="https://hexler.net/touchosc/manual/editor-control-properties">https://hexler.net/touchosc/manual/editor-control-properties</a></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../guide/5-tosc-msg.html#tosclib.tosc.Trigger" title="tosclib.tosc.Trigger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trigger</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertyType</span></code></p></td>
+<td><p>Enum of valid &lt;property type=?&gt;</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../guide/5-tosc-msg.html#tosclib.tosc.Trigger" title="tosclib.tosc.Trigger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trigger</span></code></a></p></td>
 <td><p>Default Elements for &lt;trigger&gt;</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Value</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Value</span></code></p></td>
 <td><p>Default Elements for &lt;value&gt;.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">buttonType</span></code></p></td>
+<td><p>An enumeration.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cursorDisplay</span></code></p></td>
+<td><p>An enumeration.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">font</span></code></p></td>
+<td><p>An enumeration.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">orientation</span></code></p></td>
+<td><p>An enumeration.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">outlineStyle</span></code></p></td>
+<td><p>An enumeration.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pointerPriority</span></code></p></td>
+<td><p>An enumeration.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">response</span></code></p></td>
+<td><p>An enumeration.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></p></td>
+<td><p>An enumeration.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">textAlignH</span></code></p></td>
+<td><p>An enumeration.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">textAlignV</span></code></p></td>
+<td><p>An enumeration.</p></td>
 </tr>
 </tbody>
 </table></div>

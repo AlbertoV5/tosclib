@@ -10,7 +10,7 @@ The basic concept is to load a regular XML Element and create a new ElementTOSC 
 
    import tosclib as tosc
    
-   root = tosc.load("demos/files/test.tosc")
+   root = tosc.load("docs/demos/files/test.tosc")
    parent = tosc.ElementTOSC(root[0])
 
 .. code-block::
@@ -34,7 +34,7 @@ The basic concept is to load a regular XML Element and create a new ElementTOSC 
 .. code-block::
    :caption: In order to write back to .tosc, we use the original root Element with the tosclib write function.
    
-   tosc.write(root, "demos/files/out.tosc")
+   tosc.write(root, "docs/demos/files/out.tosc")
 
 
 Classes and Functions

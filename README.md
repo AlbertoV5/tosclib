@@ -28,7 +28,7 @@ setuptools==61.2.0
 pytest-cov==3.0.0
 ```
 Requirements docs:
-```
+```python
 sphinx==4.5.0
 furo==2022.4.7
 sphinx_copybutton==0.5.0

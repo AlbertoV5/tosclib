@@ -6,7 +6,7 @@ copyright = "2022, Alberto Valdez"
 author = "Alberto Valdez"
 
 release = "0.1"
-version = "0.1.10"
+version = "0.1.11"
 
 # -- General configuration
 

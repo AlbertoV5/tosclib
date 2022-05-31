@@ -1,18 +1,19 @@
 """
 Simplify navigating, editing and generating .tosc files.
 """
-from dataclasses import dataclass, field
-from enum import Enum, unique
 import sys
 import xml.etree.ElementTree as ET
 import re
 import zlib
 import uuid
-from typing import List
+from dataclasses import dataclass, field
+from enum import Enum, unique
+from typing import List, Final
 
 
 @unique
 class ControlElements(Enum):
+    """Enum of valid Sub Elements for a Node"""
 
     PROPERTIES = "properties"
     VALUES = "values"
@@ -30,114 +31,6 @@ class ControlElements(Enum):
     CHILD = "node"
 
 
-@unique
-class ControlType(Enum):
-    """All the Node Types
-
-    https://hexler.net/touchosc/manual/script-enumerations#controltype"""
-
-    BOX = "BOX"
-    BUTTON = "BUTTON"
-    LABEL = "LABEL"
-    TEXT = "TEXT"
-    FADER = "FADER"
-    XY = "XY"
-    RADIAL = "RADIAL"
-    ENCODER = "ENCODER"
-    RADAR = "RADAR"
-    RADIO = "RADIO"
-    GROUP = "GROUP"
-    PAGER = "PAGER"
-    GRID = "GRID"
-
-    @classmethod
-    def hasChildren(cls):
-        return (cls.GROUP.value, cls.PAGER.value)
-
-
-@unique
-class PropertyKeys(Enum):
-    """https://hexler.net/touchosc/manual/editor-control-properties"""
-
-    TYPE = "type"
-    NAME = "name"
-    TAG = "tag"
-    FRAME = "frame"
-    COLOR = "color"
-    LOCKED = "locked"
-    VISIBLE = "visible"
-    INTERACTIVE = "interactive"
-    BACKGROUND = "background"
-    OUTLINE = "outline"
-    GRAB_FOCUS = "grabFocus"
-    POINTER = "pointerPriority"
-    CORNER = "cornerRadius"
-    ORIENTATION = "orientation"
-
-
-class BOX(PropertyKeys):
-    SHAPE = "shape"
-
-
-class BUTTON(PropertyKeys):
-    SHAPE = "shape"
-    TYPE = "buttonType"
-    PRESS = "press"
-    RELEASE = "release"
-    VALUE_POSITION = "valuePosition"
-
-
-class LABEL(PropertyKeys):
-    FONT = "font"
-    SIZE = "textSize"
-    LENGTH = "textLength"
-    ALIGNMENT_H = "textAlignH"
-    ALIGNMENT_V = "textAlignV"
-    COLOR = "textColor"
-    CLIP = "textClip"
-
-
-class TEXT(PropertyKeys):
-    FONT = "font"
-    SIZE = "textSize"
-    ALIGNMENT_H = "textAlignH"
-    COLOR = "textColor"
-
-
-class FADER(PropertyKeys):
-    CURSOR = "cursor"
-    BAR = "bar"
-    BAR_DISPLAY = "barDisplay"
-    RESPONSE = "response"
-    FACTOR = "responseFactor"
-    GRID = "grid"
-    GRID_STEPS = "gridSteps"
-
-
-class XY(PropertyKeys):
-    CURSOR = "cursor"
-    LINES = "lines"
-    LINES_DISPLAY = "linesDisplay"
-    LOCK_X = "lockX"
-    LOCK_Y = "lockY"
-    RESPONSE = "response"
-    FACTOR = "responseFactor"
-    GRID_X = "gridX"
-    GRID_Y = "gridY"
-    GRID_STEPSX = "gridStepsX"
-    GRID_STEPSY = "gridStepsY"
-
-
-@unique
-class PropertyType(Enum):
-    STRING = "s"
-    BOOLEAN = "b"
-    iNTEGER = "i"
-    FLOAT = "f"
-    FRAME = "r"
-    COLOR = "c"
-
-
 @dataclass
 class Property:
     """_summary_
@@ -152,7 +45,7 @@ class Property:
     type: str
     key: str
     value: str = ""
-    params: dict[str, str] = field(default_factory=lambda: {})
+    params: dict = field(default_factory=lambda: {})
 
     def __post_init__(self):
         if self.value and self.params:
@@ -241,6 +134,189 @@ class OSC:
     )
 
 
+@unique
+class PropertyType(Enum):
+    """Enum of valid <property type=?>"""
+
+    STRING = "s"
+    BOOLEAN = "b"
+    INTEGER = "i"
+    FLOAT = "f"
+    FRAME = "r"
+    COLOR = "c"
+    
+@unique
+class ControlType(Enum):
+    """Enum of valid <node type=?>"""
+    
+    BOX = "BOX"
+    BUTTON = "BUTTON"
+    LABEL = "LABEL"
+    TEXT = "TEXT"
+    FADER = "FADER"
+    XY = "XY"
+    RADIAL = "RADIAL"
+    ENCODER = "ENCODER"
+    RADAR = "RADAR"
+    RADIO = "RADIO"
+    GROUP = "GROUP"
+    PAGER = "PAGER"
+    GRID = "GRID"
+
+
+class PropertyKeys:
+    """All controls have these properties
+    https://hexler.net/touchosc/manual/editor-control-properties"""
+
+    NAME: Final[str] = "name"
+    TAG: Final[str] = "tag"
+    FRAME: Final[str] = "frame"
+    COLOR: Final[str] = "color"
+    LOCKED: Final[str] = "locked"
+    VISIBLE: Final[str] = "visible"
+    INTERACTIVE: Final[str] = "interactive"
+    BACKGROUND: Final[str] = "background"
+    OUTLINE: Final[str] = "outline"
+    GRAB_FOCUS: Final[str] = "grabFocus"
+    POINTER: Final[str] = "pointerPriority"
+    CORNER: Final[str] = "cornerRadius"
+    ORIENTATION: Final[str] = "orientation"
+    SCRIPT: Final[str] = "script"
+
+
+class PropertiesGrid:
+    GRID: Final[str] = "grid"
+    GRID_STEPS: Final[str] = "gridSteps"
+
+
+class PropertiesResponse:
+    RESPONSE: Final[str] = "response"
+    RESPONSE_FACTOR: Final[str] = "responseFactor"
+
+
+class PropertiesCursor:
+    CURSOR: Final[str] = "cursor"
+    CURSOR_DISPLAY: Final[str] = "cursorDisplay"
+
+
+class PropertiesLine:
+    LINES: Final[str] = "lines"
+    LINES_DISPLAY: Final[str] = "linesDisplay"
+
+
+class PropertiesXY:
+    LOCK_X: Final[str] = "lockX"
+    LOCK_Y: Final[str] = "lockY"
+    GRID_X: Final[str] = "gridX"
+    GRID_Y: Final[str] = "gridY"
+    GRID_STEPSX: Final[str] = "gridStepsX"
+    GRID_STEPSY: Final[str] = "gridStepsY"
+
+
+class PropertiesText:
+    FONT: Final[str] = "font"
+    SIZE: Final[str] = "textSize"
+    ALIGNMENT_H: Final[str] = "textAlignH"
+    TEXT_COLOR: Final[str] = "textColor"
+
+
+class Controls:
+    """All the Node Types and their available properties
+
+    https://hexler.net/touchosc/manual/script-enumerations#controltype"""
+
+    class BOX(PropertyKeys):
+        SHAPE = "shape"
+
+    class BUTTON(PropertyKeys):
+        SHAPE = "shape"
+        BUTTON_TYPE = "buttonType"
+        PRESS = "press"
+        RELEASE = "release"
+        VALUE_POSITION = "valuePosition"
+
+    class LABEL(PropertyKeys, PropertiesText):
+        LENGTH = "textLength"
+        CLIP = "textClip"
+
+    class TEXT(PropertyKeys, PropertiesText):
+        pass
+
+    class FADER(PropertyKeys):
+        CURSOR = "cursor"
+        BAR = "bar"
+        BAR_DISPLAY = "barDisplay"
+        RESPONSE = "response"
+        RESPONSE_FACTOR = "responseFactor"
+        GRID = "grid"
+        GRID_STEPS = "gridSteps"
+
+    class XY(
+        PropertyKeys,
+        PropertiesResponse,
+        PropertiesCursor,
+        PropertiesXY,
+    ):
+        pass
+
+    class RADIAL(
+        PropertyKeys,
+        PropertiesResponse,
+        PropertiesGrid,
+        PropertiesCursor,
+    ):
+        INVERTED = "inverted"
+        CENTERED = "centered"
+
+    class ENCODER(PropertyKeys, PropertiesResponse, PropertiesGrid):
+        pass
+
+    class RADAR(
+        PropertyKeys,
+        PropertiesCursor,
+        PropertiesLine,
+        PropertiesXY,
+    ):
+        pass
+
+    class RADIO(PropertyKeys):
+        STEPS = "steps"
+        RADIO_TYPE = "radioType"
+        pass
+
+    class GROUP(PropertyKeys):
+        pass
+
+    class PAGER(PropertyKeys):
+        TAB_LABELS = "tabLabels"
+        TAB_BAR = "tabbar"
+        DOUBLE_TAP = "tabbarDoubleTap"
+        TAB_BAR_SIZE = "tabbarSize"
+        TEXT_SIZE_OFF = "textSizeOff"
+        TEXT_SIZE_ON = "textSizeOn"
+        pass
+
+        class PAGE(PropertyKeys):
+            TAB_COLOR_OFF = "tabColorOff"
+            TAB_COLOR_ON = "tabColorOn"
+            TAB_LABEL = "tabLabel"
+            TEXT_COLOR_OFF = "textColorOff"
+            TEXT_COLOR_ON = "textColorOn"
+
+    class GRID(PropertyKeys):
+        EXCLUSIVE = "exclusive"
+        GRID_NAMING = "gridNaming"
+        GRID_ORDER = "gridOrder"
+        GRID_START = "gridStart"
+        GRID_TYPE = "gridType"
+        GRID_X = "gridX"
+        GRID_Y = "gridY"
+
+    @classmethod
+    def hasChildren(cls):
+        return (cls.GRID, cls.GROUP, cls.PAGER)
+
+
 class ElementTOSC:
     """
     Contains a Node Element and its SubElements.
@@ -282,9 +358,7 @@ class ElementTOSC:
     def hasProperty(self, key: str) -> bool:
         return True if findKey(self.properties, key) else False
 
-    def setProperty(
-        self, key: str, value: str = "", params: dict[str, str] = {}
-    ) -> bool:
+    def setProperty(self, key: str, value: str = "", params: dict = {}) -> bool:
         if not self.hasProperty(key):
             raise ValueError(f"{key} doesn't exist.")
         val = self.getPropertyValue(key)
@@ -378,41 +452,71 @@ class ElementTOSC:
     #   SHORTCUTS:
     #
     #
-    def setter(
-        self, type: str, key: str, value: str = "", params: dict[str, str] = {}
+    def overrideProperty(
+        self, type: str, key: str, value: str = "", params: dict = {}
     ) -> bool:
         """Create a Property, if already exists, then modify its values."""
         if not self.hasProperty(key):
             return self.createProperty(Property(type, key, value=value, params=params))
         return self.setProperty(key, value=value, params=params)
 
+    def setType(self, value: ControlType):
+        self.node.attrib = {"type": value}
+        return True
+
+    def setName(self, value: str):
+        return self.overrideProperty(
+            PropertyType.STRING.value, PropertyKeys.NAME, value=value
+        )
+
+    def setTag(self, value: str):
+        return self.overrideProperty(
+            PropertyType.STRING.value, PropertyKeys.TAG, value=value
+        )
+
     def setFrame(self, x: float, y: float, w: float, h: float):
-        return self.setter(
+        return self.overrideProperty(
             PropertyType.FRAME.value,
-            "frame",
+            PropertyKeys.FRAME,
             params={"x": str(x), "y": str(y), "w": str(w), "h": str(h)},
         )
 
     def setColor(self, r: float, g: float, b: float, a: float):
-        return self.setter(
+        return self.overrideProperty(
             PropertyType.COLOR.value,
-            "color",
+            PropertyKeys.COLOR,
             params={"r": str(r), "g": str(g), "b": str(b), "a": str(a)},
         )
 
-    def setName(self, value: str):
-        return self.setter(PropertyType.STRING.value, "name", value=value)
-
-    def setScript(self, value: str):
-        return self.setter(PropertyType.STRING.value, "script", value=value)
+    def setLocked(self, value: bool):
+        return self.overrideProperty(
+            PropertyType.BOOLEAN, PropertyKeys.LOCKED, str(int(value))
+        )
 
     def setBackground(self, value: bool):
-        return self.setter(
-            PropertyType.BOOLEAN.value, "background", value=str(int(value))
+        return self.overrideProperty(
+            PropertyType.BOOLEAN.value, PropertyKeys.BACKGROUND, value=str(int(value))
         )
 
     def setVisible(self, value: bool):
-        return self.setter(PropertyType.BOOLEAN.value, "visible", value=str(int(value)))
+        return self.overrideProperty(
+            PropertyType.BOOLEAN.value, PropertyKeys.VISIBLE, value=str(int(value))
+        )
+
+    def setInteractive(self, value: bool):
+        return self.overrideProperty(
+            PropertyType.BOOLEAN, PropertyKeys.INTERACTIVE, value=str(int(value))
+        )
+
+    def setOutline(self, value: bool):
+        return self.overrideProperty(
+            PropertyType.BOOLEAN, PropertyKeys.OUTLINE, value=value
+        )
+
+    def setScript(self, value: str):
+        return self.overrideProperty(
+            PropertyType.STRING.value, PropertyKeys.SCRIPT, value=value
+        )
 
     def show(self):
         showElement(self.node)

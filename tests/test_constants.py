@@ -1,4 +1,5 @@
 import tosclib as tosc
+from tosclib import Controls
 import pytest
 import sys
 
@@ -26,6 +27,11 @@ def test_print_attributes(capture_stdout):
         print(attribute)
     assert capture_stdout["stdout"] == "node\nproperties\nvalues\nmessages\nchildren\n"
     capture_stdout["stdout"] = ""
+
+
+def test_control():
+    for i in Controls.__dict__:
+        assert Controls.__dict__[i]
 
 
 @pytest.fixture

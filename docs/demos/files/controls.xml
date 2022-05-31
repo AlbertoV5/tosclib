@@ -40,6 +40,10 @@
 <key><![CDATA[locked]]></key>
 <value>0</value>
 </property>
+<property type='s'>
+<key><![CDATA[name]]></key>
+<value><![CDATA[group]]></value>
+</property>
 <property type='i'>
 <key><![CDATA[orientation]]></key>
 <value>0</value>
@@ -1768,7 +1772,7 @@
 </property>
 <property type='s'>
 <key><![CDATA[name]]></key>
-<value><![CDATA[1]]></value>
+<value><![CDATA[findMePage]]></value>
 </property>
 <property type='i'>
 <key><![CDATA[orientation]]></key>

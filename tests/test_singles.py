@@ -14,6 +14,7 @@ def test_singles():
     element.setTag("Scottish")
     element.createValue(Value())
 
+    element.showValue("touch")
     element.setValue(Value("touch", "1", "1", "true", "1"))
 
     element.createOSC(
@@ -32,7 +33,7 @@ def test_singles():
     element.setColor(1, 0, 0, 1)
     element.setFrame(0, 0, 1, 1)
 
-    element.showProperty("frame")
+    # element.showProperty("frame")
 
     print(tosc.Controls.BOX.FRAME)
     print(Controls.BOX.BACKGROUND)
@@ -61,9 +62,18 @@ def test_singles():
         end = time.process_time()
         print(x, end - start)
 
-
     go1(10000000)
-    print(tosc.outlineStyle)
+    print(tosc.outlineStyle.__name__)
+    
+    def go2(n):
+        start = time.process_time()
+        for i in range(n):
+            x = element.setColor(1, 0, 0, 1)
+        end = time.process_time()
+        print(x, end - start)
+    
+
+    go2(10000)
 
 if __name__ == "__main__":
     test_singles()

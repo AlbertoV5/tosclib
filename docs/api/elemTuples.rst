@@ -1,4 +1,4 @@
-Element Named Tuples
+Element Enumerations
 =====================================
 
 .. autoclass:: tosclib.tosc.ControlElements

@@ -3,6 +3,10 @@ Welcome to tosclib!
 
 Generate and edit Touch OSC templates with XML trees through a few custom classes and functions that help navigate the structure of the .tosc file.
 
+For more go to the `TouchOSC control reference. <https://hexler.net/touchosc/manual/controls>`_
+
+And more details on the `TouchOSC scripting reference <https://hexler.net/touchosc/manual/script>`_
+
 .. attention::
 
    **Disclaimer**: This project has no relation to Hexler, the developer of TouchOSC. Backup your templates before editing them with third party tools.
@@ -20,6 +24,10 @@ Installation
 
 Changelog
 ------------------
+
+- 0.2.0
+   - Added multiple enumerations that mirror Hexlers'
+   - Creating
 
 - 0.1.10
    - Tested on python 3.8, 3.9, 3.10.

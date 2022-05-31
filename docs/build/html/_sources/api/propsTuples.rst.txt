@@ -1,4 +1,4 @@
-Property Named Tuples
+Property Enumerations
 ==============================
 
 .. autoclass:: tosclib.tosc.Controls

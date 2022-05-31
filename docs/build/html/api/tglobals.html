@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Globals" href="tglobals.html" /><link rel="prev" title="Property Enumerations" href="propsTuples.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="tosclib.tosc" href="tosclib.tosc.html" /><link rel="prev" title="Shortcuts" href="shortcuts.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>Shortcuts - tosclib 0.2 documentation</title>
+        <title>Globals - tosclib 0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -175,8 +175,8 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="elemTuples.html">Element Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="propsTuples.html">Property Enumerations</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Shortcuts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tglobals.html">Globals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Globals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tosclib.tosc.html">tosclib.tosc</a></li>
 </ul>
 </li>
@@ -212,70 +212,101 @@
           </label>
         </div>
         <article role="main">
-          <section id="shortcuts">
-<h1>Shortcuts<a class="headerlink" href="#shortcuts" title="Permalink to this headline">#</a></h1>
-<p>Property shortcuts:</p>
+          <section id="globals">
+<h1>Globals<a class="headerlink" href="#globals" title="Permalink to this headline">#</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setName">
-<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setName" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p>
+<dt class="sig sig-object py" id="tosclib.tosc.createTemplate">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">createTemplate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#createTemplate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.createTemplate" title="Permalink to this definition">#</a></dt>
+<dd><p>Generates a root Element for your .tosc file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element" title="(in Python v3.10)">xml.etree.ElementTree.Element</a></p>
 </dd>
 </dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setColor">
-<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setColor" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dt class="sig sig-object py" id="tosclib.tosc.findKey">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">findKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#findKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.findKey" title="Permalink to this definition">#</a></dt>
+<dd><p>Iterate through element with children and return child whose key matches</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
-<li><p><strong>g</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
-<li><p><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
-<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
+<li><p><strong>elements</strong> (<a class="reference external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element" title="(in Python v3.10)"><em>xml.etree.ElementTree.Element</em></a>) – </p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element" title="(in Python v3.10)">xml.etree.ElementTree.Element</a></p>
 </dd>
 </dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setFrame">
-<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setFrame" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dt class="sig sig-object py" id="tosclib.tosc.getTextValueFromKey">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">getTextValueFromKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">properties</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#getTextValueFromKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.getTextValueFromKey" title="Permalink to this definition">#</a></dt>
+<dd><p>Find the value.text from a known key</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
-<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
-<li><p><strong>w</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
-<li><p><strong>h</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p></li>
+<li><p><strong>properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element" title="(in Python v3.10)"><em>xml.etree.ElementTree.Element</em></a>) – </p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
 </ul>
 </dd>
-</dl>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setScript">
-<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setScript</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setScript" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setTag">
-<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setTag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setTag" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dt class="sig sig-object py" id="tosclib.tosc.pullValueFromKey">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">pullValueFromKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetKey</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#pullValueFromKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.pullValueFromKey" title="Permalink to this definition">#</a></dt>
+<dd><p>If you know the name of an element but don’t know its other properties.
+This function uses a .tosc file and gets its root.
+For passing an element see pullValueFromKey2</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputFile</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File to parse.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Known key.</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Known value.</p></li>
+<li><p><strong>targetKey</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Known key of unknown value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.setBackground">
-<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">setBackground</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ElementTOSC.setBackground" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dt class="sig sig-object py" id="tosclib.tosc.pullValueFromKey2">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">pullValueFromKey2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetKey</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#pullValueFromKey2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.pullValueFromKey2" title="Permalink to this definition">#</a></dt>
+<dd><p>If you know the name of an element but don’t know its other properties.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – </p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> (<em>ET.Element</em>) – Parses the whole element, so you can feed the root.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Known key.</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Known value.</p></li>
+<li><p><strong>targetKey</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Known key of unknown value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="tosclib.tosc.showElement">
+<span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">showElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#showElement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.showElement" title="Permalink to this definition">#</a></dt>
+<dd><p>Generic print string function, UTF-8, indented 2 spaces</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<a class="reference external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element" title="(in Python v3.10)"><em>xml.etree.ElementTree.Element</em></a>) – </p>
 </dd>
 </dl>
 </dd></dl>
@@ -286,23 +317,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="tglobals.html">
+          <a class="next-page" href="tosclib.tosc.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Globals</div>
+                <div class="title">tosclib.tosc</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="propsTuples.html">
+          <a class="prev-page" href="shortcuts.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Property Enumerations</div>
+                <div class="title">Shortcuts</div>
                 
               </div>
             </a>

@@ -13,20 +13,48 @@ from typing import List, Final, NamedTuple
 class ControlElements(NamedTuple):
     """Valid Sub Elements for a Node"""
 
-    PROPERTIES = "properties"  #:
-    VALUES = "values"  #:
-    MESSAGES = "messages"  #:
-    CHILDREN = "children"  #:
-    # Sub Elements
-    PROPERTY = "property"  #:
-    VALUE = "value"  #:
-    # Messages
-    OSC = "osc"  #:
-    MIDI = "midi"  #:
-    LOCAL = "local"  #:
-    GAMEPAD = "gamepad"  #:
-    # Children
-    CHILD = "node"  #:
+    PROPERTIES = "properties"  #: <properties>
+    VALUES = "values"  #: <values>
+    MESSAGES = "messages"  #: <messages>
+    CHILDREN = "children"  #: <children>
+    PROPERTY = (
+        "property"  #: <property type = `PropertyType <#tosclib.tosc.PropertyType>`_>
+    )
+    VALUE = "value"  #: <value>
+    OSC = "osc"  #: <osc>
+    MIDI = "midi"  #: <midi>
+    LOCAL = "local"  #: <local>
+    GAMEPAD = "gamepad"  #: <gamepad>
+    CHILD = "node"  #: <node type = `ControlType <#tosclib.tosc.ControlType>`_>
+
+
+class ControlType(NamedTuple):
+    """Enum of valid <node type=?>"""
+
+    BOX = "BOX"  #: <node type = "BOX">
+    BUTTON = "BUTTON"  #: <node type = "BUTTON">
+    LABEL = "LABEL"  #: <node type = "LABEL">
+    TEXT = "TEXT"  #: <node type = "TEXT">
+    FADER = "FADER"  #: <node type = "FADER">
+    XY = "XY"  #: <node type = "XY">
+    RADIAL = "RADIAL"  #: <node type = "RADIAL">
+    ENCODER = "ENCODER"  #: <node type = "ENCODER">
+    RADAR = "RADAR"  #: <node type = "RADAR">
+    RADIO = "RADIO"  #: <node type = "RADIO">
+    GROUP = "GROUP"  #: <node type = "GROUP">
+    PAGER = "PAGER"  #: <node type = "PAGER">
+    GRID = "GRID"  #: <node type = "GRID">
+
+
+class PropertyType(NamedTuple):
+    """Enum of valid <property type=?>"""
+
+    STRING = "s"  #: <property type="s">
+    BOOLEAN = "b"  #: <property type="b">
+    INTEGER = "i"  #: <property type="i">
+    FLOAT = "f"  #: <property type="f">
+    FRAME = "r"  #: <property type="r">
+    COLOR = "c"  #: <property type="c">
 
 
 @dataclass
@@ -132,53 +160,6 @@ class OSC:
     )
 
 
-class PropertyType(NamedTuple):
-    """Enum of valid <property type=?>"""
-
-    STRING = "s"  #:
-    BOOLEAN = "b"  #:
-    INTEGER = "i"  #:
-    FLOAT = "f"  #:
-    FRAME = "r"  #:
-    COLOR = "c"  #:
-
-
-class textAlignH(NamedTuple):
-    LEFT = "0"  #:
-    CENTER = "1"  #:
-    RIGHT = "2"  #:
-
-
-class textAlignV(NamedTuple):
-    TOP = "0"  #:
-    MIDDLE = "1"  #:
-    BOTTOM = "2"  #:
-
-
-class buttonType(NamedTuple):
-    MOMENTARY = "0"  #:
-    TOGGLE_RELEASE = "1"  #:
-    TOGGLE_PRESS = "2"  #:
-
-
-class ControlType(NamedTuple):
-    """Enum of valid <node type=?>"""
-
-    BOX = "BOX"  #:
-    BUTTON = "BUTTON"  #:
-    LABEL = "LABEL"  #:
-    TEXT = "TEXT"  #:
-    FADER = "FADER"  #:
-    XY = "XY"  #:
-    RADIAL = "RADIAL"  #:
-    ENCODER = "ENCODER"  #:
-    RADAR = "RADAR"  #:
-    RADIO = "RADIO"  #:
-    GROUP = "GROUP"  #:
-    PAGER = "PAGER"  #:
-    GRID = "GRID"  #:
-
-
 class cursorDisplay(NamedTuple):
     ALWAYS = "0"  #:
     ACTIVE = "1"  #:
@@ -222,7 +203,25 @@ class shape(NamedTuple):
     HEXAGON = "5"  #:
 
 
-class _PropertyKeys:
+class textAlignH(NamedTuple):
+    LEFT = "0"  #:
+    CENTER = "1"  #:
+    RIGHT = "2"  #:
+
+
+class textAlignV(NamedTuple):
+    TOP = "0"  #:
+    MIDDLE = "1"  #:
+    BOTTOM = "2"  #:
+
+
+class buttonType(NamedTuple):
+    MOMENTARY = "0"  #:
+    TOGGLE_RELEASE = "1"  #:
+    TOGGLE_PRESS = "2"  #:
+
+
+class _PropertyKeys():
     """All controls have these properties
     https://hexler.net/touchosc/manual/script-properties-and-values"""
 
@@ -506,7 +505,7 @@ class ElementTOSC:
     #   SHORTCUTS:
     #
     #
-    def overrideProperty(
+    def _overrideProperty(
         self, type: str, key: str, value: str = "", params: dict = {}
     ) -> bool:
         """Create a Property, if already exists, then modify its values."""
@@ -520,56 +519,56 @@ class ElementTOSC:
         return True
 
     def setName(self, value: str):
-        return self.overrideProperty(
+        return self._overrideProperty(
             PropertyType.STRING, _PropertyKeys.NAME, value=value
         )
 
     def setTag(self, value: str):
-        return self.overrideProperty(
+        return self._overrideProperty(
             PropertyType.STRING, _PropertyKeys.TAG, value=value
         )
 
     def setFrame(self, x: float, y: float, w: float, h: float):
-        return self.overrideProperty(
+        return self._overrideProperty(
             PropertyType.FRAME,
             _PropertyKeys.FRAME,
             params={"x": str(x), "y": str(y), "w": str(w), "h": str(h)},
         )
 
     def setColor(self, r: float, g: float, b: float, a: float):
-        return self.overrideProperty(
+        return self._overrideProperty(
             PropertyType.COLOR,
             _PropertyKeys.COLOR,
             params={"r": str(r), "g": str(g), "b": str(b), "a": str(a)},
         )
 
     def setLocked(self, value: bool):
-        return self.overrideProperty(
+        return self._overrideProperty(
             PropertyType.BOOLEAN, _PropertyKeys.LOCKED, str(int(value))
         )
 
     def setBackground(self, value: bool):
-        return self.overrideProperty(
+        return self._overrideProperty(
             PropertyType.BOOLEAN, _PropertyKeys.BACKGROUND, value=str(int(value))
         )
 
     def setVisible(self, value: bool):
-        return self.overrideProperty(
+        return self._overrideProperty(
             PropertyType.BOOLEAN, _PropertyKeys.VISIBLE, value=str(int(value))
         )
 
     def setInteractive(self, value: bool):
-        return self.overrideProperty(
+        return self._overrideProperty(
             PropertyType.BOOLEAN, _PropertyKeys.INTERACTIVE, value=str(int(value))
         )
 
     def setOutline(self, value: bool):
-        return self.overrideProperty(
+        return self._overrideProperty(
             PropertyType.BOOLEAN, _PropertyKeys.OUTLINE, value=value
         )
 
     def setScript(self, value: str):
-        return self.overrideProperty(
+        return self._overrideProperty(
             PropertyType.STRING, _PropertyKeys.SCRIPT, value=str(int(value))
         )
 
@@ -599,7 +598,7 @@ def findKey(elements: ET.Element, key: str) -> ET.Element:
 
 
 def showElement(e: ET.Element):
-    """Generic show function, UTF-8, indented 2 spaces"""
+    """Generic print string function, UTF-8, indented 2 spaces"""
     if sys.version_info[0] == 3 and sys.version_info[1] >= 9:
         ET.indent(e, "  ")
     print(ET.tostring(e).decode("utf-8"))

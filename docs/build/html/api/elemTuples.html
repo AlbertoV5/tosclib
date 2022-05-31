@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Property Named Tuples" href="propEnums.html" /><link rel="prev" title="API" href="../api.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Property Enumerations" href="propsTuples.html" /><link rel="prev" title="API" href="../api.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>Element Named Tuples - tosclib 0.2 documentation</title>
+        <title>Element Enumerations - tosclib 0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -173,9 +173,10 @@
 </ul>
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Element Named Tuples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="propEnums.html">Property Named Tuples</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="propsTuples.html">Property Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tglobals.html">Globals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tosclib.tosc.html">tosclib.tosc</a></li>
 </ul>
 </li>
@@ -211,8 +212,8 @@
           </label>
         </div>
         <article role="main">
-          <section id="element-named-tuples">
-<h1>Element Named Tuples<a class="headerlink" href="#element-named-tuples" title="Permalink to this headline">#</a></h1>
+          <section id="element-enumerations">
+<h1>Element Enumerations<a class="headerlink" href="#element-enumerations" title="Permalink to this headline">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">ControlElements</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#ControlElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.ControlElements" title="Permalink to this definition">#</a></dt>
@@ -220,47 +221,53 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.CHILD">
 <span class="sig-name descname"><span class="pre">CHILD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'node'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.CHILD" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = <a class="reference external" href="#tosclib.tosc.ControlType">ControlType</a>&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.CHILDREN">
 <span class="sig-name descname"><span class="pre">CHILDREN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'children'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.CHILDREN" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;children&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.GAMEPAD">
 <span class="sig-name descname"><span class="pre">GAMEPAD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gamepad'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.GAMEPAD" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;gamepad&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.LOCAL">
 <span class="sig-name descname"><span class="pre">LOCAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'local'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.LOCAL" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;local&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.MESSAGES">
 <span class="sig-name descname"><span class="pre">MESSAGES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'messages'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.MESSAGES" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;messages&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.MIDI">
 <span class="sig-name descname"><span class="pre">MIDI</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'midi'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.MIDI" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;midi&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.OSC">
 <span class="sig-name descname"><span class="pre">OSC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'osc'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.OSC" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;osc&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.PROPERTIES">
 <span class="sig-name descname"><span class="pre">PROPERTIES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'properties'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.PROPERTIES" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.ControlElements.PROPERTY">
-<span class="sig-name descname"><span class="pre">PROPERTY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'property'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.PROPERTY" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;properties&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.VALUE">
 <span class="sig-name descname"><span class="pre">VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'value'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.VALUE" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;value&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.VALUES">
 <span class="sig-name descname"><span class="pre">VALUES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'values'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.VALUES" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;values&gt;</p>
+</dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.__new__">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ControlElements.__new__" title="Permalink to this definition">#</a></dt>
@@ -274,55 +281,68 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.BOX">
 <span class="sig-name descname"><span class="pre">BOX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'BOX'</span></em><a class="headerlink" href="#tosclib.tosc.ControlType.BOX" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = “BOX”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.BUTTON">
 <span class="sig-name descname"><span class="pre">BUTTON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'BUTTON'</span></em><a class="headerlink" href="#tosclib.tosc.ControlType.BUTTON" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = “BUTTON”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.ENCODER">
 <span class="sig-name descname"><span class="pre">ENCODER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ENCODER'</span></em><a class="headerlink" href="#tosclib.tosc.ControlType.ENCODER" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = “ENCODER”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.FADER">
 <span class="sig-name descname"><span class="pre">FADER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'FADER'</span></em><a class="headerlink" href="#tosclib.tosc.ControlType.FADER" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = “FADER”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.GRID">
 <span class="sig-name descname"><span class="pre">GRID</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'GRID'</span></em><a class="headerlink" href="#tosclib.tosc.ControlType.GRID" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = “GRID”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.GROUP">
 <span class="sig-name descname"><span class="pre">GROUP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'GROUP'</span></em><a class="headerlink" href="#tosclib.tosc.ControlType.GROUP" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = “GROUP”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.LABEL">
 <span class="sig-name descname"><span class="pre">LABEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'LABEL'</span></em><a class="headerlink" href="#tosclib.tosc.ControlType.LABEL" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = “LABEL”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.PAGER">
 <span class="sig-name descname"><span class="pre">PAGER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PAGER'</span></em><a class="headerlink" href="#tosclib.tosc.ControlType.PAGER" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = “PAGER”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.RADAR">
 <span class="sig-name descname"><span class="pre">RADAR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RADAR'</span></em><a class="headerlink" href="#tosclib.tosc.ControlType.RADAR" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = “RADAR”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.RADIAL">
 <span class="sig-name descname"><span class="pre">RADIAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RADIAL'</span></em><a class="headerlink" href="#tosclib.tosc.ControlType.RADIAL" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = “RADIAL”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.RADIO">
 <span class="sig-name descname"><span class="pre">RADIO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RADIO'</span></em><a class="headerlink" href="#tosclib.tosc.ControlType.RADIO" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = “RADIO”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.TEXT">
 <span class="sig-name descname"><span class="pre">TEXT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'TEXT'</span></em><a class="headerlink" href="#tosclib.tosc.ControlType.TEXT" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = “TEXT”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.XY">
 <span class="sig-name descname"><span class="pre">XY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'XY'</span></em><a class="headerlink" href="#tosclib.tosc.ControlType.XY" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;node type = “XY”&gt;</p>
+</dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlType.__new__">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.ControlType.__new__" title="Permalink to this definition">#</a></dt>
@@ -336,27 +356,33 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.PropertyType.BOOLEAN">
 <span class="sig-name descname"><span class="pre">BOOLEAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'b'</span></em><a class="headerlink" href="#tosclib.tosc.PropertyType.BOOLEAN" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;property type=”b”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.PropertyType.COLOR">
 <span class="sig-name descname"><span class="pre">COLOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'c'</span></em><a class="headerlink" href="#tosclib.tosc.PropertyType.COLOR" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;property type=”c”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.PropertyType.FLOAT">
 <span class="sig-name descname"><span class="pre">FLOAT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'f'</span></em><a class="headerlink" href="#tosclib.tosc.PropertyType.FLOAT" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;property type=”f”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.PropertyType.FRAME">
 <span class="sig-name descname"><span class="pre">FRAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'r'</span></em><a class="headerlink" href="#tosclib.tosc.PropertyType.FRAME" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;property type=”r”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.PropertyType.INTEGER">
 <span class="sig-name descname"><span class="pre">INTEGER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'i'</span></em><a class="headerlink" href="#tosclib.tosc.PropertyType.INTEGER" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;property type=”i”&gt;</p>
+</dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.PropertyType.STRING">
 <span class="sig-name descname"><span class="pre">STRING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'s'</span></em><a class="headerlink" href="#tosclib.tosc.PropertyType.STRING" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>&lt;property type=”s”&gt;</p>
+</dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="tosclib.tosc.PropertyType.__new__">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.PropertyType.__new__" title="Permalink to this definition">#</a></dt>
@@ -436,12 +462,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="propEnums.html">
+          <a class="next-page" href="propsTuples.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Property Named Tuples</div>
+                <div class="title">Property Enumerations</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>

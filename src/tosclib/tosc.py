@@ -13,7 +13,7 @@ from typing import List, Final
 
 @unique
 class ControlElements(Enum):
-    """Enum of valid Sub Elements for a Node"""
+    """Valid Sub Elements for a Node"""
 
     PROPERTIES = "properties"
     VALUES = "values"
@@ -37,7 +37,7 @@ class Property:
 
     Args:
         type (str): See PropertyType.
-        key (str): See PropertyKeys.
+        key (str): See parameters of inner classes of Controls.
         value (str, optional): Exclusive with params.
         params (dict[str,str], optional): Exclusive with value.
     """

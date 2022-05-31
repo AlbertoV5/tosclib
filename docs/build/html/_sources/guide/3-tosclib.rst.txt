@@ -47,6 +47,7 @@ Here are more details on the functions and methods we used:
 .. autoclass:: tosclib.tosc.ElementTOSC
 
 .. autoclass:: tosclib.tosc.Property
+   :noindex:
 
 .. autofunction:: tosclib.tosc.ElementTOSC.createProperty
 

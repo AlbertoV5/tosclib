@@ -1,7 +1,6 @@
-Enums
+Property Enums
 ===============
 
-Property Enums:
 
 .. autoclass:: tosclib.tosc.Controls
     :members:

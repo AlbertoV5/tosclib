@@ -172,7 +172,8 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../api/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/elemEnums.html">Element Enums and Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/propEnums.html">Property Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/shortcuts.html">Shortcuts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/tosclib.tosc.html">tosclib.tosc</a></li>
 </ul>
@@ -223,9 +224,9 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Final</span>
 
 
-<span class="nd">@unique</span>
+<div class="viewcode-block" id="ControlElements"><a class="viewcode-back" href="../../api/elemEnums.html#tosclib.tosc.ControlElements">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">ControlElements</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">"""Enum of valid Sub Elements for a Node"""</span>
+    <span class="sd">"""Valid Sub Elements for a Node"""</span>
 
     <span class="n">PROPERTIES</span> <span class="o">=</span> <span class="s2">"properties"</span>
     <span class="n">VALUES</span> <span class="o">=</span> <span class="s2">"values"</span>
@@ -240,7 +241,7 @@
     <span class="n">LOCAL</span> <span class="o">=</span> <span class="s2">"local"</span>
     <span class="n">GAMEPAD</span> <span class="o">=</span> <span class="s2">"gamepad"</span>
     <span class="c1"># Children</span>
-    <span class="n">CHILD</span> <span class="o">=</span> <span class="s2">"node"</span>
+    <span class="n">CHILD</span> <span class="o">=</span> <span class="s2">"node"</span></div>
 
 
 <div class="viewcode-block" id="Property"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.tosc.Property">[docs]</a><span class="nd">@dataclass</span>
@@ -249,7 +250,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        type (str): See PropertyType.</span>
-<span class="sd">        key (str): See PropertyKeys.</span>
+<span class="sd">        key (str): See parameters of inner classes of Controls.</span>
 <span class="sd">        value (str, optional): Exclusive with params.</span>
 <span class="sd">        params (dict[str,str], optional): Exclusive with value.</span>
 <span class="sd">    """</span>
@@ -266,7 +267,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> needs either a value or params."</span><span class="p">)</span></div>
 
 
-<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="Value"><a class="viewcode-back" href="../../api/elemEnums.html#tosclib.tosc.Value">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Value</span><span class="p">:</span>
     <span class="sd">"""Default Elements for &lt;value&gt;.</span>
 
@@ -282,7 +283,7 @@
     <span class="n">locked</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
     <span class="n">lockedDefaultCurrent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
     <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"false"</span>
-    <span class="n">defaultPull</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
+    <span class="n">defaultPull</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span></div>
 
 
 <div class="viewcode-block" id="Partial"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.tosc.Partial">[docs]</a><span class="nd">@dataclass</span>
@@ -346,7 +347,7 @@
     <span class="p">)</span></div>
 
 
-<span class="nd">@unique</span>
+<div class="viewcode-block" id="PropertyType"><a class="viewcode-back" href="../../api/elemEnums.html#tosclib.tosc.PropertyType">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">PropertyType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">"""Enum of valid &lt;property type=?&gt;"""</span>
 
@@ -355,31 +356,31 @@
     <span class="n">INTEGER</span> <span class="o">=</span> <span class="s2">"i"</span>
     <span class="n">FLOAT</span> <span class="o">=</span> <span class="s2">"f"</span>
     <span class="n">FRAME</span> <span class="o">=</span> <span class="s2">"r"</span>
-    <span class="n">COLOR</span> <span class="o">=</span> <span class="s2">"c"</span>
+    <span class="n">COLOR</span> <span class="o">=</span> <span class="s2">"c"</span></div>
 
 
-<div class="viewcode-block" id="textAlignH"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.textAlignH">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="textAlignH"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.textAlignH">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">textAlignH</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">LEFT</span> <span class="o">=</span> <span class="s2">"0"</span>
     <span class="n">CENTER</span> <span class="o">=</span> <span class="s2">"1"</span>
     <span class="n">RIGHT</span> <span class="o">=</span> <span class="s2">"2"</span></div>
 
 
-<div class="viewcode-block" id="textAlignV"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.textAlignV">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="textAlignV"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.textAlignV">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">textAlignV</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">TOP</span> <span class="o">=</span> <span class="s2">"0"</span>
     <span class="n">MIDDLE</span> <span class="o">=</span> <span class="s2">"1"</span>
     <span class="n">BOTTOM</span> <span class="o">=</span> <span class="s2">"2"</span></div>
 
 
-<div class="viewcode-block" id="buttonType"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.buttonType">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="buttonType"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.buttonType">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">buttonType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">MOMENTARY</span> <span class="o">=</span> <span class="s2">"0"</span>
     <span class="n">TOGGLE_RELEASE</span> <span class="o">=</span> <span class="s2">"1"</span>
     <span class="n">TOGGLE_PRESS</span> <span class="o">=</span> <span class="s2">"2"</span></div>
 
 
-<span class="nd">@unique</span>
+<div class="viewcode-block" id="ControlType"><a class="viewcode-back" href="../../api/elemEnums.html#tosclib.tosc.ControlType">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">ControlType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">"""Enum of valid &lt;node type=?&gt;"""</span>
 
@@ -395,23 +396,23 @@
     <span class="n">RADIO</span> <span class="o">=</span> <span class="s2">"RADIO"</span>
     <span class="n">GROUP</span> <span class="o">=</span> <span class="s2">"GROUP"</span>
     <span class="n">PAGER</span> <span class="o">=</span> <span class="s2">"PAGER"</span>
-    <span class="n">GRID</span> <span class="o">=</span> <span class="s2">"GRID"</span>
+    <span class="n">GRID</span> <span class="o">=</span> <span class="s2">"GRID"</span></div>
 
 
-<div class="viewcode-block" id="cursorDisplay"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.cursorDisplay">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="cursorDisplay"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.cursorDisplay">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">cursorDisplay</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">ALWAYS</span> <span class="o">=</span> <span class="s2">"0"</span>
     <span class="n">ACTIVE</span> <span class="o">=</span> <span class="s2">"1"</span>
     <span class="n">INACTIVE</span> <span class="o">=</span> <span class="s2">"2"</span></div>
 
 
-<div class="viewcode-block" id="font"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.font">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="font"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.font">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">font</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">DEFAULT</span> <span class="o">=</span> <span class="s2">"0"</span>
     <span class="n">MONOSPACED</span> <span class="o">=</span> <span class="s2">"1"</span></div>
 
 
-<div class="viewcode-block" id="orientation"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.orientation">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="orientation"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.orientation">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">orientation</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">NORTH</span> <span class="o">=</span> <span class="s2">"0"</span>
     <span class="n">EAST</span> <span class="o">=</span> <span class="s2">"1"</span>
@@ -419,26 +420,26 @@
     <span class="n">WEST</span> <span class="o">=</span> <span class="s2">"3"</span></div>
 
 
-<div class="viewcode-block" id="outlineStyle"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.outlineStyle">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="outlineStyle"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.outlineStyle">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">outlineStyle</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">FULL</span> <span class="o">=</span> <span class="s2">"0"</span>
     <span class="n">CORNERS</span> <span class="o">=</span> <span class="s2">"1"</span>
     <span class="n">EDGES</span> <span class="o">=</span> <span class="s2">"2"</span></div>
 
 
-<div class="viewcode-block" id="pointerPriority"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.pointerPriority">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="pointerPriority"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.pointerPriority">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">pointerPriority</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">OLDEST</span> <span class="o">=</span> <span class="s2">"0"</span>
     <span class="n">NEWEST</span> <span class="o">=</span> <span class="s2">"1"</span></div>
 
 
-<div class="viewcode-block" id="response"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.response">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="response"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.response">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">response</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">ABSOLUTE</span> <span class="o">=</span> <span class="s2">"0"</span>
     <span class="n">RELATIVE</span> <span class="o">=</span> <span class="s2">"1"</span></div>
 
 
-<div class="viewcode-block" id="shape"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.shape">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="shape"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.shape">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">shape</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">RECTANGLE</span> <span class="o">=</span> <span class="s2">"0"</span>
     <span class="n">CIRCLE</span> <span class="o">=</span> <span class="s2">"1"</span>
@@ -509,32 +510,32 @@
     <span class="n">TEXT_COLOR</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"textColor"</span>
 
 
-<div class="viewcode-block" id="Controls"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls">[docs]</a><span class="k">class</span> <span class="nc">Controls</span><span class="p">:</span>
+<div class="viewcode-block" id="Controls"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls">[docs]</a><span class="k">class</span> <span class="nc">Controls</span><span class="p">:</span>
     <span class="sd">"""All the Node Types and their available properties</span>
 
 <span class="sd">    https://hexler.net/touchosc/manual/script-enumerations#controltype"""</span>
 
-<div class="viewcode-block" id="Controls.BOX"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.BOX">[docs]</a>    <span class="k">class</span> <span class="nc">BOX</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">,</span> <span class="n">_PropertiesBox</span><span class="p">):</span>
+<div class="viewcode-block" id="Controls.BOX"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.BOX">[docs]</a>    <span class="k">class</span> <span class="nc">BOX</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">,</span> <span class="n">_PropertiesBox</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Controls.BUTTON"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.BUTTON">[docs]</a>    <span class="k">class</span> <span class="nc">BUTTON</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">,</span> <span class="n">_PropertiesBox</span><span class="p">):</span>
+<div class="viewcode-block" id="Controls.BUTTON"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.BUTTON">[docs]</a>    <span class="k">class</span> <span class="nc">BUTTON</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">,</span> <span class="n">_PropertiesBox</span><span class="p">):</span>
         <span class="n">BUTTON_TYPE</span> <span class="o">=</span> <span class="n">buttonType</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="n">PRESS</span> <span class="o">=</span> <span class="s2">"press"</span>
         <span class="n">RELEASE</span> <span class="o">=</span> <span class="s2">"release"</span>
         <span class="n">VALUE_POSITION</span> <span class="o">=</span> <span class="s2">"valuePosition"</span></div>
 
-<div class="viewcode-block" id="Controls.LABEL"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.LABEL">[docs]</a>    <span class="k">class</span> <span class="nc">LABEL</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">,</span> <span class="n">_PropertiesText</span><span class="p">):</span>
+<div class="viewcode-block" id="Controls.LABEL"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.LABEL">[docs]</a>    <span class="k">class</span> <span class="nc">LABEL</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">,</span> <span class="n">_PropertiesText</span><span class="p">):</span>
         <span class="n">LENGTH</span> <span class="o">=</span> <span class="s2">"textLength"</span>
         <span class="n">CLIP</span> <span class="o">=</span> <span class="s2">"textClip"</span></div>
 
-<div class="viewcode-block" id="Controls.TEXT"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.TEXT">[docs]</a>    <span class="k">class</span> <span class="nc">TEXT</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">,</span> <span class="n">_PropertiesText</span><span class="p">):</span>
+<div class="viewcode-block" id="Controls.TEXT"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.TEXT">[docs]</a>    <span class="k">class</span> <span class="nc">TEXT</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">,</span> <span class="n">_PropertiesText</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Controls.FADER"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.FADER">[docs]</a>    <span class="k">class</span> <span class="nc">FADER</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">,</span> <span class="n">_PropertiesResponse</span><span class="p">,</span> <span class="n">_PropertiesGrid</span><span class="p">,</span> <span class="n">_PropertiesCursor</span><span class="p">):</span>
+<div class="viewcode-block" id="Controls.FADER"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.FADER">[docs]</a>    <span class="k">class</span> <span class="nc">FADER</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">,</span> <span class="n">_PropertiesResponse</span><span class="p">,</span> <span class="n">_PropertiesGrid</span><span class="p">,</span> <span class="n">_PropertiesCursor</span><span class="p">):</span>
         <span class="n">BAR</span> <span class="o">=</span> <span class="s2">"bar"</span>
         <span class="n">BAR_DISPLAY</span> <span class="o">=</span> <span class="s2">"barDisplay"</span></div>
 
-<div class="viewcode-block" id="Controls.XY"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.XY">[docs]</a>    <span class="k">class</span> <span class="nc">XY</span><span class="p">(</span>
+<div class="viewcode-block" id="Controls.XY"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.XY">[docs]</a>    <span class="k">class</span> <span class="nc">XY</span><span class="p">(</span>
         <span class="n">_PropertyKeys</span><span class="p">,</span>
         <span class="n">_PropertiesResponse</span><span class="p">,</span>
         <span class="n">_PropertiesCursor</span><span class="p">,</span>
@@ -542,7 +543,7 @@
     <span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Controls.RADIAL"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.RADIAL">[docs]</a>    <span class="k">class</span> <span class="nc">RADIAL</span><span class="p">(</span>
+<div class="viewcode-block" id="Controls.RADIAL"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.RADIAL">[docs]</a>    <span class="k">class</span> <span class="nc">RADIAL</span><span class="p">(</span>
         <span class="n">_PropertyKeys</span><span class="p">,</span>
         <span class="n">_PropertiesResponse</span><span class="p">,</span>
         <span class="n">_PropertiesGrid</span><span class="p">,</span>
@@ -551,10 +552,10 @@
         <span class="n">INVERTED</span> <span class="o">=</span> <span class="s2">"inverted"</span>
         <span class="n">CENTERED</span> <span class="o">=</span> <span class="s2">"centered"</span></div>
 
-<div class="viewcode-block" id="Controls.ENCODER"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.ENCODER">[docs]</a>    <span class="k">class</span> <span class="nc">ENCODER</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">,</span> <span class="n">_PropertiesResponse</span><span class="p">,</span> <span class="n">_PropertiesGrid</span><span class="p">):</span>
+<div class="viewcode-block" id="Controls.ENCODER"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.ENCODER">[docs]</a>    <span class="k">class</span> <span class="nc">ENCODER</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">,</span> <span class="n">_PropertiesResponse</span><span class="p">,</span> <span class="n">_PropertiesGrid</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Controls.RADAR"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.RADAR">[docs]</a>    <span class="k">class</span> <span class="nc">RADAR</span><span class="p">(</span>
+<div class="viewcode-block" id="Controls.RADAR"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.RADAR">[docs]</a>    <span class="k">class</span> <span class="nc">RADAR</span><span class="p">(</span>
         <span class="n">_PropertyKeys</span><span class="p">,</span>
         <span class="n">_PropertiesCursor</span><span class="p">,</span>
         <span class="n">_PropertiesLine</span><span class="p">,</span>
@@ -562,15 +563,15 @@
     <span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Controls.RADIO"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.RADIO">[docs]</a>    <span class="k">class</span> <span class="nc">RADIO</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">):</span>
+<div class="viewcode-block" id="Controls.RADIO"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.RADIO">[docs]</a>    <span class="k">class</span> <span class="nc">RADIO</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">):</span>
         <span class="n">STEPS</span> <span class="o">=</span> <span class="s2">"steps"</span>
         <span class="n">RADIO_TYPE</span> <span class="o">=</span> <span class="s2">"radioType"</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Controls.GROUP"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.GROUP">[docs]</a>    <span class="k">class</span> <span class="nc">GROUP</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">):</span>
+<div class="viewcode-block" id="Controls.GROUP"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.GROUP">[docs]</a>    <span class="k">class</span> <span class="nc">GROUP</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Controls.PAGER"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.PAGER">[docs]</a>    <span class="k">class</span> <span class="nc">PAGER</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">):</span>
+<div class="viewcode-block" id="Controls.PAGER"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.PAGER">[docs]</a>    <span class="k">class</span> <span class="nc">PAGER</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">):</span>
         <span class="n">TAB_LABELS</span> <span class="o">=</span> <span class="s2">"tabLabels"</span>
         <span class="n">TAB_BAR</span> <span class="o">=</span> <span class="s2">"tabbar"</span>
         <span class="n">DOUBLE_TAP</span> <span class="o">=</span> <span class="s2">"tabbarDoubleTap"</span>
@@ -579,14 +580,14 @@
         <span class="n">TEXT_SIZE_ON</span> <span class="o">=</span> <span class="s2">"textSizeOn"</span>
         <span class="k">pass</span>
 
-<div class="viewcode-block" id="Controls.PAGER.PAGE"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.PAGER.PAGE">[docs]</a>        <span class="k">class</span> <span class="nc">PAGE</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">):</span>
+<div class="viewcode-block" id="Controls.PAGER.PAGE"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.PAGER.PAGE">[docs]</a>        <span class="k">class</span> <span class="nc">PAGE</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">):</span>
             <span class="n">TAB_COLOR_OFF</span> <span class="o">=</span> <span class="s2">"tabColorOff"</span>
             <span class="n">TAB_COLOR_ON</span> <span class="o">=</span> <span class="s2">"tabColorOn"</span>
             <span class="n">TAB_LABEL</span> <span class="o">=</span> <span class="s2">"tabLabel"</span>
             <span class="n">TEXT_COLOR_OFF</span> <span class="o">=</span> <span class="s2">"textColorOff"</span>
             <span class="n">TEXT_COLOR_ON</span> <span class="o">=</span> <span class="s2">"textColorOn"</span></div></div>
 
-<div class="viewcode-block" id="Controls.GRID"><a class="viewcode-back" href="../../api/enums.html#tosclib.tosc.Controls.GRID">[docs]</a>    <span class="k">class</span> <span class="nc">GRID</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">):</span>
+<div class="viewcode-block" id="Controls.GRID"><a class="viewcode-back" href="../../api/propEnums.html#tosclib.tosc.Controls.GRID">[docs]</a>    <span class="k">class</span> <span class="nc">GRID</span><span class="p">(</span><span class="n">_PropertyKeys</span><span class="p">):</span>
         <span class="n">EXCLUSIVE</span> <span class="o">=</span> <span class="s2">"exclusive"</span>
         <span class="n">GRID_NAMING</span> <span class="o">=</span> <span class="s2">"gridNaming"</span>
         <span class="n">GRID_ORDER</span> <span class="o">=</span> <span class="s2">"gridOrder"</span>

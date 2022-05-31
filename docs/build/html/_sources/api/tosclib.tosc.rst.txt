@@ -36,15 +36,7 @@
       ElementTOSC
       OSC
       Partial
-      PropertiesBox
-      PropertiesCursor
-      PropertiesGrid
-      PropertiesLine
-      PropertiesResponse
-      PropertiesText
-      PropertiesXY
       Property
-      PropertyKeys
       PropertyType
       Trigger
       Value
@@ -58,10 +50,6 @@
       shape
       textAlignH
       textAlignV
-   
-   
-
-   
    
    
 

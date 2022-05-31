@@ -171,7 +171,8 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/elemEnums.html">Element Enums and Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/propEnums.html">Property Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/shortcuts.html">Shortcuts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/tosclib.tosc.html">tosclib.tosc</a></li>
 </ul>
@@ -211,7 +212,7 @@
           
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#X"><strong>X</strong></a></div>
 </section>
 <section id="_" class="genindex-section">
   <h2>_</h2>
@@ -224,9 +225,11 @@
 </li>
           <li><a href="guide/5-tosc-msg.html#tosclib.tosc.Partial.__init__">(tosclib.tosc.Partial method)</a>
 </li>
-          <li><a href="guide/3-tosclib.html#tosclib.tosc.Property.__init__">(tosclib.tosc.Property method)</a>
+          <li><a href="api/elemEnums.html#tosclib.tosc.Property.__init__">(tosclib.tosc.Property method)</a>
 </li>
           <li><a href="guide/5-tosc-msg.html#tosclib.tosc.Trigger.__init__">(tosclib.tosc.Trigger method)</a>
+</li>
+          <li><a href="api/elemEnums.html#tosclib.tosc.Value.__init__">(tosclib.tosc.Value method)</a>
 </li>
         </ul></li>
     </ul></td>
@@ -237,8 +240,6 @@
           <li><a href="guide/5-tosc-msg.html#tosclib.tosc.OSC.__new__">(tosclib.tosc.OSC method)</a>
 </li>
           <li><a href="guide/5-tosc-msg.html#tosclib.tosc.Partial.__new__">(tosclib.tosc.Partial method)</a>
-</li>
-          <li><a href="guide/3-tosclib.html#tosclib.tosc.Property.__new__">(tosclib.tosc.Property method)</a>
 </li>
           <li><a href="guide/5-tosc-msg.html#tosclib.tosc.Trigger.__new__">(tosclib.tosc.Trigger method)</a>
 </li>
@@ -251,13 +252,13 @@
   <h2>A</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.response.ABSOLUTE">ABSOLUTE (tosclib.tosc.response attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.response.ABSOLUTE">ABSOLUTE (tosclib.tosc.response attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.cursorDisplay.ACTIVE">ACTIVE (tosclib.tosc.cursorDisplay attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.cursorDisplay.ACTIVE">ACTIVE (tosclib.tosc.cursorDisplay attribute)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.cursorDisplay.ALWAYS">ALWAYS (tosclib.tosc.cursorDisplay attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.cursorDisplay.ALWAYS">ALWAYS (tosclib.tosc.cursorDisplay attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -267,7 +268,15 @@
   <h2>B</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.textAlignV.BOTTOM">BOTTOM (tosclib.tosc.textAlignV attribute)</a>
+        <li><a href="api/elemEnums.html#tosclib.tosc.PropertyType.BOOLEAN">BOOLEAN (tosclib.tosc.PropertyType attribute)</a>
+</li>
+        <li><a href="api/propEnums.html#tosclib.tosc.textAlignV.BOTTOM">BOTTOM (tosclib.tosc.textAlignV attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlType.BOX">BOX (tosclib.tosc.ControlType attribute)</a>
+</li>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlType.BUTTON">BUTTON (tosclib.tosc.ControlType attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -277,45 +286,51 @@
   <h2>C</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.textAlignH.CENTER">CENTER (tosclib.tosc.textAlignH attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.textAlignH.CENTER">CENTER (tosclib.tosc.textAlignH attribute)</a>
+</li>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlElements.CHILD">CHILD (tosclib.tosc.ControlElements attribute)</a>
+</li>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlElements.CHILDREN">CHILDREN (tosclib.tosc.ControlElements attribute)</a>
 </li>
         <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.children">children (tosclib.tosc.ElementTOSC attribute)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.shape.CIRCLE">CIRCLE (tosclib.tosc.shape attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.shape.CIRCLE">CIRCLE (tosclib.tosc.shape attribute)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls">Controls (class in tosclib.tosc)</a>
+        <li><a href="api/elemEnums.html#tosclib.tosc.PropertyType.COLOR">COLOR (tosclib.tosc.PropertyType attribute)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.BOX">Controls.BOX (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls">Controls (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.BUTTON">Controls.BUTTON (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.BOX">Controls.BOX (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.ENCODER">Controls.ENCODER (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.BUTTON">Controls.BUTTON (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.FADER">Controls.FADER (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.ENCODER">Controls.ENCODER (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.GRID">Controls.GRID (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.FADER">Controls.FADER (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.GROUP">Controls.GROUP (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.GRID">Controls.GRID (class in tosclib.tosc)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.LABEL">Controls.LABEL (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.GROUP">Controls.GROUP (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.PAGER">Controls.PAGER (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.LABEL">Controls.LABEL (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.PAGER.PAGE">Controls.PAGER.PAGE (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.PAGER">Controls.PAGER (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.RADAR">Controls.RADAR (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.PAGER.PAGE">Controls.PAGER.PAGE (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.RADIAL">Controls.RADIAL (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.RADAR">Controls.RADAR (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.RADIO">Controls.RADIO (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.RADIAL">Controls.RADIAL (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.TEXT">Controls.TEXT (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.RADIO">Controls.RADIO (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.Controls.XY">Controls.XY (class in tosclib.tosc)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.TEXT">Controls.TEXT (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.outlineStyle.CORNERS">CORNERS (tosclib.tosc.outlineStyle attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.Controls.XY">Controls.XY (class in tosclib.tosc)</a>
+</li>
+        <li><a href="api/propEnums.html#tosclib.tosc.outlineStyle.CORNERS">CORNERS (tosclib.tosc.outlineStyle attribute)</a>
 </li>
         <li><a href="guide/5-tosc-msg.html#tosclib.tosc.ElementTOSC.createOSC">createOSC() (tosclib.tosc.ElementTOSC method)</a>
 </li>
@@ -329,11 +344,11 @@
   <h2>D</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.font.DEFAULT">DEFAULT (tosclib.tosc.font attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.font.DEFAULT">DEFAULT (tosclib.tosc.font attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.shape.DIAMOND">DIAMOND (tosclib.tosc.shape attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.shape.DIAMOND">DIAMOND (tosclib.tosc.shape attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -343,13 +358,15 @@
   <h2>E</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.orientation.EAST">EAST (tosclib.tosc.orientation attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.orientation.EAST">EAST (tosclib.tosc.orientation attribute)</a>
+</li>
+        <li><a href="api/propEnums.html#tosclib.tosc.outlineStyle.EDGES">EDGES (tosclib.tosc.outlineStyle attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.outlineStyle.EDGES">EDGES (tosclib.tosc.outlineStyle attribute)</a>
-</li>
         <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC">ElementTOSC (class in tosclib.tosc)</a>
+</li>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlType.ENCODER">ENCODER (tosclib.tosc.ControlType attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -359,7 +376,31 @@
   <h2>F</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.outlineStyle.FULL">FULL (tosclib.tosc.outlineStyle attribute)</a>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlType.FADER">FADER (tosclib.tosc.ControlType attribute)</a>
+</li>
+        <li><a href="api/elemEnums.html#tosclib.tosc.PropertyType.FLOAT">FLOAT (tosclib.tosc.PropertyType attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/elemEnums.html#tosclib.tosc.PropertyType.FRAME">FRAME (tosclib.tosc.PropertyType attribute)</a>
+</li>
+        <li><a href="api/propEnums.html#tosclib.tosc.outlineStyle.FULL">FULL (tosclib.tosc.outlineStyle attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="G" class="genindex-section">
+  <h2>G</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlElements.GAMEPAD">GAMEPAD (tosclib.tosc.ControlElements attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlType.GRID">GRID (tosclib.tosc.ControlType attribute)</a>
+</li>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlType.GROUP">GROUP (tosclib.tosc.ControlType attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -369,7 +410,7 @@
   <h2>H</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.shape.HEXAGON">HEXAGON (tosclib.tosc.shape attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.shape.HEXAGON">HEXAGON (tosclib.tosc.shape attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -379,7 +420,11 @@
   <h2>I</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.cursorDisplay.INACTIVE">INACTIVE (tosclib.tosc.cursorDisplay attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.cursorDisplay.INACTIVE">INACTIVE (tosclib.tosc.cursorDisplay attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/elemEnums.html#tosclib.tosc.PropertyType.INTEGER">INTEGER (tosclib.tosc.PropertyType attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -389,11 +434,15 @@
   <h2>L</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.textAlignH.LEFT">LEFT (tosclib.tosc.textAlignH attribute)</a>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlType.LABEL">LABEL (tosclib.tosc.ControlType attribute)</a>
+</li>
+        <li><a href="api/propEnums.html#tosclib.tosc.textAlignH.LEFT">LEFT (tosclib.tosc.textAlignH attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="guide/3-tosclib.html#tosclib.tosc.load">load() (in module tosclib.tosc)</a>
+</li>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlElements.LOCAL">LOCAL (tosclib.tosc.ControlElements attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -403,10 +452,16 @@
   <h2>M</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlElements.MESSAGES">MESSAGES (tosclib.tosc.ControlElements attribute)</a>
+</li>
         <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.messages">messages (tosclib.tosc.ElementTOSC attribute)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.textAlignV.MIDDLE">MIDDLE (tosclib.tosc.textAlignV attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.textAlignV.MIDDLE">MIDDLE (tosclib.tosc.textAlignV attribute)</a>
 </li>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlElements.MIDI">MIDI (tosclib.tosc.ControlElements attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     module
 
@@ -414,11 +469,9 @@
           <li><a href="api/tosclib.tosc.html#module-tosclib.tosc">tosclib.tosc</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.buttonType.MOMENTARY">MOMENTARY (tosclib.tosc.buttonType attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.buttonType.MOMENTARY">MOMENTARY (tosclib.tosc.buttonType attribute)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.font.MONOSPACED">MONOSPACED (tosclib.tosc.font attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.font.MONOSPACED">MONOSPACED (tosclib.tosc.font attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -428,11 +481,11 @@
   <h2>N</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.pointerPriority.NEWEST">NEWEST (tosclib.tosc.pointerPriority attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.pointerPriority.NEWEST">NEWEST (tosclib.tosc.pointerPriority attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.orientation.NORTH">NORTH (tosclib.tosc.orientation attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.orientation.NORTH">NORTH (tosclib.tosc.orientation attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -442,12 +495,16 @@
   <h2>O</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.pointerPriority.OLDEST">OLDEST (tosclib.tosc.pointerPriority attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.pointerPriority.OLDEST">OLDEST (tosclib.tosc.pointerPriority attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="guide/5-tosc-msg.html#tosclib.tosc.OSC">OSC (class in tosclib.tosc)</a>
+
+        <ul>
+          <li><a href="api/elemEnums.html#tosclib.tosc.ControlElements.OSC">(tosclib.tosc.ControlElements attribute)</a>
 </li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -456,15 +513,21 @@
   <h2>P</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlType.PAGER">PAGER (tosclib.tosc.ControlType attribute)</a>
+</li>
         <li><a href="guide/5-tosc-msg.html#tosclib.tosc.Partial">Partial (class in tosclib.tosc)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.shape.PENTAGON">PENTAGON (tosclib.tosc.shape attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.shape.PENTAGON">PENTAGON (tosclib.tosc.shape attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlElements.PROPERTIES">PROPERTIES (tosclib.tosc.ControlElements attribute)</a>
+</li>
         <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.properties">properties (tosclib.tosc.ElementTOSC attribute)</a>
 </li>
-        <li><a href="guide/3-tosclib.html#tosclib.tosc.Property">Property (class in tosclib.tosc)</a>
+        <li><a href="api/elemEnums.html#tosclib.tosc.Property">Property (class in tosclib.tosc)</a>
+</li>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlElements.PROPERTY">PROPERTY (tosclib.tosc.ControlElements attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -474,13 +537,19 @@
   <h2>R</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.shape.RECTANGLE">RECTANGLE (tosclib.tosc.shape attribute)</a>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlType.RADAR">RADAR (tosclib.tosc.ControlType attribute)</a>
+</li>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlType.RADIAL">RADIAL (tosclib.tosc.ControlType attribute)</a>
+</li>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlType.RADIO">RADIO (tosclib.tosc.ControlType attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.response.RELATIVE">RELATIVE (tosclib.tosc.response attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.shape.RECTANGLE">RECTANGLE (tosclib.tosc.shape attribute)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.textAlignH.RIGHT">RIGHT (tosclib.tosc.textAlignH attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.response.RELATIVE">RELATIVE (tosclib.tosc.response attribute)</a>
+</li>
+        <li><a href="api/propEnums.html#tosclib.tosc.textAlignH.RIGHT">RIGHT (tosclib.tosc.textAlignH attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -496,15 +565,17 @@
 </li>
         <li><a href="api/shortcuts.html#tosclib.tosc.ElementTOSC.setFrame">setFrame() (in module tosclib.tosc.ElementTOSC)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/shortcuts.html#tosclib.tosc.ElementTOSC.setName">setName() (in module tosclib.tosc.ElementTOSC)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/shortcuts.html#tosclib.tosc.ElementTOSC.setScript">setScript() (in module tosclib.tosc.ElementTOSC)</a>
 </li>
         <li><a href="api/shortcuts.html#tosclib.tosc.ElementTOSC.setTag">setTag() (in module tosclib.tosc.ElementTOSC)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.orientation.SOUTH">SOUTH (tosclib.tosc.orientation attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.orientation.SOUTH">SOUTH (tosclib.tosc.orientation attribute)</a>
+</li>
+        <li><a href="api/elemEnums.html#tosclib.tosc.PropertyType.STRING">STRING (tosclib.tosc.PropertyType attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -514,11 +585,13 @@
   <h2>T</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.buttonType.TOGGLE_PRESS">TOGGLE_PRESS (tosclib.tosc.buttonType attribute)</a>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlType.TEXT">TEXT (tosclib.tosc.ControlType attribute)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.buttonType.TOGGLE_RELEASE">TOGGLE_RELEASE (tosclib.tosc.buttonType attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.buttonType.TOGGLE_PRESS">TOGGLE_PRESS (tosclib.tosc.buttonType attribute)</a>
 </li>
-        <li><a href="api/enums.html#tosclib.tosc.textAlignV.TOP">TOP (tosclib.tosc.textAlignV attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.buttonType.TOGGLE_RELEASE">TOGGLE_RELEASE (tosclib.tosc.buttonType attribute)</a>
+</li>
+        <li><a href="api/propEnums.html#tosclib.tosc.textAlignV.TOP">TOP (tosclib.tosc.textAlignV attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
@@ -529,7 +602,7 @@
           <li><a href="api/tosclib.tosc.html#module-tosclib.tosc">module</a>
 </li>
         </ul></li>
-        <li><a href="api/enums.html#tosclib.tosc.shape.TRIANGLE">TRIANGLE (tosclib.tosc.shape attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.shape.TRIANGLE">TRIANGLE (tosclib.tosc.shape attribute)</a>
 </li>
         <li><a href="guide/5-tosc-msg.html#tosclib.tosc.Trigger">Trigger (class in tosclib.tosc)</a>
 </li>
@@ -541,6 +614,14 @@
   <h2>V</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/elemEnums.html#tosclib.tosc.Value">Value (class in tosclib.tosc)</a>
+</li>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlElements.VALUE">VALUE (tosclib.tosc.ControlElements attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlElements.VALUES">VALUES (tosclib.tosc.ControlElements attribute)</a>
+</li>
         <li><a href="guide/3-tosclib.html#tosclib.tosc.ElementTOSC.values">values (tosclib.tosc.ElementTOSC attribute)</a>
 </li>
     </ul></td>
@@ -551,11 +632,21 @@
   <h2>W</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/enums.html#tosclib.tosc.orientation.WEST">WEST (tosclib.tosc.orientation attribute)</a>
+        <li><a href="api/propEnums.html#tosclib.tosc.orientation.WEST">WEST (tosclib.tosc.orientation attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="guide/3-tosclib.html#tosclib.tosc.write">write() (in module tosclib.tosc)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="X" class="genindex-section">
+  <h2>X</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/elemEnums.html#tosclib.tosc.ControlType.XY">XY (tosclib.tosc.ControlType attribute)</a>
 </li>
     </ul></td>
   </tr></table>

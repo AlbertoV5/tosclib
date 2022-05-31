@@ -160,6 +160,79 @@ class OSC:
     )
 
 
+@dataclass
+class MidiMessage:
+    type: str = "CONTROLCHANGE"
+    channel: str = "0"
+    data1: str = "0"
+    data2: str = "0"
+
+
+@dataclass
+class MidiValue:
+    type: str = "CONSTANT"
+    key: str = ""
+    scaleMin: str = "0"
+    scaleMax: str = "15"
+
+
+@dataclass
+class MIDI:
+    """ Default elements for <midi>
+    Args:
+        enabled: bool
+        send : bool
+        receive : bool
+        feedback : bool
+        connections : bool
+        triggers : List of Trigger
+        message : MidiMessage
+        values : List of MidiValue
+    """
+    enabled: str = "1"
+    send: str = "1"
+    receive: str = "1"
+    feedback: str = "0"
+    connections: str = "00001"
+    triggers: List[Trigger] = field(default_factory=lambda: [Trigger()])
+    message: MidiMessage = MidiMessage()
+    values: List[MidiValue] = field(
+        default_factory=lambda: [
+            MidiValue(),
+            MidiValue("INDEX", "", "0", "1"),
+            MidiValue("VALUE", "x", "0", "127"),
+        ]
+    )
+
+
+@dataclass
+class LOCAL:
+    """ Default elements for <midi>
+    Args:
+        enabled: bool
+        triggers : Trigger x or touch.
+        type : BOOL, INT, FLOAT, STRING. The Type of Trigger.x
+        conversion : BOOL, INT, FLOAT, STRING. 
+        value : The value sent to the other local Control.
+        scaleMin : 0
+        scaleMax : 1
+        dstType : BOOL, INT, FLOAT, STRING of the target.
+        dstVar : The value you want to change in the target.
+        dstID : The node {ID} of the target.
+    """
+    enabled : str = "1"
+    triggers : List[Trigger] = field(default_factory=lambda:[Trigger()])
+    type : str = "VALUE"
+    conversion : str = "FLOAT"
+    value : str = "x"
+    scaleMin : str = "0"
+    scaleMax : str = "1"
+    dstType : str = ""
+    dstVar : str = ""
+    dstID : str = ""
+
+
+
 class cursorDisplay(NamedTuple):
     ALWAYS = "0"  #:
     ACTIVE = "1"  #:
@@ -221,7 +294,7 @@ class buttonType(NamedTuple):
     TOGGLE_PRESS = "2"  #:
 
 
-class _PropertyKeys():
+class _PropertyKeys:
     """All controls have these properties
     https://hexler.net/touchosc/manual/script-properties-and-values"""
 
@@ -288,7 +361,7 @@ class Controls:
     https://hexler.net/touchosc/manual/script-enumerations#controltype"""
 
     class BOX(_PropertyKeys, _PropertiesBox):
-        pass
+        pass #wip
 
     class BUTTON(_PropertyKeys, _PropertiesBox):
         BUTTON_TYPE = buttonType.__name__
@@ -466,10 +539,10 @@ class ElementTOSC:
             element.find(v).text = getattr(value, v)
         return True
 
-    def createOSC(self, message: OSC = OSC()) -> ET.Element:
-        osc = ET.SubElement(self.messages, ControlElements.OSC)
+    def _createMessage(self, name, message) -> ET.Element:
+        msg = ET.SubElement(self.messages, name)
         for key in vars(message):
-            element = ET.SubElement(osc, key)
+            element = ET.SubElement(msg, key)
             attribute = getattr(message, key)
             if isinstance(attribute, list):  # For Partials and Triggers
                 for partialOrTrigger in attribute:
@@ -480,7 +553,25 @@ class ElementTOSC:
                         ET.SubElement(subElement, v).text = getattr(partialOrTrigger, v)
             else:
                 element.text = getattr(message, key)
-        return osc
+        return msg
+
+    def createOSC(self, message: OSC = OSC()) -> ET.Element:
+        return self._createMessage(ControlElements.OSC, message)
+    
+    def createMIDI(self, message: MIDI = MIDI()) -> ET.Element:
+        return self._createMessage(ControlElements.MIDI, message)    
+                    
+    def createLOCAL(self, message: LOCAL = LOCAL()) -> ET.Element:
+        return self._createMessage(ControlElements.LOCAL, message)
+    
+    def removeOSC(self) -> bool:
+        return [e.remove for e in self.messages.findall(ControlElements.OSC)]
+    
+    def removeMIDI(self) -> bool:
+        return [e.remove for e in self.messages.findall(ControlElements.MIDI)]
+    
+    def removeLOCAL(self) -> bool:
+        return [e.remove for e in self.messages.findall(ControlElements.LOCAL)]
 
     def findChildByName(self, name: str) -> ET.Element:
         for child in self.children:
@@ -499,7 +590,9 @@ class ElementTOSC:
             ControlElements.CHILD,
             attrib={"ID": str(uuid.uuid4()), "type": type},
         )
-
+        
+    def getID(self) -> str:
+        return str(self.node.attrib["ID"])
     #
     #
     #   SHORTCUTS:

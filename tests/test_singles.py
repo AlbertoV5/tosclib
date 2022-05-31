@@ -73,6 +73,7 @@ def test_singles():
         print(x, end - start)
     
 
+    print(element.getID())
     go2(10000)
 
 if __name__ == "__main__":

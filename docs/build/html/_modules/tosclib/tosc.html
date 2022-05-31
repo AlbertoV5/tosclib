@@ -374,6 +374,79 @@
     <span class="p">)</span></div>
 
 
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">MidiMessage</span><span class="p">:</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"CONTROLCHANGE"</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
+    <span class="n">data1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
+    <span class="n">data2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">MidiValue</span><span class="p">:</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"CONSTANT"</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">scaleMin</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
+    <span class="n">scaleMax</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"15"</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">MIDI</span><span class="p">:</span>
+    <span class="sd">""" Default elements for &lt;midi&gt;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        enabled: bool</span>
+<span class="sd">        send : bool</span>
+<span class="sd">        receive : bool</span>
+<span class="sd">        feedback : bool</span>
+<span class="sd">        connections : bool</span>
+<span class="sd">        triggers : List of Trigger</span>
+<span class="sd">        message : MidiMessage</span>
+<span class="sd">        values : List of MidiValue</span>
+<span class="sd">    """</span>
+    <span class="n">enabled</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span>
+    <span class="n">send</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span>
+    <span class="n">receive</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span>
+    <span class="n">feedback</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
+    <span class="n">connections</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"00001"</span>
+    <span class="n">triggers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Trigger</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="n">Trigger</span><span class="p">()])</span>
+    <span class="n">message</span><span class="p">:</span> <span class="n">MidiMessage</span> <span class="o">=</span> <span class="n">MidiMessage</span><span class="p">()</span>
+    <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MidiValue</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">MidiValue</span><span class="p">(),</span>
+            <span class="n">MidiValue</span><span class="p">(</span><span class="s2">"INDEX"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="s2">"0"</span><span class="p">,</span> <span class="s2">"1"</span><span class="p">),</span>
+            <span class="n">MidiValue</span><span class="p">(</span><span class="s2">"VALUE"</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">,</span> <span class="s2">"0"</span><span class="p">,</span> <span class="s2">"127"</span><span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">LOCAL</span><span class="p">:</span>
+    <span class="sd">""" Default elements for &lt;midi&gt;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        enabled: bool</span>
+<span class="sd">        triggers : Trigger x or touch.</span>
+<span class="sd">        type : BOOL, INT, FLOAT, STRING. The Type of Trigger.x</span>
+<span class="sd">        conversion : BOOL, INT, FLOAT, STRING. </span>
+<span class="sd">        value : The value sent to the other local Control.</span>
+<span class="sd">        scaleMin : 0</span>
+<span class="sd">        scaleMax : 1</span>
+<span class="sd">        dstType : BOOL, INT, FLOAT, STRING of the target.</span>
+<span class="sd">        dstVar : The value you want to change in the target.</span>
+<span class="sd">        dstID : The node {ID} of the target.</span>
+<span class="sd">    """</span>
+    <span class="n">enabled</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span>
+    <span class="n">triggers</span> <span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Trigger</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:[</span><span class="n">Trigger</span><span class="p">()])</span>
+    <span class="nb">type</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"VALUE"</span>
+    <span class="n">conversion</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"FLOAT"</span>
+    <span class="n">value</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"x"</span>
+    <span class="n">scaleMin</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span>
+    <span class="n">scaleMax</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span>
+    <span class="n">dstType</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">dstVar</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">dstID</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+
+
+
 <div class="viewcode-block" id="cursorDisplay"><a class="viewcode-back" href="../../api/propsTuples.html#tosclib.tosc.cursorDisplay">[docs]</a><span class="k">class</span> <span class="nc">cursorDisplay</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
     <span class="n">ALWAYS</span> <span class="o">=</span> <span class="s2">"0"</span>  <span class="c1">#:</span>
     <span class="n">ACTIVE</span> <span class="o">=</span> <span class="s2">"1"</span>  <span class="c1">#:</span>
@@ -435,7 +508,7 @@
     <span class="n">TOGGLE_PRESS</span> <span class="o">=</span> <span class="s2">"2"</span>  <span class="c1">#:</span></div>
 
 
-<span class="k">class</span> <span class="nc">_PropertyKeys</span><span class="p">():</span>
+<span class="k">class</span> <span class="nc">_PropertyKeys</span><span class="p">:</span>
     <span class="sd">"""All controls have these properties</span>
 <span class="sd">    https://hexler.net/touchosc/manual/script-properties-and-values"""</span>
 
@@ -713,7 +786,9 @@
             <span class="n">ControlElements</span><span class="o">.</span><span class="n">CHILD</span><span class="p">,</span>
             <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">"ID"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="s2">"type"</span><span class="p">:</span> <span class="nb">type</span><span class="p">},</span>
         <span class="p">)</span>
-
+        
+    <span class="k">def</span> <span class="nf">getID</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">"ID"</span><span class="p">])</span>
     <span class="c1">#</span>
     <span class="c1">#</span>
     <span class="c1">#   SHORTCUTS:</span>

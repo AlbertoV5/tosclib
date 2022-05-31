@@ -1,3 +1,4 @@
+from msilib.schema import Property
 import tosclib as tosc
 import re
 
@@ -25,7 +26,7 @@ def main(inputFile, outputFile, sourceName, targetName):
             if box.hasProperty("script"):
                 box.setProperty("script", script)
             else:
-                box.createProperty("s", "script", script)
+                box.createProperty(tosc.Property("s", "script", script))
 
         tosc.write(root, outputFile)
 
@@ -34,4 +35,4 @@ def main(inputFile, outputFile, sourceName, targetName):
 
 if __name__ == "__main__":
 
-    main("demos/files/test.tosc", "demos/files/out.tosc", "source", "target")
+    main("docs/demos/files/test.tosc", "docs/demos/files/out.tosc", "source", "target")

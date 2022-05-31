@@ -1,33 +1,57 @@
 """
 Simplify navigating, editing and generating .tosc files.
 """
-from dataclasses import dataclass, field
-from enum import Enum, unique
 import sys
 import xml.etree.ElementTree as ET
 import re
 import zlib
 import uuid
-from typing import List
+from dataclasses import dataclass, field
+from enum import Enum, auto, unique
+from typing import List, Final
 
 
 @unique
-class ControlType(Enum):
-    """https://hexler.net/touchosc/manual/script-enumerations#controltype"""
+class ControlElements(Enum):
+    """Valid Sub Elements for a Node"""
 
-    BOX = "BOX"
-    BUTTON = "BUTTON"
-    LABEL = "LABEL"
-    TEXT = "TEXT"
-    FADER = "FADER"
-    XY = "XY"
-    RADIAL = "RADIAL"
-    ENCODER = "ENCODER"
-    RADAR = "RADAR"
-    RADIO = "RADIO"
-    GROUP = "GROUP"
-    PAGER = "PAGER"
-    GRID = "GRID"
+    PROPERTIES = "properties"
+    VALUES = "values"
+    MESSAGES = "messages"
+    CHILDREN = "children"
+    # Sub Elements
+    PROPERTY = "property"
+    VALUE = "value"
+    # Messages
+    OSC = "osc"
+    MIDI = "midi"
+    LOCAL = "local"
+    GAMEPAD = "gamepad"
+    # Children
+    CHILD = "node"
+
+
+@dataclass
+class Property:
+    """Element structure for a <property>
+
+    Args:
+        type (str): See PropertyType.
+        key (str): See parameters of inner classes of Controls.
+        value (str, optional): Exclusive with params.
+        params (dict[str,str], optional): Exclusive with value.
+    """
+
+    type: str
+    key: str
+    value: str = ""
+    params: dict = field(default_factory=lambda: {})
+
+    def __post_init__(self):
+        if self.value and self.params:
+            raise ValueError(f"{self} can't have both value and params.")
+        if not self.value and not self.params:
+            raise ValueError(f"{self} needs either a value or params.")
 
 
 @dataclass
@@ -103,11 +127,265 @@ class OSC:
     connections: str = "00001"
     triggers: List[Trigger] = field(default_factory=lambda: [Trigger()])
     path: List[Partial] = field(
-        default_factory = lambda: [Partial(), Partial(type="PROPERTY", value="name")]
+        default_factory=lambda: [Partial(), Partial(type="PROPERTY", value="name")]
     )
     arguments: List[Partial] = field(
-        default_factory = lambda: [Partial(type="VALUE", conversion="FLOAT", value="x")]
+        default_factory=lambda: [Partial(type="VALUE", conversion="FLOAT", value="x")]
     )
+
+
+@unique
+class PropertyType(Enum):
+    """Enum of valid <property type=?>"""
+
+    STRING = "s"
+    BOOLEAN = "b"
+    INTEGER = "i"
+    FLOAT = "f"
+    FRAME = "r"
+    COLOR = "c"
+
+
+@unique
+class textAlignH(Enum):
+    LEFT = "0"
+    CENTER = "1"
+    RIGHT = "2"
+
+
+@unique
+class textAlignV(Enum):
+    TOP = "0"
+    MIDDLE = "1"
+    BOTTOM = "2"
+
+
+@unique
+class buttonType(Enum):
+    MOMENTARY = "0"
+    TOGGLE_RELEASE = "1"
+    TOGGLE_PRESS = "2"
+
+
+@unique
+class ControlType(Enum):
+    """Enum of valid <node type=?>"""
+
+    BOX = "BOX"
+    BUTTON = "BUTTON"
+    LABEL = "LABEL"
+    TEXT = "TEXT"
+    FADER = "FADER"
+    XY = "XY"
+    RADIAL = "RADIAL"
+    ENCODER = "ENCODER"
+    RADAR = "RADAR"
+    RADIO = "RADIO"
+    GROUP = "GROUP"
+    PAGER = "PAGER"
+    GRID = "GRID"
+
+
+@unique
+class cursorDisplay(Enum):
+    ALWAYS = "0"
+    ACTIVE = "1"
+    INACTIVE = "2"
+
+
+@unique
+class font(Enum):
+    DEFAULT = "0"
+    MONOSPACED = "1"
+
+
+@unique
+class orientation(Enum):
+    NORTH = "0"
+    EAST = "1"
+    SOUTH = "2"
+    WEST = "3"
+
+
+@unique
+class outlineStyle(Enum):
+    FULL = "0"
+    CORNERS = "1"
+    EDGES = "2"
+
+
+@unique
+class pointerPriority(Enum):
+    OLDEST = "0"
+    NEWEST = "1"
+
+
+@unique
+class response(Enum):
+    ABSOLUTE = "0"
+    RELATIVE = "1"
+
+
+@unique
+class shape(Enum):
+    RECTANGLE = "0"
+    CIRCLE = "1"
+    TRIANGLE = "2"
+    DIAMOND = "3"
+    PENTAGON = "4"
+    HEXAGON = "5"
+
+
+class _PropertyKeys:
+    """All controls have these properties
+    https://hexler.net/touchosc/manual/script-properties-and-values"""
+
+    NAME: Final[str] = "name"
+    TAG: Final[str] = "tag"
+    FRAME: Final[str] = "frame"
+    COLOR: Final[str] = "color"
+    LOCKED: Final[str] = "locked"
+    VISIBLE: Final[str] = "visible"
+    INTERACTIVE: Final[str] = "interactive"
+    BACKGROUND: Final[str] = "background"
+    OUTLINE: Final[str] = "outline"
+    OUTLINE_STYLE: Final[str] = outlineStyle.__name__
+    GRAB_FOCUS: Final[str] = "grabFocus"
+    POINTER: Final[str] = pointerPriority.__name__
+    CORNER: Final[str] = "cornerRadius"
+    ORIENTATION: Final[str] = orientation.__name__
+    SCRIPT: Final[str] = "script"
+
+
+class _PropertiesBox:
+    SHAPE: Final[str] = shape.__name__
+
+
+class _PropertiesGrid:
+    GRID: Final[str] = "grid"
+    GRID_STEPS: Final[str] = "gridSteps"
+
+
+class _PropertiesResponse:
+    RESPONSE: Final[str] = response.__name__
+    RESPONSE_FACTOR: Final[str] = "responseFactor"
+
+
+class _PropertiesCursor:
+    CURSOR: Final[str] = "cursor"
+    CURSOR_DISPLAY: Final[str] = cursorDisplay.__name__
+
+
+class _PropertiesLine:
+    LINES: Final[str] = "lines"
+    LINES_DISPLAY: Final[str] = "linesDisplay"
+
+
+class _PropertiesXY:
+    LOCK_X: Final[str] = "lockX"
+    LOCK_Y: Final[str] = "lockY"
+    GRID_X: Final[str] = "gridX"
+    GRID_Y: Final[str] = "gridY"
+    GRID_STEPSX: Final[str] = "gridStepsX"
+    GRID_STEPSY: Final[str] = "gridStepsY"
+
+
+class _PropertiesText:
+    FONT: Final[str] = "font"
+    SIZE: Final[str] = "textSize"
+    ALIGNMENT_H: Final[str] = "textAlignH"
+    TEXT_COLOR: Final[str] = "textColor"
+
+
+class Controls:
+    """All the Node Types and their available properties
+
+    https://hexler.net/touchosc/manual/script-enumerations#controltype"""
+
+    class BOX(_PropertyKeys, _PropertiesBox):
+        pass
+
+    class BUTTON(_PropertyKeys, _PropertiesBox):
+        BUTTON_TYPE = buttonType.__name__
+        PRESS = "press"
+        RELEASE = "release"
+        VALUE_POSITION = "valuePosition"
+
+    class LABEL(_PropertyKeys, _PropertiesText):
+        LENGTH = "textLength"
+        CLIP = "textClip"
+
+    class TEXT(_PropertyKeys, _PropertiesText):
+        pass
+
+    class FADER(_PropertyKeys, _PropertiesResponse, _PropertiesGrid, _PropertiesCursor):
+        BAR = "bar"
+        BAR_DISPLAY = "barDisplay"
+
+    class XY(
+        _PropertyKeys,
+        _PropertiesResponse,
+        _PropertiesCursor,
+        _PropertiesXY,
+    ):
+        pass
+
+    class RADIAL(
+        _PropertyKeys,
+        _PropertiesResponse,
+        _PropertiesGrid,
+        _PropertiesCursor,
+    ):
+        INVERTED = "inverted"
+        CENTERED = "centered"
+
+    class ENCODER(_PropertyKeys, _PropertiesResponse, _PropertiesGrid):
+        pass
+
+    class RADAR(
+        _PropertyKeys,
+        _PropertiesCursor,
+        _PropertiesLine,
+        _PropertiesXY,
+    ):
+        pass
+
+    class RADIO(_PropertyKeys):
+        STEPS = "steps"
+        RADIO_TYPE = "radioType"
+        pass
+
+    class GROUP(_PropertyKeys):
+        pass
+
+    class PAGER(_PropertyKeys):
+        TAB_LABELS = "tabLabels"
+        TAB_BAR = "tabbar"
+        DOUBLE_TAP = "tabbarDoubleTap"
+        TAB_BAR_SIZE = "tabbarSize"
+        TEXT_SIZE_OFF = "textSizeOff"
+        TEXT_SIZE_ON = "textSizeOn"
+        pass
+
+        class PAGE(_PropertyKeys):
+            TAB_COLOR_OFF = "tabColorOff"
+            TAB_COLOR_ON = "tabColorOn"
+            TAB_LABEL = "tabLabel"
+            TEXT_COLOR_OFF = "textColorOff"
+            TEXT_COLOR_ON = "textColorOn"
+
+    class GRID(_PropertyKeys):
+        EXCLUSIVE = "exclusive"
+        GRID_NAMING = "gridNaming"
+        GRID_ORDER = "gridOrder"
+        GRID_START = "gridStart"
+        GRID_TYPE = "gridType"
+        GRID_X = "gridX"
+        GRID_Y = "gridY"
+
+    @classmethod
+    def hasChildren(cls):
+        return (cls.GRID, cls.GROUP, cls.PAGER)
 
 
 class ElementTOSC:
@@ -130,10 +408,10 @@ class ElementTOSC:
         """
         self.node = e
         f = lambda v: e.find(v) if e.find(v) else ET.SubElement(e, v)
-        self.properties = f("properties")
-        self.values = f("values")
-        self.messages = f("messages")
-        self.children = f("children")
+        self.properties = f(ControlElements.PROPERTIES.value)
+        self.values = f(ControlElements.VALUES.value)
+        self.messages = f(ControlElements.MESSAGES.value)
+        self.children = f(ControlElements.CHILDREN.value)
 
     @classmethod
     def fromFile(cls, file: str) -> "ElementTOSC":
@@ -149,37 +427,34 @@ class ElementTOSC:
         return findKey(self.properties, key).find("value").find(param)
 
     def hasProperty(self, key: str) -> bool:
-        return True if ET.iselement(findKey(self.properties, key)) else False
+        return True if findKey(self.properties, key) else False
 
-    def setProperty(self, key: str, text: str = "", params: dict = {}) -> bool:
-        if not text and not params:
-            raise ValueError(f"Missing either text or params")
+    def setProperty(self, key: str, value: str = "", params: dict = {}) -> bool:
         if not self.hasProperty(key):
-            raise ValueError(f"Property '{key}' doesn't exist.")
-        value = self.getPropertyValue(key)
-        if text:
-            value.text = text
+            raise ValueError(f"{key} doesn't exist.")
+        val = self.getPropertyValue(key)
+        if value:
+            val.text = value
             return True
         for paramKey in params:
-            value.find(paramKey).text = params[paramKey]
+            val.find(paramKey).text = params[paramKey]
         return True
 
-    def createProperty(
-        self, type: str, key: str, text: str = "", params: dict = {}
-    ) -> bool:
-        if self.hasProperty(key):
-            raise ValueError(f"Property '{key}' already exists.")
-        property = ET.SubElement(self.properties, "property", attrib={"type": type})
-        (keyElement, valueElement) = (
-            ET.SubElement(property, "key"),
-            ET.SubElement(property, "value"),
+    def createProperty(self, property: Property) -> bool:
+        if self.hasProperty(property.key):
+            raise ValueError(f"{property.key} already exists.")
+        prop = ET.SubElement(
+            self.properties,
+            ControlElements.PROPERTY.value,
+            attrib={"type": property.type},
         )
-        keyElement.text = key
-        if text:
-            valueElement.text = text
+        (key, value) = (ET.SubElement(prop, "key"), ET.SubElement(prop, "value"))
+        key.text = property.key
+        if property.value:
+            value.text = property.value
             return True
-        for paramKey in params:
-            ET.SubElement(valueElement, paramKey).text = params[paramKey]
+        for paramKey in property.params:
+            ET.SubElement(value, paramKey).text = property.params[paramKey]
         return True
 
     def getValue(self, key: str) -> ET.Element:
@@ -193,22 +468,22 @@ class ElementTOSC:
 
     def createValue(self, value: Value) -> bool:
         if self.hasValue(value.key):
-            raise ValueError(f"Value '{value.key}' already exists.")
+            raise ValueError(f"{value.key} already exists.")
         element = ET.SubElement(self.values, "value")
         for v in vars(value):
             ET.SubElement(element, v).text = getattr(value, v)
-        return ET.iselement(element)
+        return True
 
     def setValue(self, value: Value) -> bool:
         if not self.hasValue(value.key):
-            raise ValueError(f"Value '{value.key}' doesn't exist.")
+            raise ValueError(f"{value.key} doesn't exist.")
         element = findKey(self.values, value.key)
         for v in vars(value):
             element.find(v).text = getattr(value, v)
         return True
 
     def createOSC(self, message: OSC = OSC()) -> ET.Element:
-        osc = ET.SubElement(self.messages, "osc")
+        osc = ET.SubElement(self.messages, ControlElements.OSC.value)
         for key in vars(message):
             element = ET.SubElement(osc, key)
             attribute = getattr(message, key)
@@ -223,47 +498,100 @@ class ElementTOSC:
                 element.text = getattr(message, key)
         return osc
 
-    def findChild(self, name: str) -> ET.Element:
+    def findChildByName(self, name: str) -> ET.Element:
         for child in self.children:
-            if not child.find("properties"):
+            if not child.find(ControlElements.PROPERTIES.value):
                 continue
-            if re.fullmatch(findKey(child.find("properties"), "name").text, name):
+            if re.fullmatch(
+                getTextValueFromKey(
+                    child.find(ControlElements.PROPERTIES.value), "name"
+                ),
+                name,
+            ):
                 return child
         return None
 
-    def createChild(self, type: str) -> ET.Element:
+    def createChild(self, type: ControlType) -> ET.Element:
         return ET.SubElement(
-            self.children, "node", attrib={"ID": str(uuid.uuid4()), "type": type}
+            self.children,
+            ControlElements.CHILD.value,
+            attrib={"ID": str(uuid.uuid4()), "type": type},
         )
 
-    def setFrame(self, x: float, y: float, w: float, h: float) -> bool:
-        """Create a Frame Property, if already exists, then modify it."""
-        params = {"x": str(x), "y": str(y), "w": str(w), "h": str(h)}
-        if not self.hasProperty("frame"):
-            return self.createProperty("r", "frame", "", params)
-        return self.setProperty("frame", "", params)
+    #
+    #
+    #   SHORTCUTS:
+    #
+    #
+    def overrideProperty(
+        self, type: str, key: str, value: str = "", params: dict = {}
+    ) -> bool:
+        """Create a Property, if already exists, then modify its values."""
+        if not self.hasProperty(key):
+            return self.createProperty(Property(type, key, value=value, params=params))
+        return self.setProperty(key, value=value, params=params)
 
-    def setColor(self, r: float, g: float, b: float, a: float) -> bool:
-        """Create a Color Property, if already exists, then modify it."""
-        params = {"r": str(r), "g": str(g), "b": str(b), "a": str(a)}
-        if not self.hasProperty("color"):
-            return self.createProperty("c", "color", "", params)
-        return self.setProperty("color", "", params)
+    def setType(self, value: str):
+        """See ControlType Element"""
+        self.node.attrib = {"type": value}
+        return True
+
+    def setName(self, value: str):
+        return self.overrideProperty(
+            PropertyType.STRING.value, _PropertyKeys.NAME, value=value
+        )
+
+    def setTag(self, value: str):
+        return self.overrideProperty(
+            PropertyType.STRING.value, _PropertyKeys.TAG, value=value
+        )
+
+    def setFrame(self, x: float, y: float, w: float, h: float):
+        return self.overrideProperty(
+            PropertyType.FRAME.value,
+            _PropertyKeys.FRAME,
+            params={"x": str(x), "y": str(y), "w": str(w), "h": str(h)},
+        )
+
+    def setColor(self, r: float, g: float, b: float, a: float):
+        return self.overrideProperty(
+            PropertyType.COLOR.value,
+            _PropertyKeys.COLOR,
+            params={"r": str(r), "g": str(g), "b": str(b), "a": str(a)},
+        )
+
+    def setLocked(self, value: bool):
+        return self.overrideProperty(
+            PropertyType.BOOLEAN, _PropertyKeys.LOCKED, str(int(value))
+        )
+
+    def setBackground(self, value: bool):
+        return self.overrideProperty(
+            PropertyType.BOOLEAN.value, _PropertyKeys.BACKGROUND, value=str(int(value))
+        )
+
+    def setVisible(self, value: bool):
+        return self.overrideProperty(
+            PropertyType.BOOLEAN.value, _PropertyKeys.VISIBLE, value=str(int(value))
+        )
+
+    def setInteractive(self, value: bool):
+        return self.overrideProperty(
+            PropertyType.BOOLEAN, _PropertyKeys.INTERACTIVE, value=str(int(value))
+        )
+
+    def setOutline(self, value: bool):
+        return self.overrideProperty(
+            PropertyType.BOOLEAN, _PropertyKeys.OUTLINE, value=value
+        )
+
+    def setScript(self, value: str):
+        return self.overrideProperty(
+            PropertyType.STRING.value, _PropertyKeys.SCRIPT, value=value
+        )
 
     def show(self):
         showElement(self.node)
-
-    def showProperties(self):
-        showElement(self.properties)
-
-    def showValues(self):
-        showElement(self.values)
-
-    def showMessages(self):
-        showElement(self.messages)
-
-    def showChildren(self):
-        showElement(self.children)
 
     def showProperty(self, name: str):
         showElement(findKey(self.properties, name))
@@ -271,12 +599,18 @@ class ElementTOSC:
     def showValue(self, name: str):
         showElement(findKey(self.values, name))
 
+###
+#
+#   GLOBAL FUNCTIONS
+#
+###
 
 def findKey(elements: ET.Element, key: str) -> ET.Element:
     """Iterate through element with children and return child whose key matches"""
     for e in elements:
         if re.fullmatch(e.find("key").text, key):
             return e
+    return None
 
 
 def showElement(e: ET.Element):
@@ -289,7 +623,11 @@ def showElement(e: ET.Element):
 def createTemplate() -> ET.Element:
     """Generates a root Element for your .tosc file"""
     root = ET.Element("lexml", attrib={"version": "3"})
-    ET.SubElement(root, "node", attrib={"ID": str(uuid.uuid4()), "type": "GROUP"})
+    ET.SubElement(
+        root,
+        ControlElements.CHILD.value,
+        attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP.value},
+    )
     return root
 
 
@@ -307,15 +645,6 @@ def write(root: ET.Element, outputPath: str = None) -> bool:
         return True
 
 
-def findChildByName(element: ET.Element, name: str) -> ET.Element:
-    """Returns the first child element by name"""
-    for child in element.find("children"):
-        if not child.find("properties"):
-            continue
-        if re.fullmatch(getTextValueFromKey(child.find("properties"), "name"), name):
-            return child
-
-
 def getTextValueFromKey(properties: ET.Element, key: str) -> str:
     """Find the value.text from a known key"""
     for property in properties:
@@ -324,7 +653,19 @@ def getTextValueFromKey(properties: ET.Element, key: str) -> str:
 
 
 def pullValueFromKey(inputFile: str, key: str, value: str, targetKey: str) -> str:
-    """Find a value from a known key, value and target key"""
+    """If you know the name of an element but don't know its other properties.
+    This function uses a .tosc file and gets its root.
+    For passing an element see pullValueFromKey2
+
+    Args:
+        inputFile (str): File to parse.
+        key (str): Known key.
+        value (str): Known value.
+        targetKey (str): Known key of unknown value.
+
+    Returns:
+        str: Value
+    """
     parser = ET.XMLPullParser()
     with open(inputFile, "rb") as file:
         parser.feed(zlib.decompress(file.read()))
@@ -337,3 +678,24 @@ def pullValueFromKey(inputFile: str, key: str, value: str, targetKey: str) -> st
 
     parser.close()
     return ""
+
+def pullValueFromKey2(root: ET.Element, key : str, value : str, targetKey : str) -> str:
+    """If you know the name of an element but don't know its other properties.
+
+    Args:
+        root (ET.Element): Parses the whole element, so you can feed the root.
+        key (str): Known key.
+        value (str): Known value.
+        targetKey (str): Known key of unknown value.
+
+    Returns:
+        str: Value
+    """
+    parser = ET.XMLPullParser()
+    parser.feed(ET.tostring(root, encoding = "UTF-8"))
+    for _, e in parser.read_events():  # event, element
+        if not e.find("properties"):
+            continue
+        if re.fullmatch(getTextValueFromKey(e.find("properties"), key), value):
+            parser.close()
+            return getTextValueFromKey(e.find("properties"), targetKey)

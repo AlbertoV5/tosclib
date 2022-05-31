@@ -1,7 +1,7 @@
 import tosclib as tosc
 from PIL import Image
 import numpy as np
-
+import time
 
 class ImageConverter:
     def __init__(self, inputFile, outputFile, imagePath, canvasName="canvas"):
@@ -28,15 +28,13 @@ class ImageConverter:
         """
         root = tosc.load(self.input_path)
         main = tosc.ElementTOSC(root[0])
-
-        canvas = tosc.findChildByName(main.node, self.canvas_name)
-        canvas = tosc.ElementTOSC(canvas)
-
+        canvas = tosc.ElementTOSC(main.findChildByName(self.canvas_name))
+        
         pxs = self.pixel_size
         for iy, ix in np.ndindex(self.pixels.shape[:2]):
             box = tosc.ElementTOSC(canvas.createChild("BOX"))
-            box.createProperty("s", "name", f"p{ix}{iy}")
             (r, g, b) = self.pixels[iy, ix]
+            box.setName(f"p{ix}{iy}")
             box.setColor(r, g, b, 1)
             box.setFrame(ix * pxs, iy * pxs, pxs, pxs)
 
@@ -52,10 +50,12 @@ def main(inputFile, outputFile, imageFile, target):
 
 
 if __name__ == "__main__":
-
+    start = time.process_time()
     main(
-        "demos/files/test.tosc",
-        "demos/files/out.tosc",
-        "demos/files/logo.jpg",
+        "docs/demos/files/test.tosc",
+        "docs/demos/files/out.tosc",
+        "docs/demos/files/logo.jpg",
         "canvas",
     )
+    end = time.process_time()
+    print("Converter", end - start)

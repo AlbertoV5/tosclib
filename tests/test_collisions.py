@@ -1,5 +1,6 @@
 import pytest
 import tosclib as tosc
+from tosclib import Property
 
 
 def test_create_template() -> tosc.ElementTOSC:
@@ -12,10 +13,10 @@ def test_create_template() -> tosc.ElementTOSC:
 def test_create_property():
     """Error with collisions. Raise exception."""
     element = test_create_template()
-    assert element.createProperty("s", "name", "geoff")
+    assert element.createProperty(Property("s", "name", "geoff"))
     with pytest.raises(ValueError):
-        assert element.createProperty("s", "name", "craig")
-    assert element.createProperty("s", "name2", "craig")
+        assert element.createProperty(Property("s", "name", "craig"))
+    assert element.createProperty(Property("s", "name2", "craig"))
 
 
 def test_set_frame():

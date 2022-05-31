@@ -3,3 +3,5 @@ dist
 src/tosclib.egg-info
 .pytest_cache
 .tox
+venv
+.vscode

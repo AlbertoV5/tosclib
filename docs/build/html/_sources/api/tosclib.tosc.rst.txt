@@ -14,11 +14,11 @@
    .. autosummary::
    
       createTemplate
-      findChildByName
       findKey
       getTextValueFromKey
       load
       pullValueFromKey
+      pullValueFromKey2
       showElement
       write
    
@@ -30,16 +30,26 @@
 
    .. autosummary::
    
+      ControlElements
       ControlType
+      Controls
       ElementTOSC
       OSC
       Partial
+      Property
+      PropertyType
       Trigger
       Value
-   
-   
-
-   
+      buttonType
+      cursorDisplay
+      font
+      orientation
+      outlineStyle
+      pointerPriority
+      response
+      shape
+      textAlignH
+      textAlignV
    
    
 

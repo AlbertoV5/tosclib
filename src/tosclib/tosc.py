@@ -7,28 +7,26 @@ import re
 import zlib
 import uuid
 from dataclasses import dataclass, field
-from enum import Enum, auto, unique
-from typing import List, Final
+from typing import List, Final, NamedTuple
 
 
-@unique
-class ControlElements(Enum):
+class ControlElements(NamedTuple):
     """Valid Sub Elements for a Node"""
 
-    PROPERTIES = "properties"
-    VALUES = "values"
-    MESSAGES = "messages"
-    CHILDREN = "children"
+    PROPERTIES = "properties"  #:
+    VALUES = "values"  #:
+    MESSAGES = "messages"  #:
+    CHILDREN = "children"  #:
     # Sub Elements
-    PROPERTY = "property"
-    VALUE = "value"
+    PROPERTY = "property"  #:
+    VALUE = "value"  #:
     # Messages
-    OSC = "osc"
-    MIDI = "midi"
-    LOCAL = "local"
-    GAMEPAD = "gamepad"
+    OSC = "osc"  #:
+    MIDI = "midi"  #:
+    LOCAL = "local"  #:
+    GAMEPAD = "gamepad"  #:
     # Children
-    CHILD = "node"
+    CHILD = "node"  #:
 
 
 @dataclass
@@ -134,106 +132,94 @@ class OSC:
     )
 
 
-@unique
-class PropertyType(Enum):
+class PropertyType(NamedTuple):
     """Enum of valid <property type=?>"""
 
-    STRING = "s"
-    BOOLEAN = "b"
-    INTEGER = "i"
-    FLOAT = "f"
-    FRAME = "r"
-    COLOR = "c"
+    STRING = "s"  #:
+    BOOLEAN = "b"  #:
+    INTEGER = "i"  #:
+    FLOAT = "f"  #:
+    FRAME = "r"  #:
+    COLOR = "c"  #:
 
 
-@unique
-class textAlignH(Enum):
-    LEFT = "0"
-    CENTER = "1"
-    RIGHT = "2"
+class textAlignH(NamedTuple):
+    LEFT = "0"  #:
+    CENTER = "1"  #:
+    RIGHT = "2"  #:
 
 
-@unique
-class textAlignV(Enum):
-    TOP = "0"
-    MIDDLE = "1"
-    BOTTOM = "2"
+class textAlignV(NamedTuple):
+    TOP = "0"  #:
+    MIDDLE = "1"  #:
+    BOTTOM = "2"  #:
 
 
-@unique
-class buttonType(Enum):
-    MOMENTARY = "0"
-    TOGGLE_RELEASE = "1"
-    TOGGLE_PRESS = "2"
+class buttonType(NamedTuple):
+    MOMENTARY = "0"  #:
+    TOGGLE_RELEASE = "1"  #:
+    TOGGLE_PRESS = "2"  #:
 
 
-@unique
-class ControlType(Enum):
+class ControlType(NamedTuple):
     """Enum of valid <node type=?>"""
 
-    BOX = "BOX"
-    BUTTON = "BUTTON"
-    LABEL = "LABEL"
-    TEXT = "TEXT"
-    FADER = "FADER"
-    XY = "XY"
-    RADIAL = "RADIAL"
-    ENCODER = "ENCODER"
-    RADAR = "RADAR"
-    RADIO = "RADIO"
-    GROUP = "GROUP"
-    PAGER = "PAGER"
-    GRID = "GRID"
+    BOX = "BOX"  #:
+    BUTTON = "BUTTON"  #:
+    LABEL = "LABEL"  #:
+    TEXT = "TEXT"  #:
+    FADER = "FADER"  #:
+    XY = "XY"  #:
+    RADIAL = "RADIAL"  #:
+    ENCODER = "ENCODER"  #:
+    RADAR = "RADAR"  #:
+    RADIO = "RADIO"  #:
+    GROUP = "GROUP"  #:
+    PAGER = "PAGER"  #:
+    GRID = "GRID"  #:
 
 
-@unique
-class cursorDisplay(Enum):
-    ALWAYS = "0"
-    ACTIVE = "1"
-    INACTIVE = "2"
+class cursorDisplay(NamedTuple):
+    ALWAYS = "0"  #:
+    ACTIVE = "1"  #:
+    INACTIVE = "2"  #:
 
 
-@unique
-class font(Enum):
-    DEFAULT = "0"
-    MONOSPACED = "1"
+class font(NamedTuple):
+    DEFAULT = "0"  #:
+    MONOSPACED = "1"  #:
 
 
-@unique
-class orientation(Enum):
-    NORTH = "0"
-    EAST = "1"
-    SOUTH = "2"
-    WEST = "3"
+class orientation(NamedTuple):
+    NORTH = "0"  #:
+    EAST = "1"  #:
+    SOUTH = "2"  #:
+    WEST = "3"  #:
 
 
-@unique
-class outlineStyle(Enum):
-    FULL = "0"
-    CORNERS = "1"
-    EDGES = "2"
+class outlineStyle(NamedTuple):
+    FULL = "0"  #:
+    CORNERS = "1"  #:
+    EDGES = "2"  #:
 
 
-@unique
-class pointerPriority(Enum):
-    OLDEST = "0"
-    NEWEST = "1"
+class pointerPriority(NamedTuple):
+    OLDEST = "0"  #:
+    NEWEST = "1"  #:
 
 
-@unique
-class response(Enum):
-    ABSOLUTE = "0"
-    RELATIVE = "1"
+class response(NamedTuple):
+    ABSOLUTE = "0"  #:
+    RELATIVE = "1"  #:
 
 
-@unique
-class shape(Enum):
-    RECTANGLE = "0"
-    CIRCLE = "1"
-    TRIANGLE = "2"
-    DIAMOND = "3"
-    PENTAGON = "4"
-    HEXAGON = "5"
+class shape(NamedTuple):
+    RECTANGLE = "0"  #:
+    CIRCLE = "1"  #:
+    TRIANGLE = "2"  #:
+    DIAMOND = "3"  #:
+    PENTAGON = "4"  #:
+    HEXAGON = "5"  #:
 
 
 class _PropertyKeys:
@@ -390,8 +376,7 @@ class Controls:
 
 class ElementTOSC:
     """
-    Contains a Node Element and its SubElements.
-    Creates Enum SubElements if they are not found in the Node.
+    Contains a Node Element and its SubElements. Creates them if not found.
     """
 
     def __init__(self, e: ET.Element):
@@ -408,10 +393,10 @@ class ElementTOSC:
         """
         self.node = e
         f = lambda v: e.find(v) if e.find(v) else ET.SubElement(e, v)
-        self.properties = f(ControlElements.PROPERTIES.value)
-        self.values = f(ControlElements.VALUES.value)
-        self.messages = f(ControlElements.MESSAGES.value)
-        self.children = f(ControlElements.CHILDREN.value)
+        self.properties = f(ControlElements.PROPERTIES)
+        self.values = f(ControlElements.VALUES)
+        self.messages = f(ControlElements.MESSAGES)
+        self.children = f(ControlElements.CHILDREN)
 
     @classmethod
     def fromFile(cls, file: str) -> "ElementTOSC":
@@ -445,7 +430,7 @@ class ElementTOSC:
             raise ValueError(f"{property.key} already exists.")
         prop = ET.SubElement(
             self.properties,
-            ControlElements.PROPERTY.value,
+            ControlElements.PROPERTY,
             attrib={"type": property.type},
         )
         (key, value) = (ET.SubElement(prop, "key"), ET.SubElement(prop, "value"))
@@ -483,7 +468,7 @@ class ElementTOSC:
         return True
 
     def createOSC(self, message: OSC = OSC()) -> ET.Element:
-        osc = ET.SubElement(self.messages, ControlElements.OSC.value)
+        osc = ET.SubElement(self.messages, ControlElements.OSC)
         for key in vars(message):
             element = ET.SubElement(osc, key)
             attribute = getattr(message, key)
@@ -500,12 +485,10 @@ class ElementTOSC:
 
     def findChildByName(self, name: str) -> ET.Element:
         for child in self.children:
-            if not child.find(ControlElements.PROPERTIES.value):
+            if not child.find(ControlElements.PROPERTIES):
                 continue
             if re.fullmatch(
-                getTextValueFromKey(
-                    child.find(ControlElements.PROPERTIES.value), "name"
-                ),
+                getTextValueFromKey(child.find(ControlElements.PROPERTIES), "name"),
                 name,
             ):
                 return child
@@ -514,7 +497,7 @@ class ElementTOSC:
     def createChild(self, type: ControlType) -> ET.Element:
         return ET.SubElement(
             self.children,
-            ControlElements.CHILD.value,
+            ControlElements.CHILD,
             attrib={"ID": str(uuid.uuid4()), "type": type},
         )
 
@@ -538,24 +521,24 @@ class ElementTOSC:
 
     def setName(self, value: str):
         return self.overrideProperty(
-            PropertyType.STRING.value, _PropertyKeys.NAME, value=value
+            PropertyType.STRING, _PropertyKeys.NAME, value=value
         )
 
     def setTag(self, value: str):
         return self.overrideProperty(
-            PropertyType.STRING.value, _PropertyKeys.TAG, value=value
+            PropertyType.STRING, _PropertyKeys.TAG, value=value
         )
 
     def setFrame(self, x: float, y: float, w: float, h: float):
         return self.overrideProperty(
-            PropertyType.FRAME.value,
+            PropertyType.FRAME,
             _PropertyKeys.FRAME,
             params={"x": str(x), "y": str(y), "w": str(w), "h": str(h)},
         )
 
     def setColor(self, r: float, g: float, b: float, a: float):
         return self.overrideProperty(
-            PropertyType.COLOR.value,
+            PropertyType.COLOR,
             _PropertyKeys.COLOR,
             params={"r": str(r), "g": str(g), "b": str(b), "a": str(a)},
         )
@@ -567,12 +550,12 @@ class ElementTOSC:
 
     def setBackground(self, value: bool):
         return self.overrideProperty(
-            PropertyType.BOOLEAN.value, _PropertyKeys.BACKGROUND, value=str(int(value))
+            PropertyType.BOOLEAN, _PropertyKeys.BACKGROUND, value=str(int(value))
         )
 
     def setVisible(self, value: bool):
         return self.overrideProperty(
-            PropertyType.BOOLEAN.value, _PropertyKeys.VISIBLE, value=str(int(value))
+            PropertyType.BOOLEAN, _PropertyKeys.VISIBLE, value=str(int(value))
         )
 
     def setInteractive(self, value: bool):
@@ -587,7 +570,7 @@ class ElementTOSC:
 
     def setScript(self, value: str):
         return self.overrideProperty(
-            PropertyType.STRING.value, _PropertyKeys.SCRIPT, value=value
+            PropertyType.STRING, _PropertyKeys.SCRIPT, value=str(int(value))
         )
 
     def show(self):
@@ -599,11 +582,13 @@ class ElementTOSC:
     def showValue(self, name: str):
         showElement(findKey(self.values, name))
 
+
 ###
 #
 #   GLOBAL FUNCTIONS
 #
 ###
+
 
 def findKey(elements: ET.Element, key: str) -> ET.Element:
     """Iterate through element with children and return child whose key matches"""
@@ -625,8 +610,8 @@ def createTemplate() -> ET.Element:
     root = ET.Element("lexml", attrib={"version": "3"})
     ET.SubElement(
         root,
-        ControlElements.CHILD.value,
-        attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP.value},
+        ControlElements.CHILD,
+        attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
     )
     return root
 
@@ -679,7 +664,8 @@ def pullValueFromKey(inputFile: str, key: str, value: str, targetKey: str) -> st
     parser.close()
     return ""
 
-def pullValueFromKey2(root: ET.Element, key : str, value : str, targetKey : str) -> str:
+
+def pullValueFromKey2(root: ET.Element, key: str, value: str, targetKey: str) -> str:
     """If you know the name of an element but don't know its other properties.
 
     Args:
@@ -692,7 +678,7 @@ def pullValueFromKey2(root: ET.Element, key : str, value : str, targetKey : str)
         str: Value
     """
     parser = ET.XMLPullParser()
-    parser.feed(ET.tostring(root, encoding = "UTF-8"))
+    parser.feed(ET.tostring(root, encoding="UTF-8"))
     for _, e in parser.read_events():  # event, element
         if not e.find("properties"):
             continue

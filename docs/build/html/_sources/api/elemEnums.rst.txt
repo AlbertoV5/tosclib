@@ -1,13 +1,13 @@
-Element Enums and Classes
-==============================
+Element Named Tuples
+=====================================
 
-.. autoenum:: tosclib.tosc.ControlElements
+.. autoclass:: tosclib.tosc.ControlElements
     :members:
 
-.. autoenum:: tosclib.tosc.ControlType
+.. autoclass:: tosclib.tosc.ControlType
     :members:
 
-.. autoenum:: tosclib.tosc.PropertyType
+.. autoclass:: tosclib.tosc.PropertyType
     :members:
 
 .. autoclass:: tosclib.tosc.Property

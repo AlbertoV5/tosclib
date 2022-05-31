@@ -1,9 +1,9 @@
-import tosclib as tosc
+from tosclib import tosc
 from tosclib.tosc import Partial, Value
 from tosclib.tosc import Controls
 import sys
 import xml.etree.ElementTree as ET
-
+import time
 
 def test_singles():
 
@@ -52,6 +52,18 @@ def test_singles():
 
     tag = tosc.pullValueFromKey2(root, "name", "Craig", "tag")
     print(tag)
+
+
+    def go1(n):
+        start = time.process_time()
+        for i in range(n):
+            x = tosc.ControlElements.PROPERTIES
+        end = time.process_time()
+        print(x, end - start)
+
+
+    go1(10000000)
+    print(tosc.outlineStyle)
 
 if __name__ == "__main__":
     test_singles()

@@ -18,8 +18,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
-    "sphinx_copybutton",
-    "enum_tools.autoenum"
+    "sphinx_copybutton"
 ]
 
 exclude_patterns = ["build"]

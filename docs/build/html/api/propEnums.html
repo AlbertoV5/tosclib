@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Shortcuts" href="shortcuts.html" /><link rel="prev" title="Element Enums and Classes" href="elemEnums.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Shortcuts" href="shortcuts.html" /><link rel="prev" title="Element Named Tuples" href="elemEnums.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>Property Enums - tosclib 0.2 documentation</title>
+        <title>Property Named Tuples - tosclib 0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -173,8 +173,8 @@
 </ul>
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="elemEnums.html">Element Enums and Classes</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Property Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elemEnums.html">Element Named Tuples</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Property Named Tuples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="shortcuts.html">Shortcuts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tosclib.tosc.html">tosclib.tosc</a></li>
 </ul>
@@ -211,8 +211,8 @@
           </label>
         </div>
         <article role="main">
-          <section id="property-enums">
-<h1>Property Enums<a class="headerlink" href="#property-enums" title="Permalink to this headline">#</a></h1>
+          <section id="property-named-tuples">
+<h1>Property Named Tuples<a class="headerlink" href="#property-named-tuples" title="Permalink to this headline">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.Controls">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">Controls</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#Controls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.Controls" title="Permalink to this definition">#</a></dt>
@@ -275,189 +275,229 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">XY</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#Controls.XY"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.Controls.XY" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 </dd></dl>
-<dl class="py class enum">
+<dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.buttonType">
-<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">buttonType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#buttonType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.buttonType" title="Permalink to this definition">#</a></dt>
-<dd><p>An enumeration.</p>
-<p>Valid values are as follows:</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">buttonType</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#buttonType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.buttonType" title="Permalink to this definition">#</a></dt>
+<dd><p>buttonType()</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.buttonType.MOMENTARY">
-<span class="sig-name descname"><span class="pre">MOMENTARY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;buttonType.MOMENTARY:</span> <span class="pre">'0'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.buttonType.MOMENTARY" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.buttonType.TOGGLE_RELEASE">
-<span class="sig-name descname"><span class="pre">TOGGLE_RELEASE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;buttonType.TOGGLE_RELEASE:</span> <span class="pre">'1'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.buttonType.TOGGLE_RELEASE" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">MOMENTARY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0'</span></em><a class="headerlink" href="#tosclib.tosc.buttonType.MOMENTARY" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.buttonType.TOGGLE_PRESS">
-<span class="sig-name descname"><span class="pre">TOGGLE_PRESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;buttonType.TOGGLE_PRESS:</span> <span class="pre">'2'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.buttonType.TOGGLE_PRESS" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">TOGGLE_PRESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2'</span></em><a class="headerlink" href="#tosclib.tosc.buttonType.TOGGLE_PRESS" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
-</dd></dl>
-<dl class="py class enum">
-<dt class="sig sig-object py" id="tosclib.tosc.cursorDisplay">
-<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">cursorDisplay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#cursorDisplay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.cursorDisplay" title="Permalink to this definition">#</a></dt>
-<dd><p>An enumeration.</p>
-<p>Valid values are as follows:</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.cursorDisplay.ALWAYS">
-<span class="sig-name descname"><span class="pre">ALWAYS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;cursorDisplay.ALWAYS:</span> <span class="pre">'0'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.cursorDisplay.ALWAYS" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="tosclib.tosc.buttonType.TOGGLE_RELEASE">
+<span class="sig-name descname"><span class="pre">TOGGLE_RELEASE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1'</span></em><a class="headerlink" href="#tosclib.tosc.buttonType.TOGGLE_RELEASE" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.buttonType.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.buttonType.__new__" title="Permalink to this definition">#</a></dt>
+<dd><p>Create new instance of buttonType()</p>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="tosclib.tosc.cursorDisplay">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">cursorDisplay</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#cursorDisplay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.cursorDisplay" title="Permalink to this definition">#</a></dt>
+<dd><p>cursorDisplay()</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.cursorDisplay.ACTIVE">
-<span class="sig-name descname"><span class="pre">ACTIVE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;cursorDisplay.ACTIVE:</span> <span class="pre">'1'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.cursorDisplay.ACTIVE" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">ACTIVE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1'</span></em><a class="headerlink" href="#tosclib.tosc.cursorDisplay.ACTIVE" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.cursorDisplay.ALWAYS">
+<span class="sig-name descname"><span class="pre">ALWAYS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0'</span></em><a class="headerlink" href="#tosclib.tosc.cursorDisplay.ALWAYS" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.cursorDisplay.INACTIVE">
-<span class="sig-name descname"><span class="pre">INACTIVE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;cursorDisplay.INACTIVE:</span> <span class="pre">'2'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.cursorDisplay.INACTIVE" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">INACTIVE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2'</span></em><a class="headerlink" href="#tosclib.tosc.cursorDisplay.INACTIVE" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.cursorDisplay.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.cursorDisplay.__new__" title="Permalink to this definition">#</a></dt>
+<dd><p>Create new instance of cursorDisplay()</p>
 </dd></dl>
-<dl class="py class enum">
+</dd></dl>
+<dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.font">
-<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">font</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#font"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.font" title="Permalink to this definition">#</a></dt>
-<dd><p>An enumeration.</p>
-<p>Valid values are as follows:</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">font</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#font"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.font" title="Permalink to this definition">#</a></dt>
+<dd><p>font()</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.font.DEFAULT">
-<span class="sig-name descname"><span class="pre">DEFAULT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;font.DEFAULT:</span> <span class="pre">'0'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.font.DEFAULT" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">DEFAULT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0'</span></em><a class="headerlink" href="#tosclib.tosc.font.DEFAULT" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.font.MONOSPACED">
-<span class="sig-name descname"><span class="pre">MONOSPACED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;font.MONOSPACED:</span> <span class="pre">'1'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.font.MONOSPACED" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">MONOSPACED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1'</span></em><a class="headerlink" href="#tosclib.tosc.font.MONOSPACED" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.font.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.font.__new__" title="Permalink to this definition">#</a></dt>
+<dd><p>Create new instance of font()</p>
 </dd></dl>
-<dl class="py class enum">
+</dd></dl>
+<dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.orientation">
-<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">orientation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#orientation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.orientation" title="Permalink to this definition">#</a></dt>
-<dd><p>An enumeration.</p>
-<p>Valid values are as follows:</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.orientation.NORTH">
-<span class="sig-name descname"><span class="pre">NORTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;orientation.NORTH:</span> <span class="pre">'0'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.orientation.NORTH" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">orientation</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#orientation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.orientation" title="Permalink to this definition">#</a></dt>
+<dd><p>orientation()</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.orientation.EAST">
-<span class="sig-name descname"><span class="pre">EAST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;orientation.EAST:</span> <span class="pre">'1'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.orientation.EAST" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">EAST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1'</span></em><a class="headerlink" href="#tosclib.tosc.orientation.EAST" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.orientation.NORTH">
+<span class="sig-name descname"><span class="pre">NORTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0'</span></em><a class="headerlink" href="#tosclib.tosc.orientation.NORTH" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.orientation.SOUTH">
-<span class="sig-name descname"><span class="pre">SOUTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;orientation.SOUTH:</span> <span class="pre">'2'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.orientation.SOUTH" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">SOUTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2'</span></em><a class="headerlink" href="#tosclib.tosc.orientation.SOUTH" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.orientation.WEST">
-<span class="sig-name descname"><span class="pre">WEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;orientation.WEST:</span> <span class="pre">'3'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.orientation.WEST" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">WEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'3'</span></em><a class="headerlink" href="#tosclib.tosc.orientation.WEST" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.orientation.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.orientation.__new__" title="Permalink to this definition">#</a></dt>
+<dd><p>Create new instance of orientation()</p>
 </dd></dl>
-<dl class="py class enum">
+</dd></dl>
+<dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.outlineStyle">
-<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">outlineStyle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#outlineStyle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.outlineStyle" title="Permalink to this definition">#</a></dt>
-<dd><p>An enumeration.</p>
-<p>Valid values are as follows:</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.outlineStyle.FULL">
-<span class="sig-name descname"><span class="pre">FULL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;outlineStyle.FULL:</span> <span class="pre">'0'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.outlineStyle.FULL" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">outlineStyle</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#outlineStyle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.outlineStyle" title="Permalink to this definition">#</a></dt>
+<dd><p>outlineStyle()</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.outlineStyle.CORNERS">
-<span class="sig-name descname"><span class="pre">CORNERS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;outlineStyle.CORNERS:</span> <span class="pre">'1'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.outlineStyle.CORNERS" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">CORNERS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1'</span></em><a class="headerlink" href="#tosclib.tosc.outlineStyle.CORNERS" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.outlineStyle.EDGES">
-<span class="sig-name descname"><span class="pre">EDGES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;outlineStyle.EDGES:</span> <span class="pre">'2'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.outlineStyle.EDGES" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">EDGES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2'</span></em><a class="headerlink" href="#tosclib.tosc.outlineStyle.EDGES" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
-</dd></dl>
-<dl class="py class enum">
-<dt class="sig sig-object py" id="tosclib.tosc.pointerPriority">
-<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">pointerPriority</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#pointerPriority"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.pointerPriority" title="Permalink to this definition">#</a></dt>
-<dd><p>An enumeration.</p>
-<p>Valid values are as follows:</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.pointerPriority.OLDEST">
-<span class="sig-name descname"><span class="pre">OLDEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pointerPriority.OLDEST:</span> <span class="pre">'0'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.pointerPriority.OLDEST" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="tosclib.tosc.outlineStyle.FULL">
+<span class="sig-name descname"><span class="pre">FULL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0'</span></em><a class="headerlink" href="#tosclib.tosc.outlineStyle.FULL" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.outlineStyle.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.outlineStyle.__new__" title="Permalink to this definition">#</a></dt>
+<dd><p>Create new instance of outlineStyle()</p>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="tosclib.tosc.pointerPriority">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">pointerPriority</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#pointerPriority"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.pointerPriority" title="Permalink to this definition">#</a></dt>
+<dd><p>pointerPriority()</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.pointerPriority.NEWEST">
-<span class="sig-name descname"><span class="pre">NEWEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;pointerPriority.NEWEST:</span> <span class="pre">'1'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.pointerPriority.NEWEST" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">NEWEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1'</span></em><a class="headerlink" href="#tosclib.tosc.pointerPriority.NEWEST" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.pointerPriority.OLDEST">
+<span class="sig-name descname"><span class="pre">OLDEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0'</span></em><a class="headerlink" href="#tosclib.tosc.pointerPriority.OLDEST" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.pointerPriority.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.pointerPriority.__new__" title="Permalink to this definition">#</a></dt>
+<dd><p>Create new instance of pointerPriority()</p>
 </dd></dl>
-<dl class="py class enum">
+</dd></dl>
+<dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.response">
-<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.response" title="Permalink to this definition">#</a></dt>
-<dd><p>An enumeration.</p>
-<p>Valid values are as follows:</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">response</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.response" title="Permalink to this definition">#</a></dt>
+<dd><p>response()</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.response.ABSOLUTE">
-<span class="sig-name descname"><span class="pre">ABSOLUTE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;response.ABSOLUTE:</span> <span class="pre">'0'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.response.ABSOLUTE" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">ABSOLUTE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0'</span></em><a class="headerlink" href="#tosclib.tosc.response.ABSOLUTE" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.response.RELATIVE">
-<span class="sig-name descname"><span class="pre">RELATIVE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;response.RELATIVE:</span> <span class="pre">'1'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.response.RELATIVE" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">RELATIVE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1'</span></em><a class="headerlink" href="#tosclib.tosc.response.RELATIVE" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.response.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.response.__new__" title="Permalink to this definition">#</a></dt>
+<dd><p>Create new instance of response()</p>
 </dd></dl>
-<dl class="py class enum">
+</dd></dl>
+<dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.shape">
-<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.shape" title="Permalink to this definition">#</a></dt>
-<dd><p>An enumeration.</p>
-<p>Valid values are as follows:</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.shape.RECTANGLE">
-<span class="sig-name descname"><span class="pre">RECTANGLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;shape.RECTANGLE:</span> <span class="pre">'0'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.shape.RECTANGLE" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">shape</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.shape" title="Permalink to this definition">#</a></dt>
+<dd><p>shape()</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.shape.CIRCLE">
-<span class="sig-name descname"><span class="pre">CIRCLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;shape.CIRCLE:</span> <span class="pre">'1'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.shape.CIRCLE" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.shape.TRIANGLE">
-<span class="sig-name descname"><span class="pre">TRIANGLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;shape.TRIANGLE:</span> <span class="pre">'2'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.shape.TRIANGLE" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">CIRCLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1'</span></em><a class="headerlink" href="#tosclib.tosc.shape.CIRCLE" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.shape.DIAMOND">
-<span class="sig-name descname"><span class="pre">DIAMOND</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;shape.DIAMOND:</span> <span class="pre">'3'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.shape.DIAMOND" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.shape.PENTAGON">
-<span class="sig-name descname"><span class="pre">PENTAGON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;shape.PENTAGON:</span> <span class="pre">'4'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.shape.PENTAGON" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">DIAMOND</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'3'</span></em><a class="headerlink" href="#tosclib.tosc.shape.DIAMOND" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.shape.HEXAGON">
-<span class="sig-name descname"><span class="pre">HEXAGON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;shape.HEXAGON:</span> <span class="pre">'5'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.shape.HEXAGON" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">HEXAGON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'5'</span></em><a class="headerlink" href="#tosclib.tosc.shape.HEXAGON" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
-</dd></dl>
-<dl class="py class enum">
-<dt class="sig sig-object py" id="tosclib.tosc.textAlignH">
-<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">textAlignH</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#textAlignH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.textAlignH" title="Permalink to this definition">#</a></dt>
-<dd><p>An enumeration.</p>
-<p>Valid values are as follows:</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.textAlignH.LEFT">
-<span class="sig-name descname"><span class="pre">LEFT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;textAlignH.LEFT:</span> <span class="pre">'0'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.textAlignH.LEFT" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="tosclib.tosc.shape.PENTAGON">
+<span class="sig-name descname"><span class="pre">PENTAGON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'4'</span></em><a class="headerlink" href="#tosclib.tosc.shape.PENTAGON" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.shape.RECTANGLE">
+<span class="sig-name descname"><span class="pre">RECTANGLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0'</span></em><a class="headerlink" href="#tosclib.tosc.shape.RECTANGLE" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.shape.TRIANGLE">
+<span class="sig-name descname"><span class="pre">TRIANGLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2'</span></em><a class="headerlink" href="#tosclib.tosc.shape.TRIANGLE" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.shape.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.shape.__new__" title="Permalink to this definition">#</a></dt>
+<dd><p>Create new instance of shape()</p>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="tosclib.tosc.textAlignH">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">textAlignH</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#textAlignH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.textAlignH" title="Permalink to this definition">#</a></dt>
+<dd><p>textAlignH()</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.textAlignH.CENTER">
-<span class="sig-name descname"><span class="pre">CENTER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;textAlignH.CENTER:</span> <span class="pre">'1'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.textAlignH.CENTER" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">CENTER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1'</span></em><a class="headerlink" href="#tosclib.tosc.textAlignH.CENTER" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.textAlignH.LEFT">
+<span class="sig-name descname"><span class="pre">LEFT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0'</span></em><a class="headerlink" href="#tosclib.tosc.textAlignH.LEFT" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.textAlignH.RIGHT">
-<span class="sig-name descname"><span class="pre">RIGHT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;textAlignH.RIGHT:</span> <span class="pre">'2'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.textAlignH.RIGHT" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">RIGHT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2'</span></em><a class="headerlink" href="#tosclib.tosc.textAlignH.RIGHT" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.textAlignH.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.textAlignH.__new__" title="Permalink to this definition">#</a></dt>
+<dd><p>Create new instance of textAlignH()</p>
 </dd></dl>
-<dl class="py class enum">
+</dd></dl>
+<dl class="py class">
 <dt class="sig sig-object py" id="tosclib.tosc.textAlignV">
-<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">textAlignV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#textAlignV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.textAlignV" title="Permalink to this definition">#</a></dt>
-<dd><p>An enumeration.</p>
-<p>Valid values are as follows:</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">textAlignV</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#textAlignV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.textAlignV" title="Permalink to this definition">#</a></dt>
+<dd><p>textAlignV()</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.textAlignV.TOP">
-<span class="sig-name descname"><span class="pre">TOP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;textAlignV.TOP:</span> <span class="pre">'0'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.textAlignV.TOP" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="tosclib.tosc.textAlignV.BOTTOM">
+<span class="sig-name descname"><span class="pre">BOTTOM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2'</span></em><a class="headerlink" href="#tosclib.tosc.textAlignV.BOTTOM" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.textAlignV.MIDDLE">
-<span class="sig-name descname"><span class="pre">MIDDLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;textAlignV.MIDDLE:</span> <span class="pre">'1'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.textAlignV.MIDDLE" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">MIDDLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1'</span></em><a class="headerlink" href="#tosclib.tosc.textAlignV.MIDDLE" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.textAlignV.BOTTOM">
-<span class="sig-name descname"><span class="pre">BOTTOM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;textAlignV.BOTTOM:</span> <span class="pre">'2'&gt;</span></em><a class="headerlink" href="#tosclib.tosc.textAlignV.BOTTOM" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="tosclib.tosc.textAlignV.TOP">
+<span class="sig-name descname"><span class="pre">TOP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0'</span></em><a class="headerlink" href="#tosclib.tosc.textAlignV.TOP" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.textAlignV.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.textAlignV.__new__" title="Permalink to this definition">#</a></dt>
+<dd><p>Create new instance of textAlignV()</p>
+</dd></dl>
 </dd></dl>
 </section>
 
@@ -482,7 +522,7 @@
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Element Enums and Classes</div>
+                <div class="title">Element Named Tuples</div>
                 
               </div>
             </a>

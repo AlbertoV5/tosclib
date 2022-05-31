@@ -1,36 +1,35 @@
-Property Enums
-===============
-
+Property Named Tuples
+==============================
 
 .. autoclass:: tosclib.tosc.Controls
     :members:
     
-.. autoenum:: tosclib.tosc.buttonType
+.. autoclass:: tosclib.tosc.buttonType
     :members:
 
-.. autoenum:: tosclib.tosc.cursorDisplay
+.. autoclass:: tosclib.tosc.cursorDisplay
     :members:
 
-.. autoenum:: tosclib.tosc.font
+.. autoclass:: tosclib.tosc.font
     :members:
 
-.. autoenum:: tosclib.tosc.orientation
+.. autoclass:: tosclib.tosc.orientation
     :members:
 
-.. autoenum:: tosclib.tosc.outlineStyle
+.. autoclass:: tosclib.tosc.outlineStyle
     :members:
 
-.. autoenum:: tosclib.tosc.pointerPriority
+.. autoclass:: tosclib.tosc.pointerPriority
     :members:
 
-.. autoenum:: tosclib.tosc.response
+.. autoclass:: tosclib.tosc.response
     :members:
 
-.. autoenum:: tosclib.tosc.shape
+.. autoclass:: tosclib.tosc.shape
     :members:
 
-.. autoenum:: tosclib.tosc.textAlignH
+.. autoclass:: tosclib.tosc.textAlignH
     :members:
 
-.. autoenum:: tosclib.tosc.textAlignV
+.. autoclass:: tosclib.tosc.textAlignV
     :members:

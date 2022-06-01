@@ -2,8 +2,6 @@ import tosclib as tosc
 from tosclib import Control, Property, Value
 import re
 from tosclib.tosc import ControlType
-from copy import deepcopy
-
 
 def test_module_1():
 
@@ -22,11 +20,11 @@ def test_module_1():
                 # print("---",d["name"],"---")
                 # print(d["script"])
 
-    group2 = deepcopy(group1)
-    group.children.append(group2.node)
+    group2 = tosc.ElementTOSC(group.createChild(ControlType.GROUP))
     group2.setName("group2mod")
-    group2.children.clear()
+    group1.moveChildren(group2, ControlType.BUTTON)
 
+    
     for child in group1.children:
         child = tosc.ElementTOSC(child)
         name = child.getPropertyValue("name").text
@@ -65,12 +63,12 @@ end
     """
             )
         elif not re.search(r"\d", name) and not child.isControl(ControlType.LABEL):
-            print(child.getPropertyValue("name").text)
+            # print(child.getPropertyValue("name").text)
             group2.children.append(child.node)
             # child.showProperty("script")
 
     tosc.write(root, outputFile)
-
+    
 
 if __name__ == "__main__":
     test_module_1()

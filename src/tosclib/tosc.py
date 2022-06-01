@@ -1,6 +1,7 @@
 """
 Simplify navigating, editing and generating .tosc files.
 """
+from copy import deepcopy
 import sys
 import xml.etree.ElementTree as ET
 import re
@@ -695,8 +696,43 @@ class ElementTOSC:
     def getID(self) -> str:
         return str(self.node.attrib["ID"])
 
-    def isControl(self, control: ControlType) -> bool:
+    def isControl(self, control: str):
         return True if str(self.node.attrib["type"]) == control else False
+
+    def moveProperties(self, target: "ElementTOSC", *args):
+        """Args can be any number of property keys"""
+        if not [*args]:
+            return _moveAllElements(self.properties, target.properties)
+        for arg in [*args]:
+            _moveElements(
+                self.properties,
+                target.properties,
+                f".//{Property.Elements.KEY}[.='{arg}']../../"
+            )
+
+
+    def moveValues(self, target: "ElementTOSC", *args):
+        """Args can be any number of value keys"""
+        if not [*args]:
+            return _moveAllElements(self.values, target.values)
+        for arg in [*args]:
+            _moveElements(
+                self.values, target.values, f".//*{Value.Elements.KEY}/[.='{arg}']"
+            )
+
+    def moveMessages(self, target: "ElementTOSC", *args):
+        """Args can be ControlElements.OSC, MIDI, LOCAL, GAMEPAD"""
+        if not [*args]:
+            return _moveAllElements(self.messages, target.messages)
+        for arg in [*args]:
+            _moveElements(self.messages, target.messages, f".//*{arg}")
+
+    def moveChildren(self, target: "ElementTOSC", *args):
+        """Args can be ControlType.BOX, BUTTON, etc."""
+        if not [*args]:
+            return _moveAllElements(self.children, target.children)
+        for arg in [*args]:
+            _moveElements(self.children, target.children, f".//*[@type='{arg}']")
 
     #
     #
@@ -774,11 +810,16 @@ class ElementTOSC:
         showElement(self.node)
 
     def showProperty(self, name: str):
-        showElement(findKey(self.properties, name))
-
+        try:
+            showElement(findKey(self.properties, name))
+        except TypeError:
+            raise ValueError(f"{name} doesn't exist")
+         
     def showValue(self, name: str):
-        showElement(findKey(self.values, name))
-
+        try:
+            showElement(findKey(self.values, name))
+        except TypeError:
+            raise ValueError(f"{name} doesn't exist")
 
 ###
 #
@@ -793,6 +834,24 @@ def findKey(elements: ET.Element, key: str) -> ET.Element:
         if re.fullmatch(e.find("key").text, key):
             return e
     return None
+
+
+def _moveAllElements(source: ET.Element, target: ET.Element):
+    elements = source.findall("*")
+    [target.append(deepcopy(e)) for e in elements]
+    [source.remove(e) for e in elements]
+
+
+def _moveElements(
+    source: ET.Element,
+    target: ET.Element,
+    path: str,
+):
+    elements = source.findall(path)
+    if not elements:
+        raise ValueError(f"Failed to find elements with {path}")
+    [target.append(deepcopy(e)) for e in elements]
+    [source.remove(e) for e in elements]
 
 
 def showElement(e: ET.Element):

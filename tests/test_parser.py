@@ -7,15 +7,13 @@ class PropertyParser:
     maxDepth = 0
     depth = 0
     
-    def __init__(self, targetProperty: str, depth : int = None):
+    def __init__(self, targetProperty: str):
         self.targetKey = targetProperty
-        self.depthClose = depth
         self.control = False
         self.property = False
         self.key = False
         self.value = False
         self.targetFound = False
-        self.numberOfNodes = 0
         self.targetList = []
         self.multiLine = ""
 
@@ -32,12 +30,12 @@ class PropertyParser:
             self.key = True
         elif self.property and tag == Property.Elements.VALUE:
             self.value = True
+
             
     def end(self, tag):
         if tag == ControlElements.NODE:
             self.control = False
             self.depth = 1
-            self.numberOfNodes += 1
         elif self.control and tag == ControlElements.PROPERTY:
             self.property = False
         elif self.property and tag == Property.Elements.KEY:
@@ -49,9 +47,6 @@ class PropertyParser:
             self.targetFound = False
             self.targetList.append(self.multiLine)
             self.multiLine = ""
-        
-        if self.depthClose == self.depth:
-            return self.close()
         
     def data(self, data):
         if self.control and self.property and self.key and data == self.targetKey:
@@ -73,7 +68,12 @@ def parseNode(element: ET.Element, target : PropertyParser):
     print("-", end - start)
     return result
 
+
 root = tosc.load("docs/demos/files/Numpad_basic.tosc")
-result = parseNode(root, PropertyParser(targetProperty="name", depth = 2))
+
+result = parseNode(root, 
+                   PropertyParser(
+                       "name"
+                   ))
 
 print(result)

@@ -690,7 +690,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-            
+
         <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">attrib</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="n">ControlElements</span><span class="o">.</span><span class="n">NODE</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -713,9 +713,7 @@
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">property</span> <span class="ow">and</span> <span class="n">tag</span> <span class="o">==</span> <span class="n">Property</span><span class="o">.</span><span class="n">Elements</span><span class="o">.</span><span class="n">VALUE</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
 
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">targetFound</span> <span class="ow">and</span> <span class="n">tag</span> <span class="o">==</span> <span class="n">Property</span><span class="o">.</span><span class="n">Elements</span><span class="o">.</span><span class="n">VALUE</span>
-                <span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">targetFound</span> <span class="ow">and</span> <span class="n">tag</span> <span class="o">==</span> <span class="n">Property</span><span class="o">.</span><span class="n">Elements</span><span class="o">.</span><span class="n">VALUE</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">targetList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">targetFound</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiLine</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">multiLine</span> <span class="o">=</span> <span class="s2">""</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">targetFound</span> <span class="o">=</span> <span class="kc">None</span>
@@ -736,15 +734,15 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">targetList</span>
 
 <div class="viewcode-block" id="Control.parseProperties"><a class="viewcode-back" href="../../api/propsTuples.html#tosclib.tosc.Control.parseProperties">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">parseProperties</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">parseProperties</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">"""</span>
 <span class="sd">        Specify all properties you want to find and this will parse</span>
 <span class="sd">        the entire Node and its children and return a list of key value pairs.</span>
-<span class="sd">        </span>
+
 <span class="sd">        For example:</span>
-<span class="sd">        </span>
+
 <span class="sd">        &gt;&gt;&gt;Control.parseProperties(node, "name", "script")</span>
-<span class="sd">        </span>
+
 <span class="sd">        [{"name":"control1", "script":"scriptContent1"},</span>
 <span class="sd">        {"name":"control2", "script":""},</span>
 <span class="sd">        {"name":"control3", "script":"scriptContent3"}]</span>
@@ -798,6 +796,7 @@
 
     <span class="k">def</span> <span class="nf">getPropertyParam</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">findKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"value"</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+        <span class="c1"># return [e.text for e in findKey(self.properties, key).find("value")]</span>
 
     <span class="k">def</span> <span class="nf">hasProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">findKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span>
@@ -909,6 +908,9 @@
 
     <span class="k">def</span> <span class="nf">getID</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">"ID"</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">isControl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">control</span><span class="p">:</span> <span class="n">ControlType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">"type"</span><span class="p">])</span> <span class="o">==</span> <span class="n">control</span> <span class="k">else</span> <span class="kc">False</span>
 
     <span class="c1">#</span>
     <span class="c1">#</span>

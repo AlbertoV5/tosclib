@@ -28,9 +28,6 @@ class ControlElements(NamedTuple):
     GAMEPAD = "gamepad"  #: <gamepad>
     NODE = "node"  #: <node type = `ControlType <#tosclib.tosc.ControlType>`_>
 
-    @classmethod
-    def __iter__(cls):
-        return vars(cls)
 
 
 class ControlType(NamedTuple):
@@ -204,7 +201,7 @@ class MIDI:
         feedback : bool
         connections : bool
         triggers : List of Trigger
-        message : MidiMessage
+        messages : MidiMessage
         values : List of MidiValue
     """
 
@@ -378,6 +375,9 @@ class Control:
     """All the Node Types and their available properties
 
     https://hexler.net/touchosc/manual/script-enumerations#controltype"""
+
+    TYPE = "type"
+    ID = "ID"
 
     class BOX(_PropertyKeys, _PropertiesBox):
         pass  # wip
@@ -644,7 +644,9 @@ class ElementTOSC:
     def _createMessage(self, name, message) -> ET.Element:
         msg = ET.SubElement(self.messages, name)
         for key in vars(message):
-            element = ET.SubElement(msg, key)
+            element = ET.SubElement(
+                msg, key
+            )  # enabled, send, receive, message, values, etc.
             attribute = getattr(message, key)
             if isinstance(attribute, list):  # For Partials and Triggers
                 for partialOrTrigger in attribute:
@@ -653,6 +655,9 @@ class ElementTOSC:
                     )  # Create <partial> or <trigger>
                     for v in vars(partialOrTrigger):  # Attributes of Partials/Triggers
                         ET.SubElement(subElement, v).text = getattr(partialOrTrigger, v)
+            elif isinstance(attribute, MidiMessage):  # not a list of Partials, not str
+                for v in vars(attribute):
+                    ET.SubElement(element, v).text = getattr(attribute, v)
             else:
                 element.text = getattr(message, key)
         return msg
@@ -696,54 +701,61 @@ class ElementTOSC:
     def getID(self) -> str:
         return str(self.node.attrib["ID"])
 
-    def isControl(self, control: str):
+    def isControlType(self, control: str):
         return True if str(self.node.attrib["type"]) == control else False
 
-    def moveProperties(self, target: "ElementTOSC", *args):
+    def copyProperties(self, target: "ElementTOSC", move: bool, *args):
         """Args can be any number of property keys"""
-        if not [*args]:
-            return _moveAllElements(self.properties, target.properties)
-        for arg in [*args]:
-            _moveElements(
+        if not args:
+            return _copyAllElements(self.properties, target.properties, move)
+        for arg in args:
+            _copyElements(
                 self.properties,
                 target.properties,
-                f"./{ControlElements.PROPERTY}/{Property.Elements.KEY}[.='{arg}']../../",
+                move,
+                f"*[{Property.Elements.KEY}='{arg}']",
             )
+        return True
 
-    def moveValues(self, target: "ElementTOSC", *args):
+    def copyValues(self, target: "ElementTOSC", move: bool, *args):
         """Args can be any number of value keys"""
-        if not [*args]:
-            return _moveAllElements(self.values, target.values)
-        for arg in [*args]:
-            _moveElements(
+        if not args:
+            return _copyAllElements(self.values, target.values, move)
+        for arg in args:
+            _copyElements(
                 self.values,
                 target.values,
-                f"./{ControlElements.VALUE}/{Value.Elements.KEY}[.='{arg}']../../",
+                move,
+                f"*[{Value.Elements.KEY}='{arg}']",
             )
+        return True
 
-    def moveMessages(self, target: "ElementTOSC", *args):
+    def copyMessages(self, target: "ElementTOSC", move: bool, *args):
         """Args can be ControlElements.OSC, MIDI, LOCAL, GAMEPAD"""
-        if not [*args]:
-            return _moveAllElements(self.messages, target.messages)
-        for arg in [*args]:
-            _moveElements(self.messages, target.messages, f"./{arg}")
+        if not args:
+            return _copyAllElements(self.messages, target.messages, move)
+        for arg in args:
+            _copyElements(self.messages, target.messages, move, f"./{arg}")
+        return True
 
-    def moveChildren(self, target: "ElementTOSC", *args):
+    def copyChildren(self, target: "ElementTOSC", move: bool, *args):
         """Args can be ControlType.BOX, BUTTON, etc."""
-        if not [*args]:
-            return _moveAllElements(self.children, target.children)
-        for arg in [*args]:
-            _moveElements(
+        if not args:
+            return _copyAllElements(self.children, target.children, move)
+        for arg in args:
+            _copyElements(
                 self.children,
                 target.children,
+                move,
                 f"./{ControlElements.NODE}[@type='{arg}']",
             )
+        return True
 
-    #
+    ####
     #
     #   SHORTCUTS:
     #
-    #
+    ####
     def _overrideProperty(
         self, type: str, key: str, value: str = "", params: dict = {}
     ) -> bool:
@@ -752,7 +764,7 @@ class ElementTOSC:
             return self.createProperty(Property(type, key, value=value, params=params))
         return self.setProperty(key, value=value, params=params)
 
-    def setType(self, value: str):
+    def setControlType(self, value: str):
         """See ControlType Element"""
         self.node.attrib = {"type": value}
         return True
@@ -836,27 +848,11 @@ class ElementTOSC:
 
 def findKey(elements: ET.Element, key: str) -> ET.Element:
     """Iterate through element with children and return child whose key matches"""
+    # return elements.find(f"./key/[.='{key}']")
     for e in elements:
         if re.fullmatch(e.find("key").text, key):
             return e
     return None
-
-
-def _moveAllElements(source: ET.Element, target: ET.Element):
-    [target.append(deepcopy(e)) for e in source]
-    source.clear()
-
-
-def _moveElements(
-    source: ET.Element,
-    target: ET.Element,
-    path: str,
-):
-    elements = source.findall(path)
-    if not elements:
-        raise ValueError(f"Failed to find elements with {path}")
-    [target.append(deepcopy(e)) for e in elements]
-    [source.remove(e) for e in elements]
 
 
 def showElement(e: ET.Element):
@@ -946,3 +942,25 @@ def pullValueFromKey2(root: ET.Element, key: str, value: str, targetKey: str) ->
         if re.fullmatch(getTextValueFromKey(e.find("properties"), key), value):
             parser.close()
             return getTextValueFromKey(e.find("properties"), targetKey)
+
+
+def _copyAllElements(source: ET.Element, target: ET.Element, move: bool) -> bool:
+    [target.append(deepcopy(e)) for e in source]
+    if move:
+        source.clear()
+    return True
+
+
+def _copyElements(
+    source: ET.Element,
+    target: ET.Element,
+    move: bool,
+    path: str,
+) -> bool:
+    elements = source.findall(path)
+    if not elements:
+        raise ValueError(f"Failed to find elements with {path}")
+    [target.append(deepcopy(e)) for e in elements]
+    if move:
+        [source.remove(e) for e in elements]
+    return True

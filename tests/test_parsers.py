@@ -32,8 +32,3 @@ def test_all_parsers():
     print(script2)
 
     assert script0 == script1 == script2
-
-
-if __name__ == "__main__":
-
-    test_all_parsers()

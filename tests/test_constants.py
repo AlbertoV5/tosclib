@@ -33,6 +33,9 @@ def test_control():
     for i in Control.__dict__:
         assert Control.__dict__[i]
 
+    for i in Control.hasChildren():
+        assert i.__name__
+
 
 @pytest.fixture
 def capture_stdout(monkeypatch):

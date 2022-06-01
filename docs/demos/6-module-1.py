@@ -23,12 +23,12 @@ def test_module_1():
 
     group2 = tosc.ElementTOSC(group.createChild(ControlType.GROUP))
     group2.setName("group2mod")
-    group1.moveChildren(group2, ControlType.BUTTON)
+    group1.copyChildren(group2, ControlType.BUTTON)
 
     for child in group1.children:
         child = tosc.ElementTOSC(child)
         name = child.getPropertyValue("name").text
-        if re.search(r"\d", name) and (child.isControl(ControlType.BUTTON)):
+        if re.search(r"\d", name) and (child.isControlType(ControlType.BUTTON)):
             # print(name)
             indexName = name.replace("num", "")
 
@@ -60,7 +60,7 @@ function onValueChanged(key)
 end
     """
             )
-        elif not re.search(r"\d", name) and not child.isControl(ControlType.LABEL):
+        elif not re.search(r"\d", name) and not child.isControlType(ControlType.LABEL):
             # print(child.getPropertyValue("name").text)
             group2.children.append(child.node)
             # child.showProperty("script")

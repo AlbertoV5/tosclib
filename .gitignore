@@ -5,3 +5,4 @@ src/tosclib.egg-info
 .tox
 venv
 .vscode
+htmlcov

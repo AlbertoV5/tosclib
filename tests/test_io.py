@@ -10,12 +10,12 @@ class TestTemplate(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.directory = Path(__file__).absolute().parent / "files"
-        try:
-            Path.mkdir(cls.directory)
-        except FileExistsError:
+
+        if Path.is_dir(cls.directory):
             [Path.unlink(file) for file in cls.directory.iterdir()]
             cls.directory.rmdir()
-            Path.mkdir(cls.directory)
+
+        Path.mkdir(cls.directory)
 
         cls.fileName = "test.tosc"
         cls.root = tosc.createTemplate()

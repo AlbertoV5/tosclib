@@ -62,7 +62,7 @@ def test_singles():
         end = time.process_time()
         print(x, end - start)
 
-    go1(100000)
+    go1(10000)
     print(tosc.outlineStyle.__name__)
 
     def go2(n):
@@ -74,7 +74,3 @@ def test_singles():
 
     print(element.getID())
     go2(10000)
-
-
-if __name__ == "__main__":
-    test_singles()

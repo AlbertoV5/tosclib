@@ -32,7 +32,7 @@
    
       ControlElements
       ControlType
-      Controls
+      Control
       ElementTOSC
       OSC
       Partial

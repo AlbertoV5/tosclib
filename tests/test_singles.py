@@ -1,6 +1,6 @@
 from tosclib import tosc
 from tosclib.tosc import Partial, Value
-from tosclib.tosc import Controls
+from tosclib.tosc import Control
 import sys
 import xml.etree.ElementTree as ET
 import time
@@ -36,10 +36,10 @@ def test_singles():
 
     # element.showProperty("frame")
 
-    print(tosc.Controls.BOX.FRAME)
-    print(Controls.BOX.BACKGROUND)
+    print(tosc.Control.BOX.FRAME)
+    print(Control.BOX.BACKGROUND)
 
-    print(Controls.BOX.SHAPE)
+    print(Control.BOX.SHAPE)
 
     def size(data):
         return print(sys.getsizeof(data))
@@ -74,6 +74,7 @@ def test_singles():
 
     print(element.getID())
     go2(10000)
+
 
 if __name__ == "__main__":
     test_singles()

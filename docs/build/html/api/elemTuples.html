@@ -219,11 +219,6 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">ControlElements</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#ControlElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.ControlElements" title="Permalink to this definition">#</a></dt>
 <dd><p>Valid Sub Elements for a Node</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tosclib.tosc.ControlElements.CHILD">
-<span class="sig-name descname"><span class="pre">CHILD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'node'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.CHILD" title="Permalink to this definition">#</a></dt>
-<dd><p>&lt;node type = <a class="reference external" href="#tosclib.tosc.ControlType">ControlType</a>&gt;</p>
-</dd></dl>
-<dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.CHILDREN">
 <span class="sig-name descname"><span class="pre">CHILDREN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'children'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.CHILDREN" title="Permalink to this definition">#</a></dt>
 <dd><p>&lt;children&gt;</p>
@@ -247,6 +242,11 @@
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.MIDI">
 <span class="sig-name descname"><span class="pre">MIDI</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'midi'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.MIDI" title="Permalink to this definition">#</a></dt>
 <dd><p>&lt;midi&gt;</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.tosc.ControlElements.NODE">
+<span class="sig-name descname"><span class="pre">NODE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'node'</span></em><a class="headerlink" href="#tosclib.tosc.ControlElements.NODE" title="Permalink to this definition">#</a></dt>
+<dd><p>&lt;node type = <a class="reference external" href="#tosclib.tosc.ControlType">ControlType</a>&gt;</p>
 </dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.tosc.ControlElements.OSC">
@@ -403,6 +403,16 @@
 </ul>
 </dd>
 </dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="tosclib.tosc.Property.Elements">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Elements</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#Property.Elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.Property.Elements" title="Permalink to this definition">#</a></dt>
+<dd><p>Elements()</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.Property.Elements.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.Property.Elements.__new__" title="Permalink to this definition">#</a></dt>
+<dd><p>Create new instance of Elements()</p>
+</dd></dl>
+</dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="tosclib.tosc.Property.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.Property.__init__" title="Permalink to this definition">#</a></dt>
@@ -436,6 +446,16 @@
 </ul>
 </dd>
 </dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="tosclib.tosc.Value.Elements">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Elements</span></span><a class="reference internal" href="../_modules/tosclib/tosc.html#Value.Elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.Value.Elements" title="Permalink to this definition">#</a></dt>
+<dd><p>Elements()</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.tosc.Value.Elements.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.Value.Elements.__new__" title="Permalink to this definition">#</a></dt>
+<dd><p>Create new instance of Elements()</p>
+</dd></dl>
+</dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="tosclib.tosc.Value.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'touch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locked</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lockedDefaultCurrent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'false'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultPull</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.Value.__init__" title="Permalink to this definition">#</a></dt>

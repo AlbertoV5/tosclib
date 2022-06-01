@@ -1,5 +1,5 @@
 import tosclib as tosc
-from tosclib import Controls
+from tosclib import Control
 import pytest
 import sys
 
@@ -30,8 +30,8 @@ def test_print_attributes(capture_stdout):
 
 
 def test_control():
-    for i in Controls.__dict__:
-        assert Controls.__dict__[i]
+    for i in Control.__dict__:
+        assert Control.__dict__[i]
 
 
 @pytest.fixture

@@ -1,7 +1,7 @@
 Property Enumerations
 ==============================
 
-.. autoclass:: tosclib.tosc.Controls
+.. autoclass:: tosclib.tosc.Control
     :members:
     
 .. autoclass:: tosclib.tosc.buttonType

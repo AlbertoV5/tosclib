@@ -476,7 +476,7 @@ class Control:
             self.key = False
             self.value = False
             self.index = -1
-            
+
         def start(self, tag, attrib):
             if tag == ControlElements.NODE:
                 self.index += 1
@@ -499,9 +499,7 @@ class Control:
             elif self.property and tag == Property.Elements.VALUE:
                 self.value = False
 
-            if (
-                self.targetFound and tag == Property.Elements.VALUE
-                ):
+            if self.targetFound and tag == Property.Elements.VALUE:
                 self.targetList[self.index][self.targetFound] = self.multiLine
                 self.multiLine = ""
                 self.targetFound = None
@@ -526,11 +524,11 @@ class Control:
         """
         Specify all properties you want to find and this will parse
         the entire Node and its children and return a list of key value pairs.
-        
+
         For example:
-        
+
         >>>Control.parseProperties(node, "name", "script")
-        
+
         [{"name":"control1", "script":"scriptContent1"},
         {"name":"control2", "script":""},
         {"name":"control3", "script":"scriptContent3"}]
@@ -584,6 +582,7 @@ class ElementTOSC:
 
     def getPropertyParam(self, key: str, param: str) -> ET.Element:
         return findKey(self.properties, key).find("value").find(param)
+        # return [e.text for e in findKey(self.properties, key).find("value")]
 
     def hasProperty(self, key: str) -> bool:
         return True if findKey(self.properties, key) else False
@@ -695,6 +694,9 @@ class ElementTOSC:
 
     def getID(self) -> str:
         return str(self.node.attrib["ID"])
+
+    def isControl(self, control: ControlType) -> bool:
+        return True if str(self.node.attrib["type"]) == control else False
 
     #
     #

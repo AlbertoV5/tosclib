@@ -62,7 +62,7 @@ def test_singles():
         end = time.process_time()
         print(x, end - start)
 
-    go1(10000000)
+    go1(100000)
     print(tosc.outlineStyle.__name__)
 
     def go2(n):

@@ -3,6 +3,7 @@ from tosclib import Control, Property, Value
 import re
 from tosclib.tosc import ControlType
 
+
 def test_module_1():
 
     file = "docs/demos/files/Numpad_basic.tosc"
@@ -24,13 +25,10 @@ def test_module_1():
     group2.setName("group2mod")
     group1.moveChildren(group2, ControlType.BUTTON)
 
-    
     for child in group1.children:
         child = tosc.ElementTOSC(child)
         name = child.getPropertyValue("name").text
-        if re.search(r"\d", name) and (
-            child.isControl(ControlType.BUTTON)
-        ):
+        if re.search(r"\d", name) and (child.isControl(ControlType.BUTTON)):
             # print(name)
             indexName = name.replace("num", "")
 
@@ -68,7 +66,7 @@ end
             # child.showProperty("script")
 
     tosc.write(root, outputFile)
-    
+
 
 if __name__ == "__main__":
     test_module_1()

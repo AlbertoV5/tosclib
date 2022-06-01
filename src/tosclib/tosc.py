@@ -707,9 +707,8 @@ class ElementTOSC:
             _moveElements(
                 self.properties,
                 target.properties,
-                f".//{Property.Elements.KEY}[.='{arg}']../../"
+                f"./{ControlElements.PROPERTY}/{Property.Elements.KEY}[.='{arg}']../../",
             )
-
 
     def moveValues(self, target: "ElementTOSC", *args):
         """Args can be any number of value keys"""
@@ -717,7 +716,9 @@ class ElementTOSC:
             return _moveAllElements(self.values, target.values)
         for arg in [*args]:
             _moveElements(
-                self.values, target.values, f".//*{Value.Elements.KEY}/[.='{arg}']"
+                self.values,
+                target.values,
+                f"./{ControlElements.VALUE}/{Value.Elements.KEY}[.='{arg}']../../",
             )
 
     def moveMessages(self, target: "ElementTOSC", *args):
@@ -725,14 +726,18 @@ class ElementTOSC:
         if not [*args]:
             return _moveAllElements(self.messages, target.messages)
         for arg in [*args]:
-            _moveElements(self.messages, target.messages, f".//*{arg}")
+            _moveElements(self.messages, target.messages, f"./{arg}")
 
     def moveChildren(self, target: "ElementTOSC", *args):
         """Args can be ControlType.BOX, BUTTON, etc."""
         if not [*args]:
             return _moveAllElements(self.children, target.children)
         for arg in [*args]:
-            _moveElements(self.children, target.children, f".//*[@type='{arg}']")
+            _moveElements(
+                self.children,
+                target.children,
+                f"./{ControlElements.NODE}[@type='{arg}']",
+            )
 
     #
     #
@@ -814,12 +819,13 @@ class ElementTOSC:
             showElement(findKey(self.properties, name))
         except TypeError:
             raise ValueError(f"{name} doesn't exist")
-         
+
     def showValue(self, name: str):
         try:
             showElement(findKey(self.values, name))
         except TypeError:
             raise ValueError(f"{name} doesn't exist")
+
 
 ###
 #
@@ -837,9 +843,8 @@ def findKey(elements: ET.Element, key: str) -> ET.Element:
 
 
 def _moveAllElements(source: ET.Element, target: ET.Element):
-    elements = source.findall("*")
-    [target.append(deepcopy(e)) for e in elements]
-    [source.remove(e) for e in elements]
+    [target.append(deepcopy(e)) for e in source]
+    source.clear()
 
 
 def _moveElements(

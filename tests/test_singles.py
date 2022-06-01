@@ -5,6 +5,7 @@ import sys
 import xml.etree.ElementTree as ET
 import time
 
+
 def test_singles():
 
     root = tosc.createTemplate()
@@ -37,12 +38,12 @@ def test_singles():
 
     print(tosc.Controls.BOX.FRAME)
     print(Controls.BOX.BACKGROUND)
-    
+
     print(Controls.BOX.SHAPE)
 
     def size(data):
         return print(sys.getsizeof(data))
-    
+
     size(ET.Element("test"))
 
     count = 0
@@ -54,7 +55,6 @@ def test_singles():
     tag = tosc.pullValueFromKey2(root, "name", "Craig", "tag")
     print(tag)
 
-
     def go1(n):
         start = time.process_time()
         for i in range(n):
@@ -64,14 +64,13 @@ def test_singles():
 
     go1(10000000)
     print(tosc.outlineStyle.__name__)
-    
+
     def go2(n):
         start = time.process_time()
         for i in range(n):
             x = element.setColor(1, 0, 0, 1)
         end = time.process_time()
         print(x, end - start)
-    
 
     print(element.getID())
     go2(10000)

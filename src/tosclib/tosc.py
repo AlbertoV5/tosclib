@@ -25,7 +25,11 @@ class ControlElements(NamedTuple):
     MIDI = "midi"  #: <midi>
     LOCAL = "local"  #: <local>
     GAMEPAD = "gamepad"  #: <gamepad>
-    CHILD = "node"  #: <node type = `ControlType <#tosclib.tosc.ControlType>`_>
+    NODE = "node"  #: <node type = `ControlType <#tosclib.tosc.ControlType>`_>
+
+    @classmethod
+    def __iter__(cls):
+        return vars(cls)
 
 
 class ControlType(NamedTuple):
@@ -79,6 +83,12 @@ class Property:
         if not self.value and not self.params:
             raise ValueError(f"{self} needs either a value or params.")
 
+    class Elements(NamedTuple):
+        KEY = "key"
+        VALUE = "value"
+        R, G, B, A = "r", "g", "b", "a"
+        X, Y, W, H = "x", "y", "w", "h"
+
 
 @dataclass
 class Value:
@@ -97,6 +107,13 @@ class Value:
     lockedDefaultCurrent: str = "0"
     default: str = "false"
     defaultPull: str = "0"
+
+    class Elements(NamedTuple):
+        KEY = "key"
+        LOCKED = "locked"
+        LOCKED_DEFAULT_CURRENT = "lockedDefaultCurrent"
+        DEFAULT = "default"
+        DEFAULT_PULL = "defaultPull"
 
 
 @dataclass
@@ -178,7 +195,7 @@ class MidiValue:
 
 @dataclass
 class MIDI:
-    """ Default elements for <midi>
+    """Default elements for <midi>
     Args:
         enabled: bool
         send : bool
@@ -189,6 +206,7 @@ class MIDI:
         message : MidiMessage
         values : List of MidiValue
     """
+
     enabled: str = "1"
     send: str = "1"
     receive: str = "1"
@@ -207,12 +225,12 @@ class MIDI:
 
 @dataclass
 class LOCAL:
-    """ Default elements for <midi>
+    """Default elements for <midi>
     Args:
         enabled: bool
         triggers : Trigger x or touch.
         type : BOOL, INT, FLOAT, STRING. The Type of Trigger.x
-        conversion : BOOL, INT, FLOAT, STRING. 
+        conversion : BOOL, INT, FLOAT, STRING.
         value : The value sent to the other local Control.
         scaleMin : 0
         scaleMax : 1
@@ -220,17 +238,17 @@ class LOCAL:
         dstVar : The value you want to change in the target.
         dstID : The node {ID} of the target.
     """
-    enabled : str = "1"
-    triggers : List[Trigger] = field(default_factory=lambda:[Trigger()])
-    type : str = "VALUE"
-    conversion : str = "FLOAT"
-    value : str = "x"
-    scaleMin : str = "0"
-    scaleMax : str = "1"
-    dstType : str = ""
-    dstVar : str = ""
-    dstID : str = ""
 
+    enabled: str = "1"
+    triggers: List[Trigger] = field(default_factory=lambda: [Trigger()])
+    type: str = "VALUE"
+    conversion: str = "FLOAT"
+    value: str = "x"
+    scaleMin: str = "0"
+    scaleMax: str = "1"
+    dstType: str = ""
+    dstVar: str = ""
+    dstID: str = ""
 
 
 class cursorDisplay(NamedTuple):
@@ -361,7 +379,7 @@ class Controls:
     https://hexler.net/touchosc/manual/script-enumerations#controltype"""
 
     class BOX(_PropertyKeys, _PropertiesBox):
-        pass #wip
+        pass  # wip
 
     class BUTTON(_PropertyKeys, _PropertiesBox):
         BUTTON_TYPE = buttonType.__name__
@@ -557,19 +575,19 @@ class ElementTOSC:
 
     def createOSC(self, message: OSC = OSC()) -> ET.Element:
         return self._createMessage(ControlElements.OSC, message)
-    
+
     def createMIDI(self, message: MIDI = MIDI()) -> ET.Element:
-        return self._createMessage(ControlElements.MIDI, message)    
-                    
+        return self._createMessage(ControlElements.MIDI, message)
+
     def createLOCAL(self, message: LOCAL = LOCAL()) -> ET.Element:
         return self._createMessage(ControlElements.LOCAL, message)
-    
+
     def removeOSC(self) -> bool:
         return [e.remove for e in self.messages.findall(ControlElements.OSC)]
-    
+
     def removeMIDI(self) -> bool:
         return [e.remove for e in self.messages.findall(ControlElements.MIDI)]
-    
+
     def removeLOCAL(self) -> bool:
         return [e.remove for e in self.messages.findall(ControlElements.LOCAL)]
 
@@ -587,12 +605,13 @@ class ElementTOSC:
     def createChild(self, type: ControlType) -> ET.Element:
         return ET.SubElement(
             self.children,
-            ControlElements.CHILD,
+            ControlElements.NODE,
             attrib={"ID": str(uuid.uuid4()), "type": type},
         )
-        
+
     def getID(self) -> str:
         return str(self.node.attrib["ID"])
+
     #
     #
     #   SHORTCUTS:
@@ -657,12 +676,12 @@ class ElementTOSC:
 
     def setOutline(self, value: bool):
         return self._overrideProperty(
-            PropertyType.BOOLEAN, _PropertyKeys.OUTLINE, value=value
+            PropertyType.BOOLEAN, _PropertyKeys.OUTLINE, value=str(int(value))
         )
 
     def setScript(self, value: str):
         return self._overrideProperty(
-            PropertyType.STRING, _PropertyKeys.SCRIPT, value=str(int(value))
+            PropertyType.STRING, _PropertyKeys.SCRIPT, value=value
         )
 
     def show(self):
@@ -702,7 +721,7 @@ def createTemplate() -> ET.Element:
     root = ET.Element("lexml", attrib={"version": "3"})
     ET.SubElement(
         root,
-        ControlElements.CHILD,
+        ControlElements.NODE,
         attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
     )
     return root
@@ -777,3 +796,4 @@ def pullValueFromKey2(root: ET.Element, key: str, value: str, targetKey: str) ->
         if re.fullmatch(getTextValueFromKey(e.find("properties"), key), value):
             parser.close()
             return getTextValueFromKey(e.find("properties"), targetKey)
+

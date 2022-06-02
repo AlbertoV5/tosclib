@@ -575,6 +575,13 @@ class ElementTOSC:
     def fromFile(cls, file: str) -> "ElementTOSC":
         return cls(load(file)[0])
 
+    @classmethod
+    def newGroup(cls) -> "ElementTOSC":
+        return cls(ET.Element(
+            ControlElements.NODE,
+            attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
+        ))
+
     def getProperty(self, key: str) -> ET.Element:
         return findKey(self.properties, key)
 
@@ -697,6 +704,24 @@ class ElementTOSC:
             ControlElements.NODE,
             attrib={"ID": str(uuid.uuid4()), "type": type},
         )
+
+    def addBox(self):
+        return self.__class__(self.createChild(ControlType.BOX))
+    
+    def addGroup(self, *args : ControlType):
+        e = self.__class__(self.createChild(ControlType.GROUP))
+        if not args:
+            return e
+        r = [e]
+        for arg in args:
+            r.append(self.__class__(e.createChild(arg)))
+        return tuple(r) 
+        
+    def addButton(self):
+        return self.__class__(self.createChild(ControlType.BUTTON))
+    
+    def addLabel(self):
+        return self.__class__(self.createChild(ControlType.LABEL))
 
     def getID(self) -> str:
         return str(self.node.attrib["ID"])
@@ -964,3 +989,5 @@ def _copyElements(
     if move:
         [source.remove(e) for e in elements]
     return True
+
+

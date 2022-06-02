@@ -4,7 +4,7 @@ import re
 from tosclib.tosc import ControlType
 
 
-def test_module_1():
+def numpad():
 
     file = "docs/demos/files/Numpad_basic.tosc"
     outputFile = "docs/demos/files/Numpad_modded.tosc"
@@ -69,4 +69,4 @@ end
 
 
 if __name__ == "__main__":
-    test_module_1()
+    numpad()

@@ -44,5 +44,6 @@ Contents
    
    guide
    demos
+   modules
    api
    

@@ -33,20 +33,20 @@ def test_nested():
 
     for i in range(lim):
         assert group.findChildByName(f"button{i}")
-    
+
     buttonBad = group.createChild(ControlType.BUTTON)
     ET.SubElement(buttonBad, "name").text = "buttonBad"
     assert group.findChildByName("buttonBad") is None
-    
+
     buttonBetter = tosc.ElementTOSC(buttonBad)
     assert button.copyProperties(buttonBetter, False)
     assert button.copyValues(buttonBetter, False)
     assert button.copyMessages(buttonBetter, False)
-    
+
     group2 = tosc.ElementTOSC(parent.createChild(ControlType.GROUP))
     assert group.copyChildren(group2, False)
     assert group2.setControlType(ControlType.GRID)
-    
+
     for child in group.children:
         child = tosc.ElementTOSC(child)
         child.setBackground(False)
@@ -55,8 +55,9 @@ def test_nested():
         child.setOutline(True)
         child.setInteractive(False)
         child.setScript(
-"""
+            """
 function init()
     self.values.x = 1
 end
-""")
+"""
+        )

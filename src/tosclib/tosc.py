@@ -29,7 +29,6 @@ class ControlElements(NamedTuple):
     NODE = "node"  #: <node type = `ControlType <#tosclib.tosc.ControlType>`_>
 
 
-
 class ControlType(NamedTuple):
     """Enum of valid <node type=?>"""
 
@@ -577,10 +576,12 @@ class ElementTOSC:
 
     @classmethod
     def newGroup(cls) -> "ElementTOSC":
-        return cls(ET.Element(
-            ControlElements.NODE,
-            attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
-        ))
+        return cls(
+            ET.Element(
+                ControlElements.NODE,
+                attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
+            )
+        )
 
     def getProperty(self, key: str) -> ET.Element:
         return findKey(self.properties, key)
@@ -707,19 +708,19 @@ class ElementTOSC:
 
     def addBox(self):
         return self.__class__(self.createChild(ControlType.BOX))
-    
-    def addGroup(self, *args : ControlType):
+
+    def addGroup(self, *args: ControlType):
         e = self.__class__(self.createChild(ControlType.GROUP))
         if not args:
             return e
         r = [e]
         for arg in args:
             r.append(self.__class__(e.createChild(arg)))
-        return tuple(r) 
-        
+        return tuple(r)
+
     def addButton(self):
         return self.__class__(self.createChild(ControlType.BUTTON))
-    
+
     def addLabel(self):
         return self.__class__(self.createChild(ControlType.LABEL))
 
@@ -989,5 +990,3 @@ def _copyElements(
     if move:
         [source.remove(e) for e in elements]
     return True
-
-

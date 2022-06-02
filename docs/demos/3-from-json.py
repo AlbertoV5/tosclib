@@ -55,4 +55,6 @@ def main(jsonFile, outputFile):
 
 
 if __name__ == "__main__":
-    main("docs/demos/files/Pro-C 2 (FabFilter).json", "docs/demos/files/newTemplate.tosc")
+    main(
+        "docs/demos/files/Pro-C 2 (FabFilter).json", "docs/demos/files/newTemplate.tosc"
+    )

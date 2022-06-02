@@ -17,7 +17,7 @@ def test_singles():
 
     element.showValue("touch")
     element.setValue(Value("touch", "1", "1", "true", "1"))
-
+    
     element.createOSC(
         message=tosc.OSC(
             "0",
@@ -35,11 +35,6 @@ def test_singles():
     element.setFrame(0, 0, 1, 1)
 
     # element.showProperty("frame")
-
-    print(tosc.Control.BOX.frame)
-    print(Control.BOX.background)
-
-    print(Control.BOX.SHAPE)
 
     def size(data):
         return print(sys.getsizeof(data))
@@ -63,8 +58,6 @@ def test_singles():
         print(x, end - start)
 
     go1(10000)
-    print(tosc.outlineStyle.__name__)
-
     def go2(n):
         start = time.process_time()
         for i in range(n):

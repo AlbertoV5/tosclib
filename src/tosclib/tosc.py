@@ -12,7 +12,6 @@ from dataclasses import dataclass, field, fields
 from typing import List, Final, NamedTuple
 
 
-
 class ControlElements(NamedTuple):
     """Valid Sub Elements for a Node"""
 
@@ -83,9 +82,7 @@ class Property:
             raise ValueError(f"{self} is missing both value and params.")
 
     def create(self) -> ET.Element:
-        property = ET.Element(
-            self.__class__.__name__.lower(), attrib={"type": self.type}
-        )
+        property = ET.Element("property", attrib={"type": self.type})
         ET.SubElement(property, self.__class__.Elements.KEY).text = self.key
         value = ET.SubElement(property, self.__class__.Elements.VALUE)
         if self.value:
@@ -264,7 +261,7 @@ class LOCAL:
 
 
 @dataclass
-class _PropertyKeys:
+class _PropertiesControl:
     """All controls have these properties
     https://hexler.net/touchosc/manual/script-properties-and-values"""
 
@@ -272,15 +269,11 @@ class _PropertyKeys:
     """Any string"""
     tag: Final[str] = "tag"
     """Any string"""
-    script: Final[str] = ""
+    script: Final[str] = " "
     """Any string"""
-    frame: Final[dict] = field(
-        default_factory=lambda: {"x": 1, "y": 1, "w": 1, "h": 1}
-    )
+    frame: Final[dict] = field(default_factory=lambda: {"x": 1, "y": 1, "w": 1, "h": 1})
     """x,y,w,h float dictionary"""
-    color: Final[dict] = field(
-        default_factory=lambda: {"r": 1, "g": 1, "b": 1, "a": 1}
-    )
+    color: Final[dict] = field(default_factory=lambda: {"r": 1, "g": 1, "b": 1, "a": 1})
     """r,g,b,a float dictionary"""
     locked: Final[bool] = False
     visible: Final[bool] = True
@@ -293,32 +286,44 @@ class _PropertyKeys:
     """Depends on the control, groups are false"""
     pointerPriority: Final[int] = 0
     """0,1 = Oldest, Newest"""
-    cornerRadius: Final[int] = 0
+    cornerRadius: Final[float] = 0.0
     """An integer number value ranging from 0 to 10"""
     orientation: int = 0
     """0,1,2,3 = North, East, South, West"""
 
-    def __post_init__(self):
+    def build(self, *args) -> bool:
+        """Create Property Elements in CAPS. Pass args to filter."""
         for key in list(vars(self)):
             value = getattr(self, key)
-            print(key, type(value))
+            if args and key not in args:
+                continue
             if isinstance(value, dict) and "r" in value.keys():
-                p = Property(PropertyType.COLOR, key, "", value)
+                prop = Property(PropertyType.COLOR, key, "", value)
             elif isinstance(value, dict) and "x" in value.keys():
-                p = Property(PropertyType.FRAME, key, "", value)
+                prop = Property(PropertyType.FRAME, key, "", value)
             elif isinstance(value, int):
-                p = Property(PropertyType.INTEGER, key, str(value))   
+                prop = Property(PropertyType.INTEGER, key, str(value))
             elif isinstance(value, bool):
-                p = Property(PropertyType.BOOLEAN, key, (str(int(value)))) 
+                prop = Property(PropertyType.BOOLEAN, key, (str(int(value))))
+            elif isinstance(value, float):
+                prop = Property(PropertyType.FLOAT, key, str(value))
             else:
-                p = Property(PropertyType.STRING, key, str(value))
-                
-            setattr(self, key.upper(), p)
-            
+                prop = Property(PropertyType.STRING, key, str(value))
+
+            setattr(self, key.upper(), prop)
+        return True
+
+    def insert(self, e: "ElementTOSC") -> bool:
+        for key in vars(self):
+            e.createProperty(getattr(self, key))
+        return True
+
+
 @dataclass
 class _PropertiesBox:
     shape: int = 0
     """0,1,2,3,4,5 Rectangle, Circle, Triangle, Diamond, Pentagon, Hexagon"""
+
 
 @dataclass
 class _PropertiesGroup:
@@ -326,12 +331,14 @@ class _PropertiesGroup:
     """0,1,2, = Full, Corner, Edges"""
     grabFocus: bool = False
     """Depends on the control, groups are false"""
-    
+
+
 @dataclass
 class _PropertiesGrid:
     grid: Final[bool] = True
     gridSteps: Final[int] = 10
     """Size of grid"""
+
 
 @dataclass
 class _PropertiesResponse:
@@ -339,17 +346,21 @@ class _PropertiesResponse:
     """0,1 = Absolute, Relative"""
     responseFactor: Final[int] = 100
     """An integer value ranging from 1 to 100."""
+
+
 @dataclass
 class _PropertiesCursor:
     cursor: Final[bool] = True
     cursorDisplay: Final[int] = 0
     """Cursor display 0, 1, 2 = always, active, inactive"""
-    
+
+
 @dataclass
 class _PropertiesLine:
     lines: Final[bool] = 1
     linesDisplay: Final[int] = 0
     """Cursor display 0, 1, 2 = always, active, inactive"""
+
 
 @dataclass
 class _PropertiesXY:
@@ -359,6 +370,7 @@ class _PropertiesXY:
     gridY: Final[bool] = True
     gridStepsX: Final[int] = 10
     gridStepsY: Final[int] = 10
+
 
 @dataclass
 class _PropertiesText:
@@ -372,7 +384,7 @@ class _PropertiesText:
     """rgba dict from 0 to 1 as str"""
     textAlignH: Final[int] = 2
     """1,2,3 = left, center, right"""
-    
+
 
 class Control:
     """All the Node Types and their available properties
@@ -382,98 +394,134 @@ class Control:
     TYPE = "type"
     ID = "ID"
 
-    class BOX(_PropertyKeys, _PropertiesBox):
+    @dataclass
+    class BOX(_PropertiesControl, _PropertiesBox):
         orientation: int = 0
         """0,1,2,3 = North, East, South, West"""
 
-    class BUTTON(_PropertyKeys, _PropertiesBox):
-        buttonType : Final[int] = 0
+    @dataclass
+    class BUTTON(_PropertiesControl, _PropertiesBox):
+        buttonType: Final[int] = 0
         """0,1,2 Momentary, Toggle_Release, Toggle_Press"""
         press: Final[bool] = True
         release: Final[bool] = True
         valuePosition: Final[bool] = False
 
     @dataclass
-    class LABEL(_PropertyKeys, _PropertiesText):
-        LENGTH = "textLength"
-        CLIP = "textClip"
+    class LABEL(_PropertiesControl, _PropertiesText):
+        textLength: Final[int] = 0
+        """0 is infinite length"""
+        textClip: Final[bool] = True
 
-    class TEXT(_PropertyKeys, _PropertiesText):
+    @dataclass
+    class TEXT(_PropertiesControl, _PropertiesText):
         pass
 
-    class FADER(_PropertyKeys, _PropertiesResponse, _PropertiesGrid, _PropertiesCursor):
-        BAR = "bar"
-        BAR_DISPLAY = "barDisplay"
+    @dataclass
+    class FADER(
+        _PropertiesControl, _PropertiesResponse, _PropertiesGrid, _PropertiesCursor
+    ):
+        bar: Final[bool] = True
+        barDisplay: Final[int] = 0
+        """Cursor display 0, 1, 2 = always, active, inactive"""
 
+    @dataclass
     class XY(
-        _PropertyKeys,
+        _PropertiesControl,
         _PropertiesResponse,
         _PropertiesCursor,
         _PropertiesXY,
     ):
         pass
 
+    @dataclass
     class RADIAL(
-        _PropertyKeys,
+        _PropertiesControl,
         _PropertiesResponse,
         _PropertiesGrid,
         _PropertiesCursor,
     ):
         outlineStyle: int = 0
-        INVERTED = "inverted"
-        CENTERED = "centered"
+        """0,1,2, = Full, Corner, Edges"""
+        inverted: Final[bool] = False
+        centered: Final[bool] = False
 
-    class ENCODER(_PropertyKeys, _PropertiesResponse, _PropertiesGrid):
+    @dataclass
+    class ENCODER(_PropertiesControl, _PropertiesResponse, _PropertiesGrid):
         outlineStyle: int = 0
+        """0,1,2, = Full, Corner, Edges"""
 
+    @dataclass
     class RADAR(
-        _PropertyKeys,
+        _PropertiesControl,
         _PropertiesCursor,
         _PropertiesLine,
         _PropertiesXY,
     ):
         pass
 
-    class RADIO(_PropertyKeys):
-        STEPS = "steps"
-        RADIO_TYPE = "radioType"
+    @dataclass
+    class RADIO(_PropertiesControl):
+        steps: Final[int] = 5
+        """Amount of radio steps"""
+        radioType: Final[int] = 0
+        """0,1 = select, meter"""
         orientation: int = 0
         """0,1,2,3 = North, East, South, West"""
 
-    class GROUP(_PropertyKeys, _PropertiesGroup):
+    @dataclass
+    class GROUP(_PropertiesControl, _PropertiesGroup):
         pass
 
-
-    class PAGER(_PropertyKeys):
+    @dataclass
+    class PAGER(_PropertiesControl):
         grabFocus: bool = False
         """Depends on the control, groups are false"""
         outlineStyle: int = 0
         """0,1,2, = Full, Corner, Edges"""
-        TAB_LABELS = "tabLabels"
-        TAB_BAR = "tabbar"
-        DOUBLE_TAP = "tabbarDoubleTap"
-        TAB_BAR_SIZE = "tabbarSize"
-        TEXT_SIZE_OFF = "textSizeOff"
-        TEXT_SIZE_ON = "textSizeOn"
-        pass
+        tabLabels: Final[bool] = 1
+        tabbar: Final[bool] = 1
+        tabbarDoubleTap: Final[bool] = 0
+        tabbarSize: Final[int] = 40
+        """int from 10 to 300"""
+        textSizeOff: Final[int] = 14
+        """font size any int"""
+        textSizeOn: Final[int] = 14
+        """font size any int"""
 
-        class PAGE(_PropertyKeys):
-            TAB_COLOR_OFF = "tabColorOff"
-            TAB_COLOR_ON = "tabColorOn"
-            TAB_LABEL = "tabLabel"
-            TEXT_COLOR_OFF = "textColorOff"
-            TEXT_COLOR_ON = "textColorOn"
+    @dataclass
+    class PAGE(_PropertiesControl):
+        tabColorOff: Final[dict] = field(
+            default_factory=lambda: {"r": 0.25, "g": 0.25, "b": 0.25, "a": 1}
+        )
+        tabColorOn: Final[dict] = field(
+            default_factory=lambda: {"r": 0, "g": 0, "b": 0, "a": 0}
+        )
+        tabLabel: Final[str] = "1"
+        textColorOff: Final[dict] = field(
+            default_factory=lambda: {"r": 1, "g": 1, "b": 1, "a": 1}
+        )
+        textColorOn: Final[dict] = field(
+            default_factory=lambda: {"r": 1, "g": 1, "b": 1, "a": 1}
+        )
 
-    class GRID(_PropertyKeys):
+    @dataclass
+    class GRID(_PropertiesControl):
         grabFocus: bool = False
         """Depends on the control, groups are false"""
-        EXCLUSIVE = "exclusive"
-        GRID_NAMING = "gridNaming"
-        GRID_ORDER = "gridOrder"
-        GRID_START = "gridStart"
-        GRID_TYPE = "gridType"
-        GRID_X = "gridX"
-        GRID_Y = "gridY"
+        exclusive: bool = False
+        gridNaming: Final[int] = 0
+        """0,1,2 = Index, Column, Row"""
+        gridOrder: Final[int] = 0
+        """0,1 = Row, Column"""
+        gridStart: Final[int] = 0
+        """0,1,2,3 = Top left, Top right, Bottom Left, Bottom Right"""
+        gridType: Final[int] = 4
+        """0,1,2,3,4,5,6,7,8 See ControlType, can't hold groups"""
+        gridX: Final[int] = 2
+        """amount of elements on X"""
+        gridY: Final[int] = 2
+        """amount of elements on Y"""
 
     @classmethod
     def hasChildren(cls):
@@ -591,7 +639,7 @@ class ElementTOSC:
         return cls(load(file)[0])
 
     @classmethod
-    def newGroup(cls) -> "ElementTOSC":
+    def fromGroup(cls) -> "ElementTOSC":
         return cls(
             ET.Element(
                 ControlElements.NODE,
@@ -607,13 +655,9 @@ class ElementTOSC:
 
     def getPropertyParam(self, key: str, param: str) -> ET.Element:
         return findKey(self.properties, key).find("value").find(param)
-        # return [e.text for e in findKey(self.properties, key).find("value")]
-
-    def hasProperty(self, key: str) -> bool:
-        return True if findKey(self.properties, key) else False
 
     def setProperty(self, key: str, value: str = "", params: dict = {}) -> bool:
-        if not self.hasProperty(key):
+        if not findKey(self.properties, key):
             raise ValueError(f"{key} doesn't exist.")
         val = self.getPropertyValue(key)
         if value:
@@ -624,7 +668,10 @@ class ElementTOSC:
         return True
 
     def createProperty(self, property: Property) -> bool:
-        return self.properties.append(property.create())
+        if findKey(self.properties, property.key):
+            raise ValueError(f"{property.key} already exists.")
+        self.properties.append(property.create())
+        return True
 
     def getValue(self, key: str) -> ET.Element:
         return findKey(self.values, key)
@@ -779,23 +826,16 @@ class ElementTOSC:
             )
         return True
 
-    ####
-    #
-    #   SHORTCUTS:
-    #
-    ####
     def _overrideProperty(
         self, type: str, key: str, value: str = "", params: dict = {}
     ) -> bool:
         """Create a Property, if already exists, then modify its values."""
-        if not self.hasProperty(key):
-            return self.createProperty(Property(type, key, value=value, params=params))
-        return self.setProperty(key, value=value, params=params)
-
-    def _overrideProperty2(self, property: Property):
-        if element := self.getProperty(property.key):
+        if element := self.getProperty(key):
             self.properties.remove(element)
-        return self.properties.append(property.create())
+        return self.createProperty(Property(type, key, value, params))
+        # if not findKey(self.properties, key):
+        #     return self.createProperty(Property(type, key, value=value, params=params))
+        # return self.setProperty(key, value=value, params=params)
 
     def setControlType(self, value: str):
         """See ControlType Element"""
@@ -803,17 +843,10 @@ class ElementTOSC:
         return True
 
     def setName(self, value: str):
-        return self._overrideProperty(
-            PropertyType.STRING, "name", value=value
-        )
-
-    def setProperty(self, property: Property):
-        return self._overrideProperty2(property)
+        return self._overrideProperty(PropertyType.STRING, "name", value=value)
 
     def setTag(self, value: str):
-        return self._overrideProperty(
-            PropertyType.STRING, "tag", value=value
-        )
+        return self._overrideProperty(PropertyType.STRING, "tag", value=value)
 
     def setFrame(self, x: float, y: float, w: float, h: float):
         return self._overrideProperty(
@@ -830,9 +863,7 @@ class ElementTOSC:
         )
 
     def setLocked(self, value: bool):
-        return self._overrideProperty(
-            PropertyType.BOOLEAN, "locked", str(int(value))
-        )
+        return self._overrideProperty(PropertyType.BOOLEAN, "locked", str(int(value)))
 
     def setBackground(self, value: bool):
         return self._overrideProperty(
@@ -855,9 +886,7 @@ class ElementTOSC:
         )
 
     def setScript(self, value: str):
-        return self._overrideProperty(
-            PropertyType.STRING, "script", value=value
-        )
+        return self._overrideProperty(PropertyType.STRING, "script", value=value)
 
     def show(self):
         showElement(self.node)
@@ -873,13 +902,6 @@ class ElementTOSC:
             showElement(findKey(self.values, name))
         except TypeError:
             raise ValueError(f"{name} doesn't exist")
-
-
-###
-#
-#   GLOBAL FUNCTIONS
-#
-###
 
 
 def findKey(elements: ET.Element, key: str) -> ET.Element:

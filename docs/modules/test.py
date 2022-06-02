@@ -12,7 +12,7 @@ def createNumpad():
     fx, fy, fw, fh = 0, 0, 200, 400
     cr, cg, cb, ca = 0.25, 0.25, 0.25, 1.0
 
-    group = ElementTOSC.newGroup()
+    group = ElementTOSC.fromGroup()
     group.setName("Numpad")
     group.setFrame(fx, fy, fw, fh)
 
@@ -31,7 +31,8 @@ def createNumpad():
     XYN = np.stack((X, Y, (N.reshape(1, 9) + 1)), axis=2)[0]
 
     label1 = Control.LABEL(textSize = "48")
-
+    label1.build()
+    
     for x, y, n in XYN:
         # print("x",x,"y",y,"n",n)
         # GROUP with args

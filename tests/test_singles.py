@@ -17,7 +17,7 @@ def test_singles():
 
     element.showValue("touch")
     element.setValue(Value("touch", "1", "1", "true", "1"))
-    
+
     element.createOSC(
         message=tosc.OSC(
             "0",
@@ -58,6 +58,7 @@ def test_singles():
         print(x, end - start)
 
     go1(10000)
+
     def go2(n):
         start = time.process_time()
         for i in range(n):

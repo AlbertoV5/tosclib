@@ -271,10 +271,10 @@ class _PropertiesControl:
     """Any string"""
     script: Final[str] = " "
     """Any string"""
-    frame: Final[dict] = field(default_factory=lambda: {"x": 1, "y": 1, "w": 1, "h": 1})
-    """x,y,w,h float dictionary"""
-    color: Final[dict] = field(default_factory=lambda: {"r": 1, "g": 1, "b": 1, "a": 1})
-    """r,g,b,a float dictionary"""
+    frame: Final[list] = field(default_factory=lambda: [0, 0, 100, 100])
+    """x,y,w,h float list"""
+    color: Final[list] = field(default_factory=lambda: [0.25, 0.25, 0.25, 1.0])
+    """r,g,b,a float list"""
     locked: Final[bool] = False
     visible: Final[bool] = True
     interactive: Final[bool] = True
@@ -290,32 +290,55 @@ class _PropertiesControl:
     """An integer number value ranging from 0 to 10"""
     orientation: int = 0
     """0,1,2,3 = North, East, South, West"""
+    props: dict = field(default_factory=lambda: {})
+    """Use build to populate this dict"""
 
     def build(self, *args) -> bool:
-        """Create Property Elements in CAPS. Pass args to filter."""
-        for key in list(vars(self)):
+        """Use attributes to create Property Elements.
+        Pass args to chose which Properties to build.
+        Any Properties build will be stored in the props attribute."""
+        for key in args:
             value = getattr(self, key)
-            if args and key not in args:
-                continue
-            if isinstance(value, dict) and "r" in value.keys():
-                prop = Property(PropertyType.COLOR, key, "", value)
-            elif isinstance(value, dict) and "x" in value.keys():
-                prop = Property(PropertyType.FRAME, key, "", value)
-            elif isinstance(value, int):
+            if type(value) is list and key == "frame":
+                prop = Property(
+                    PropertyType.FRAME,
+                    key,
+                    "",
+                    {
+                        "x": str(value[0]),
+                        "y": str(value[1]),
+                        "w": str(value[2]),
+                        "h": str(value[3]),
+                    },
+                )
+            elif type(value) is list and key != "frame":
+                prop = Property(
+                    PropertyType.COLOR,
+                    key,
+                    "",
+                    {
+                        "r": str(value[0]),
+                        "g": str(value[1]),
+                        "b": str(value[2]),
+                        "a": str(value[3]),
+                    },
+                )
+            elif type(value) is int:
                 prop = Property(PropertyType.INTEGER, key, str(value))
-            elif isinstance(value, bool):
+            elif type(value) is bool:
                 prop = Property(PropertyType.BOOLEAN, key, (str(int(value))))
-            elif isinstance(value, float):
+            elif type(value) is float:
                 prop = Property(PropertyType.FLOAT, key, str(value))
-            else:
+            elif type(value) is str:
                 prop = Property(PropertyType.STRING, key, str(value))
-
-            setattr(self, key.upper(), prop)
+            else:
+                raise TypeError(f"{key}, {type(key)}, is not compatible.")
+            self.props[key] = prop
         return True
 
-    def insert(self, e: "ElementTOSC") -> bool:
-        for key in vars(self):
-            e.createProperty(getattr(self, key))
+    def injectTo(self, e: "ElementTOSC") -> bool:
+        for key in self.props:
+            e.createProperty(self.props[key])
         return True
 
 
@@ -378,9 +401,7 @@ class _PropertiesText:
     """0, 1 = default, monospaced"""
     textSize: Final[int] = 14
     """Any int"""
-    textColor: Final[int] = field(
-        default_factory=lambda: {"r": 1, "g": 1, "b": 1, "a": 1}
-    )
+    textColor: Final[list] = field(default_factory=lambda: [1, 1, 1, 1])
     """rgba dict from 0 to 1 as str"""
     textAlignH: Final[int] = 2
     """1,2,3 = left, center, right"""
@@ -491,19 +512,11 @@ class Control:
 
     @dataclass
     class PAGE(_PropertiesControl):
-        tabColorOff: Final[dict] = field(
-            default_factory=lambda: {"r": 0.25, "g": 0.25, "b": 0.25, "a": 1}
-        )
-        tabColorOn: Final[dict] = field(
-            default_factory=lambda: {"r": 0, "g": 0, "b": 0, "a": 0}
-        )
+        tabColorOff: Final[list] = field(default_factory=lambda: [0.25, 0.25, 0.25, 1])
+        tabColorOn: Final[list] = field(default_factory=lambda: [0, 0, 0, 0])
         tabLabel: Final[str] = "1"
-        textColorOff: Final[dict] = field(
-            default_factory=lambda: {"r": 1, "g": 1, "b": 1, "a": 1}
-        )
-        textColorOn: Final[dict] = field(
-            default_factory=lambda: {"r": 1, "g": 1, "b": 1, "a": 1}
-        )
+        textColorOff: Final[list] = field(default_factory=lambda: [1, 1, 1, 1])
+        textColorOn: Final[list] = field(default_factory=lambda: [1, 1, 1, 1])
 
     @dataclass
     class GRID(_PropertiesControl):

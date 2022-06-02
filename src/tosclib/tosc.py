@@ -1,14 +1,16 @@
 """
 Simplify navigating, editing and generating .tosc files.
 """
+from collections import namedtuple
 from copy import deepcopy
 import sys
 import xml.etree.ElementTree as ET
 import re
 import zlib
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from typing import List, Final, NamedTuple
+
 
 
 class ControlElements(NamedTuple):
@@ -78,7 +80,20 @@ class Property:
         if self.value and self.params:
             raise ValueError(f"{self} can't have both value and params.")
         if not self.value and not self.params:
-            raise ValueError(f"{self} needs either a value or params.")
+            raise ValueError(f"{self} is missing both value and params.")
+
+    def create(self) -> ET.Element:
+        property = ET.Element(
+            self.__class__.__name__.lower(), attrib={"type": self.type}
+        )
+        ET.SubElement(property, self.__class__.Elements.KEY).text = self.key
+        value = ET.SubElement(property, self.__class__.Elements.VALUE)
+        if self.value:
+            value.text = self.value
+            return property
+        for paramKey in self.params:
+            ET.SubElement(value, paramKey).text = self.params[paramKey]
+        return property
 
     class Elements(NamedTuple):
         KEY = "key"
@@ -248,127 +263,116 @@ class LOCAL:
     dstID: str = ""
 
 
-class cursorDisplay(NamedTuple):
-    ALWAYS = "0"  #:
-    ACTIVE = "1"  #:
-    INACTIVE = "2"  #:
-
-
-class font(NamedTuple):
-    DEFAULT = "0"  #:
-    MONOSPACED = "1"  #:
-
-
-class orientation(NamedTuple):
-    NORTH = "0"  #:
-    EAST = "1"  #:
-    SOUTH = "2"  #:
-    WEST = "3"  #:
-
-
-class outlineStyle(NamedTuple):
-    FULL = "0"  #:
-    CORNERS = "1"  #:
-    EDGES = "2"  #:
-
-
-class pointerPriority(NamedTuple):
-    OLDEST = "0"  #:
-    NEWEST = "1"  #:
-
-
-class response(NamedTuple):
-    ABSOLUTE = "0"  #:
-    RELATIVE = "1"  #:
-
-
-class shape(NamedTuple):
-    RECTANGLE = "0"  #:
-    CIRCLE = "1"  #:
-    TRIANGLE = "2"  #:
-    DIAMOND = "3"  #:
-    PENTAGON = "4"  #:
-    HEXAGON = "5"  #:
-
-
-class textAlignH(NamedTuple):
-    LEFT = "0"  #:
-    CENTER = "1"  #:
-    RIGHT = "2"  #:
-
-
-class textAlignV(NamedTuple):
-    TOP = "0"  #:
-    MIDDLE = "1"  #:
-    BOTTOM = "2"  #:
-
-
-class buttonType(NamedTuple):
-    MOMENTARY = "0"  #:
-    TOGGLE_RELEASE = "1"  #:
-    TOGGLE_PRESS = "2"  #:
-
-
+@dataclass
 class _PropertyKeys:
     """All controls have these properties
     https://hexler.net/touchosc/manual/script-properties-and-values"""
 
-    NAME: Final[str] = "name"
-    TAG: Final[str] = "tag"
-    FRAME: Final[str] = "frame"
-    COLOR: Final[str] = "color"
-    LOCKED: Final[str] = "locked"
-    VISIBLE: Final[str] = "visible"
-    INTERACTIVE: Final[str] = "interactive"
-    BACKGROUND: Final[str] = "background"
-    OUTLINE: Final[str] = "outline"
-    OUTLINE_STYLE: Final[str] = outlineStyle.__name__
-    GRAB_FOCUS: Final[str] = "grabFocus"
-    POINTER: Final[str] = pointerPriority.__name__
-    CORNER: Final[str] = "cornerRadius"
-    ORIENTATION: Final[str] = orientation.__name__
-    SCRIPT: Final[str] = "script"
+    name: Final[str] = "name"
+    """Any string"""
+    tag: Final[str] = "tag"
+    """Any string"""
+    script: Final[str] = ""
+    """Any string"""
+    frame: Final[dict] = field(
+        default_factory=lambda: {"x": 1, "y": 1, "w": 1, "h": 1}
+    )
+    """x,y,w,h float dictionary"""
+    color: Final[dict] = field(
+        default_factory=lambda: {"r": 1, "g": 1, "b": 1, "a": 1}
+    )
+    """r,g,b,a float dictionary"""
+    locked: Final[bool] = False
+    visible: Final[bool] = True
+    interactive: Final[bool] = True
+    background: Final[bool] = True
+    outline: Final[bool] = True
+    outlineStyle: int = 1
+    """0,1,2, = Full, Corner, Edges"""
+    grabFocus: bool = True
+    """Depends on the control, groups are false"""
+    pointerPriority: Final[int] = 0
+    """0,1 = Oldest, Newest"""
+    cornerRadius: Final[int] = 0
+    """An integer number value ranging from 0 to 10"""
+    orientation: int = 0
+    """0,1,2,3 = North, East, South, West"""
 
-
+    def __post_init__(self):
+        for key in list(vars(self)):
+            value = getattr(self, key)
+            print(key, type(value))
+            if isinstance(value, dict) and "r" in value.keys():
+                p = Property(PropertyType.COLOR, key, "", value)
+            elif isinstance(value, dict) and "x" in value.keys():
+                p = Property(PropertyType.FRAME, key, "", value)
+            elif isinstance(value, int):
+                p = Property(PropertyType.INTEGER, key, str(value))   
+            elif isinstance(value, bool):
+                p = Property(PropertyType.BOOLEAN, key, (str(int(value)))) 
+            else:
+                p = Property(PropertyType.STRING, key, str(value))
+                
+            setattr(self, key.upper(), p)
+            
+@dataclass
 class _PropertiesBox:
-    SHAPE: Final[str] = shape.__name__
+    shape: int = 0
+    """0,1,2,3,4,5 Rectangle, Circle, Triangle, Diamond, Pentagon, Hexagon"""
 
-
+@dataclass
+class _PropertiesGroup:
+    outlineStyle: int = 0
+    """0,1,2, = Full, Corner, Edges"""
+    grabFocus: bool = False
+    """Depends on the control, groups are false"""
+    
+@dataclass
 class _PropertiesGrid:
-    GRID: Final[str] = "grid"
-    GRID_STEPS: Final[str] = "gridSteps"
+    grid: Final[bool] = True
+    gridSteps: Final[int] = 10
+    """Size of grid"""
 
-
+@dataclass
 class _PropertiesResponse:
-    RESPONSE: Final[str] = response.__name__
-    RESPONSE_FACTOR: Final[str] = "responseFactor"
-
-
+    response: Final[int] = 0
+    """0,1 = Absolute, Relative"""
+    responseFactor: Final[int] = 100
+    """An integer value ranging from 1 to 100."""
+@dataclass
 class _PropertiesCursor:
-    CURSOR: Final[str] = "cursor"
-    CURSOR_DISPLAY: Final[str] = cursorDisplay.__name__
-
-
+    cursor: Final[bool] = True
+    cursorDisplay: Final[int] = 0
+    """Cursor display 0, 1, 2 = always, active, inactive"""
+    
+@dataclass
 class _PropertiesLine:
-    LINES: Final[str] = "lines"
-    LINES_DISPLAY: Final[str] = "linesDisplay"
+    lines: Final[bool] = 1
+    linesDisplay: Final[int] = 0
+    """Cursor display 0, 1, 2 = always, active, inactive"""
 
-
+@dataclass
 class _PropertiesXY:
-    LOCK_X: Final[str] = "lockX"
-    LOCK_Y: Final[str] = "lockY"
-    GRID_X: Final[str] = "gridX"
-    GRID_Y: Final[str] = "gridY"
-    GRID_STEPSX: Final[str] = "gridStepsX"
-    GRID_STEPSY: Final[str] = "gridStepsY"
+    lockX: Final[bool] = False
+    lockY: Final[bool] = False
+    gridX: Final[bool] = True
+    gridY: Final[bool] = True
+    gridStepsX: Final[int] = 10
+    gridStepsY: Final[int] = 10
 
-
+@dataclass
 class _PropertiesText:
-    FONT: Final[str] = "font"
-    SIZE: Final[str] = "textSize"
-    ALIGNMENT_H: Final[str] = "textAlignH"
-    TEXT_COLOR: Final[str] = "textColor"
-
+    font: int = 0
+    """0, 1 = default, monospaced"""
+    textSize: Final[int] = 14
+    """Any int"""
+    textColor: Final[int] = field(
+        default_factory=lambda: {"r": 1, "g": 1, "b": 1, "a": 1}
+    )
+    """rgba dict from 0 to 1 as str"""
+    textAlignH: Final[int] = 2
+    """1,2,3 = left, center, right"""
+    
 
 class Control:
     """All the Node Types and their available properties
@@ -379,14 +383,17 @@ class Control:
     ID = "ID"
 
     class BOX(_PropertyKeys, _PropertiesBox):
-        pass  # wip
+        orientation: int = 0
+        """0,1,2,3 = North, East, South, West"""
 
     class BUTTON(_PropertyKeys, _PropertiesBox):
-        BUTTON_TYPE = buttonType.__name__
-        PRESS = "press"
-        RELEASE = "release"
-        VALUE_POSITION = "valuePosition"
+        buttonType : Final[int] = 0
+        """0,1,2 Momentary, Toggle_Release, Toggle_Press"""
+        press: Final[bool] = True
+        release: Final[bool] = True
+        valuePosition: Final[bool] = False
 
+    @dataclass
     class LABEL(_PropertyKeys, _PropertiesText):
         LENGTH = "textLength"
         CLIP = "textClip"
@@ -412,11 +419,12 @@ class Control:
         _PropertiesGrid,
         _PropertiesCursor,
     ):
+        outlineStyle: int = 0
         INVERTED = "inverted"
         CENTERED = "centered"
 
     class ENCODER(_PropertyKeys, _PropertiesResponse, _PropertiesGrid):
-        pass
+        outlineStyle: int = 0
 
     class RADAR(
         _PropertyKeys,
@@ -429,12 +437,18 @@ class Control:
     class RADIO(_PropertyKeys):
         STEPS = "steps"
         RADIO_TYPE = "radioType"
+        orientation: int = 0
+        """0,1,2,3 = North, East, South, West"""
+
+    class GROUP(_PropertyKeys, _PropertiesGroup):
         pass
 
-    class GROUP(_PropertyKeys):
-        pass
 
     class PAGER(_PropertyKeys):
+        grabFocus: bool = False
+        """Depends on the control, groups are false"""
+        outlineStyle: int = 0
+        """0,1,2, = Full, Corner, Edges"""
         TAB_LABELS = "tabLabels"
         TAB_BAR = "tabbar"
         DOUBLE_TAP = "tabbarDoubleTap"
@@ -451,6 +465,8 @@ class Control:
             TEXT_COLOR_ON = "textColorOn"
 
     class GRID(_PropertyKeys):
+        grabFocus: bool = False
+        """Depends on the control, groups are false"""
         EXCLUSIVE = "exclusive"
         GRID_NAMING = "gridNaming"
         GRID_ORDER = "gridOrder"
@@ -608,21 +624,7 @@ class ElementTOSC:
         return True
 
     def createProperty(self, property: Property) -> bool:
-        if self.hasProperty(property.key):
-            raise ValueError(f"{property.key} already exists.")
-        prop = ET.SubElement(
-            self.properties,
-            ControlElements.PROPERTY,
-            attrib={"type": property.type},
-        )
-        (key, value) = (ET.SubElement(prop, "key"), ET.SubElement(prop, "value"))
-        key.text = property.key
-        if property.value:
-            value.text = property.value
-            return True
-        for paramKey in property.params:
-            ET.SubElement(value, paramKey).text = property.params[paramKey]
-        return True
+        return self.properties.append(property.create())
 
     def getValue(self, key: str) -> ET.Element:
         return findKey(self.values, key)
@@ -790,6 +792,11 @@ class ElementTOSC:
             return self.createProperty(Property(type, key, value=value, params=params))
         return self.setProperty(key, value=value, params=params)
 
+    def _overrideProperty2(self, property: Property):
+        if element := self.getProperty(property.key):
+            self.properties.remove(element)
+        return self.properties.append(property.create())
+
     def setControlType(self, value: str):
         """See ControlType Element"""
         self.node.attrib = {"type": value}
@@ -797,56 +804,59 @@ class ElementTOSC:
 
     def setName(self, value: str):
         return self._overrideProperty(
-            PropertyType.STRING, _PropertyKeys.NAME, value=value
+            PropertyType.STRING, "name", value=value
         )
+
+    def setProperty(self, property: Property):
+        return self._overrideProperty2(property)
 
     def setTag(self, value: str):
         return self._overrideProperty(
-            PropertyType.STRING, _PropertyKeys.TAG, value=value
+            PropertyType.STRING, "tag", value=value
         )
 
     def setFrame(self, x: float, y: float, w: float, h: float):
         return self._overrideProperty(
             PropertyType.FRAME,
-            _PropertyKeys.FRAME,
+            "frame",
             params={"x": str(x), "y": str(y), "w": str(w), "h": str(h)},
         )
 
     def setColor(self, r: float, g: float, b: float, a: float):
         return self._overrideProperty(
             PropertyType.COLOR,
-            _PropertyKeys.COLOR,
+            "color",
             params={"r": str(r), "g": str(g), "b": str(b), "a": str(a)},
         )
 
     def setLocked(self, value: bool):
         return self._overrideProperty(
-            PropertyType.BOOLEAN, _PropertyKeys.LOCKED, str(int(value))
+            PropertyType.BOOLEAN, "locked", str(int(value))
         )
 
     def setBackground(self, value: bool):
         return self._overrideProperty(
-            PropertyType.BOOLEAN, _PropertyKeys.BACKGROUND, value=str(int(value))
+            PropertyType.BOOLEAN, "background", value=str(int(value))
         )
 
     def setVisible(self, value: bool):
         return self._overrideProperty(
-            PropertyType.BOOLEAN, _PropertyKeys.VISIBLE, value=str(int(value))
+            PropertyType.BOOLEAN, "visible", value=str(int(value))
         )
 
     def setInteractive(self, value: bool):
         return self._overrideProperty(
-            PropertyType.BOOLEAN, _PropertyKeys.INTERACTIVE, value=str(int(value))
+            PropertyType.BOOLEAN, "interactive", value=str(int(value))
         )
 
     def setOutline(self, value: bool):
         return self._overrideProperty(
-            PropertyType.BOOLEAN, _PropertyKeys.OUTLINE, value=str(int(value))
+            PropertyType.BOOLEAN, "outline", value=str(int(value))
         )
 
     def setScript(self, value: str):
         return self._overrideProperty(
-            PropertyType.STRING, _PropertyKeys.SCRIPT, value=value
+            PropertyType.STRING, "script", value=value
         )
 
     def show(self):

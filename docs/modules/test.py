@@ -30,6 +30,8 @@ def createNumpad():
     Y = np.repeat(N[0] * h, d).reshape(1, 9)
     XYN = np.stack((X, Y, (N.reshape(1, 9) + 1)), axis=2)[0]
 
+    label1 = Control.LABEL(textSize = "48")
+
     for x, y, n in XYN:
         # print("x",x,"y",y,"n",n)
         # GROUP with args
@@ -41,7 +43,8 @@ def createNumpad():
         l.setColor(1, 1, 1, 1)
         l.setBackground(False)
         l.createValue(Value(key="text", default=f"{int(n)}"))
-        l.createProperty(Property(PropertyType.INTEGER, Control.LABEL.SIZE, "48"))
+        # l.setProperty(label1.TEXTSIZE)
+        # l.showProperty("textSize")
         # BUTTON
         b.setFrame(0, 0, w, h)
         b.setColor(cr, cg, cb, ca)

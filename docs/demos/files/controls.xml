@@ -489,7 +489,7 @@
 </property>
 <property type='i'>
 <key><![CDATA[textAlignH]]></key>
-<value>1</value>
+<value>3</value>
 </property>
 <property type='c'>
 <key><![CDATA[textColor]]></key>

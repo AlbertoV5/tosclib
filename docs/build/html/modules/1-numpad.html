@@ -221,7 +221,9 @@
 <p>This is a re-construction of the integer numpad from <a class="reference external" href="https://github.com/F-l-i-x">Felix</a> here: <a class="reference external" href="https://github.com/F-l-i-x/TouchOSC/tree/main/modules/numpad#readme">https://github.com/F-l-i-x/TouchOSC/tree/main/modules/numpad#readme</a></p>
 <p>Original:</p>
 <img alt="https://github.com/F-l-i-x/TouchOSC/raw/main/modules/numpad/pics/numpad.gif" src="https://github.com/F-l-i-x/TouchOSC/raw/main/modules/numpad/pics/numpad.gif"/>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cProfile</span>
+<span class="kn">import</span> <span class="nn">pstats</span>
+<span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
 <span class="kn">from</span> <span class="nn">tosclib</span> <span class="kn">import</span> <span class="n">Control</span><span class="p">,</span> <span class="n">Value</span>
 <span class="kn">from</span> <span class="nn">tosclib.tosc</span> <span class="kn">import</span> <span class="n">ControlType</span><span class="p">,</span> <span class="n">ElementTOSC</span>
 
@@ -230,24 +232,28 @@
     <span class="sd">"""Let's start by creating a group and set basic properties"""</span>
     <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">createTemplate</span><span class="p">()</span>
     <span class="n">main</span> <span class="o">=</span> <span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">fx</span><span class="p">,</span> <span class="n">fy</span><span class="p">,</span> <span class="n">fw</span><span class="p">,</span> <span class="n">fh</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span>
+    <span class="n">fx</span><span class="p">,</span> <span class="n">fy</span><span class="p">,</span> <span class="n">fw</span><span class="p">,</span> <span class="n">fh</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">400</span>
     <span class="n">main</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="s2">"Numpad"</span><span class="p">)</span>
     <span class="n">main</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="n">fx</span><span class="p">,</span> <span class="n">fy</span><span class="p">,</span> <span class="n">fw</span><span class="p">,</span> <span class="n">fh</span><span class="p">)</span>
 
     <span class="sd">"""Second group to avoid having many elements in top layer"""</span>
-    <span class="n">grpNums</span> <span class="o">=</span> <span class="n">main</span><span class="o">.</span><span class="n">addGroup</span><span class="p">()</span>
-    <span class="n">main</span><span class="o">.</span><span class="n">copyProperties</span><span class="p">(</span><span class="n">grpNums</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">)</span>
+    <span class="n">grpNums</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">addGroup</span><span class="p">(</span><span class="n">main</span><span class="p">)</span>
+    <span class="n">tosc</span><span class="o">.</span><span class="n">copyProperties</span><span class="p">(</span><span class="n">main</span><span class="p">,</span> <span class="n">grpNums</span><span class="p">,</span> <span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">)</span>
+    <span class="n">deleteme</span> <span class="o">=</span> <span class="n">ElementTOSC</span><span class="p">(</span><span class="n">tosc</span><span class="o">.</span><span class="n">createTemplate</span><span class="p">())</span>
+    <span class="n">tosc</span><span class="o">.</span><span class="n">copyProperties</span><span class="p">(</span><span class="n">main</span><span class="p">,</span> <span class="n">deleteme</span><span class="p">,</span> <span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">)</span>
+    
+    <span class="n">tosc</span><span class="o">.</span><span class="n">moveProperties</span><span class="p">(</span><span class="n">deleteme</span><span class="p">,</span> <span class="n">main</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"frame"</span><span class="p">)</span>
 
     <span class="sd">"""Let's build the templates for the controls inside the subgroups"""</span>
-    <span class="n">n</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span>
-    <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">fw</span> <span class="o">/</span> <span class="n">r</span><span class="p">,</span> <span class="n">fh</span> <span class="o">/</span> <span class="n">c</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span>
+    <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">fw</span> <span class="o">/</span> <span class="n">rows</span><span class="p">,</span> <span class="n">fh</span> <span class="o">/</span> <span class="n">columns</span>
     <span class="n">frame</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">]</span>
     <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
     
-    <span class="n">labelTemplate</span> <span class="o">=</span> <span class="n">Control</span><span class="o">.</span><span class="n">LABEL</span><span class="p">(</span>
+    <span class="n">labelTemplate</span> <span class="o">=</span> <span class="n">Control</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">"label"</span><span class="p">,</span> <span class="n">textSize</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">frame</span>
     <span class="p">)</span>
-    <span class="n">buttonTemplate</span> <span class="o">=</span> <span class="n">Control</span><span class="o">.</span><span class="n">BUTTON</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"button"</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+    <span class="n">buttonTemplate</span> <span class="o">=</span> <span class="n">Control</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"button"</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/modules/button.lua"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="n">buttonTemplate</span><span class="o">.</span><span class="n">script</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     
@@ -261,21 +267,26 @@
                 <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,)</span>
     <span class="c1"># fmt: on</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sequence</span><span class="p">:</span>
-        <span class="n">grp</span><span class="p">,</span> <span class="n">btn</span><span class="p">,</span> <span class="n">lbl</span> <span class="o">=</span> <span class="n">grpNums</span><span class="o">.</span><span class="n">addGroup</span><span class="p">(</span><span class="n">ControlType</span><span class="o">.</span><span class="n">BUTTON</span><span class="p">,</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+        <span class="n">grp</span><span class="p">,</span> <span class="n">btn</span><span class="p">,</span> <span class="n">lbl</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">addGroup</span><span class="p">(</span><span class="n">grpNums</span><span class="p">,</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">BUTTON</span><span class="p">,</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
         <span class="n">grp</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">buttonTemplate</span><span class="o">.</span><span class="n">applyTo</span><span class="p">(</span><span class="n">btn</span><span class="p">)</span>
         <span class="n">labelTemplate</span><span class="o">.</span><span class="n">applyTo</span><span class="p">(</span><span class="n">lbl</span><span class="p">)</span>
         <span class="n">lbl</span><span class="o">.</span><span class="n">createValue</span><span class="p">(</span><span class="n">Value</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
 
     <span class="sd">"""Automatically position all children by row and column, 'zero-padding' optional"""</span>
-    <span class="n">grpNums</span><span class="o">.</span><span class="n">fitChildren</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">grpNums</span><span class="o">.</span><span class="n">arrangeChildren</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
     <span class="sd">"""Save it as a template"""</span>
-    <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">"docs/modules/numpad.tosc"</span><span class="p">)</span>
+    <span class="c1"># tosc.write(root, "docs/modules/numpad.tosc")</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-    <span class="n">createNumpad</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">cProfile</span><span class="o">.</span><span class="n">Profile</span><span class="p">()</span> <span class="k">as</span> <span class="n">pr</span><span class="p">:</span>
+        <span class="n">createNumpad</span><span class="p">()</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">pstats</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="n">pr</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="n">pstats</span><span class="o">.</span><span class="n">SortKey</span><span class="o">.</span><span class="n">TIME</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">dump_stats</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">"test.prof"</span><span class="p">)</span>
+    
 </pre></div>
 </div>
 </section>

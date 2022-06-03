@@ -40,20 +40,20 @@
       Trigger
       Value
       Control
-      Control.BOX
-      Control.BUTTON
-      Control.ENCODER
-      Control.FADER
-      Control.GRID
-      Control.GROUP
-      Control.LABEL
-      Control.PAGE
-      Control.PAGER
-      Control.RADAR
-      Control.RADIAL
-      Control.RADIO
-      Control.TEXT
-      Control.XY
+      Control.Box
+      Control.Button
+      Control.Encoder
+      Control.Fader
+      Control.Grid
+      Control.Group
+      Control.Label
+      Control.Page
+      Control.Pager
+      Control.Radar
+      Control.Radial
+      Control.Radio
+      Control.Text
+      Control.Xy
 
 
    

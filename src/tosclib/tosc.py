@@ -10,7 +10,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import List, Final, NamedTuple
 import numpy as np
-
+# from lxml import etree as ET
 
 class ControlElements(NamedTuple):
     """Valid Sub Elements for a Node"""
@@ -660,11 +660,21 @@ class ElementTOSC:
             children (ET.Element): Find <children>
         """
         self.node = e
-        f = lambda v: e.find(v) if e.find(v) else ET.SubElement(e, v)
-        self.properties = f(ControlElements.PROPERTIES)
-        self.values = f(ControlElements.VALUES)
-        self.messages = f(ControlElements.MESSAGES)
-        self.children = f(ControlElements.CHILDREN)
+        self.properties = self.getSet("properties")
+        self.values = self.getSet("values")
+        self.messages = self.getSet("messages")
+        self.children = self.getSet("children")
+        # f = lambda v: e.find(v) if e.find(v) else ET.SubElement(e, v)
+        # self.properties = f(ControlElements.PROPERTIES)
+        # self.values = f(ControlElements.VALUES)
+        # self.messages = f(ControlElements.MESSAGES)
+        # self.children = f(ControlElements.CHILDREN)
+
+    def getSet(self, target):
+        s = self.node.find(target)
+        if s is not None:
+            return s
+        return ET.SubElement(self.node, target) 
 
     @classmethod
     def fromFile(cls, file: str) -> "ElementTOSC":
@@ -694,7 +704,7 @@ class ElementTOSC:
         return True
 
     def createProperty(self, property: Property) -> bool:
-        if findKey(self.properties, property.key):
+        if findKey(self.properties, property.key) is not None:
             raise ValueError(f"{property.key} already exists.")
         property.applyTo(self.properties)
         return True
@@ -706,7 +716,7 @@ class ElementTOSC:
         return findKey(self.values, key).find(param)
 
     def hasValue(self, key: str) -> bool:
-        return True if findKey(self.values, key) else False
+        return ET.iselement(findKey(self.values, key))
 
     def createValue(self, value: Value) -> bool:
         if self.hasValue(value.key):
@@ -765,7 +775,7 @@ class ElementTOSC:
 
     def findChildByName(self, name: str) -> ET.Element:
         for child in self.children:
-            if not child.find(ControlElements.PROPERTIES):
+            if child.find(ControlElements.PROPERTIES) is None:
                 continue
             if re.fullmatch(
                 getTextValueFromKey(child.find(ControlElements.PROPERTIES), "name"),
@@ -785,7 +795,7 @@ class ElementTOSC:
         return str(self.node.attrib["ID"])
 
     def isControlType(self, control: str):
-        return True if str(self.node.attrib["type"]) == control else False
+        return str(self.node.attrib["type"]) == control
 
     def arrangeChildren(self, rows: int, columns: int, padding: bool = False) -> bool:
         """Get n number of children and arrange them in rows and columns"""
@@ -812,13 +822,14 @@ class ElementTOSC:
         self, type: str, key: str, value: str = "", params: dict = {}
     ) -> bool:
         """Create a Property, if already exists, then modify its values."""
-        if element := self.getProperty(key):
+        element = self.getProperty(key)
+        if element is not None:
             self.properties.remove(element)
         return self.createProperty(Property(type, key, value, params))
 
     def setControlType(self, value: str):
         """See ControlType Element"""
-        self.node.attrib = {"type": value}
+        self.node.attrib["type"] = value
         return True
 
     def setName(self, value: str):
@@ -892,12 +903,11 @@ GENERAL FUNCTIONS
 
 def findKey(elements: ET.Element, key: str) -> ET.Element:
     """Iterate through element with children and return child whose key matches"""
-    # return elements.find(f"*[{Property.Elements.KEY}='{key}']")
-    for e in elements:
-        if re.fullmatch(e.find("key").text, key):
-            return e
-    return None
-
+    return elements.find(f"*[key='{key}']")
+    # for e in elements:
+    #     if re.fullmatch(e.find("key").text, key):
+    #         return e
+    # return None
 
 def showElement(e: ET.Element):
     """Generic print string function, UTF-8, indented 2 spaces"""
@@ -963,7 +973,7 @@ def pullValueFromKey(inputFile: str, key: str, value: str, targetKey: str) -> st
     with open(inputFile, "rb") as file:
         parser.feed(zlib.decompress(file.read()))
         for _, e in parser.read_events():  # event, element
-            if not e.find("properties"):
+            if e.find("properties") is None:
                 continue
             if re.fullmatch(getTextValueFromKey(e.find("properties"), key), value):
                 parser.close()
@@ -975,6 +985,7 @@ def pullValueFromKey(inputFile: str, key: str, value: str, targetKey: str) -> st
 
 def pullValueFromKey2(root: ET.Element, key: str, value: str, targetKey: str) -> str:
     """If you know the name of an element but don't know its other properties.
+    This parses an Element and has to convert it to string so its slower.
 
     Args:
         root (ET.Element): Parses the whole element, so you can feed the root.
@@ -988,7 +999,7 @@ def pullValueFromKey2(root: ET.Element, key: str, value: str, targetKey: str) ->
     parser = ET.XMLPullParser()
     parser.feed(ET.tostring(root, encoding="UTF-8"))
     for _, e in parser.read_events():  # event, element
-        if not e.find("properties"):
+        if e.find("properties") is None:
             continue
         if re.fullmatch(getTextValueFromKey(e.find("properties"), key), value):
             parser.close()
@@ -1176,3 +1187,6 @@ def addButton(e: ElementTOSC):
 
 def addLabel(e: ElementTOSC):
     return ElementTOSC(e.createChild(ControlType.LABEL))
+
+def testFromString(data):
+    return ET.fromstring(data)

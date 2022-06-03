@@ -1,13 +1,23 @@
 import unittest
 import tosclib as tosc
-import pytest
-import sys
 from pathlib import Path
 from tosclib import Property
+import cProfile
+import pstats
 
+def profile(func):
+    def wrapper(*args, **kwargs):
+        with cProfile.Profile() as pr:
+            for i in range(1):
+                func(*args, **kwargs)
+            stats = pstats.Stats(pr)
+            stats.sort_stats(pstats.SortKey.TIME)
+            stats.dump_stats(filename="tests/test_io.prof")
+    return wrapper
 
 class TestTemplate(unittest.TestCase):
     @classmethod
+    @profile
     def setUpClass(cls):
         cls.directory = Path(__file__).absolute().parent / "files"
 

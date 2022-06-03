@@ -228,7 +228,7 @@
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Final</span><span class="p">,</span> <span class="n">NamedTuple</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
+<span class="c1"># from lxml import etree as ET</span>
 
 <div class="viewcode-block" id="ControlElements"><a class="viewcode-back" href="../../api/elemTuples.html#tosclib.tosc.ControlElements">[docs]</a><span class="k">class</span> <span class="nc">ControlElements</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
     <span class="sd">"""Valid Sub Elements for a Node"""</span>
@@ -878,11 +878,21 @@
 <span class="sd">            children (ET.Element): Find &lt;children&gt;</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">e</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">else</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">ControlElements</span><span class="o">.</span><span class="n">PROPERTIES</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">ControlElements</span><span class="o">.</span><span class="n">VALUES</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">ControlElements</span><span class="o">.</span><span class="n">MESSAGES</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">ControlElements</span><span class="o">.</span><span class="n">CHILDREN</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSet</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSet</span><span class="p">(</span><span class="s2">"values"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSet</span><span class="p">(</span><span class="s2">"messages"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSet</span><span class="p">(</span><span class="s2">"children"</span><span class="p">)</span></div>
+        <span class="c1"># f = lambda v: e.find(v) if e.find(v) else ET.SubElement(e, v)</span>
+        <span class="c1"># self.properties = f(ControlElements.PROPERTIES)</span>
+        <span class="c1"># self.values = f(ControlElements.VALUES)</span>
+        <span class="c1"># self.messages = f(ControlElements.MESSAGES)</span>
+        <span class="c1"># self.children = f(ControlElements.CHILDREN)</span>
+
+    <span class="k">def</span> <span class="nf">getSet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">s</span>
+        <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> 
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"ElementTOSC"</span><span class="p">:</span>
@@ -912,7 +922,7 @@
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">createProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">property</span><span class="p">:</span> <span class="n">Property</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">findKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span> <span class="nb">property</span><span class="o">.</span><span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">findKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span> <span class="nb">property</span><span class="o">.</span><span class="n">key</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">property</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2"> already exists."</span><span class="p">)</span>
         <span class="nb">property</span><span class="o">.</span><span class="n">applyTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
@@ -924,7 +934,7 @@
         <span class="k">return</span> <span class="n">findKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">hasValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">findKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">iselement</span><span class="p">(</span><span class="n">findKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">createValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hasValue</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">key</span><span class="p">):</span>
@@ -983,7 +993,7 @@
 
     <span class="k">def</span> <span class="nf">findChildByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">child</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">ControlElements</span><span class="o">.</span><span class="n">PROPERTIES</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">ControlElements</span><span class="o">.</span><span class="n">PROPERTIES</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span>
                 <span class="n">getTextValueFromKey</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">ControlElements</span><span class="o">.</span><span class="n">PROPERTIES</span><span class="p">),</span> <span class="s2">"name"</span><span class="p">),</span>
@@ -1003,7 +1013,7 @@
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">"ID"</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">isControlType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">control</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">"type"</span><span class="p">])</span> <span class="o">==</span> <span class="n">control</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">"type"</span><span class="p">])</span> <span class="o">==</span> <span class="n">control</span>
 
     <span class="k">def</span> <span class="nf">arrangeChildren</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">padding</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">"""Get n number of children and arrange them in rows and columns"""</span>
@@ -1030,13 +1040,14 @@
         <span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">"""Create a Property, if already exists, then modify its values."""</span>
-        <span class="k">if</span> <span class="n">element</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getProperty</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getProperty</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">element</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="n">Property</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">setControlType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">"""See ControlType Element"""</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">attrib</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">setName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -1110,12 +1121,11 @@
 
 <div class="viewcode-block" id="findKey"><a class="viewcode-back" href="../../api/tglobals.html#tosclib.tosc.findKey">[docs]</a><span class="k">def</span> <span class="nf">findKey</span><span class="p">(</span><span class="n">elements</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
     <span class="sd">"""Iterate through element with children and return child whose key matches"""</span>
-    <span class="c1"># return elements.find(f"*[{Property.Elements.KEY}='{key}']")</span>
-    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"key"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">e</span>
-    <span class="k">return</span> <span class="kc">None</span></div>
-
+    <span class="k">return</span> <span class="n">elements</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="sa">f</span><span class="s2">"*[key='</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">']"</span><span class="p">)</span></div>
+    <span class="c1"># for e in elements:</span>
+    <span class="c1">#     if re.fullmatch(e.find("key").text, key):</span>
+    <span class="c1">#         return e</span>
+    <span class="c1"># return None</span>
 
 <div class="viewcode-block" id="showElement"><a class="viewcode-back" href="../../api/tglobals.html#tosclib.tosc.showElement">[docs]</a><span class="k">def</span> <span class="nf">showElement</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
     <span class="sd">"""Generic print string function, UTF-8, indented 2 spaces"""</span>
@@ -1181,7 +1191,7 @@
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inputFile</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span><span class="n">zlib</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
         <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">read_events</span><span class="p">():</span>  <span class="c1"># event, element</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">getTextValueFromKey</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">),</span> <span class="n">key</span><span class="p">),</span> <span class="n">value</span><span class="p">):</span>
                 <span class="n">parser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -1193,6 +1203,7 @@
 
 <div class="viewcode-block" id="pullValueFromKey2"><a class="viewcode-back" href="../../api/tglobals.html#tosclib.tosc.pullValueFromKey2">[docs]</a><span class="k">def</span> <span class="nf">pullValueFromKey2</span><span class="p">(</span><span class="n">root</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">targetKey</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">"""If you know the name of an element but don't know its other properties.</span>
+<span class="sd">    This parses an Element and has to convert it to string so its slower.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        root (ET.Element): Parses the whole element, so you can feed the root.</span>
@@ -1206,7 +1217,7 @@
     <span class="n">parser</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">XMLPullParser</span><span class="p">()</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span><span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"UTF-8"</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">read_events</span><span class="p">():</span>  <span class="c1"># event, element</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">getTextValueFromKey</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"properties"</span><span class="p">),</span> <span class="n">key</span><span class="p">),</span> <span class="n">value</span><span class="p">):</span>
             <span class="n">parser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -1394,6 +1405,9 @@
 
 <span class="k">def</span> <span class="nf">addLabel</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">ElementTOSC</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">ElementTOSC</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">createChild</span><span class="p">(</span><span class="n">ControlType</span><span class="o">.</span><span class="n">LABEL</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">testFromString</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
         </article>
       </div>

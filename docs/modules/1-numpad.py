@@ -16,10 +16,6 @@ def createNumpad():
     """Second group to avoid having many elements in top layer"""
     grpNums = tosc.addGroup(main)
     tosc.copyProperties(main, grpNums, "frame", "name")
-    deleteme = ElementTOSC(tosc.createTemplate())
-    tosc.copyProperties(main, deleteme, "frame", "name")
-    
-    tosc.moveProperties(deleteme, main, "name", "frame")
 
     """Let's build the templates for the controls inside the subgroups"""
     n, rows, columns = 9, 3, 3
@@ -54,7 +50,7 @@ def createNumpad():
     grpNums.arrangeChildren(3, 3, True)
 
     """Save it as a template"""
-    # tosc.write(root, "docs/modules/numpad.tosc")
+    tosc.write(root, "docs/modules/numpad.tosc")
 
 
 if __name__ == "__main__":

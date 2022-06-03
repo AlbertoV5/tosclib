@@ -1,11 +1,19 @@
+import cProfile
+import pstats
 from tosclib import tosc
 from tosclib.tosc import Partial, Value
-from tosclib.tosc import Control
-import sys
-import xml.etree.ElementTree as ET
-import time
 
+def profile(func):
+    def wrapper(*args, **kwargs):
+        with cProfile.Profile() as pr:
+            for i in range(1):
+                func(*args, **kwargs)
+            stats = pstats.Stats(pr)
+            stats.sort_stats(pstats.SortKey.TIME)
+            stats.dump_stats(filename="tests/test_singles.prof")
+    return wrapper
 
+@profile
 def test_singles():
 
     root = tosc.createTemplate()
@@ -34,37 +42,13 @@ def test_singles():
     element.setColor(1, 0, 0, 1)
     element.setFrame(0, 0, 1, 1)
 
-    # element.showProperty("frame")
-
-    def size(data):
-        return print(sys.getsizeof(data))
-
-    size(ET.Element("test"))
-
     count = 0
     for i in dir(tosc.ElementTOSC):
         if "__" not in i:
             count += 1
-    print(count)
 
     tag = tosc.pullValueFromKey2(root, "name", "Craig", "tag")
-    print(tag)
 
-    def go1(n):
-        start = time.process_time()
-        for i in range(n):
-            x = tosc.ControlElements.PROPERTIES
-        end = time.process_time()
-        print(x, end - start)
+    x = tosc.ControlElements.PROPERTIES
+    x = element.setColor(1, 0, 0, 1)
 
-    go1(10000)
-
-    def go2(n):
-        start = time.process_time()
-        for i in range(n):
-            x = element.setColor(1, 0, 0, 1)
-        end = time.process_time()
-        print(x, end - start)
-
-    print(element.getID())
-    go2(10000)

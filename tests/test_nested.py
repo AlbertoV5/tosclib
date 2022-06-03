@@ -1,13 +1,20 @@
 from tosclib import tosc
 from tosclib.tosc import OSC, ControlType, Partial, Trigger, Value
-from tosclib.tosc import Control
-import sys
-import xml.etree.ElementTree as ET
-import time
+import pstats
+import cProfile
 
-
+def profile(func):
+    def wrapper(*args, **kwargs):
+        with cProfile.Profile() as pr:
+            for i in range(1):
+                func(*args, **kwargs)
+            stats = pstats.Stats(pr)
+            stats.sort_stats(pstats.SortKey.TIME)
+            stats.dump_stats(filename="tests/test_nested.prof")
+    return wrapper
+    
+@profile
 def test_nested():
-
     root = tosc.createTemplate()
     parent = tosc.ElementTOSC(root[0])
 
@@ -24,18 +31,18 @@ def test_nested():
     lim = 8
     for i in range(lim):
         button = tosc.ElementTOSC(group.createChild(ControlType.BUTTON))
-        assert button.setName(f"button{i}")
-        assert button.setFrame(i * 100, 0, 100, 50)
-        assert button.setColor(1 - i / lim, 0, lim, 1)
-        assert button.createValue(Value(key="x"))
-        assert button.createOSC(msg)
+        assert button.setName(f"button{i}") is not None
+        assert button.setFrame(i * 100, 0, 100, 50) is not None
+        assert button.setColor(1 - i / lim, 0, lim, 1) is not None
+        assert button.createValue(Value(key="x")) is not None
+        assert button.createOSC(msg) is not None
         assert button.isControlType(ControlType.BUTTON)
 
     for i in range(lim):
-        assert group.findChildByName(f"button{i}")
+        assert group.findChildByName(f"button{i}") is not None
 
     buttonBad = group.createChild(ControlType.BUTTON)
-    ET.SubElement(buttonBad, "name").text = "buttonBad"
+    buttonBad.append(tosc.testFromString("<name>buttonBad</name>"))
     assert group.findChildByName("buttonBad") is None
 
     buttonBetter = tosc.ElementTOSC(buttonBad)
@@ -61,3 +68,6 @@ function init()
 end
 """
         )
+    
+
+        

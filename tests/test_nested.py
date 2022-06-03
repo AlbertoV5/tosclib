@@ -39,12 +39,12 @@ def test_nested():
     assert group.findChildByName("buttonBad") is None
 
     buttonBetter = tosc.ElementTOSC(buttonBad)
-    assert button.copyProperties(buttonBetter, False)
-    assert button.copyValues(buttonBetter, False)
-    assert button.copyMessages(buttonBetter, False)
+    assert tosc.copyProperties(button, buttonBetter)
+    assert tosc.copyValues(button, buttonBetter)
+    assert tosc.copyMessages(button, buttonBetter)
 
     group2 = tosc.ElementTOSC(parent.createChild(ControlType.GROUP))
-    assert group.copyChildren(group2, False)
+    assert tosc.copyChildren(group, group2)
     assert group2.setControlType(ControlType.GRID)
 
     for child in group.children:

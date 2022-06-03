@@ -31,7 +31,7 @@ def test_copiers():
     assert node2.setColor(1, 0, 0, 1)
 
     propList = [p.tag for p in node2.properties]
-    assert node2.copyProperties(node, True, "frame", "color")
+    assert tosc.moveProperties(node2, node, "frame", "color")
     assert node.getProperty("frame")
     assert node.getProperty("color")
     propListCopied = [p.tag for p in node.properties]
@@ -40,7 +40,7 @@ def test_copiers():
     # VALUES
 
     assert node.createValue(tosc.Value())
-    assert node.copyValues(node2, True, "touch")
+    assert tosc.moveValues(node, node2, "touch")
     assert node2.getValue("touch")
     assert node2.setValue(tosc.Value("touch", "1"))
     assert node2.getValueParam("touch", "locked").text == "1"
@@ -50,11 +50,11 @@ def test_copiers():
     assert node.createMIDI()
     assert node.createLOCAL()
 
-    assert node.copyMessages(node2, True, ControlElements.OSC)
+    assert tosc.moveMessages(node, node2, ControlElements.OSC)
     with pytest.raises(ValueError):
-        assert node.copyMessages(node2, False, ControlElements.OSC)
+        assert tosc.copyMessages(node, node2, ControlElements.OSC)
 
-    assert node.copyMessages(node2, False, ControlElements.MIDI)
+    assert tosc.copyMessages(node, node2, ControlElements.MIDI)
     assert node.removeMIDI()
     assert node.removeLOCAL()
     assert node2.removeOSC()
@@ -67,9 +67,9 @@ def test_copiers():
             child.setName(var.lower())
             controlsList.append(var.lower())
 
-    assert node.copyChildren(
+    assert tosc.copyChildren(
+        node,
         node2,
-        False,
         ControlType.BOX,
         ControlType.BUTTON,
         ControlType.ENCODER,
@@ -77,7 +77,7 @@ def test_copiers():
     )
 
     with pytest.raises(ValueError):
-        assert node2.copyChildren(node2, False, ControlType.FADER)
+        assert tosc.copyChildren(node2, node2, ControlType.FADER)
 
     childList = []
     for n1 in node.children:

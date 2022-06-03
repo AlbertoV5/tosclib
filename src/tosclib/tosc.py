@@ -81,10 +81,22 @@ class Property:
         if not self.value and not self.params:
             raise ValueError(f"{self} is missing both value and params.")
 
+    def applyTo(self, e: ET.Element) -> bool:
+        """Create SubElement Property in passed Element"""
+        property = ET.SubElement(e, "property", attrib={"type": self.type})
+        ET.SubElement(property, "key").text = self.key
+        value = ET.SubElement(property, "value")
+        if self.value:
+            value.text = self.value
+            return True
+        for paramKey in self.params:
+            ET.SubElement(value, paramKey).text = self.params[paramKey]
+        return True
+
     def create(self) -> ET.Element:
         property = ET.Element("property", attrib={"type": self.type})
-        ET.SubElement(property, self.__class__.Elements.KEY).text = self.key
-        value = ET.SubElement(property, self.__class__.Elements.VALUE)
+        ET.SubElement(property, "key").text = self.key
+        value = ET.SubElement(property, "value")
         if self.value:
             value.text = self.value
             return property
@@ -423,12 +435,12 @@ class Control:
     https://hexler.net/touchosc/manual/script-enumerations#controltype"""
 
     @dataclass
-    class BOX(_PropertiesControl, _PropertiesBox):
+    class Box(_PropertiesControl, _PropertiesBox):
         orientation: int = 0
         """0,1,2,3 = North, East, South, West"""
 
     @dataclass
-    class BUTTON(_PropertiesControl, _PropertiesBox):
+    class Button(_PropertiesControl, _PropertiesBox):
         buttonType: Final[int] = 0
         """0,1,2 Momentary, Toggle_Release, Toggle_Press"""
         press: Final[bool] = True
@@ -436,17 +448,17 @@ class Control:
         valuePosition: Final[bool] = False
 
     @dataclass
-    class LABEL(_PropertiesControl, _PropertiesText):
+    class Label(_PropertiesControl, _PropertiesText):
         textLength: Final[int] = 0
         """0 is infinite length"""
         textClip: Final[bool] = True
 
     @dataclass
-    class TEXT(_PropertiesControl, _PropertiesText):
+    class Text(_PropertiesControl, _PropertiesText):
         pass
 
     @dataclass
-    class FADER(
+    class Fader(
         _PropertiesControl, _PropertiesResponse, _PropertiesGrid, _PropertiesCursor
     ):
         bar: Final[bool] = True
@@ -454,7 +466,7 @@ class Control:
         """Cursor display 0, 1, 2 = always, active, inactive"""
 
     @dataclass
-    class XY(
+    class Xy(
         _PropertiesControl,
         _PropertiesResponse,
         _PropertiesCursor,
@@ -463,7 +475,7 @@ class Control:
         pass
 
     @dataclass
-    class RADIAL(
+    class Radial(
         _PropertiesControl,
         _PropertiesResponse,
         _PropertiesGrid,
@@ -475,12 +487,12 @@ class Control:
         centered: Final[bool] = False
 
     @dataclass
-    class ENCODER(_PropertiesControl, _PropertiesResponse, _PropertiesGrid):
+    class Encoder(_PropertiesControl, _PropertiesResponse, _PropertiesGrid):
         outlineStyle: int = 0
         """0,1,2, = Full, Corner, Edges"""
 
     @dataclass
-    class RADAR(
+    class Radar(
         _PropertiesControl,
         _PropertiesCursor,
         _PropertiesLine,
@@ -489,7 +501,7 @@ class Control:
         pass
 
     @dataclass
-    class RADIO(_PropertiesControl):
+    class Radio(_PropertiesControl):
         steps: Final[int] = 5
         """Amount of radio steps"""
         radioType: Final[int] = 0
@@ -498,11 +510,11 @@ class Control:
         """0,1,2,3 = North, East, South, West"""
 
     @dataclass
-    class GROUP(_PropertiesControl, _PropertiesGroup):
+    class Group(_PropertiesControl, _PropertiesGroup):
         pass
 
     @dataclass
-    class PAGER(_PropertiesControl):
+    class Pager(_PropertiesControl):
         grabFocus: bool = False
         """Depends on the control, groups are false"""
         outlineStyle: int = 0
@@ -518,7 +530,7 @@ class Control:
         """font size any int"""
 
     @dataclass
-    class PAGE(_PropertiesControl):
+    class Page(_PropertiesControl):
         tabColorOff: Final[list] = field(default_factory=lambda: [0.25, 0.25, 0.25, 1])
         tabColorOn: Final[list] = field(default_factory=lambda: [0, 0, 0, 0])
         tabLabel: Final[str] = "1"
@@ -526,7 +538,7 @@ class Control:
         textColorOn: Final[list] = field(default_factory=lambda: [1, 1, 1, 1])
 
     @dataclass
-    class GRID(_PropertiesControl):
+    class Grid(_PropertiesControl):
         grabFocus: bool = False
         """Depends on the control, groups are false"""
         exclusive: bool = False
@@ -545,7 +557,7 @@ class Control:
 
     @classmethod
     def hasChildren(cls):
-        return (cls.GRID, cls.GROUP, cls.PAGER)
+        return (cls.Grid, cls.Group, cls.Pager)
 
     class _PropertyParser:
         """Find all defined properties in the Node"""
@@ -651,7 +663,7 @@ class ElementTOSC:
         f = lambda v: e.find(v) if e.find(v) else ET.SubElement(e, v)
         self.properties = f(ControlElements.PROPERTIES)
         self.values = f(ControlElements.VALUES)
-        self.messages = f(ControlElements.MESSAGES)
+        self.children = f(ControlElements.MESSAGES)
         self.children = f(ControlElements.CHILDREN)
 
     @classmethod
@@ -684,7 +696,7 @@ class ElementTOSC:
     def createProperty(self, property: Property) -> bool:
         if findKey(self.properties, property.key):
             raise ValueError(f"{property.key} already exists.")
-        self.properties.append(property.create())
+        property.applyTo(self.properties)
         return True
 
     def getValue(self, key: str) -> ET.Element:
@@ -713,7 +725,7 @@ class ElementTOSC:
         return True
 
     def _createMessage(self, name, message) -> ET.Element:
-        msg = ET.SubElement(self.messages, name)
+        msg = ET.SubElement(self.children, name)
         for key in vars(message):
             element = ET.SubElement(
                 msg, key
@@ -743,13 +755,13 @@ class ElementTOSC:
         return self._createMessage(ControlElements.LOCAL, message)
 
     def removeOSC(self) -> bool:
-        return [e.remove for e in self.messages.findall(ControlElements.OSC)]
+        return [e.remove for e in self.children.findall(ControlElements.OSC)]
 
     def removeMIDI(self) -> bool:
-        return [e.remove for e in self.messages.findall(ControlElements.MIDI)]
+        return [e.remove for e in self.children.findall(ControlElements.MIDI)]
 
     def removeLOCAL(self) -> bool:
-        return [e.remove for e in self.messages.findall(ControlElements.LOCAL)]
+        return [e.remove for e in self.children.findall(ControlElements.LOCAL)]
 
     def findChildByName(self, name: str) -> ET.Element:
         for child in self.children:
@@ -769,80 +781,13 @@ class ElementTOSC:
             attrib={"ID": str(uuid.uuid4()), "type": type},
         )
 
-    def addBox(self):
-        return self.__class__(self.createChild(ControlType.BOX))
-
-    def addGroup(self, *args: ControlType):
-        """Pass Control Types as arguments to append children to the group.
-        Then the result will be a tuple (group, child, child, ...)"""
-        e = self.__class__(self.createChild(ControlType.GROUP))
-        if not args:
-            return e
-        r = [e]
-        for arg in args:
-            r.append(self.__class__(e.createChild(arg)))
-        return tuple(r)
-
-    def addButton(self):
-        return self.__class__(self.createChild(ControlType.BUTTON))
-
-    def addLabel(self):
-        return self.__class__(self.createChild(ControlType.LABEL))
-
     def getID(self) -> str:
         return str(self.node.attrib["ID"])
 
     def isControlType(self, control: str):
         return True if str(self.node.attrib["type"]) == control else False
 
-    def copyProperties(self, target: "ElementTOSC", move: bool, *args):
-        """Args can be any number of property keys"""
-        if not args:
-            return _copyAllElements(self.properties, target.properties, move)
-        for arg in args:
-            _copyElements(
-                self.properties,
-                target.properties,
-                move,
-                f"*[{Property.Elements.KEY}='{arg}']",
-            )
-        return True
-
-    def copyValues(self, target: "ElementTOSC", move: bool, *args):
-        """Args can be any number of value keys"""
-        if not args:
-            return _copyAllElements(self.values, target.values, move)
-        for arg in args:
-            _copyElements(
-                self.values,
-                target.values,
-                move,
-                f"*[{Value.Elements.KEY}='{arg}']",
-            )
-        return True
-
-    def copyMessages(self, target: "ElementTOSC", move: bool, *args):
-        """Args can be ControlElements.OSC, MIDI, LOCAL, GAMEPAD"""
-        if not args:
-            return _copyAllElements(self.messages, target.messages, move)
-        for arg in args:
-            _copyElements(self.messages, target.messages, move, f"./{arg}")
-        return True
-
-    def copyChildren(self, target: "ElementTOSC", move: bool, *args):
-        """Args can be ControlType.BOX, BUTTON, etc."""
-        if not args:
-            return _copyAllElements(self.children, target.children, move)
-        for arg in args:
-            _copyElements(
-                self.children,
-                target.children,
-                move,
-                f"./{ControlElements.NODE}[@type='{arg}']",
-            )
-        return True
-
-    def fitChildren(self, rows: int, columns: int, padding: bool = False) -> bool:
+    def arrangeChildren(self, rows: int, columns: int, padding: bool = False) -> bool:
         """Get n number of children and arrange them in rows and columns"""
         number = len(self.children)
         number = rows * columns
@@ -870,9 +815,6 @@ class ElementTOSC:
         if element := self.getProperty(key):
             self.properties.remove(element)
         return self.createProperty(Property(type, key, value, params))
-        # if not findKey(self.properties, key):
-        #     return self.createProperty(Property(type, key, value=value, params=params))
-        # return self.setProperty(key, value=value, params=params)
 
     def setControlType(self, value: str):
         """See ControlType Element"""
@@ -941,9 +883,16 @@ class ElementTOSC:
             raise ValueError(f"{name} doesn't exist")
 
 
+""" 
+
+GENERAL FUNCTIONS 
+
+"""
+
+
 def findKey(elements: ET.Element, key: str) -> ET.Element:
     """Iterate through element with children and return child whose key matches"""
-    # return elements.find(f"./key/[.='{key}']")
+    # return elements.find(f"*[{Property.Elements.KEY}='{key}']")
     for e in elements:
         if re.fullmatch(e.find("key").text, key):
             return e
@@ -987,6 +936,13 @@ def getTextValueFromKey(properties: ET.Element, key: str) -> str:
     for property in properties:
         if re.fullmatch(property.find("key").text, key):
             return property.find("value").text
+
+
+"""
+
+GENERAL PARSERS
+
+"""
 
 
 def pullValueFromKey(inputFile: str, key: str, value: str, targetKey: str) -> str:
@@ -1039,23 +995,184 @@ def pullValueFromKey2(root: ET.Element, key: str, value: str, targetKey: str) ->
             return getTextValueFromKey(e.find("properties"), targetKey)
 
 
-def _copyAllElements(source: ET.Element, target: ET.Element, move: bool) -> bool:
-    [target.append(deepcopy(e)) for e in source]
-    if move:
-        source.clear()
-    return True
+"""
+
+FUNCTIONS TO COPY FROM ONE ELEMENTTOSC TO ANOTHER
+
+"""
 
 
 def _copyElements(
     source: ET.Element,
     target: ET.Element,
-    move: bool,
-    path: str,
+    cut: bool,
+    xPath: str,
 ) -> bool:
-    elements = source.findall(path)
+    elements = source.findall(xPath)
     if not elements:
-        raise ValueError(f"Failed to find elements with {path}")
+        raise ValueError(f"Failed to find elements with {xPath}")
     [target.append(deepcopy(e)) for e in elements]
-    if move:
+    if cut:
         [source.remove(e) for e in elements]
     return True
+
+
+def copyProperties(source: ElementTOSC, target: ElementTOSC, *args: str):
+    """Args can be any number of property keys"""
+    if not args:
+        [target.properties.append(deepcopy(e)) for e in source.properties]
+        return True
+    for arg in args:
+        if elements := source.properties.findall(f"*[{Property.Elements.KEY}='{arg}']"):
+            [target.properties.append(deepcopy(e)) for e in elements]
+        else:
+            raise ValueError(f"Failed to find all elements with {args}")
+    return True
+
+
+def moveProperties(source: ElementTOSC, target: ElementTOSC, *args):
+    elements = []
+    if not args:
+        elements = source.properties
+    for arg in args:
+        if e := source.properties.findall(f"*[{Property.Elements.KEY}='{arg}']"):
+            elements += e
+        else:
+            raise ValueError(f"Failed to find all elements with {args}")
+
+    [target.properties.append(deepcopy(e)) for e in elements]
+    [source.properties.remove(e) for e in elements]
+    return True
+
+
+def copyValues(source: ElementTOSC, target: ElementTOSC, *args: str):
+    """Args can be any number of value keys"""
+    if not args:
+        [target.values.append(deepcopy(e)) for e in source.values]
+        return True
+    for arg in args:
+        if elements := source.values.findall(f"*[{Property.Elements.KEY}='{arg}']"):
+            [target.values.append(deepcopy(e)) for e in elements]
+        else:
+            raise ValueError(f"Failed to find all elements with {args}")
+    return True
+
+
+def moveValues(source: ElementTOSC, target: ElementTOSC, *args:str):
+    elements = []
+    if not args:
+        elements = source.values
+    for arg in args:
+        if e := source.values.findall(f"*[{Property.Elements.KEY}='{arg}']"):
+            elements += e
+        else:
+            raise ValueError(f"Failed to find all elements with {args}")
+
+    [target.values.append(deepcopy(e)) for e in elements]
+    [source.values.remove(e) for e in elements]
+    return True
+
+
+def copyMessages(source: ElementTOSC, target: ElementTOSC, *args: str):
+    """Args can be ControlElements.OSC, MIDI, LOCAL, GAMEPAD"""
+    if not args:
+        [target.children.append(deepcopy(e)) for e in source.children]
+        return True
+    for arg in args:
+        if elements := source.children.findall(f"./{arg}"):
+            [target.children.append(deepcopy(e)) for e in elements]
+        else:
+            raise ValueError(f"Failed to find all elements with {args}")
+    return True
+
+def moveMessages(source: ElementTOSC, target: ElementTOSC, *args:str):
+    elements = []
+    if not args:
+        elements = source.children
+    for arg in args:
+        if e := source.children.findall(f"./{arg}"):
+            elements += e
+        else:
+            raise ValueError(f"Failed to find all elements with {args}")
+
+    [target.children.append(deepcopy(e)) for e in elements]
+    [source.children.remove(e) for e in elements]
+    return True
+
+
+def copyChildren(source: ElementTOSC, target: ElementTOSC, *args:str):
+    """Args can be ControlType.BOX, BUTTON, etc."""
+    if not args:
+        [target.children.append(deepcopy(e)) for e in source.children]
+        return True
+    for arg in args:
+        if elements := source.children.findall(f"./{ControlElements.NODE}[@type='{arg}']"):
+            [target.children.append(deepcopy(e)) for e in elements]
+        else:
+            raise ValueError(f"Failed to find all elements with {args}")
+    return True
+
+
+def moveChildren(source: ElementTOSC, target: ElementTOSC, *args:str):
+    elements = []
+    if not args:
+        elements = source.children
+    for arg in args:
+        if e := source.children.findall(f"./{ControlElements.NODE}[@type='{arg}']"):
+            elements += e
+        else:
+            raise ValueError(f"Failed to find all elements with {args}")
+
+    [target.children.append(deepcopy(e)) for e in elements]
+    [source.children.remove(e) for e in elements]
+    return True
+
+"""
+
+FUNCTIONS TO ADD CONTROL ELEMENTS TO A ELEMENTTOSC
+
+Creating ElementTOSC directly to a parent.
+
+"""
+
+
+def addBox(e: ElementTOSC):
+    return ElementTOSC(
+        ET.SubElement(
+            e.children,
+            ControlElements.NODE,
+            attrib={"ID": str(uuid.uuid4()), "type": ControlType.BOX},
+        )
+    )
+
+
+def addGroup(e: ElementTOSC, *args: ControlType):
+    """Pass Control Types as arguments to append children to the group.
+    Then the result will be a tuple (group, child, child, ...)"""
+    group = ElementTOSC(
+        ET.SubElement(
+            e.children,
+            ControlElements.NODE,
+            attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
+        )
+    )
+    if not args:
+        return group
+    return [group] + [
+        ElementTOSC(
+            ET.SubElement(
+                group.children,
+                ControlElements.NODE,
+                attrib={"ID": str(uuid.uuid4()), "type": arg},
+            )
+        )
+        for arg in args
+    ]
+
+
+def addButton(e: ElementTOSC):
+    return ElementTOSC(e.createChild(ControlType.BUTTON))
+
+
+def addLabel(e: ElementTOSC):
+    return ElementTOSC(e.createChild(ControlType.LABEL))

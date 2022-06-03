@@ -882,11 +882,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSet</span><span class="p">(</span><span class="s2">"values"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSet</span><span class="p">(</span><span class="s2">"messages"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSet</span><span class="p">(</span><span class="s2">"children"</span><span class="p">)</span></div>
-        <span class="c1"># f = lambda v: e.find(v) if e.find(v) else ET.SubElement(e, v)</span>
-        <span class="c1"># self.properties = f(ControlElements.PROPERTIES)</span>
-        <span class="c1"># self.values = f(ControlElements.VALUES)</span>
-        <span class="c1"># self.messages = f(ControlElements.MESSAGES)</span>
-        <span class="c1"># self.children = f(ControlElements.CHILDREN)</span>
 
     <span class="k">def</span> <span class="nf">getSet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
@@ -914,7 +909,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">findKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> doesn't exist."</span><span class="p">)</span>
         <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyValue</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">val</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">value</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">for</span> <span class="n">paramKey</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>

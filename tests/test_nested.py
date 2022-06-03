@@ -1,5 +1,5 @@
-from tosclib import tosc
-from tosclib.tosc import OSC, ControlType, Partial, Trigger, Value
+import tosclib as tosc
+from tosclib import OSC, ControlType, Partial, Trigger, Value
 import pstats
 import cProfile
 

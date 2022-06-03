@@ -25,9 +25,12 @@ Installation
 Changelog
 ------------------
 
+- 0.2.5
+   - Improved code in general and added a lot of general use functions.
+   - Tested with possible lxml support.
+
 - 0.2.0
    - Added multiple enumerations that mirror Hexlers'
-   - Creating
 
 - 0.1.10
    - Tested on python 3.8, 3.9, 3.10.

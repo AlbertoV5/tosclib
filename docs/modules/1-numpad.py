@@ -34,14 +34,6 @@ def createNumpad():
     labelT.build("name", "textSize", "background", "frame")
     buttonT.build("name", "frame", "color", "script")
 
-    deleteme = ET.canonicalize(ET.tostring(labelT.props["frame"].create()))
-    deleteme = ET.XML(deleteme)
-    print(deleteme)
-    # print(labelT.frame)
-    # print(labelT.props["frame"])
-    # print(labelT.props["frame"].create())
-    
-
     """Create the actual <node> Elements. In this case using a specific sequence"""
     # fmt: off
     sequence = (7,8,9,
@@ -51,12 +43,12 @@ def createNumpad():
     for i in sequence:
         grp, btn, lbl = tosc.addGroup(grpNums, ControlType.BUTTON, ControlType.LABEL)
         grp.setName(f"{int(i)}")
-        buttonT.applyTo(btn)
-        labelT.applyTo(lbl)
+        [btn.createProperty(prop) for prop in buttonT.props]
+        [lbl.createProperty(prop) for prop in labelT.props]
         lbl.createValue(Value(key="text", default=f"{int(i)}"))
 
     """Automatically position all children by row and column, 'zero-padding' optional"""
-    grpNums.arrangeChildren(3, 3, True)
+    tosc.arrangeChildren(grpNums, 3, 3, True)
 
     """Save it as a template"""
     tosc.write(root, "docs/modules/numpad.tosc")

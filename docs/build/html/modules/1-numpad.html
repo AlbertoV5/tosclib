@@ -226,6 +226,7 @@
 <span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
 <span class="kn">from</span> <span class="nn">tosclib</span> <span class="kn">import</span> <span class="n">Control</span><span class="p">,</span> <span class="n">Value</span>
 <span class="kn">from</span> <span class="nn">tosclib.tosc</span> <span class="kn">import</span> <span class="n">ControlType</span><span class="p">,</span> <span class="n">ElementTOSC</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
 
 <span class="sd">"""WORK IN PROGRESS June-2-2022"""</span>
 <span class="k">def</span> <span class="nf">createNumpad</span><span class="p">():</span>
@@ -246,15 +247,23 @@
     <span class="n">frame</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">]</span>
     <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
     
-    <span class="n">labelTemplate</span> <span class="o">=</span> <span class="n">Control</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+    <span class="n">labelT</span> <span class="o">=</span> <span class="n">Control</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">"label"</span><span class="p">,</span> <span class="n">textSize</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">frame</span>
     <span class="p">)</span>
-    <span class="n">buttonTemplate</span> <span class="o">=</span> <span class="n">Control</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"button"</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+    <span class="n">buttonT</span> <span class="o">=</span> <span class="n">Control</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"button"</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/modules/button.lua"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-        <span class="n">buttonTemplate</span><span class="o">.</span><span class="n">script</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">buttonT</span><span class="o">.</span><span class="n">script</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     
-    <span class="n">labelTemplate</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"textSize"</span><span class="p">,</span> <span class="s2">"background"</span><span class="p">,</span> <span class="s2">"frame"</span><span class="p">)</span>
-    <span class="n">buttonTemplate</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">,</span> <span class="s2">"script"</span><span class="p">)</span>
+    <span class="n">labelT</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"textSize"</span><span class="p">,</span> <span class="s2">"background"</span><span class="p">,</span> <span class="s2">"frame"</span><span class="p">)</span>
+    <span class="n">buttonT</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">,</span> <span class="s2">"script"</span><span class="p">)</span>
+
+    <span class="n">deleteme</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">canonicalize</span><span class="p">(</span><span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">labelT</span><span class="o">.</span><span class="n">props</span><span class="p">[</span><span class="s2">"frame"</span><span class="p">]</span><span class="o">.</span><span class="n">create</span><span class="p">()))</span>
+    <span class="n">deleteme</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">XML</span><span class="p">(</span><span class="n">deleteme</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">deleteme</span><span class="p">)</span>
+    <span class="c1"># print(labelT.frame)</span>
+    <span class="c1"># print(labelT.props["frame"])</span>
+    <span class="c1"># print(labelT.props["frame"].create())</span>
+    
 
     <span class="sd">"""Create the actual &lt;node&gt; Elements. In this case using a specific sequence"""</span>
     <span class="c1"># fmt: off</span>
@@ -265,8 +274,8 @@
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sequence</span><span class="p">:</span>
         <span class="n">grp</span><span class="p">,</span> <span class="n">btn</span><span class="p">,</span> <span class="n">lbl</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">addGroup</span><span class="p">(</span><span class="n">grpNums</span><span class="p">,</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">BUTTON</span><span class="p">,</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
         <span class="n">grp</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="n">buttonTemplate</span><span class="o">.</span><span class="n">applyTo</span><span class="p">(</span><span class="n">btn</span><span class="p">)</span>
-        <span class="n">labelTemplate</span><span class="o">.</span><span class="n">applyTo</span><span class="p">(</span><span class="n">lbl</span><span class="p">)</span>
+        <span class="n">buttonT</span><span class="o">.</span><span class="n">applyTo</span><span class="p">(</span><span class="n">btn</span><span class="p">)</span>
+        <span class="n">labelT</span><span class="o">.</span><span class="n">applyTo</span><span class="p">(</span><span class="n">lbl</span><span class="p">)</span>
         <span class="n">lbl</span><span class="o">.</span><span class="n">createValue</span><span class="p">(</span><span class="n">Value</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
 
     <span class="sd">"""Automatically position all children by row and column, 'zero-padding' optional"""</span>

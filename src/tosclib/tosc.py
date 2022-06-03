@@ -664,11 +664,6 @@ class ElementTOSC:
         self.values = self.getSet("values")
         self.messages = self.getSet("messages")
         self.children = self.getSet("children")
-        # f = lambda v: e.find(v) if e.find(v) else ET.SubElement(e, v)
-        # self.properties = f(ControlElements.PROPERTIES)
-        # self.values = f(ControlElements.VALUES)
-        # self.messages = f(ControlElements.MESSAGES)
-        # self.children = f(ControlElements.CHILDREN)
 
     def getSet(self, target):
         s = self.node.find(target)
@@ -696,7 +691,7 @@ class ElementTOSC:
         if not findKey(self.properties, key):
             raise ValueError(f"{key} doesn't exist.")
         val = self.getPropertyValue(key)
-        if value:
+        if value is not None:
             val.text = value
             return True
         for paramKey in params:

@@ -3,6 +3,7 @@ import pstats
 import tosclib as tosc
 from tosclib import Control, Value
 from tosclib.tosc import ControlType, ElementTOSC
+import xml.etree.ElementTree as ET
 
 """WORK IN PROGRESS June-2-2022"""
 def createNumpad():
@@ -23,15 +24,23 @@ def createNumpad():
     frame = [0, 0, w, h]
     color = [0.25, 0.25, 0.25, 1.0]
     
-    labelTemplate = Control.Label(
+    labelT = Control.Label(
         name="label", textSize=48, background=False, frame=frame
     )
-    buttonTemplate = Control.Button(name="button", frame=frame, color=color)
+    buttonT = Control.Button(name="button", frame=frame, color=color)
     with open("docs/modules/button.lua", "r") as file:
-        buttonTemplate.script = file.read()
+        buttonT.script = file.read()
     
-    labelTemplate.build("name", "textSize", "background", "frame")
-    buttonTemplate.build("name", "frame", "color", "script")
+    labelT.build("name", "textSize", "background", "frame")
+    buttonT.build("name", "frame", "color", "script")
+
+    deleteme = ET.canonicalize(ET.tostring(labelT.props["frame"].create()))
+    deleteme = ET.XML(deleteme)
+    print(deleteme)
+    # print(labelT.frame)
+    # print(labelT.props["frame"])
+    # print(labelT.props["frame"].create())
+    
 
     """Create the actual <node> Elements. In this case using a specific sequence"""
     # fmt: off
@@ -42,8 +51,8 @@ def createNumpad():
     for i in sequence:
         grp, btn, lbl = tosc.addGroup(grpNums, ControlType.BUTTON, ControlType.LABEL)
         grp.setName(f"{int(i)}")
-        buttonTemplate.applyTo(btn)
-        labelTemplate.applyTo(lbl)
+        buttonT.applyTo(btn)
+        labelT.applyTo(lbl)
         lbl.createValue(Value(key="text", default=f"{int(i)}"))
 
     """Automatically position all children by row and column, 'zero-padding' optional"""

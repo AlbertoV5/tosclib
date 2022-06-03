@@ -3,4 +3,3 @@ Pillow==9.1.1
 pytest==7.1.2
 setuptools==61.2.0
 pytest-cov==3.0.0
-aiohttp==3.8.1

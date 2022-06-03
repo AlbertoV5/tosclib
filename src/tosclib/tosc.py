@@ -1,15 +1,15 @@
 """
 Simplify navigating, editing and generating .tosc files.
 """
-from collections import namedtuple
 from copy import deepcopy
 import sys
 import xml.etree.ElementTree as ET
 import re
 import zlib
 import uuid
-from dataclasses import dataclass, field, fields
+from dataclasses import dataclass, field
 from typing import List, Final, NamedTuple
+import numpy as np
 
 
 class ControlElements(NamedTuple):
@@ -265,7 +265,7 @@ class _PropertiesControl:
     """All controls have these properties
     https://hexler.net/touchosc/manual/script-properties-and-values"""
 
-    name: Final[str] = "name"
+    name: Final[str] = " "
     """Any string"""
     tag: Final[str] = "tag"
     """Any string"""
@@ -296,7 +296,12 @@ class _PropertiesControl:
     def build(self, *args) -> bool:
         """Use attributes to create Property Elements.
         Pass args to chose which Properties to build.
-        Any Properties build will be stored in the props attribute."""
+        Any Properties built will be stored in the props attribute."""
+        if not args:
+            raise ValueError(f"No args found. Pass 'all' for building all.")
+        elif "all" in args:
+            args = [key for key in vars(self) if key != "props"]
+
         for key in args:
             value = getattr(self, key)
             if type(value) is list and key == "frame":
@@ -336,7 +341,12 @@ class _PropertiesControl:
             self.props[key] = prop
         return True
 
-    def injectTo(self, e: "ElementTOSC") -> bool:
+    def applyTo(self, e: "ElementTOSC") -> bool:
+        """Append all props to <properties>"""
+        if not self.props:
+            raise ValueError(
+                f"{self.name} props are empty, try using build() with arguments"
+            )
         for key in self.props:
             e.createProperty(self.props[key])
         return True
@@ -411,9 +421,6 @@ class Control:
     """All the Node Types and their available properties
 
     https://hexler.net/touchosc/manual/script-enumerations#controltype"""
-
-    TYPE = "type"
-    ID = "ID"
 
     @dataclass
     class BOX(_PropertiesControl, _PropertiesBox):
@@ -651,15 +658,6 @@ class ElementTOSC:
     def fromFile(cls, file: str) -> "ElementTOSC":
         return cls(load(file)[0])
 
-    @classmethod
-    def fromGroup(cls) -> "ElementTOSC":
-        return cls(
-            ET.Element(
-                ControlElements.NODE,
-                attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
-            )
-        )
-
     def getProperty(self, key: str) -> ET.Element:
         return findKey(self.properties, key)
 
@@ -668,6 +666,9 @@ class ElementTOSC:
 
     def getPropertyParam(self, key: str, param: str) -> ET.Element:
         return findKey(self.properties, key).find("value").find(param)
+
+    def hasProperty(self, key: str) -> bool:
+        return True if findKey(self.properties, key) else False
 
     def setProperty(self, key: str, value: str = "", params: dict = {}) -> bool:
         if not findKey(self.properties, key):
@@ -772,6 +773,8 @@ class ElementTOSC:
         return self.__class__(self.createChild(ControlType.BOX))
 
     def addGroup(self, *args: ControlType):
+        """Pass Control Types as arguments to append children to the group.
+        Then the result will be a tuple (group, child, child, ...)"""
         e = self.__class__(self.createChild(ControlType.GROUP))
         if not args:
             return e
@@ -837,6 +840,27 @@ class ElementTOSC:
                 move,
                 f"./{ControlElements.NODE}[@type='{arg}']",
             )
+        return True
+
+    def fitChildren(self, rows: int, columns: int, padding: bool = False) -> bool:
+        """Get n number of children and arrange them in rows and columns"""
+        number = len(self.children)
+        number = rows * columns
+
+        fw = int(self.getPropertyParam("frame", "w").text)
+        fh = int(self.getPropertyParam("frame", "h").text)
+        w, h = fw / rows, fh / columns
+        N = np.asarray(range(0, number)).reshape(rows, columns)
+        X = np.asarray([(N[0][:columns] * w) for i in range(rows)]).reshape(1, number)
+        Y = np.repeat(N[0][:rows] * h, columns).reshape(1, number)
+        XYN = np.stack((X, Y, N.reshape(1, number)), axis=2)[0]
+
+        for x, y, n in XYN:
+            if padding and n >= len(self.children):
+                continue
+            e = ElementTOSC(self.children[int(n)])
+            e.setFrame(x, y, w, h)
+
         return True
 
     def _overrideProperty(

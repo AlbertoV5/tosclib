@@ -1,72 +1,55 @@
 import tosclib as tosc
-from tosclib import Control, Property, Value
-import re
-from tosclib.tosc import ControlType
+from tosclib import Control, Value
+from tosclib.tosc import ControlType, ElementTOSC
 
+"""WORK IN PROGRESS June-2-2022"""
+def createNumpad():
+    """Let's start by creating a group and set basic properties"""
+    root = tosc.createTemplate()
+    main = ElementTOSC(root[0])
+    fx, fy, fw, fh = 0, 0, 200, 300
+    main.setName("Numpad")
+    main.setFrame(fx, fy, fw, fh)
 
-def numpad():
+    """Second group to avoid having many elements in top layer"""
+    grpNums = main.addGroup()
+    main.copyProperties(grpNums, False, "frame", "name")
 
-    file = "docs/demos/files/Numpad_basic.tosc"
-    outputFile = "docs/demos/files/Numpad_modded.tosc"
-    root = tosc.load(file)
-    group = tosc.ElementTOSC(root[0])
-    group1 = tosc.ElementTOSC(group.findChildByName("group1"))
-    data = Control.parseProperties(group1.children, "name", "script")
+    """Let's build the templates for the controls inside the subgroups"""
+    n, r, c = 9, 3, 3
+    w, h = fw / r, fh / c
+    frame = [0, 0, w, h]
+    color = [0.25, 0.25, 0.25, 1.0]
+    
+    labelTemplate = Control.LABEL(
+        name="label", textSize=48, background=False, frame=frame
+    )
+    buttonTemplate = Control.BUTTON(name="button", frame=frame, color=color)
+    with open("docs/modules/button.lua", "r") as file:
+        buttonTemplate.script = file.read()
+    
+    labelTemplate.build("name", "textSize", "background", "frame")
+    buttonTemplate.build("name", "frame", "color", "script")
 
-    for i, d in enumerate(data):
-        if "num" in d["name"] and d["script"]:
+    """Create the actual <node> Elements. In this case using a specific sequence"""
+    # fmt: off
+    sequence = (7,8,9,
+                4,5,6,
+                1,2,3,)
+    # fmt: on
+    for i in sequence:
+        grp, btn, lbl = grpNums.addGroup(ControlType.BUTTON, ControlType.LABEL)
+        grp.setName(f"{int(i)}")
+        buttonTemplate.applyTo(btn)
+        labelTemplate.applyTo(lbl)
+        lbl.createValue(Value(key="text", default=f"{int(i)}"))
 
-            if re.search(r"\d", d["name"]):
-                pass
-                # print("---",d["name"],"---")
-                # print(d["script"])
+    """Automatically position all children by row and column, 'zero-padding' optional"""
+    grpNums.fitChildren(3, 3, True)
 
-    group2 = tosc.ElementTOSC(group.createChild(ControlType.GROUP))
-    group2.setName("group2mod")
-    group1.copyChildren(group2, ControlType.BUTTON)
-
-    for child in group1.children:
-        child = tosc.ElementTOSC(child)
-        name = child.getPropertyValue("name").text
-        if re.search(r"\d", name) and (child.isControlType(ControlType.BUTTON)):
-            # print(name)
-            indexName = name.replace("num", "")
-
-            subGroup = tosc.ElementTOSC(group2.createChild(ControlType.GROUP))
-            subGroup.setName(indexName)
-            f = [e.text for e in child.getPropertyValue("frame")]
-            print(f)
-            subGroup.setFrame(f[0], f[1], f[2], f[3])
-            subGroup.setColor(0.25, 0.25, 0.25, 1)
-
-            subButton = tosc.ElementTOSC(subGroup.createChild(ControlType.BUTTON))
-            subButton.setFrame(0, 0, f[2], f[3])
-            subButton.setName(f"button{indexName}")
-            subButton.setColor(0.25, 0.25, 0.25, 1)
-
-            subLabel = tosc.ElementTOSC(subGroup.createChild(ControlType.LABEL))
-            subLabel.setName(f"label{indexName}")
-            subLabel.setFrame(0, 0, f[2], f[3])
-            subLabel.setColor(1, 1, 1, 1)
-            subLabel.setBackground(False)
-            subLabel.createValue(Value(key="text", default=indexName))
-
-            subButton.setScript(
-                f"""
-function onValueChanged(key)
-    if (key == "x" and self.values.x == 1) then
-        self.parent.parent.children.numvalue:notify(self.parent.name)
-    end
-end
-    """
-            )
-        elif not re.search(r"\d", name) and not child.isControlType(ControlType.LABEL):
-            # print(child.getPropertyValue("name").text)
-            group2.children.append(child.node)
-            # child.showProperty("script")
-
-    tosc.write(root, outputFile)
+    """Save it as a template"""
+    tosc.write(root, "docs/modules/numpad.tosc")
 
 
 if __name__ == "__main__":
-    numpad()
+    createNumpad()

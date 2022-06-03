@@ -219,15 +219,15 @@
 <span></span><span class="sd">"""</span>
 <span class="sd">Simplify navigating, editing and generating .tosc files.</span>
 <span class="sd">"""</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">zlib</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">fields</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Final</span><span class="p">,</span> <span class="n">NamedTuple</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
 <div class="viewcode-block" id="ControlElements"><a class="viewcode-back" href="../../api/elemTuples.html#tosclib.tosc.ControlElements">[docs]</a><span class="k">class</span> <span class="nc">ControlElements</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
@@ -483,16 +483,16 @@
     <span class="sd">"""All controls have these properties</span>
 <span class="sd">    https://hexler.net/touchosc/manual/script-properties-and-values"""</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"name"</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">" "</span>
     <span class="sd">"""Any string"""</span>
     <span class="n">tag</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"tag"</span>
     <span class="sd">"""Any string"""</span>
     <span class="n">script</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">" "</span>
     <span class="sd">"""Any string"""</span>
-    <span class="n">frame</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"h"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
-    <span class="sd">"""x,y,w,h float dictionary"""</span>
-    <span class="n">color</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">"r"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
-    <span class="sd">"""r,g,b,a float dictionary"""</span>
+    <span class="n">frame</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+    <span class="sd">"""x,y,w,h float list"""</span>
+    <span class="n">color</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+    <span class="sd">"""r,g,b,a float list"""</span>
     <span class="n">locked</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">visible</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">interactive</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
@@ -508,32 +508,65 @@
     <span class="sd">"""An integer number value ranging from 0 to 10"""</span>
     <span class="n">orientation</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="sd">"""0,1,2,3 = North, East, South, West"""</span>
+    <span class="n">props</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{})</span>
+    <span class="sd">"""Use build to populate this dict"""</span>
 
     <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">"""Create Property Elements in CAPS. Pass args to filter."""</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">args</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"r"</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">prop</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"x"</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">prop</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">FRAME</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-                <span class="n">prop</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">INTEGER</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-                <span class="n">prop</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">BOOLEAN</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">))))</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
-                <span class="n">prop</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">prop</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="sd">"""Use attributes to create Property Elements.</span>
+<span class="sd">        Pass args to chose which Properties to build.</span>
+<span class="sd">        Any Properties built will be stored in the props attribute."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No args found. Pass 'all' for building all."</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="s2">"all"</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">"props"</span><span class="p">]</span>
 
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">prop</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"frame"</span><span class="p">:</span>
+                <span class="n">prop</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span>
+                    <span class="n">PropertyType</span><span class="o">.</span><span class="n">FRAME</span><span class="p">,</span>
+                    <span class="n">key</span><span class="p">,</span>
+                    <span class="s2">""</span><span class="p">,</span>
+                    <span class="p">{</span>
+                        <span class="s2">"x"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                        <span class="s2">"y"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                        <span class="s2">"w"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                        <span class="s2">"h"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">"frame"</span><span class="p">:</span>
+                <span class="n">prop</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span>
+                    <span class="n">PropertyType</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span>
+                    <span class="n">key</span><span class="p">,</span>
+                    <span class="s2">""</span><span class="p">,</span>
+                    <span class="p">{</span>
+                        <span class="s2">"r"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                        <span class="s2">"g"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                        <span class="s2">"b"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                        <span class="s2">"a"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">:</span>
+                <span class="n">prop</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">INTEGER</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">bool</span><span class="p">:</span>
+                <span class="n">prop</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">BOOLEAN</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">))))</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">float</span><span class="p">:</span>
+                <span class="n">prop</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="n">prop</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s2">, is not compatible."</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">prop</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="s2">"ElementTOSC"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="n">e</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">applyTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="s2">"ElementTOSC"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">"""Append all props to &lt;properties&gt;"""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> props are empty, try using build() with arguments"</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">:</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
         <span class="k">return</span> <span class="kc">True</span>
 
 
@@ -596,9 +629,7 @@
     <span class="sd">"""0, 1 = default, monospaced"""</span>
     <span class="n">textSize</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span>
     <span class="sd">"""Any int"""</span>
-    <span class="n">textColor</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">"r"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
-    <span class="p">)</span>
+    <span class="n">textColor</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
     <span class="sd">"""rgba dict from 0 to 1 as str"""</span>
     <span class="n">textAlignH</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="sd">"""1,2,3 = left, center, right"""</span>
@@ -608,9 +639,6 @@
     <span class="sd">"""All the Node Types and their available properties</span>
 
 <span class="sd">    https://hexler.net/touchosc/manual/script-enumerations#controltype"""</span>
-
-    <span class="n">TYPE</span> <span class="o">=</span> <span class="s2">"type"</span>
-    <span class="n">ID</span> <span class="o">=</span> <span class="s2">"ID"</span>
 
 <div class="viewcode-block" id="Control.BOX"><a class="viewcode-back" href="../../api/propsTuples.html#tosclib.tosc.Control.BOX">[docs]</a>    <span class="nd">@dataclass</span>
     <span class="k">class</span> <span class="nc">BOX</span><span class="p">(</span><span class="n">_PropertiesControl</span><span class="p">,</span> <span class="n">_PropertiesBox</span><span class="p">):</span>
@@ -709,19 +737,11 @@
 
 <div class="viewcode-block" id="Control.PAGE"><a class="viewcode-back" href="../../api/propsTuples.html#tosclib.tosc.Control.PAGE">[docs]</a>    <span class="nd">@dataclass</span>
     <span class="k">class</span> <span class="nc">PAGE</span><span class="p">(</span><span class="n">_PropertiesControl</span><span class="p">):</span>
-        <span class="n">tabColorOff</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-            <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">"r"</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
-        <span class="p">)</span>
-        <span class="n">tabColorOn</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-            <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">"r"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
-        <span class="p">)</span>
+        <span class="n">tabColorOff</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">tabColorOn</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
         <span class="n">tabLabel</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"1"</span>
-        <span class="n">textColorOff</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-            <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">"r"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
-        <span class="p">)</span>
-        <span class="n">textColorOn</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-            <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">"r"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
-        <span class="p">)</span></div>
+        <span class="n">textColorOff</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">textColorOn</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="Control.GRID"><a class="viewcode-back" href="../../api/propsTuples.html#tosclib.tosc.Control.GRID">[docs]</a>    <span class="nd">@dataclass</span>
     <span class="k">class</span> <span class="nc">GRID</span><span class="p">(</span><span class="n">_PropertiesControl</span><span class="p">):</span>
@@ -856,15 +876,6 @@
     <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"ElementTOSC"</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">fromGroup</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"ElementTOSC"</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-            <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span>
-                <span class="n">ControlElements</span><span class="o">.</span><span class="n">NODE</span><span class="p">,</span>
-                <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">"ID"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="s2">"type"</span><span class="p">:</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span><span class="p">},</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
-
     <span class="k">def</span> <span class="nf">getProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">findKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
 
@@ -873,6 +884,9 @@
 
     <span class="k">def</span> <span class="nf">getPropertyParam</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">findKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"value"</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">hasProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">findKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">setProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{})</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">findKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
@@ -977,6 +991,8 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">createChild</span><span class="p">(</span><span class="n">ControlType</span><span class="o">.</span><span class="n">BOX</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">addGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">ControlType</span><span class="p">):</span>
+        <span class="sd">"""Pass Control Types as arguments to append children to the group.</span>
+<span class="sd">        Then the result will be a tuple (group, child, child, ...)"""</span>
         <span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">createChild</span><span class="p">(</span><span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">e</span>
@@ -1042,6 +1058,27 @@
                 <span class="n">move</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s2">"./</span><span class="si">{</span><span class="n">ControlElements</span><span class="o">.</span><span class="n">NODE</span><span class="si">}</span><span class="s2">[@type='</span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s2">']"</span><span class="p">,</span>
             <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">fitChildren</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">padding</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">"""Get n number of children and arrange them in rows and columns"""</span>
+        <span class="n">number</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
+        <span class="n">number</span> <span class="o">=</span> <span class="n">rows</span> <span class="o">*</span> <span class="n">columns</span>
+
+        <span class="n">fw</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyParam</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">fh</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyParam</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"h"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">fw</span> <span class="o">/</span> <span class="n">rows</span><span class="p">,</span> <span class="n">fh</span> <span class="o">/</span> <span class="n">columns</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">number</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([(</span><span class="n">N</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="n">columns</span><span class="p">]</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rows</span><span class="p">)])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">N</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="n">rows</span><span class="p">]</span> <span class="o">*</span> <span class="n">h</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+        <span class="n">XYN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">N</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">number</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">XYN</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">padding</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="n">ElementTOSC</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)])</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">_overrideProperty</span><span class="p">(</span>

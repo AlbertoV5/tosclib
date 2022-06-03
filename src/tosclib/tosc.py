@@ -663,7 +663,7 @@ class ElementTOSC:
         f = lambda v: e.find(v) if e.find(v) else ET.SubElement(e, v)
         self.properties = f(ControlElements.PROPERTIES)
         self.values = f(ControlElements.VALUES)
-        self.children = f(ControlElements.MESSAGES)
+        self.messages = f(ControlElements.MESSAGES)
         self.children = f(ControlElements.CHILDREN)
 
     @classmethod
@@ -725,7 +725,7 @@ class ElementTOSC:
         return True
 
     def _createMessage(self, name, message) -> ET.Element:
-        msg = ET.SubElement(self.children, name)
+        msg = ET.SubElement(self.messages, name)
         for key in vars(message):
             element = ET.SubElement(
                 msg, key
@@ -755,13 +755,13 @@ class ElementTOSC:
         return self._createMessage(ControlElements.LOCAL, message)
 
     def removeOSC(self) -> bool:
-        return [e.remove for e in self.children.findall(ControlElements.OSC)]
+        return [e.remove for e in self.messages.findall(ControlElements.OSC)]
 
     def removeMIDI(self) -> bool:
-        return [e.remove for e in self.children.findall(ControlElements.MIDI)]
+        return [e.remove for e in self.messages.findall(ControlElements.MIDI)]
 
     def removeLOCAL(self) -> bool:
-        return [e.remove for e in self.children.findall(ControlElements.LOCAL)]
+        return [e.remove for e in self.messages.findall(ControlElements.LOCAL)]
 
     def findChildByName(self, name: str) -> ET.Element:
         for child in self.children:
@@ -1076,11 +1076,11 @@ def moveValues(source: ElementTOSC, target: ElementTOSC, *args:str):
 def copyMessages(source: ElementTOSC, target: ElementTOSC, *args: str):
     """Args can be ControlElements.OSC, MIDI, LOCAL, GAMEPAD"""
     if not args:
-        [target.children.append(deepcopy(e)) for e in source.children]
+        [target.messages.append(deepcopy(e)) for e in source.messages]
         return True
     for arg in args:
-        if elements := source.children.findall(f"./{arg}"):
-            [target.children.append(deepcopy(e)) for e in elements]
+        if elements := source.messages.findall(f"./{arg}"):
+            [target.messages.append(deepcopy(e)) for e in elements]
         else:
             raise ValueError(f"Failed to find all elements with {args}")
     return True
@@ -1088,15 +1088,15 @@ def copyMessages(source: ElementTOSC, target: ElementTOSC, *args: str):
 def moveMessages(source: ElementTOSC, target: ElementTOSC, *args:str):
     elements = []
     if not args:
-        elements = source.children
+        elements = source.messages
     for arg in args:
-        if e := source.children.findall(f"./{arg}"):
+        if e := source.messages.findall(f"./{arg}"):
             elements += e
         else:
             raise ValueError(f"Failed to find all elements with {args}")
 
-    [target.children.append(deepcopy(e)) for e in elements]
-    [source.children.remove(e) for e in elements]
+    [target.messages.append(deepcopy(e)) for e in elements]
+    [source.messages.remove(e) for e in elements]
     return True
 
 

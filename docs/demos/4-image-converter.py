@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 import time
 
+
 class ImageConverter:
     def __init__(self, inputFile, outputFile, imagePath, canvasName="canvas"):
         """Stores the conversion settings"""
@@ -29,7 +30,7 @@ class ImageConverter:
         root = tosc.load(self.input_path)
         main = tosc.ElementTOSC(root[0])
         canvas = tosc.ElementTOSC(main.findChildByName(self.canvas_name))
-        
+
         pxs = self.pixel_size
         for iy, ix in np.ndindex(self.pixels.shape[:2]):
             box = tosc.ElementTOSC(canvas.createChild("BOX"))

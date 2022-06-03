@@ -19,7 +19,7 @@ class REAPER:
 
     lisztPath: Path = Path("AlbertoV5-ReaperTools") / "liszt"
     host: str = "127.0.0.1"
-    port: str = "8080"
+    port: str = "9500"
 
 
 @dataclass
@@ -35,6 +35,7 @@ async def pingReaper(*args):
     """Ask Reaper to execute commands by name or hash"""
     async with aiohttp.ClientSession() as session:
         for arg in args:
+            print(f"http://{REAPER.host}:{REAPER.port}/_/{arg}")
             async with session.get(
                 f"http://{REAPER.host}:{REAPER.port}/_/{arg}"
             ) as resp:
@@ -45,8 +46,9 @@ def main():
 
     asyncio.run(pingReaper(Actions.pull, Actions.generate, Actions.openProjPath))
 
+
 if __name__ == "__main__":
-    
+
     start = time.process_time()
     main()
     end = time.process_time()

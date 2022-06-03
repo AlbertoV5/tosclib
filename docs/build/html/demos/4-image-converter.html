@@ -172,10 +172,15 @@
 <li class="toctree-l2"><a class="reference internal" href="5-reaper-tosclib.html">Reaper to Touch OSC</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/elemEnums.html">Element Enums and Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/propEnums.html">Property Enums</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/1-numpad.html">Module: Numpad</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/elemTuples.html">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/propsTuples.html">Property Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/tglobals.html">Globals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/tosclib.tosc.html">tosclib.tosc</a></li>
 </ul>
 </li>
@@ -219,6 +224,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
+
 <span class="k">class</span> <span class="nc">ImageConverter</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputFile</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">,</span> <span class="n">imagePath</span><span class="p">,</span> <span class="n">canvasName</span><span class="o">=</span><span class="s2">"canvas"</span><span class="p">):</span>
         <span class="sd">"""Stores the conversion settings"""</span>
@@ -245,7 +251,7 @@
         <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_path</span><span class="p">)</span>
         <span class="n">main</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">canvas</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">findChildByName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">canvas_name</span><span class="p">))</span>
-        
+
         <span class="n">pxs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixel_size</span>
         <span class="k">for</span> <span class="n">iy</span><span class="p">,</span> <span class="n">ix</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ndindex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]):</span>
             <span class="n">box</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">createChild</span><span class="p">(</span><span class="s2">"BOX"</span><span class="p">))</span>

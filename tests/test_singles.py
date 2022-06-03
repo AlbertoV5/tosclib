@@ -1,10 +1,19 @@
-import tosclib as tosc
+import cProfile
+import pstats
+from tosclib import tosc
 from tosclib.tosc import Partial, Value
-from tosclib.tosc import Controls
-import sys
-import xml.etree.ElementTree as ET
 
+def profile(func):
+    def wrapper(*args, **kwargs):
+        with cProfile.Profile() as pr:
+            for i in range(1):
+                func(*args, **kwargs)
+            stats = pstats.Stats(pr)
+            stats.sort_stats(pstats.SortKey.TIME)
+            stats.dump_stats(filename="tests/test_singles.prof")
+    return wrapper
 
+@profile
 def test_singles():
 
     root = tosc.createTemplate()
@@ -14,6 +23,7 @@ def test_singles():
     element.setTag("Scottish")
     element.createValue(Value())
 
+    element.showValue("touch")
     element.setValue(Value("touch", "1", "1", "true", "1"))
 
     element.createOSC(
@@ -32,26 +42,13 @@ def test_singles():
     element.setColor(1, 0, 0, 1)
     element.setFrame(0, 0, 1, 1)
 
-    element.showProperty("frame")
-
-    print(tosc.Controls.BOX.FRAME)
-    print(Controls.BOX.BACKGROUND)
-    
-    print(Controls.BOX.SHAPE)
-
-    def size(data):
-        return print(sys.getsizeof(data))
-    
-    size(ET.Element("test"))
-
     count = 0
     for i in dir(tosc.ElementTOSC):
         if "__" not in i:
             count += 1
-    print(count)
 
     tag = tosc.pullValueFromKey2(root, "name", "Craig", "tag")
-    print(tag)
 
-if __name__ == "__main__":
-    test_singles()
+    x = tosc.ControlElements.PROPERTIES
+    x = element.setColor(1, 0, 0, 1)
+

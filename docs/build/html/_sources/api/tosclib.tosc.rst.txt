@@ -32,7 +32,6 @@
    
       ControlElements
       ControlType
-      Controls
       ElementTOSC
       OSC
       Partial
@@ -40,16 +39,23 @@
       PropertyType
       Trigger
       Value
-      buttonType
-      cursorDisplay
-      font
-      orientation
-      outlineStyle
-      pointerPriority
-      response
-      shape
-      textAlignH
-      textAlignV
+      Control
+      Control.Box
+      Control.Button
+      Control.Encoder
+      Control.Fader
+      Control.Grid
+      Control.Group
+      Control.Label
+      Control.Page
+      Control.Pager
+      Control.Radar
+      Control.Radial
+      Control.Radio
+      Control.Text
+      Control.Xy
+
+
    
    
 

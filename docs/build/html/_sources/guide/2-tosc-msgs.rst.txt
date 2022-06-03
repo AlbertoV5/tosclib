@@ -96,8 +96,56 @@ We are going to take a closer look to how each message type is constructed:
          |__<node>
 
 
-Work in progress. 
+Here is how the midi message looks like in the editor:
 
-There are different valid values per Element that have to be added to the diagrams.
+.. figure:: ../images/toscMidiMsg.JPG
 
-The MIDI messages have to be added too.
+And here is the diagram:
+
+**MIDI messages:**
+
+.. code-block:: xml
+
+   <node>
+      |__<messages>
+      |  |__<midi>
+      |  |  |__<enabled>
+      |  |  |  |__text
+      |  |  |__<send>
+      |  |  |  |__text
+      |  |  |__<receive>
+      |  |  |  |__text
+      |  |  |__<feedback>
+      |  |  |  |__text
+      |  |  |__<connections>
+      |  |  |  |__text
+      |  |  |__<triggers>
+      |  |  |  |__<trigger>
+      |  |  |     |__<var>
+      |  |  |     |  |__text
+      |  |  |     |__<condition>
+      |  |  |        |__text
+      |  |  |__<message>
+      |  |  |  |__<type>
+      |  |  |  |  |__text
+      |  |  |  |__<channel>
+      |  |  |  |   |__text
+      |  |  |  |__<data1>
+      |  |  |  |  |__text
+      |  |  |  |__<data2>
+      |  |  |     |__text
+      |  |  |__<values>
+      |  |  |  |__<value>
+      |  |  |     |__<type>
+      |  |  |     |  |__text
+      |  |  |     |__<key>
+      |  |  |     |  |__text
+      |  |  |     |__<scaleMin>
+      |  |  |     |  |__text
+      |  |  |     |__<scaleMax>
+      |  |  |        |__text
+      |__<children>
+         |__<node>
+
+
+Work in progress!

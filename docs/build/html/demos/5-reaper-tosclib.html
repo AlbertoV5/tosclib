@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="API" href="../api.html" /><link rel="prev" title="Image Converter" href="4-image-converter.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Modules" href="../modules.html" /><link rel="prev" title="Image Converter" href="4-image-converter.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
         <title>Reaper to Touch OSC - tosclib 0.2 documentation</title>
@@ -172,10 +172,15 @@
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Reaper to Touch OSC</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/elemEnums.html">Element Enums and Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/propEnums.html">Property Enums</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/1-numpad.html">Module: Numpad</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/elemTuples.html">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/propsTuples.html">Property Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/tglobals.html">Globals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/tosclib.tosc.html">tosclib.tosc</a></li>
 </ul>
 </li>
@@ -254,7 +259,7 @@
 
     <span class="n">lisztPath</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"AlbertoV5-ReaperTools"</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"liszt"</span>
     <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"127.0.0.1"</span>
-    <span class="n">port</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"8080"</span>
+    <span class="n">port</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"9500"</span>
 
 
 <span class="nd">@dataclass</span>
@@ -270,6 +275,7 @@
     <span class="sd">"""Ask Reaper to execute commands by name or hash"""</span>
     <span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"http://</span><span class="si">{</span><span class="n">REAPER</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">REAPER</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">/_/</span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">"http://</span><span class="si">{</span><span class="n">REAPER</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">REAPER</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">/_/</span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
@@ -280,8 +286,9 @@
 
     <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">pingReaper</span><span class="p">(</span><span class="n">Actions</span><span class="o">.</span><span class="n">pull</span><span class="p">,</span> <span class="n">Actions</span><span class="o">.</span><span class="n">generate</span><span class="p">,</span> <span class="n">Actions</span><span class="o">.</span><span class="n">openProjPath</span><span class="p">))</span>
 
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-    
+
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">process_time</span><span class="p">()</span>
     <span class="n">main</span><span class="p">()</span>
     <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">process_time</span><span class="p">()</span>
@@ -313,12 +320,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../api.html">
+          <a class="next-page" href="../modules.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">API</div>
+                <div class="title">Modules</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>

@@ -172,10 +172,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../demos/5-reaper-tosclib.html">Reaper to Touch OSC</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/elemEnums.html">Element Enums and Classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/propEnums.html">Property Enums</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/1-numpad.html">Module: Numpad</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/elemTuples.html">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/propsTuples.html">Property Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/tglobals.html">Globals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/tosclib.tosc.html">tosclib.tosc</a></li>
 </ul>
 </li>
@@ -301,9 +306,55 @@
       |__<span class="nt">&lt;node&gt;</span>
 </pre></div>
 </div>
-<p>Work in progress.</p>
-<p>There are different valid values per Element that have to be added to the diagrams.</p>
-<p>The MIDI messages have to be added too.</p>
+<p>Here is how the midi message looks like in the editor:</p>
+<figure class="align-default">
+<img alt="../_images/toscMidiMsg.JPG" src="../_images/toscMidiMsg.JPG"/>
+</figure>
+<p>And here is the diagram:</p>
+<p><strong>MIDI messages:</strong></p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;node&gt;</span>
+   |__<span class="nt">&lt;messages&gt;</span>
+   |  |__<span class="nt">&lt;midi&gt;</span>
+   |  |  |__<span class="nt">&lt;enabled&gt;</span>
+   |  |  |  |__text
+   |  |  |__<span class="nt">&lt;send&gt;</span>
+   |  |  |  |__text
+   |  |  |__<span class="nt">&lt;receive&gt;</span>
+   |  |  |  |__text
+   |  |  |__<span class="nt">&lt;feedback&gt;</span>
+   |  |  |  |__text
+   |  |  |__<span class="nt">&lt;connections&gt;</span>
+   |  |  |  |__text
+   |  |  |__<span class="nt">&lt;triggers&gt;</span>
+   |  |  |  |__<span class="nt">&lt;trigger&gt;</span>
+   |  |  |     |__<span class="nt">&lt;var&gt;</span>
+   |  |  |     |  |__text
+   |  |  |     |__<span class="nt">&lt;condition&gt;</span>
+   |  |  |        |__text
+   |  |  |__<span class="nt">&lt;message&gt;</span>
+   |  |  |  |__<span class="nt">&lt;type&gt;</span>
+   |  |  |  |  |__text
+   |  |  |  |__<span class="nt">&lt;channel&gt;</span>
+   |  |  |  |   |__text
+   |  |  |  |__<span class="nt">&lt;data1&gt;</span>
+   |  |  |  |  |__text
+   |  |  |  |__<span class="nt">&lt;data2&gt;</span>
+   |  |  |     |__text
+   |  |  |__<span class="nt">&lt;values&gt;</span>
+   |  |  |  |__<span class="nt">&lt;value&gt;</span>
+   |  |  |     |__<span class="nt">&lt;type&gt;</span>
+   |  |  |     |  |__text
+   |  |  |     |__<span class="nt">&lt;key&gt;</span>
+   |  |  |     |  |__text
+   |  |  |     |__<span class="nt">&lt;scaleMin&gt;</span>
+   |  |  |     |  |__text
+   |  |  |     |__<span class="nt">&lt;scaleMax&gt;</span>
+   |  |  |        |__text
+   |__<span class="nt">&lt;children&gt;</span>
+      |__<span class="nt">&lt;node&gt;</span>
+</pre></div>
+</div>
+<p>Work in progress!</p>
 </section>
 
         </article>

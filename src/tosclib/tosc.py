@@ -171,17 +171,21 @@ class ElementTOSC:
         self.node.attrib["type"] = value
         return True
 
+    def getFrame(self) -> tuple:
+        """Wrapper for getX, getY, etc."""
+        return (self.getX(), self.getY(), self.getW(), self.getH())
+
     def getX(self):
-        return int(self.getPropertyParam("frame", "x").text)
+        return float(self.getPropertyParam("frame", "x").text)
 
     def getY(self):
-        return int(self.getPropertyParam("frame", "y").text)
+        return float(self.getPropertyParam("frame", "y").text)
 
     def getW(self):
-        return int(self.getPropertyParam("frame", "w").text)
+        return float(self.getPropertyParam("frame", "w").text)
 
     def getH(self):
-        return int(self.getPropertyParam("frame", "h").text)
+        return float(self.getPropertyParam("frame", "h").text)
 
     def simpleProperty(fun):
         """Pass value as text arg, so name is Craig"""
@@ -216,7 +220,11 @@ class ElementTOSC:
             if element is not None:
                 self.properties.remove(element)
             return self.createProperty(
-                Property(type, key, params={k : str(params[i]) for i, k in enumerate(paramKeys)})
+                Property(
+                    type,
+                    key,
+                    params={k: str(params[i]) for i, k in enumerate(paramKeys)},
+                )
             )
 
         return wrapper
@@ -421,7 +429,7 @@ Creating ElementTOSC directly to a parent.
 """
 
 
-def addBox(e: ElementTOSC):
+def addBoxTo(e: ElementTOSC):
     return ElementTOSC(
         ET.SubElement(
             e.children,
@@ -431,7 +439,7 @@ def addBox(e: ElementTOSC):
     )
 
 
-def addGroup(e: ElementTOSC, *args: str):
+def addGroupTo(e: ElementTOSC, *args: str):
     """Pass Control Types as arguments to append children to the group.
     Then the result will be a tuple (group, child, child, ...)"""
     group = ElementTOSC(
@@ -455,11 +463,11 @@ def addGroup(e: ElementTOSC, *args: str):
     ]
 
 
-def addButton(e: ElementTOSC):
+def addButtonTo(e: ElementTOSC):
     return ElementTOSC(e.createChild(ControlType.BUTTON))
 
 
-def addLabel(e: ElementTOSC):
+def addLabelTo(e: ElementTOSC):
     return ElementTOSC(e.createChild(ControlType.LABEL))
 
 

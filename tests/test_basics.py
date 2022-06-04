@@ -4,7 +4,8 @@ from tosclib import Property
 import cProfile
 import pstats
 from tosclib import Value, Partial, ControlType, OSC
-  
+
+
 def profile(func):
     def wrapper(*args, **kwargs):
         with cProfile.Profile() as pr:
@@ -15,6 +16,7 @@ def profile(func):
             stats.dump_stats(filename="tests/test_basics.prof")
 
     return wrapper
+
 
 @profile
 def test_basics():
@@ -55,11 +57,11 @@ def test_basics():
 
     x = tosc.ControlElements.PROPERTIES
     x = element.setColor((1, 0, 0, 1))
-    
+
     assert tag == tag2
-    
+
     """NESTED"""
-    
+
     root = tosc.createTemplate()
     parent = tosc.ElementTOSC(root[0])
 

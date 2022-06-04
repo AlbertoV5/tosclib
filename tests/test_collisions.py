@@ -46,4 +46,3 @@ def test_collistions() -> tosc.ElementTOSC:
     assert fader.createOSC() is not None
     assert fader.createOSC(tosc.OSC(path=path)) is not None
     assert fader.createOSC(tosc.OSC(path=path)) is not None
-

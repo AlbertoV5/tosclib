@@ -1,6 +1,7 @@
 """General Layout shortcuts"""
 
 from copy import deepcopy
+import math
 from .tosc import *
 from .tosc import ElementTOSC
 from .elements import Property, ControlElements
@@ -156,35 +157,83 @@ def arrangeChildren(
     return True
 
 
-# 1920x1200
 def layoutColumn(func):
-    def wrapper(
-        ratios: tuple[float] = (1, 2, 1),
-        frame: tuple[float] = (0, 0, 640, 1600),
-        color: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.5, 0.5, 0.5, 1.0)),
-    ):
-        """Create a column with n elements with fixed x,w and a color gradient."""
-        parent = ElementTOSC(createGroup())
-        parent.setFrame(frame)
-        groups = [addGroup(parent) for i, r in enumerate(ratios)]
+    """Create a column of groups with a color gradient."""
 
-        H = frame[3] * (np.asarray(ratios) / np.sum(ratios))
-        W = [frame[2] for i in frame]
+    def wrapper(
+        *,
+        ratio: tuple[float] = (1, 2, 1),
+        frame: tuple[float] = (0, 0, 640, 1600),
+        gradient: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
+    ):
+
+        layout = ElementTOSC(createGroup())
+        layout.setFrame(frame)
+        groups = [addGroupTo(layout) for i, r in enumerate(ratio)]
+        [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
+
+        H = frame[3] * (np.asarray(ratio) / np.sum(ratio))
+        W = [frame[2] for i in ratio]
         Y = [frame[1] + np.sum(H[0 : i[0]]) for i, v in np.ndenumerate(H)]
-        X = [frame[0] for i in frame]
-        
-        F = np.asarray(((X), (Y), (W), (H))).T.astype(int)
+        X = [frame[0] for i in ratio]
+
+        F = np.asarray(((X), (Y), (W), (H)))
         [g.setFrame(f) for f, g in zip(F, groups)]
 
-        C = np.linspace(color[0], color[1], len(ratios))
+        C = np.linspace(gradient[0], gradient[1], len(ratio))
         [g.setColor(c) for c, g in zip(C, groups)]
 
-        [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
-        
-        properties = func(parent) # create custom props
-        
-        #continue
+        func(groups)  # Add elements to the groups
 
-        return parent
+        return layout
+
+    return wrapper
+
+
+def layoutGrid(func):
+    """Create a a:b grid of equal size groups"""
+
+    def wrapper(
+        *,
+        size: int = (4, 4),
+        frame: tuple[float] = (0, 0, 800, 1200),
+        gradient: tuple[tuple] = (
+            (0.25, 0.25, 0.25, 1.0),
+            (0.25, 0.25, 0.25, 1.0),
+            (0.5, 0.5, 0.5, 1.0),
+        ),
+    ):
+
+        layout = ElementTOSC(createGroup())
+        layout.setFrame(frame)
+        groups = [addGroupTo(layout) for i in range(int(size[0]*size[1]))]
+        [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
+
+        w = frame[2] / size[0]
+        h = frame[3] / size[1]
+        M = (
+            np.asarray(
+                tuple(
+                    (row, column)
+                    for row in np.arange(stop=frame[2], step=w)
+                    for column in np.arange(stop=frame[3], step=h)
+                )
+            )
+            .T
+        )
+        X = M[0]
+        Y = M[1]
+        W = np.repeat(w, X.size)
+        H = np.repeat(h, Y.size)
+        F = np.asarray(((X), (Y), (W), (H))).T
+        print(F)
+        [g.setFrame(f) for f, g in zip(F, groups)]
+
+        # C = np.linspace(gradient[0], gradient[1], len(ratio))
+        # [g.setColor(c) for c, g in zip(C, groups)]
+
+        func(groups)  # Add elements to the groups
+
+        return layout
 
     return wrapper

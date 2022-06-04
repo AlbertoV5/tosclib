@@ -17,6 +17,7 @@ def profile(func):
 
     return wrapper
 
+
 @profile
 def test_copiers():
 

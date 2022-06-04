@@ -172,12 +172,13 @@ def layoutColumn(func):
         R = np.asarray(ratios) / np.sum(ratios)
         H = R * frame[3]
         Y = [np.sum(H[0 : i[0]]) for i, v in np.ndenumerate(H)]
+        
         YH = np.stack((Y, H), axis=1).astype(int)
-
-        xy = np.linspace(color[0], color[1], 4)
-        print(xy)
-
         [g.setFrame(frame[0], y, frame[2], h) for (y, h), g in zip(YH, groups)]
+
+        C = np.linspace(color[0], color[1], 4)
+        [g.setColor(c[0], c[1], c[2], c[3]) for c,g in zip(C, groups)]
+
         func(parent)
         return parent
 

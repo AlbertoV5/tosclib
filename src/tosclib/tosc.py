@@ -210,13 +210,13 @@ class ElementTOSC:
     def multiProperty(fun):
         """Pass args as tuple of keys, so color is ("r","g","b","a")"""
 
-        def wrapper(self, *args):
-            type, key, keys = fun(self)
+        def wrapper(self, params):
+            type, key, paramKeys = fun(self)
             element = self.getProperty(key)
             if element is not None:
                 self.properties.remove(element)
             return self.createProperty(
-                Property(type, key, params={k: str(arg) for k, arg in zip(keys, args)})
+                Property(type, key, params={k : str(params[i]) for i, k in enumerate(paramKeys)})
             )
 
         return wrapper
@@ -240,8 +240,8 @@ class ElementTOSC:
         return PropertyType.STRING, "script"
 
     @multiProperty
-    def setFrame(self):
-        """x,y,w,h"""
+    def setFrame(self) -> bool:
+        """Tuple of x,y,w,h"""
         return PropertyType.FRAME, "frame", ("x", "y", "w", "h")
 
     @multiProperty
@@ -321,11 +321,12 @@ def createTemplate(*, frame=(0, 0, 2560, 1600)) -> ET.Element:
         ControlElements.NODE,
         attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
     )
-    ElementTOSC(group).setFrame(frame[0], frame[1], frame[2], frame[3])
+    ElementTOSC(group).setFrame(frame)
     return root
 
 
 def createGroup() -> ET.Element:
+    """Simple create Node type GROUP"""
     return ET.Element(
         ControlElements.NODE,
         attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},

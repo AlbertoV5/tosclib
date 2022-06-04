@@ -36,8 +36,8 @@ class ImageConverter:
             box = tosc.ElementTOSC(canvas.createChild("BOX"))
             (r, g, b) = self.pixels[iy, ix]
             box.setName(f"p{ix}{iy}")
-            box.setColor(r, g, b, 1)
-            box.setFrame(ix * pxs, iy * pxs, pxs, pxs)
+            box.setColor((r, g, b, 1))
+            box.setFrame((ix * pxs, iy * pxs, pxs, pxs))
 
         return tosc.write(root, self.output_path)
 

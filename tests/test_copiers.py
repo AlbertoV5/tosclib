@@ -17,18 +17,6 @@ def profile(func):
 
     return wrapper
 
-
-# def timer(func):
-#     def wrapper():
-#         start = time.process_time()
-#         for i in range(1000):
-#             func()
-#         end = time.process_time()
-#         print("-", end - start)
-
-#     return wrapper
-
-# @timer
 @profile
 def test_copiers():
 
@@ -41,8 +29,8 @@ def test_copiers():
     # COPY PROPERTIES
     assert node.setName("node1")
     assert node2.setName("node2")
-    assert node2.setFrame(0, 0, 100, 100)
-    assert node2.setColor(1, 0, 0, 1)
+    assert node2.setFrame((0, 0, 100, 100))
+    assert node2.setColor((1, 0, 0, 1))
 
     propList = [p.tag for p in node2.properties]
     assert tosc.moveProperties(node2, node, "frame", "color")

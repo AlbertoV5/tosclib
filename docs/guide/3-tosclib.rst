@@ -28,7 +28,7 @@ The basic concept is to load a regular XML Element and create a new ElementTOSC 
 .. code-block::
    :caption: Alternatively, we can use a shortcut instead to set the color property directly:
    
-   target.setColor(1, 0, 0, 1)
+   target.setColor((1, 0, 0, 1))
    target.showProperty("color")
 
 .. code-block::

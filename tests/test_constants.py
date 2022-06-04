@@ -38,9 +38,9 @@ def test_constants(capture_stdout):
         for i in Control.hasChildren():
             assert i.__name__
 
-        stats = pstats.Stats(pr)
-        stats.sort_stats(pstats.SortKey.TIME)
-        stats.dump_stats(filename="tests/test_constants.prof")
+    stats = pstats.Stats(pr)
+    stats.sort_stats(pstats.SortKey.TIME)
+    stats.dump_stats(filename="tests/test_constants.prof")
 
 
 @pytest.fixture

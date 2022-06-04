@@ -151,35 +151,40 @@ def arrangeChildren(
         if zeroPad and n >= len(parent.children):
             continue
         e = ElementTOSC(parent.children[int(n)])
-        e.setFrame(x, y, w, h)
+        e.setFrame((x, y, w, h))
 
     return True
 
 
-# 2560x1600
+# 1920x1200
 def layoutColumn(func):
     def wrapper(
         ratios: tuple[float] = (1, 2, 1),
         frame: tuple[float] = (0, 0, 640, 1600),
         color: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.5, 0.5, 0.5, 1.0)),
     ):
-        """Function to create N groups with a:b:c:.. ratios"""
+        """Create a column with n elements with fixed x,w and a color gradient."""
         parent = ElementTOSC(createGroup())
-        parent.setFrame(frame[0], frame[1], frame[2], frame[3])
-        groups = [addGroup(parent) for i in range(len(ratios))]
-        [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
+        parent.setFrame(frame)
+        groups = [addGroup(parent) for i, r in enumerate(ratios)]
 
-        R = np.asarray(ratios) / np.sum(ratios)
-        H = R * frame[3]
-        Y = [np.sum(H[0 : i[0]]) for i, v in np.ndenumerate(H)]
+        H = frame[3] * (np.asarray(ratios) / np.sum(ratios))
+        W = [frame[2] for i in frame]
+        Y = [frame[1] + np.sum(H[0 : i[0]]) for i, v in np.ndenumerate(H)]
+        X = [frame[0] for i in frame]
         
-        YH = np.stack((Y, H), axis=1).astype(int)
-        [g.setFrame(frame[0], y, frame[2], h) for (y, h), g in zip(YH, groups)]
+        F = np.asarray(((X), (Y), (W), (H))).T.astype(int)
+        [g.setFrame(f) for f, g in zip(F, groups)]
 
-        C = np.linspace(color[0], color[1], 4)
-        [g.setColor(c[0], c[1], c[2], c[3]) for c,g in zip(C, groups)]
+        C = np.linspace(color[0], color[1], len(ratios))
+        [g.setColor(c) for c, g in zip(C, groups)]
 
-        func(parent)
+        [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
+        
+        properties = func(parent) # create custom props
+        
+        #continue
+
         return parent
 
     return wrapper

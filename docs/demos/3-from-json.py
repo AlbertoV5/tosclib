@@ -22,8 +22,8 @@ def oscMsg() -> tosc.OSC:
 def createFader(e: tosc.ElementTOSC, name, width, limit, i, msg):
     fader = tosc.ElementTOSC(e.createChild("FADER"))
     fader.setName(name)
-    fader.setFrame(width * i, 0, width, 1080)
-    fader.setColor(i / limit, 0, 1 - i / limit, 1)
+    fader.setFrame((width * i, 0, width, 1080))
+    fader.setColor((i / limit, 0, 1 - i / limit, 1))
     fader.createOSC(message=msg)  # Creates a new message from custom tosc.OSC
 
 
@@ -31,13 +31,13 @@ def main(jsonFile, outputFile):
     root = tosc.createTemplate()
     base = tosc.ElementTOSC(root[0])
     base.setName("template")
-    base.setFrame(0, 0, 1920, 1080)
+    base.setFrame((0, 0, 1920, 1080))
 
     # Group container for the faders
     group = tosc.ElementTOSC(base.createChild("GROUP"))
     group.setName("Controls")
-    group.setFrame(420, 0, 1080, 1080)
-    group.setColor(0.25, 0.25, 0.25, 1)
+    group.setFrame((420, 0, 1080, 1080))
+    group.setColor((0.25, 0.25, 0.25, 1))
 
     # Create faders based on Json data
     jsonData = getJson(jsonFile)

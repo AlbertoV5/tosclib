@@ -162,25 +162,25 @@ def layoutColumn(func):
 
     def wrapper(
         *,
-        ratio: tuple[float] = (1, 2, 1),
+        size: tuple[float] = (1, 2, 1),
         frame: tuple[float] = (0, 0, 640, 1600),
         gradient: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
 
         layout = ElementTOSC(createGroup())
         layout.setFrame(frame)
-        groups = [addGroupTo(layout) for i, r in enumerate(ratio)]
+        groups = [addGroupTo(layout) for i, r in enumerate(size)]
         [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
 
-        H = frame[3] * (np.asarray(ratio) / np.sum(ratio))
-        W = [frame[2] for i in ratio]
+        H = frame[3] * (np.asarray(size) / np.sum(size))
+        W = [frame[2] for i in size]
         Y = [frame[1] + np.sum(H[0 : i[0]]) for i, v in np.ndenumerate(H)]
-        X = [frame[0] for i in ratio]
+        X = [frame[0] for i in size]
 
-        F = np.asarray(((X), (Y), (W), (H)))
+        F = np.asarray(((X), (Y), (W), (H))).T
         [g.setFrame(f) for f, g in zip(F, groups)]
 
-        C = np.linspace(gradient[0], gradient[1], len(ratio))
+        C = np.linspace(gradient[0], gradient[1], len(size))
         [g.setColor(c) for c, g in zip(C, groups)]
 
         func(groups)  # Add elements to the groups
@@ -192,45 +192,49 @@ def layoutColumn(func):
 
 def layoutGrid(func):
     """Create a a:b grid of equal size groups"""
-
     def wrapper(
         *,
         size: int = (4, 4),
         frame: tuple[float] = (0, 0, 800, 1200),
         gradient: tuple[tuple] = (
             (0.25, 0.25, 0.25, 1.0),
-            (0.25, 0.25, 0.25, 1.0),
-            (0.5, 0.5, 0.5, 1.0),
+            (1.0, 0.5, 0.5, 1.0),
+            (0.5, 0.5, 1.0, 1.0),
         ),
+        gradientStyle: int = 0,
     ):
+        """TO DO: Add gradient and gradient style"""
 
         layout = ElementTOSC(createGroup())
         layout.setFrame(frame)
-        groups = [addGroupTo(layout) for i in range(int(size[0]*size[1]))]
+        groups = [addGroupTo(layout) for i in range(int(size[0] * size[1]))]
         [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
 
         w = frame[2] / size[0]
         h = frame[3] / size[1]
-        M = (
-            np.asarray(
-                tuple(
-                    (row, column)
-                    for row in np.arange(stop=frame[2], step=w)
-                    for column in np.arange(stop=frame[3], step=h)
-                )
+        M = np.asarray(
+            tuple(
+                (row, column)
+                for row in np.arange(stop=frame[2], step=w)
+                for column in np.arange(stop=frame[3], step=h)
             )
-            .T
-        )
+        ).T
+        
         X = M[0]
         Y = M[1]
         W = np.repeat(w, X.size)
         H = np.repeat(h, Y.size)
         F = np.asarray(((X), (Y), (W), (H))).T
-        print(F)
         [g.setFrame(f) for f, g in zip(F, groups)]
 
-        # C = np.linspace(gradient[0], gradient[1], len(ratio))
-        # [g.setColor(c) for c, g in zip(C, groups)]
+        CX = np.linspace(gradient[0], gradient[1], size[0])
+        CY = np.linspace(gradient[0], gradient[2], size[1])
+        C = (
+            np.asarray(tuple(0.5 * (row + column) for row in CY for column in CX))
+            .T.reshape(4, int(size[0]*size[1]))
+            .T
+        )
+        [g.setColor(c) for c, g in zip(C, groups)]
 
         func(groups)  # Add elements to the groups
 

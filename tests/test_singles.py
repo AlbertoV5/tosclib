@@ -3,6 +3,7 @@ import pstats
 from tosclib import tosc
 from tosclib.tosc import Partial, Value
 
+
 def profile(func):
     def wrapper(*args, **kwargs):
         with cProfile.Profile() as pr:
@@ -11,7 +12,9 @@ def profile(func):
             stats = pstats.Stats(pr)
             stats.sort_stats(pstats.SortKey.TIME)
             stats.dump_stats(filename="tests/test_singles.prof")
+
     return wrapper
+
 
 @profile
 def test_singles():
@@ -51,4 +54,3 @@ def test_singles():
 
     x = tosc.ControlElements.PROPERTIES
     x = element.setColor(1, 0, 0, 1)
-

@@ -1,8 +1,10 @@
 """General Layout shortcuts"""
 
 from copy import deepcopy
+from .tosc import *
 from .tosc import ElementTOSC
 from .elements import Property, ControlElements
+from .controls import Control
 import numpy as np
 
 
@@ -131,7 +133,7 @@ ARRANGE AND LAYOUT
 
 
 def arrangeChildren(
-    parent: ElementTOSC, rows: int, columns: int, padding: bool = False
+    parent: ElementTOSC, rows: int, columns: int, zeroPad: bool = False
 ) -> bool:
     """Get n number of children and arrange them in rows and columns"""
     number = len(parent.children)
@@ -146,9 +148,37 @@ def arrangeChildren(
     XYN = np.stack((X, Y, N.reshape(1, number)), axis=2)[0]
 
     for x, y, n in XYN:
-        if padding and n >= len(parent.children):
+        if zeroPad and n >= len(parent.children):
             continue
         e = ElementTOSC(parent.children[int(n)])
         e.setFrame(x, y, w, h)
 
     return True
+
+
+# 2560x1600
+def layoutColumn(func):
+    def wrapper(
+        ratios: tuple[float] = (1, 2, 1),
+        frame: tuple[float] = (0, 0, 640, 1600),
+        color: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.5, 0.5, 0.5, 1.0)),
+    ):
+        """Function to create N groups with a:b:c:.. ratios"""
+        parent = ElementTOSC(createGroup())
+        parent.setFrame(frame[0], frame[1], frame[2], frame[3])
+        groups = [addGroup(parent) for i in range(len(ratios))]
+        [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
+
+        R = np.asarray(ratios) / np.sum(ratios)
+        H = R * frame[3]
+        Y = [np.sum(H[0 : i[0]]) for i, v in np.ndenumerate(H)]
+        YH = np.stack((Y, H), axis=1).astype(int)
+
+        xy = np.linspace(color[0], color[1], 4)
+        print(xy)
+
+        [g.setFrame(frame[0], y, frame[2], h) for (y, h), g in zip(YH, groups)]
+        func(parent)
+        return parent
+
+    return wrapper

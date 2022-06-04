@@ -1,4 +1,4 @@
-local numValue = self.parent.parent.children.numvalue           
+local numValue = self.parent.parent.children.numvalue       
             
 function onValueChanged(key)
     if (key == "x" and self.values.x == 1) then

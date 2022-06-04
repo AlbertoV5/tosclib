@@ -1,4 +1,3 @@
-from msilib.schema import Property
 import tosclib as tosc
 import re
 

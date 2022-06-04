@@ -3,6 +3,7 @@ from tosclib import OSC, ControlType, Partial, Trigger, Value
 import pstats
 import cProfile
 
+
 def profile(func):
     def wrapper(*args, **kwargs):
         with cProfile.Profile() as pr:
@@ -11,8 +12,10 @@ def profile(func):
             stats = pstats.Stats(pr)
             stats.sort_stats(pstats.SortKey.TIME)
             stats.dump_stats(filename="tests/test_nested.prof")
+
     return wrapper
-    
+
+
 @profile
 def test_nested():
     root = tosc.createTemplate()
@@ -68,6 +71,3 @@ function init()
 end
 """
         )
-    
-
-        

@@ -32,6 +32,13 @@ class ElementTOSC:
         self.messages = self.getSet("messages")
         self.children = self.getSet("children")
 
+    def __iter__(self):
+        return iter(self.children)
+
+    def append(self, e: "ElementTOSC") -> "ElementTOSC":
+        self.children.append(e.node)
+        return self
+
     def getSet(self, target):
         s = self.node.find(target)
         if s is not None:
@@ -164,6 +171,18 @@ class ElementTOSC:
         self.node.attrib["type"] = value
         return True
 
+    def getX(self):
+        return int(self.getPropertyParam("frame", "x").text)
+
+    def getY(self):
+        return int(self.getPropertyParam("frame", "y").text)
+
+    def getW(self):
+        return int(self.getPropertyParam("frame", "w").text)
+
+    def getH(self):
+        return int(self.getPropertyParam("frame", "h").text)
+
     def simpleProperty(fun):
         """Pass value as text arg, so name is Craig"""
 
@@ -206,6 +225,9 @@ class ElementTOSC:
     def setName(self):
         """String"""
         return PropertyType.STRING, "name"
+
+    def getName(self):
+        return self.getPropertyValue("name").text
 
     @simpleProperty
     def setTag(self):
@@ -291,15 +313,23 @@ def showElement(e: ET.Element):
     print(ET.tostring(e).decode("utf-8"))
 
 
-def createTemplate() -> ET.Element:
+def createTemplate(*, frame=(0, 0, 2560, 1600)) -> ET.Element:
     """Generates a root Element for your .tosc file"""
     root = ET.Element("lexml", attrib={"version": "3"})
-    ET.SubElement(
+    group = ET.SubElement(
         root,
         ControlElements.NODE,
         attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
     )
+    ElementTOSC(group).setFrame(frame[0], frame[1], frame[2], frame[3])
     return root
+
+
+def createGroup() -> ET.Element:
+    return ET.Element(
+        ControlElements.NODE,
+        attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
+    )
 
 
 def load(inputPath: str) -> ET.Element:

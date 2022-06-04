@@ -2,6 +2,7 @@ import cProfile
 import pstats
 import tosclib as tosc
 
+
 def profile(func):
     def wrapper(*args, **kwargs):
         with cProfile.Profile() as pr:
@@ -10,6 +11,7 @@ def profile(func):
             stats = pstats.Stats(pr)
             stats.sort_stats(pstats.SortKey.TIME)
             stats.dump_stats(filename="tests/test_parsers.prof")
+
     return wrapper
 
 

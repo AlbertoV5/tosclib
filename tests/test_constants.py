@@ -5,6 +5,7 @@ import sys
 import cProfile
 import pstats
 
+
 def test_constants(capture_stdout):
     with cProfile.Profile() as pr:
         partial = tosc.Partial()
@@ -26,7 +27,9 @@ def test_constants(capture_stdout):
         e = tosc.ElementTOSC(tosc.createTemplate()[0])
         for attribute, value in e.__dict__.items():
             print(attribute)
-        assert capture_stdout["stdout"] == "node\nproperties\nvalues\nmessages\nchildren\n"
+        assert (
+            capture_stdout["stdout"] == "node\nproperties\nvalues\nmessages\nchildren\n"
+        )
         capture_stdout["stdout"] = ""
 
         for i in Control.__dict__:
@@ -34,11 +37,11 @@ def test_constants(capture_stdout):
 
         for i in Control.hasChildren():
             assert i.__name__
-            
+
         stats = pstats.Stats(pr)
         stats.sort_stats(pstats.SortKey.TIME)
         stats.dump_stats(filename="tests/test_constants.prof")
-        
+
 
 @pytest.fixture
 def capture_stdout(monkeypatch):

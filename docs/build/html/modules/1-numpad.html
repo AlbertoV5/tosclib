@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="API" href="../api.html" /><link rel="prev" title="Modules" href="../modules.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>Module: Numpad - tosclib 0.2 documentation</title>
+        <title>Module: Numpad - tosclib 0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">tosclib 0.2 documentation</div></a>
+      <a href="../index.html"><div class="brand">tosclib 0.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">tosclib 0.2 documentation</span>
+  <span class="sidebar-brand-text">tosclib 0.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -231,22 +231,21 @@
 
 <span class="sd">"""WORK IN PROGRESS June-2-2022"""</span>
 
+
 <span class="nd">@layout</span><span class="o">.</span><span class="n">layoutColumn</span>
-<span class="k">def</span> <span class="nf">numpadLayout</span><span class="p">(</span><span class="n">groups</span><span class="p">:</span><span class="nb">list</span><span class="p">[</span><span class="n">ElementTOSC</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ElementTOSC</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">numpadLayout</span><span class="p">(</span><span class="n">groups</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ElementTOSC</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ElementTOSC</span><span class="p">:</span>
     <span class="c1"># do stuff to the layout</span>
     <span class="n">top</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">bot</span> <span class="o">=</span> <span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">groups</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">groups</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    
-    
-    
+
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    
-    <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">createTemplate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">400</span><span class="p">)</span>
-    <span class="n">layout</span><span class="p">:</span> <span class="n">ElementTOSC</span> <span class="o">=</span> <span class="n">numpadLayout</span><span class="p">(</span><span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">frame</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">))</span>
+
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">createTemplate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+    <span class="n">layout</span><span class="p">:</span> <span class="n">ElementTOSC</span> <span class="o">=</span> <span class="n">numpadLayout</span><span class="p">(</span><span class="n">ratio</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">frame</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">))</span>
 
     <span class="n">frame</span> <span class="o">=</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nw</span><span class="p">,</span> <span class="n">nh</span> <span class="o">=</span> <span class="n">layout</span><span class="o">.</span><span class="n">getFrame</span><span class="p">()</span>
     <span class="n">numGrp</span> <span class="o">=</span> <span class="n">layout</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    
+
     <span class="n">n</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span>
     <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">nw</span> <span class="o">/</span> <span class="n">rows</span><span class="p">,</span> <span class="n">nh</span> <span class="o">/</span> <span class="n">columns</span>
     <span class="n">frame</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
@@ -257,18 +256,20 @@
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"docs/modules/button.lua"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="n">buttonT</span><span class="o">.</span><span class="n">script</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
-    <span class="n">valueGrp</span><span class="p">,</span> <span class="n">valueLbl</span><span class="p">,</span> <span class="n">sendGrp</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">addGroupTo</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">LABEL</span><span class="p">,</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span><span class="p">)</span>
+    <span class="n">valueGrp</span><span class="p">,</span> <span class="n">valueLbl</span><span class="p">,</span> <span class="n">sendGrp</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">addGroupTo</span><span class="p">(</span>
+        <span class="n">layout</span><span class="p">,</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">LABEL</span><span class="p">,</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span>
+    <span class="p">)</span>
     <span class="n">valLocal</span> <span class="o">=</span> <span class="n">LOCAL</span><span class="p">(</span>
-        <span class="n">enabled</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">triggers</span> <span class="o">=</span> <span class="p">[</span><span class="n">Trigger</span><span class="p">(</span><span class="s2">"touch"</span><span class="p">,</span> <span class="s2">"ANY"</span><span class="p">)],</span>
-        <span class="nb">type</span> <span class="o">=</span> <span class="s2">"NAME"</span><span class="p">,</span>
-        <span class="n">conversion</span> <span class="o">=</span> <span class="s2">"STRING"</span><span class="p">,</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="s2">"name"</span><span class="p">,</span>
-        <span class="n">scaleMin</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">scaleMax</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">dstType</span> <span class="o">=</span> <span class="s2">"STRING"</span><span class="p">,</span>
-        <span class="n">dstVar</span> <span class="o">=</span> <span class="s2">"text"</span><span class="p">,</span>
-        <span class="n">dstID</span> <span class="o">=</span> <span class="n">valueLbl</span><span class="o">.</span><span class="n">getID</span><span class="p">(),</span>
+        <span class="n">enabled</span><span class="o">=</span><span class="s2">"1"</span><span class="p">,</span>
+        <span class="n">triggers</span><span class="o">=</span><span class="p">[</span><span class="n">Trigger</span><span class="p">(</span><span class="s2">"touch"</span><span class="p">,</span> <span class="s2">"ANY"</span><span class="p">)],</span>
+        <span class="nb">type</span><span class="o">=</span><span class="s2">"NAME"</span><span class="p">,</span>
+        <span class="n">conversion</span><span class="o">=</span><span class="s2">"STRING"</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="s2">"name"</span><span class="p">,</span>
+        <span class="n">scaleMin</span><span class="o">=</span><span class="s2">"0"</span><span class="p">,</span>
+        <span class="n">scaleMax</span><span class="o">=</span><span class="s2">"1"</span><span class="p">,</span>
+        <span class="n">dstType</span><span class="o">=</span><span class="s2">"STRING"</span><span class="p">,</span>
+        <span class="n">dstVar</span><span class="o">=</span><span class="s2">"text"</span><span class="p">,</span>
+        <span class="n">dstID</span><span class="o">=</span><span class="n">valueLbl</span><span class="o">.</span><span class="n">getID</span><span class="p">(),</span>
     <span class="p">)</span>
 
     <span class="n">labelT</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"textSize"</span><span class="p">,</span> <span class="s2">"background"</span><span class="p">,</span> <span class="s2">"frame"</span><span class="p">)</span>
@@ -298,7 +299,7 @@
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="k">with</span> <span class="n">cProfile</span><span class="o">.</span><span class="n">Profile</span><span class="p">()</span> <span class="k">as</span> <span class="n">pr</span><span class="p">:</span>
         <span class="n">main</span><span class="p">()</span>
-        
+
     <span class="n">stats</span> <span class="o">=</span> <span class="n">pstats</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="n">pr</span><span class="p">)</span>
     <span class="n">stats</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="n">pstats</span><span class="o">.</span><span class="n">SortKey</span><span class="o">.</span><span class="n">TIME</span><span class="p">)</span>
     <span class="n">stats</span><span class="o">.</span><span class="n">dump_stats</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">"test.prof"</span><span class="p">)</span>

@@ -25,6 +25,14 @@ Installation
 Changelog
 ------------------
 
+- 0.3.0
+   - Final code refactoring for the library's structure.
+   - The abstraction flows like this:
+      - elements -> controls -> tosc -> layout
+   - Added layout decorators and a few other features
+   - Changed setFrame and setColor to receive a tuple instead of args
+   - Improved code and flow for Enums and ElementTOSC
+
 - 0.2.5
    - Improved code in general and added a lot of general use functions.
    - Tested with possible lxml support.

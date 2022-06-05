@@ -18,6 +18,7 @@ Requirements:
 numpy==1.22.3
 ```
 
+
 # Contribute:
 
 Feel free to make a fork and contribute to the tosclib or documentation or whatever.
@@ -42,6 +43,21 @@ For testing run:
 ```console
 $ tox
 ```
+
+# Design:
+**0.3.0:**
+
+elements -> controls -> tosc -> layout
+
+- Elements are mostly data classes and enums (named tuples) that define the basic xml element parts, like valid attributes, children elements like: Property, Values, OSC and MIDI messages, etc.
+- Controls are classes with specific attributes that are analogous to Touch OSC's Controls, like Fader, Button, Label, Group, etc. can be used as templates to construct xml trees.
+- ElementTOSC is the wrapper class that handles the Control's xml tree: Node->(Properties, Messages, Values and Children). Tosclib is sort of built around it.
+- Layout contains functions that help manipulate many ElementTOSC objects like automatic children arrangement, color gradients, copying properties, etc. 
+
+Those are the basics, the goal is to build on top of that and have a solid 1.0 version with plenty of layout features and that can be fun to use.
+
+In the future this could have "modules" or "templates" on top of "layout" which would consist of a few templates that can be built programatically with custom parameters, for example a pop up menu for entering digits or a radial menu for settings, etc.
+
 # Demo Projects:
 
 ## New location for Demo Projects is [here](https://albertov5.github.io/tosclib/docs/build/html/demos.html).

@@ -33,9 +33,11 @@ class ElementTOSC:
         self.children = self.getSet("children")
 
     def __iter__(self):
+        """Return iter over children"""
         return iter(self.children)
 
     def append(self, e: "ElementTOSC") -> "ElementTOSC":
+        """Append an ElementTOSC's Node to this element's Children"""
         self.children.append(e.node)
         return self
 
@@ -47,6 +49,7 @@ class ElementTOSC:
 
     @classmethod
     def fromFile(cls, file: str) -> "ElementTOSC":
+        """Load a .tosc file into an XML Element and then as ElementTOSC"""
         return cls(load(file)[0])
 
     def getProperty(self, key: str) -> ET.Element:
@@ -75,7 +78,7 @@ class ElementTOSC:
     def createProperty(self, property: Property) -> bool:
         if findKey(self.properties, property.key) is not None:
             raise ValueError(f"{property.key} already exists.")
-        property.applyTo(self.properties)
+        self.properties.append(property.create())
         return True
 
     def getValue(self, key: str) -> ET.Element:
@@ -321,15 +324,16 @@ def showElement(e: ET.Element):
     print(ET.tostring(e).decode("utf-8"))
 
 
-def createTemplate(*, frame=(0, 0, 2560, 1600)) -> ET.Element:
-    """Generates a root Element for your .tosc file"""
+def createTemplate(*, frame: tuple = None) -> ET.Element:
+    """Generates a root xml Element and adds the base GROUP node to it."""
     root = ET.Element("lexml", attrib={"version": "3"})
-    group = ET.SubElement(
+    node = ET.SubElement(
         root,
         ControlElements.NODE,
         attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
     )
-    ElementTOSC(group).setFrame(frame)
+    if frame is not None:
+        ElementTOSC(node).setFrame(frame)
     return root
 
 

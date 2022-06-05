@@ -88,6 +88,7 @@ class Property:
         return True
 
     def create(self) -> ET.Element:
+        """Returns an xml Element <property>"""
         property = ET.Element("property", attrib={"type": self.type})
         ET.SubElement(property, "key").text = self.key
         value = ET.SubElement(property, "value")
@@ -96,6 +97,18 @@ class Property:
             return property
         for paramKey in self.params:
             ET.SubElement(value, paramKey).text = self.params[paramKey]
+        return property
+
+    @classmethod
+    def createProperty(cls, type, key, value=None, params=None) -> ET.Element:
+        property = ET.Element("property", attrib={"type": type})
+        ET.SubElement(property, "key").text = key
+        value = ET.SubElement(property, "value")
+        if value:
+            value.text = value
+            return property
+        for paramKey in params:
+            ET.SubElement(value, paramKey).text = params[paramKey]
         return property
 
     class Elements(NamedTuple):

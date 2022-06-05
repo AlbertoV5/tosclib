@@ -1,7 +1,6 @@
 """General Layout shortcuts"""
 
 from copy import deepcopy
-import math
 from .tosc import *
 from .tosc import ElementTOSC
 from .elements import Property, ControlElements
@@ -157,6 +156,25 @@ def arrangeChildren(
     return True
 
 
+def colorChecker(rgba):
+    if isinstance(rgba[0], int):
+        return tuple(i / 255 for i in rgba)
+    elif isinstance(rgba[0], float):    
+        return rgba
+    elif isinstance(rgba[0], str):
+        rgba = rgba.replace("#", "")
+        return (
+            tuple(int(rgba[i : i + 2], 16)/255 for i in (0, 2, 4, 6))
+            if len(rgba) > 7
+            else tuple(
+                *tuple(int(rgba[i : i + 2], 16)/255 for i in (0, 2, 4)),
+                1,
+            )
+        )
+    else:
+        raise TypeError(f"{rgba} type is not a valid color.")
+
+
 def layoutColumn(func):
     """Create a column of groups with a color gradient."""
 
@@ -166,6 +184,7 @@ def layoutColumn(func):
         frame: tuple[float] = (0, 0, 640, 1600),
         gradient: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
+        gradient = tuple(colorChecker(i) for i in gradient)  # make sure is normalized
 
         layout = ElementTOSC(createGroup())
         layout.setFrame(frame)
@@ -192,6 +211,7 @@ def layoutColumn(func):
 
 def layoutGrid(func):
     """Create a a:b grid of equal size groups"""
+
     def wrapper(
         *,
         size: int = (4, 4),
@@ -199,16 +219,16 @@ def layoutGrid(func):
         gradient: tuple[tuple] = (
             (0.25, 0.25, 0.25, 1.0),
             (1.0, 0.5, 0.5, 1.0),
+            (0.5, 0.5, 0.5, 1.0),
             (0.5, 0.5, 1.0, 1.0),
         ),
-        gradientStyle: int = 0,
+        gradientCenter: int = 0,
     ):
-        """TO DO: Add gradient and gradient style"""
-
+        gradient = tuple(colorChecker(i) for i in gradient)
+        
         layout = ElementTOSC(createGroup())
         layout.setFrame(frame)
         groups = [addGroupTo(layout) for i in range(int(size[0] * size[1]))]
-        [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
 
         w = frame[2] / size[0]
         h = frame[3] / size[1]
@@ -219,7 +239,7 @@ def layoutGrid(func):
                 for column in np.arange(stop=frame[3], step=h)
             )
         ).T
-        
+
         X = M[0]
         Y = M[1]
         W = np.repeat(w, X.size)
@@ -228,14 +248,18 @@ def layoutGrid(func):
         [g.setFrame(f) for f, g in zip(F, groups)]
 
         CX = np.linspace(gradient[0], gradient[1], size[0])
-        CY = np.linspace(gradient[0], gradient[2], size[1])
+        CY = np.linspace(gradient[2], gradient[3], size[1])
         C = (
             np.asarray(tuple(0.5 * (row + column) for row in CY for column in CX))
-            .T.reshape(4, int(size[0]*size[1]))
+            .T.reshape(4, int(size[0] * size[1]))  # reshape for (r,g,b,a)
             .T
         )
-        [g.setColor(c) for c, g in zip(C, groups)]
 
+        [
+            g.setColor(c) for c, g in zip(np.roll(C, gradientCenter * 4), groups)
+        ]  # roll for (r,g,b,a)
+
+        [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
         func(groups)  # Add elements to the groups
 
         return layout

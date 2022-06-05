@@ -250,6 +250,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSet</span><span class="p">(</span><span class="s2">"messages"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSet</span><span class="p">(</span><span class="s2">"children"</span><span class="p">)</span></div>
 
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Return iter over children"""</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="s2">"ElementTOSC"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"ElementTOSC"</span><span class="p">:</span>
+        <span class="sd">"""Append an ElementTOSC's Node to this element's Children"""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
     <span class="k">def</span> <span class="nf">getSet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -258,6 +267,7 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"ElementTOSC"</span><span class="p">:</span>
+        <span class="sd">"""Load a .tosc file into an XML Element and then as ElementTOSC"""</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">getProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
@@ -286,7 +296,7 @@
     <span class="k">def</span> <span class="nf">createProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">property</span><span class="p">:</span> <span class="n">Property</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">findKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span> <span class="nb">property</span><span class="o">.</span><span class="n">key</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">property</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2"> already exists."</span><span class="p">)</span>
-        <span class="nb">property</span><span class="o">.</span><span class="n">applyTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">property</span><span class="o">.</span><span class="n">create</span><span class="p">())</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
@@ -382,6 +392,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="kc">True</span>
 
+    <span class="k">def</span> <span class="nf">getFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="sd">"""Wrapper for getX, getY, etc."""</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getX</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getY</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getW</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getH</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">getX</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyParam</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getY</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyParam</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getW</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyParam</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getH</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyParam</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"h"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">simpleProperty</span><span class="p">(</span><span class="n">fun</span><span class="p">):</span>
         <span class="sd">"""Pass value as text arg, so name is Craig"""</span>
 
@@ -409,13 +435,17 @@
     <span class="k">def</span> <span class="nf">multiProperty</span><span class="p">(</span><span class="n">fun</span><span class="p">):</span>
         <span class="sd">"""Pass args as tuple of keys, so color is ("r","g","b","a")"""</span>
 
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-            <span class="nb">type</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">fun</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+            <span class="nb">type</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">paramKeys</span> <span class="o">=</span> <span class="n">fun</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
             <span class="n">element</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getProperty</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">element</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span>
-                <span class="n">Property</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">args</span><span class="p">)})</span>
+                <span class="n">Property</span><span class="p">(</span>
+                    <span class="nb">type</span><span class="p">,</span>
+                    <span class="n">key</span><span class="p">,</span>
+                    <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">paramKeys</span><span class="p">)},</span>
+                <span class="p">)</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">wrapper</span>
@@ -424,6 +454,9 @@
     <span class="k">def</span> <span class="nf">setName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""String"""</span>
         <span class="k">return</span> <span class="n">PropertyType</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span> <span class="s2">"name"</span>
+
+    <span class="k">def</span> <span class="nf">getName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyValue</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@simpleProperty</span>
     <span class="k">def</span> <span class="nf">setTag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -436,8 +469,8 @@
         <span class="k">return</span> <span class="n">PropertyType</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span> <span class="s2">"script"</span>
 
     <span class="nd">@multiProperty</span>
-    <span class="k">def</span> <span class="nf">setFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""x,y,w,h"""</span>
+    <span class="k">def</span> <span class="nf">setFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">"""Tuple of x,y,w,h"""</span>
         <span class="k">return</span> <span class="n">PropertyType</span><span class="o">.</span><span class="n">FRAME</span><span class="p">,</span> <span class="s2">"frame"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="s2">"h"</span><span class="p">)</span>
 
     <span class="nd">@multiProperty</span>
@@ -509,15 +542,25 @@
     <span class="nb">print</span><span class="p">(</span><span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="createTemplate"><a class="viewcode-back" href="../../api/tglobals.html#tosclib.tosc.createTemplate">[docs]</a><span class="k">def</span> <span class="nf">createTemplate</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
-    <span class="sd">"""Generates a root Element for your .tosc file"""</span>
+<div class="viewcode-block" id="createTemplate"><a class="viewcode-back" href="../../api/tglobals.html#tosclib.tosc.createTemplate">[docs]</a><span class="k">def</span> <span class="nf">createTemplate</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+    <span class="sd">"""Generates a root xml Element and adds the base GROUP node to it."""</span>
     <span class="n">root</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">"lexml"</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">"version"</span><span class="p">:</span> <span class="s2">"3"</span><span class="p">})</span>
-    <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
         <span class="n">root</span><span class="p">,</span>
         <span class="n">ControlElements</span><span class="o">.</span><span class="n">NODE</span><span class="p">,</span>
         <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">"ID"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="s2">"type"</span><span class="p">:</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span><span class="p">},</span>
     <span class="p">)</span>
+    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ElementTOSC</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">root</span></div>
+
+
+<span class="k">def</span> <span class="nf">createGroup</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+    <span class="sd">"""Simple create Node type GROUP"""</span>
+    <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span>
+        <span class="n">ControlElements</span><span class="o">.</span><span class="n">NODE</span><span class="p">,</span>
+        <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">"ID"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="s2">"type"</span><span class="p">:</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span><span class="p">},</span>
+    <span class="p">)</span>
 
 
 <div class="viewcode-block" id="load"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.tosc.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">inputPath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
@@ -608,7 +651,7 @@
 <span class="sd">"""</span>
 
 
-<span class="k">def</span> <span class="nf">addBox</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">ElementTOSC</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">addBoxTo</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">ElementTOSC</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">ElementTOSC</span><span class="p">(</span>
         <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
             <span class="n">e</span><span class="o">.</span><span class="n">children</span><span class="p">,</span>
@@ -618,7 +661,7 @@
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">addGroup</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">ElementTOSC</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">addGroupTo</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">ElementTOSC</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">"""Pass Control Types as arguments to append children to the group.</span>
 <span class="sd">    Then the result will be a tuple (group, child, child, ...)"""</span>
     <span class="n">group</span> <span class="o">=</span> <span class="n">ElementTOSC</span><span class="p">(</span>
@@ -642,11 +685,11 @@
     <span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">addButton</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">ElementTOSC</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">addButtonTo</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">ElementTOSC</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">ElementTOSC</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">createChild</span><span class="p">(</span><span class="n">ControlType</span><span class="o">.</span><span class="n">BUTTON</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">addLabel</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">ElementTOSC</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">addLabelTo</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">ElementTOSC</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">ElementTOSC</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">createChild</span><span class="p">(</span><span class="n">ControlType</span><span class="o">.</span><span class="n">LABEL</span><span class="p">))</span>
 
 

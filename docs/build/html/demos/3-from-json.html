@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Image Converter" href="4-image-converter.html" /><link rel="prev" title="Copy Scripts" href="2-copy-scripts.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>Elements from Json - tosclib 0.2 documentation</title>
+        <title>Elements from Json - tosclib 0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">tosclib 0.2 documentation</div></a>
+      <a href="../index.html"><div class="brand">tosclib 0.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">tosclib 0.2 documentation</span>
+  <span class="sidebar-brand-text">tosclib 0.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -243,8 +243,8 @@
 <span class="k">def</span> <span class="nf">createFader</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
     <span class="n">fader</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">createChild</span><span class="p">(</span><span class="s2">"FADER"</span><span class="p">))</span>
     <span class="n">fader</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">fader</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="mi">1080</span><span class="p">)</span>
-    <span class="n">fader</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">fader</span><span class="o">.</span><span class="n">setFrame</span><span class="p">((</span><span class="n">width</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="mi">1080</span><span class="p">))</span>
+    <span class="n">fader</span><span class="o">.</span><span class="n">setColor</span><span class="p">((</span><span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
     <span class="n">fader</span><span class="o">.</span><span class="n">createOSC</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>  <span class="c1"># Creates a new message from custom tosc.OSC</span>
 
 
@@ -252,13 +252,13 @@
     <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">createTemplate</span><span class="p">()</span>
     <span class="n">base</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">base</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="s2">"template"</span><span class="p">)</span>
-    <span class="n">base</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">)</span>
+    <span class="n">base</span><span class="o">.</span><span class="n">setFrame</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">))</span>
 
     <span class="c1"># Group container for the faders</span>
     <span class="n">group</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">createChild</span><span class="p">(</span><span class="s2">"GROUP"</span><span class="p">))</span>
     <span class="n">group</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="s2">"Controls"</span><span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="mi">420</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1080</span><span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">setFrame</span><span class="p">((</span><span class="mi">420</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1080</span><span class="p">))</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">setColor</span><span class="p">((</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
     <span class="c1"># Create faders based on Json data</span>
     <span class="n">jsonData</span> <span class="o">=</span> <span class="n">getJson</span><span class="p">(</span><span class="n">jsonFile</span><span class="p">)</span>

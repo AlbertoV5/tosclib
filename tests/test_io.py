@@ -2,18 +2,7 @@ import unittest
 import tosclib as tosc
 from pathlib import Path
 from tosclib import Property
-import cProfile
-import pstats
-
-def profile(func):
-    def wrapper(*args, **kwargs):
-        with cProfile.Profile() as pr:
-            for i in range(1):
-                func(*args, **kwargs)
-            stats = pstats.Stats(pr)
-            stats.sort_stats(pstats.SortKey.TIME)
-            stats.dump_stats(filename="tests/test_io.prof")
-    return wrapper
+from .profiler import profile
 
 class TestTemplate(unittest.TestCase):
     @classmethod
@@ -32,9 +21,9 @@ class TestTemplate(unittest.TestCase):
         cls.template = tosc.ElementTOSC(cls.root[0])
         cls.template.createChild("GROUP")
         assert cls.template.createProperty(Property("b", "background", "0"))
-        assert cls.template.setColor(0, 0, 0, 1)
+        assert cls.template.setColor((0, 0, 0, 1))
         assert cls.template.createProperty(Property("f", "cornerRadius", "0"))
-        assert cls.template.setFrame(0, 0, 640, 860)
+        assert cls.template.setFrame((0, 0, 640, 860))
         assert cls.template.createProperty(Property("b", "grabFocus", "0"))
         assert cls.template.createProperty(Property("b", "interactive", "0"))
         assert cls.template.createProperty(Property("b", "locked", "0"))
@@ -46,10 +35,11 @@ class TestTemplate(unittest.TestCase):
         assert cls.template.createProperty(Property("b", "visible", "1"))
         assert cls.template.createValue(tosc.Value("touch", "0", "0", "false", "0"))
         tosc.write(cls.root, cls.directory / cls.fileName)
+        return "tests/test_io.prof"
 
     def test_change_properties(self):
         (x, y, w, h) = (0, 0, 1920, 1080)
-        assert self.template.setFrame(x, y, w, h)
+        assert self.template.setFrame((x, y, w, h))
         self.assertEqual(self.template.getPropertyParam("frame", "w").text, str(w))
         self.assertEqual(self.template.getPropertyParam("frame", "h").text, str(h))
 

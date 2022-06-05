@@ -1,20 +1,53 @@
-from tosclib import tosc
-from tosclib.tosc import OSC, ControlType, Partial, Trigger, Value
-import pstats
-import cProfile
 
-def profile(func):
-    def wrapper(*args, **kwargs):
-        with cProfile.Profile() as pr:
-            for i in range(1):
-                func(*args, **kwargs)
-            stats = pstats.Stats(pr)
-            stats.sort_stats(pstats.SortKey.TIME)
-            stats.dump_stats(filename="tests/test_nested.prof")
-    return wrapper
-    
+import tosclib as tosc
+from .profiler import profile
+from tosclib import Value, Partial, ControlType, OSC
+
+
 @profile
-def test_nested():
+def test_basics():
+    """Misc tests"""
+    root = tosc.createTemplate()
+    element = tosc.ElementTOSC(root[0])
+
+    element.setName("Craig")
+    tag = "Scottish"
+    element.setTag(tag)
+    element.createValue(Value())
+
+    element.showValue("touch")
+    element.setValue(Value("touch", "1", "1", "true", "1"))
+
+    element.createOSC(
+        message=tosc.OSC(
+            "0",
+            "0",
+            "0",
+            "1",
+            "00001",
+            [tosc.Trigger()],
+            [tosc.Partial(), tosc.Partial()],
+            [Partial(), Partial()],
+        )
+    )
+
+    element.setColor((1, 0, 0, 1))
+    element.setFrame((0, 0, 1, 1))
+
+    count = 0
+    for i in dir(tosc.ElementTOSC):
+        if "__" not in i:
+            count += 1
+
+    tag2 = tosc.pullValueFromKey2(root, "name", "Craig", "tag")
+
+    x = tosc.ControlElements.PROPERTIES
+    x = element.setColor((1, 0, 0, 1))
+
+    assert tag == tag2
+
+    """NESTED"""
+
     root = tosc.createTemplate()
     parent = tosc.ElementTOSC(root[0])
 
@@ -32,8 +65,8 @@ def test_nested():
     for i in range(lim):
         button = tosc.ElementTOSC(group.createChild(ControlType.BUTTON))
         assert button.setName(f"button{i}") is not None
-        assert button.setFrame(i * 100, 0, 100, 50) is not None
-        assert button.setColor(1 - i / lim, 0, lim, 1) is not None
+        assert button.setFrame((i * 100, 0, 100, 50)) is not None
+        assert button.setColor((1 - i / lim, 0, lim, 1)) is not None
         assert button.createValue(Value(key="x")) is not None
         assert button.createOSC(msg) is not None
         assert button.isControlType(ControlType.BUTTON)
@@ -68,6 +101,5 @@ function init()
 end
 """
         )
-    
-
         
+    return "tests/test_basics.prof"

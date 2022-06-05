@@ -8,22 +8,21 @@ from tosclib import layout
 
 """WORK IN PROGRESS June-2-2022"""
 
+
 @layout.layoutColumn
-def numpadLayout(groups:list[ElementTOSC]) -> ElementTOSC:
+def numpadLayout(groups: list[ElementTOSC]) -> ElementTOSC:
     # do stuff to the layout
     top, mid, bot = groups[0], groups[1], groups[2]
-    
-    
-    
+
 
 def main():
-    
-    root = tosc.createTemplate(0,0,400,400)
-    layout: ElementTOSC = numpadLayout(ratio = (1,2,1), frame = (0, 0, 400, 400))
+
+    root = tosc.createTemplate(0, 0, 400, 400)
+    layout: ElementTOSC = numpadLayout(ratio=(1, 2, 1), frame=(0, 0, 400, 400))
 
     frame = nx, ny, nw, nh = layout.getFrame()
     numGrp = layout.children[1]
-    
+
     n, rows, columns = 9, 3, 3
     w, h = nw / rows, nh / columns
     frame = (0, 0, w, h)
@@ -34,18 +33,20 @@ def main():
     with open("docs/modules/button.lua", "r") as file:
         buttonT.script = file.read()
 
-    valueGrp, valueLbl, sendGrp = tosc.addGroupTo(layout, ControlType.LABEL, ControlType.GROUP)
+    valueGrp, valueLbl, sendGrp = tosc.addGroupTo(
+        layout, ControlType.LABEL, ControlType.GROUP
+    )
     valLocal = LOCAL(
-        enabled = "1",
-        triggers = [Trigger("touch", "ANY")],
-        type = "NAME",
-        conversion = "STRING",
-        value = "name",
-        scaleMin = "0",
-        scaleMax = "1",
-        dstType = "STRING",
-        dstVar = "text",
-        dstID = valueLbl.getID(),
+        enabled="1",
+        triggers=[Trigger("touch", "ANY")],
+        type="NAME",
+        conversion="STRING",
+        value="name",
+        scaleMin="0",
+        scaleMax="1",
+        dstType="STRING",
+        dstVar="text",
+        dstID=valueLbl.getID(),
     )
 
     labelT.build("name", "textSize", "background", "frame")
@@ -75,7 +76,7 @@ def main():
 if __name__ == "__main__":
     with cProfile.Profile() as pr:
         main()
-        
+
     stats = pstats.Stats(pr)
     stats.sort_stats(pstats.SortKey.TIME)
     stats.dump_stats(filename="test.prof")

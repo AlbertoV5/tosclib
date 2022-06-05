@@ -4,7 +4,6 @@ from copy import deepcopy
 from .tosc import *
 from .tosc import ElementTOSC
 from .elements import Property, ControlElements
-from .controls import Control
 import numpy as np
 
 
@@ -156,23 +155,24 @@ def arrangeChildren(
     return True
 
 
-def colorChecker(rgba):
-    if isinstance(rgba[0], int):
-        return tuple(i / 255 for i in rgba)
-    elif isinstance(rgba[0], float):    
-        return rgba
-    elif isinstance(rgba[0], str):
-        rgba = rgba.replace("#", "")
+def colorChecker(color):
+    """Allow for passing rgba in 0-255, 0-1 and hex, then convert to 0-1"""
+    if isinstance(color[0], int):
+        return tuple(i / 255 for i in color)
+    elif isinstance(color[0], float):
+        return color
+    elif isinstance(color[0], str):
+        color = color.replace("#", "")
         return (
-            tuple(int(rgba[i : i + 2], 16)/255 for i in (0, 2, 4, 6))
-            if len(rgba) > 7
+            tuple(int(color[i : i + 2], 16) / 255 for i in (0, 2, 4, 6))
+            if len(color) > 7
             else tuple(
-                *tuple(int(rgba[i : i + 2], 16)/255 for i in (0, 2, 4)),
+                *tuple(int(color[i : i + 2], 16) / 255 for i in (0, 2, 4)),
                 1,
             )
         )
     else:
-        raise TypeError(f"{rgba} type is not a valid color.")
+        raise TypeError(f"{color} type is not a valid color.")
 
 
 def layoutColumn(func):
@@ -182,9 +182,9 @@ def layoutColumn(func):
         *,
         size: tuple[float] = (1, 2, 1),
         frame: tuple[float] = (0, 0, 640, 1600),
-        gradient: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
+        colors: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
-        gradient = tuple(colorChecker(i) for i in gradient)  # make sure is normalized
+        colors = tuple(colorChecker(i) for i in colors)  # make sure is normalized
 
         layout = ElementTOSC(createGroup())
         layout.setFrame(frame)
@@ -194,15 +194,50 @@ def layoutColumn(func):
         H = frame[3] * (np.asarray(size) / np.sum(size))
         W = [frame[2] for i in size]
         Y = [frame[1] + np.sum(H[0 : i[0]]) for i, v in np.ndenumerate(H)]
-        X = [frame[0] for i in size]
+        X = np.asarray(tuple(0 for i in size))
 
         F = np.asarray(((X), (Y), (W), (H))).T
         [g.setFrame(f) for f, g in zip(F, groups)]
 
-        C = np.linspace(gradient[0], gradient[1], len(size))
+        C = np.linspace(colors[0], colors[1], len(size))
         [g.setColor(c) for c, g in zip(C, groups)]
 
-        func(groups)  # Add elements to the groups
+        func(groups)  # Do stuff to the groups
+
+        return layout
+
+    return wrapper
+
+
+def layoutRow(func):
+    """Create a row of groups with a color gradient."""
+
+    def wrapper(
+        *,
+        size: tuple[float] = (1, 2, 1),
+        frame: tuple[float] = (0, 0, 1600, 640),
+        colors: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
+    ):
+        colors = tuple(colorChecker(i) for i in colors)  # make sure is normalized
+
+        layout = ElementTOSC(createGroup())
+        layout.setFrame(frame)
+        groups = [addGroupTo(layout) for i, r in enumerate(size)]
+        [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
+
+        # TO DO : Optimize
+        W = frame[2] * (np.asarray(size) / np.sum(size))
+        H = [frame[3] for i in size]
+        X = [frame[0] + np.sum(W[0 : i[0]]) for i, v in np.ndenumerate(W)]
+        Y = np.asarray(tuple(0 for i in size))
+
+        F = np.asarray(((X), (Y), (W), (H))).T
+        [g.setFrame(f) for f, g in zip(F, groups)]
+
+        C = np.linspace(colors[0], colors[1], len(size))
+        [g.setColor(c) for c, g in zip(C, groups)]
+
+        func(groups)
 
         return layout
 
@@ -210,22 +245,30 @@ def layoutColumn(func):
 
 
 def layoutGrid(func):
-    """Create a a:b grid of equal size groups"""
+    """Create an x*y grid of groups.
+
+    colorStyle:
+        Select a gradient style.
+        0 = horizontal gradient
+        1 = vetical gradient
+        2 = sequential gradient 1
+        3 = sequential gradient 2
+        >= 4 = centered/mirrored gradient, moves position with number
+
+    """
 
     def wrapper(
         *,
         size: int = (4, 4),
         frame: tuple[float] = (0, 0, 800, 1200),
-        gradient: tuple[tuple] = (
+        colors: tuple[tuple] = (
             (0.25, 0.25, 0.25, 1.0),
-            (1.0, 0.5, 0.5, 1.0),
             (0.5, 0.5, 0.5, 1.0),
-            (0.5, 0.5, 1.0, 1.0),
         ),
-        gradientCenter: int = 0,
+        colorStyle: int = 0,
     ):
-        gradient = tuple(colorChecker(i) for i in gradient)
-        
+        colors = tuple(colorChecker(i) for i in colors)
+
         layout = ElementTOSC(createGroup())
         layout.setFrame(frame)
         groups = [addGroupTo(layout) for i in range(int(size[0] * size[1]))]
@@ -247,20 +290,33 @@ def layoutGrid(func):
         F = np.asarray(((X), (Y), (W), (H))).T
         [g.setFrame(f) for f, g in zip(F, groups)]
 
-        CX = np.linspace(gradient[0], gradient[1], size[0])
-        CY = np.linspace(gradient[2], gradient[3], size[1])
-        C = (
-            np.asarray(tuple(0.5 * (row + column) for row in CY for column in CX))
-            .T.reshape(4, int(size[0] * size[1]))  # reshape for (r,g,b,a)
-            .T
-        )
+        # TO DO : Optimize
+        if colorStyle == 0:  # horizontal
+            C = np.linspace(colors[0], colors[1], size[0])
+            C = np.repeat(C.T, size[1]).T.reshape(4, size[0] * size[1]).T
+        elif colorStyle == 1:  # vertical
+            C = np.linspace(colors[0], colors[1], size[1])
+            C = np.asarray(np.resize(C, size[0] * C.size)).reshape(size[0] * size[1], 4)
+        elif colorStyle == 2:  # sequential
+            C = np.linspace(colors[0], colors[1], size[0] * size[1])
+        elif colorStyle == 3:  # sequential inverted
+            C = np.linspace(colors[0], colors[1], size[0] * size[1])
+            C = np.asarray([C[i :: size[0]] for i in range(size[0])]).reshape(
+                size[0] * size[1], 4
+            )
+        elif colorStyle >= 4:  # centered / mirrored
+            C = np.linspace(colors[0], colors[1], size[0] * size[1])
+            C = np.roll(C, colorStyle * 4)
+            C[0:colorStyle] = np.flip(
+                np.roll(C, (-1 - colorStyle) * 4)[0:colorStyle], axis=0
+            )
+        else:
+            raise ValueError(f"{colorStyle} is not valid.")
 
-        [
-            g.setColor(c) for c, g in zip(np.roll(C, gradientCenter * 4), groups)
-        ]  # roll for (r,g,b,a)
+        [g.setColor(c) for c, g in zip(C, groups)]
 
         [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
-        func(groups)  # Add elements to the groups
+        func(groups)
 
         return layout
 

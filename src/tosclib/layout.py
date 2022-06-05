@@ -134,7 +134,14 @@ ARRANGE AND LAYOUT
 def arrangeChildren(
     parent: ElementTOSC, rows: int, columns: int, zeroPad: bool = False
 ) -> bool:
-    """Get n number of children and arrange them in rows and columns"""
+    """Get n number of children and arrange them in rows and columns.
+    
+    Args:
+        parent: Element that has the children
+        rows: how many rows 
+        columns: how many columns
+        zeroPad: allows to have incomplete rows/columns of children.
+    """
     number = len(parent.children)
     number = rows * columns
 
@@ -176,13 +183,19 @@ def colorChecker(color):
 
 
 def layoutColumn(func):
-    """Create a column of groups with a color gradient."""
+    """Create a column of groups with a color gradient.
+    
+    Args:
+        size: The size and ratio of the columns, (1,2,1) means 3 columns with 1:2:1 ratio.
+        frame: Parent frame, all children adapt to it.
+        colors: Tuple of two colors for linear gradient.
+    """
 
     def wrapper(
         *,
-        size: tuple[float] = (1, 2, 1),
-        frame: tuple[float] = (0, 0, 640, 1600),
-        colors: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
+        size: tuple = (1, 2, 1),
+        frame: tuple = (0, 0, 640, 1600),
+        colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # make sure is normalized
 
@@ -202,7 +215,7 @@ def layoutColumn(func):
         C = np.linspace(colors[0], colors[1], len(size))
         [g.setColor(c) for c, g in zip(C, groups)]
 
-        func(groups)  # Do stuff to the groups
+        func(layout)  # Do stuff to the groups
 
         return layout
 
@@ -210,13 +223,20 @@ def layoutColumn(func):
 
 
 def layoutRow(func):
-    """Create a row of groups with a color gradient."""
+    """Create a row of groups with a color gradient.
+    
+    Args:
+        size: The size and ratio of the rows, (1,2,1) means 3 rows with 1:2:1 ratio.
+        frame: Parent frame, all children adapt to it.
+        colors: Tuple of two colors for linear gradient.
+    
+    """
 
     def wrapper(
         *,
-        size: tuple[float] = (1, 2, 1),
-        frame: tuple[float] = (0, 0, 1600, 640),
-        colors: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
+        size: tuple = (1, 2, 1),
+        frame: tuple = (0, 0, 1600, 640),
+        colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # make sure is normalized
 
@@ -237,7 +257,7 @@ def layoutRow(func):
         C = np.linspace(colors[0], colors[1], len(size))
         [g.setColor(c) for c, g in zip(C, groups)]
 
-        func(groups)
+        func(layout)
 
         return layout
 
@@ -247,21 +267,25 @@ def layoutRow(func):
 def layoutGrid(func):
     """Create an x*y grid of groups.
 
-    colorStyle:
-        Select a gradient style.
-        0 = horizontal gradient
-        1 = vetical gradient
-        2 = sequential gradient 1
-        3 = sequential gradient 2
-        >= 4 = centered/mirrored gradient, moves position with number
+    Args:
+        size: the row x column size in tuple, ej (4,4) or (5, 3), etc
+        frame: parent frame, all children adapt to it
+        colors: tuple of two colors gradient, see colorStyle
+        colorStyle:
+            Select a gradient style.
+            0: horizontal gradient
+            1: vetical gradient
+            2: sequential gradient 1
+            3: sequential gradient 2
+            >= 4: centered/mirrored gradient, moves position with number
 
     """
 
     def wrapper(
         *,
         size: int = (4, 4),
-        frame: tuple[float] = (0, 0, 800, 1200),
-        colors: tuple[tuple] = (
+        frame: tuple = (0, 0, 800, 1200),
+        colors: tuple = (
             (0.25, 0.25, 0.25, 1.0),
             (0.5, 0.5, 0.5, 1.0),
         ),
@@ -316,7 +340,7 @@ def layoutGrid(func):
         [g.setColor(c) for c, g in zip(C, groups)]
 
         [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
-        func(groups)
+        func(layout)
 
         return layout
 

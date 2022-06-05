@@ -1,21 +1,7 @@
-import pytest
+
 import tosclib as tosc
-from tosclib import Property
-import cProfile
-import pstats
+from .profiler import profile
 from tosclib import Value, Partial, ControlType, OSC
-
-
-def profile(func):
-    def wrapper(*args, **kwargs):
-        with cProfile.Profile() as pr:
-            for i in range(1):
-                func(*args, **kwargs)
-            stats = pstats.Stats(pr)
-            stats.sort_stats(pstats.SortKey.TIME)
-            stats.dump_stats(filename="tests/test_basics.prof")
-
-    return wrapper
 
 
 @profile
@@ -115,3 +101,5 @@ function init()
 end
 """
         )
+        
+    return "tests/test_basics.prof"

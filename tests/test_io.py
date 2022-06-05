@@ -2,21 +2,7 @@ import unittest
 import tosclib as tosc
 from pathlib import Path
 from tosclib import Property
-import cProfile
-import pstats
-
-
-def profile(func):
-    def wrapper(*args, **kwargs):
-        with cProfile.Profile() as pr:
-            for i in range(1):
-                func(*args, **kwargs)
-            stats = pstats.Stats(pr)
-            stats.sort_stats(pstats.SortKey.TIME)
-            stats.dump_stats(filename="tests/test_io.prof")
-
-    return wrapper
-
+from .profiler import profile
 
 class TestTemplate(unittest.TestCase):
     @classmethod
@@ -49,6 +35,7 @@ class TestTemplate(unittest.TestCase):
         assert cls.template.createProperty(Property("b", "visible", "1"))
         assert cls.template.createValue(tosc.Value("touch", "0", "0", "false", "0"))
         tosc.write(cls.root, cls.directory / cls.fileName)
+        return "tests/test_io.prof"
 
     def test_change_properties(self):
         (x, y, w, h) = (0, 0, 1920, 1080)

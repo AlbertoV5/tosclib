@@ -6,22 +6,22 @@ from .profiler import profile
 
 
 @layoutColumn
-def columns(groups: list[ElementTOSC]):
-    for g in groups:
+def columns(layout: ElementTOSC):
+    for g in layout.children:
         g.setOutline(False)
     return
 
 
 @layoutGrid
-def grid(groups: list[ElementTOSC]):
-    for g in groups:
+def grid(layout: ElementTOSC):
+    for g in layout.children:
         g.setOutline(False)
     return
 
 
 @layoutRow
-def row(groups: list[ElementTOSC]):
-    for g in groups:
+def row(layout: ElementTOSC):
+    for g in layout.children:
         g.setOutline(False)
     return
 
@@ -47,7 +47,7 @@ def main():
         colors=("#3E8989FF", "#564D65FF"),
         colorStyle=0,
     )
-
+    
     rowLayout: ElementTOSC = row(
         frame=(0, 1200, 1600, 400), colors=("#3E8989FF", "#564D65FF")
     )

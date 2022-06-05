@@ -1,22 +1,7 @@
 import tosclib as tosc
 import pytest
 from tosclib.tosc import ControlElements, ControlType
-import time
-import cProfile
-import pstats
-
-
-def profile(func):
-    def wrapper(*args, **kwargs):
-        with cProfile.Profile() as pr:
-            for i in range(1):
-                func(*args, **kwargs)
-            stats = pstats.Stats(pr)
-            stats.sort_stats(pstats.SortKey.TIME)
-            stats.dump_stats(filename="tests/test_copiers.prof")
-
-    return wrapper
-
+from .profiler import profile
 
 @profile
 def test_copiers():
@@ -91,3 +76,5 @@ def test_copiers():
         childList.append(n2.getPropertyValue("name").text)
 
     assert controlsList.sort() == childList.sort()
+
+    return "tests/test_copiers.prof"

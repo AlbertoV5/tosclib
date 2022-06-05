@@ -1,21 +1,7 @@
 import pytest
 import tosclib as tosc
 from tosclib import Property
-import cProfile
-import pstats
-
-
-def profile(func):
-    def wrapper(*args, **kwargs):
-        with cProfile.Profile() as pr:
-            for i in range(1):
-                func(*args, **kwargs)
-            stats = pstats.Stats(pr)
-            stats.sort_stats(pstats.SortKey.TIME)
-            stats.dump_stats(filename="tests/test_collisions.prof")
-
-    return wrapper
-
+from .profiler import profile
 
 @profile
 def test_collistions() -> tosc.ElementTOSC:
@@ -46,3 +32,5 @@ def test_collistions() -> tosc.ElementTOSC:
     assert fader.createOSC() is not None
     assert fader.createOSC(tosc.OSC(path=path)) is not None
     assert fader.createOSC(tosc.OSC(path=path)) is not None
+
+    return "tests/test_collisions.prof"

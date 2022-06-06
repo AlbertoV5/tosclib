@@ -17,7 +17,7 @@ def copyProperties(source: ElementTOSC, target: ElementTOSC, *args: str):
         [target.properties.append(deepcopy(e)) for e in source.properties]
         return True
     for arg in args:
-        if elements := source.properties.findall(f"*[{Property.Elements.KEY}='{arg}']"):
+        if elements := source.properties.findall(f"*[key='{arg}']"):
             [target.properties.append(deepcopy(e)) for e in elements]
         else:
             raise ValueError(f"Failed to find all elements with {args}")
@@ -29,7 +29,7 @@ def moveProperties(source: ElementTOSC, target: ElementTOSC, *args):
     if args is None:
         elements = source.properties
     for arg in args:
-        if e := source.properties.findall(f"*[{Property.Elements.KEY}='{arg}']"):
+        if e := source.properties.findall(f"*[key='{arg}']"):
             elements += e
         else:
             raise ValueError(f"Failed to find all elements with {args}")
@@ -45,7 +45,7 @@ def copyValues(source: ElementTOSC, target: ElementTOSC, *args: str):
         [target.values.append(deepcopy(e)) for e in source.values]
         return True
     for arg in args:
-        if elements := source.values.findall(f"*[{Property.Elements.KEY}='{arg}']"):
+        if elements := source.values.findall(f"*[key='{arg}']"):
             [target.values.append(deepcopy(e)) for e in elements]
         else:
             raise ValueError(f"Failed to find all elements with {args}")
@@ -57,7 +57,7 @@ def moveValues(source: ElementTOSC, target: ElementTOSC, *args: str):
     if args is None:
         elements = source.values
     for arg in args:
-        if e := source.values.findall(f"*[{Property.Elements.KEY}='{arg}']"):
+        if e := source.values.findall(f"*[key='{arg}']"):
             elements += e
         else:
             raise ValueError(f"Failed to find all elements with {args}")
@@ -196,7 +196,7 @@ def Layout(frame, X, Y, W, H, C, func):
     for g,f,c in zip(children, np.nditer([X,Y,W,H], order="F"), C):
         g.setFrame(f)
         g.setColor(c)
-        [g.properties.append(p.build()) for p in properties]
+        [g.createPropertyFast(p) for p in properties]
     return layout
 
 

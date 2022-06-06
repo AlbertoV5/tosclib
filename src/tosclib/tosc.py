@@ -79,7 +79,18 @@ class ElementTOSC:
     def createProperty(self, property: Property) -> bool:
         if findKey(self.properties, property.key) is not None:
             raise ValueError(f"{property.key} already exists.")
-        self.properties.append(property.build())
+        # self.properties.append(property.build())
+        self.createPropertyFast(property)
+        return True
+
+    def createPropertyFast(self, prop: Property) -> bool:        
+        property = ET.Element("property", attrib={"type": prop.type})
+        ET.SubElement(property, "key").text = prop.key
+        value = ET.SubElement(property, "value")
+        value.text = prop.value
+        for paramKey in prop.params:
+            ET.SubElement(value, paramKey).text = prop.params[paramKey]
+        self.properties.append(property)
         return True
 
     def getValue(self, key: str) -> ET.Element:
@@ -199,7 +210,7 @@ class ElementTOSC:
             element = self.getProperty(key)
             if element is not None:
                 self.properties.remove(element)
-            return self.createProperty(Property(type, key, str(value)))
+            return self.createPropertyFast(Property(type, key, str(value)))
 
         return wrapper
 
@@ -211,7 +222,7 @@ class ElementTOSC:
             element = self.getProperty(key)
             if element is not None:
                 self.properties.remove(element)
-            return self.createProperty(Property(type, key, str(int(value))))
+            return self.createPropertyFast(Property(type, key, str(int(value))))
 
         return wrapper
 
@@ -223,7 +234,7 @@ class ElementTOSC:
             element = self.getProperty(key)
             if element is not None:
                 self.properties.remove(element)
-            return self.createProperty(
+            return self.createPropertyFast(
                 Property(
                     type,
                     key,
@@ -423,6 +434,87 @@ def pullValueFromKey2(root: ET.Element, key: str, value: str, targetKey: str) ->
         if re.fullmatch(getTextValueFromKey(e.find("properties"), key), value):
             parser.close()
             return getTextValueFromKey(e.find("properties"), targetKey)
+
+class PropertyParser:
+    """Find all defined properties in the Node"""
+
+    def __init__(self, *args):
+        self.targetList = []
+        self.args = [*args]
+        self.targetFound = None
+        self.multiLine = ""
+        self.node = False
+        self.property = False
+        self.key = False
+        self.value = False
+        self.index = -1
+
+    def start(self, tag, attrib):
+        if tag == ControlElements.NODE:
+            self.index += 1
+            self.node = True
+            self.targetList.append({arg: "" for arg in [*self.args]})
+        elif self.node and tag == ControlElements.PROPERTY:
+            self.property = True
+        elif self.property and tag == "key":
+            self.key = True
+        elif self.property and tag == "value":
+            self.value = True
+
+    def end(self, tag):
+        if tag == ControlElements.NODE:
+            self.node = False
+        elif self.node and tag == ControlElements.PROPERTY:
+            self.property = False
+        elif self.property and tag == "key":
+            self.key = False
+        elif self.property and tag == "value":
+            self.value = False
+
+        if self.targetFound and tag == "value":
+            self.targetList[self.index][self.targetFound] = self.multiLine
+            self.multiLine = ""
+            self.targetFound = None
+
+    def data(self, data):
+        if (
+            self.node
+            and self.property
+            and self.key
+            # and data in self.targetList.keys()
+            and data in self.args
+        ):
+            self.targetFound = data
+        if self.node and self.property and self.value and self.targetFound:
+            self.multiLine = f"{self.multiLine}{data}"
+
+    def close(self):
+        return self.targetList
+
+def parseProperties(node: ET.Element, *args) -> list:
+    """
+    Specify all properties you want to find and this will parse
+    the entire Node and its children and return a list of key value pairs.
+
+    For example:
+
+    >>>Control.parseProperties(node, "name", "script")
+
+    [{"name":"control1", "script":"scriptContent1"},
+    {"name":"control2", "script":""},
+    {"name":"control3", "script":"scriptContent3"}]
+
+    Args:
+        node (ET.Element): Node element to parse.
+
+    Returns:
+        List[dict]: [{arg: "" for arg in [args]}]
+    """
+    target = PropertyParser(*args)
+    line = ET.tostring(node, encoding="UTF-8")
+    parser = ET.XMLParser(target=target)
+    parser.feed(line)
+    return parser.close()
 
 
 """

@@ -6,6 +6,8 @@ from tosclib.layout import layoutGrid, layoutRow, layoutColumn
 from .profiler import profile
 from logging import debug
 
+# from memory_profiler import profile
+
 """
 Layouts are decorator functions that receive size, frame, color, etc
 and return a Group Control that holds n number of groups.
@@ -90,4 +92,4 @@ def test_layout():
     assert rootosc.append(gridLayout)
     assert rootosc.append(columnLayout)
     assert rootosc.append(rowLayout)
-    assert write(root, "tests/test_layout.tosc")
+    # assert write(root, "tests/test_layout.tosc")

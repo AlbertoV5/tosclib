@@ -1,7 +1,6 @@
 import tosclib as tosc
 from .profiler import profile
 
-
 @profile
 def test_parsers():
 
@@ -11,7 +10,7 @@ def test_parsers():
     sameName = "num7"
     root = tosc.load(sameFile)
 
-    script0 = tosc.Control.parseProperties(root, known, unknown)
+    script0 = tosc.parseProperties(root, known, unknown)
     script1 = tosc.pullValueFromKey(sameFile, known, sameName, unknown)
     script2 = tosc.pullValueFromKey2(root, known, sameName, unknown)
 
@@ -21,3 +20,7 @@ def test_parsers():
             break
 
     assert script0 == script1 == script2
+
+
+if __name__ == "__main__":
+    test_parsers()

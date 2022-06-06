@@ -7,7 +7,7 @@ from tosclib.tosc import ControlType, ElementTOSC
 from tosclib.layout import layoutColumn
 
 """WORK IN PROGRESS June-2-2022"""
-
+""" CURRENTLY DEPRECATED FOR >0.3.0"""
 
 @layoutColumn
 def numpadLayout(groups: list[ElementTOSC]) -> ElementTOSC:

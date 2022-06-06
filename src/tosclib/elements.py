@@ -54,69 +54,72 @@ class PropertyType(NamedTuple):
     COLOR = "c"  #: <property type="c">
 
 
-@dataclass
-class Property:
-    """Element structure for a <property>
-
-    Args:
-        type (str): See PropertyType.
-        key (str): See parameters of inner classes of Controls.
-        value (str, optional): Exclusive with params.
-        params (dict[str,str], optional): Exclusive with value.
-    """
+class Property(NamedTuple):
+    """Tuple to carry the Property values"""
 
     type: str
     key: str
     value: str = ""
-    params: dict = field(default_factory=lambda: {})
+    params: dict = {}
 
-    def __post_init__(self):
-        if self.value and self.params:
-            raise ValueError(f"{self} can't have both value and params.")
-        if not self.value and not self.params:
-            raise ValueError(f"{self} is missing both value and params.")
 
-    def applyTo(self, e: ET.Element) -> bool:
-        """Create SubElement Property in passed Element"""
-        property = ET.SubElement(e, "property", attrib={"type": self.type})
-        ET.SubElement(property, "key").text = self.key
-        value = ET.SubElement(property, "value")
-        if self.value:
-            value.text = self.value
-            return True
-        for paramKey in self.params:
-            ET.SubElement(value, paramKey).text = self.params[paramKey]
-        return True
+# @dataclass
+# class PropertyOld:
+#     """Element structure for a <property>
 
-    def build(self) -> ET.Element:
-        """Returns an xml Element <property>"""
-        property = ET.Element("property", attrib={"type": self.type})
-        ET.SubElement(property, "key").text = self.key
-        value = ET.SubElement(property, "value")
-        if self.value:
-            value.text = self.value
-            return property
-        for paramKey in self.params:
-            ET.SubElement(value, paramKey).text = self.params[paramKey]
-        return property
+#     Args:
+#         type (str): See PropertyType.
+#         key (str): See parameters of inner classes of Controls.
+#         value (str, optional): Exclusive with params.
+#         params (dict[str,str], optional): Exclusive with value.
+#     """
+#     type: str
+#     key: str
+#     value: str = ""
+#     params: dict = field(default_factory=lambda: {})
 
-    @classmethod
-    def createProperty(cls, type, key, value=None, params=None) -> ET.Element:
-        property = ET.Element("property", attrib={"type": type})
-        ET.SubElement(property, "key").text = key
-        value = ET.SubElement(property, "value")
-        if value:
-            value.text = value
-            return property
-        for paramKey in params:
-            ET.SubElement(value, paramKey).text = params[paramKey]
-        return property
+#     def __post_init__(self):
+#         if self.value and self.params:
+#             raise ValueError(f"{self} can't have both value and params.")
+#         if not self.value and not self.params:
+#             raise ValueError(f"{self} is missing both value and params.")
 
-    class Elements(NamedTuple):
-        KEY = "key"
-        VALUE = "value"
-        R, G, B, A = "r", "g", "b", "a"
-        X, Y, W, H = "x", "y", "w", "h"
+    # def applyTo(self, e: ET.Element) -> bool:
+    #     """Create SubElement Property in passed Element"""
+    #     property = ET.SubElement(e, "property", attrib={"type": self.type})
+    #     ET.SubElement(property, "key").text = self.key
+    #     value = ET.SubElement(property, "value")
+    #     if self.value:
+    #         value.text = self.value
+    #         return True
+    #     for paramKey in self.params:
+    #         ET.SubElement(value, paramKey).text = self.params[paramKey]
+    #     return True
+
+    # def build(self) -> ET.Element:
+    #     """Returns an xml Element <property>"""
+    #     property = ET.Element("property", attrib={"type": self.type})
+    #     ET.SubElement(property, "key").text = self.key
+    #     value = ET.SubElement(property, "value")
+    #     if self.value:
+    #         value.text = self.value
+    #         return property
+    #     for paramKey in self.params:
+    #         ET.SubElement(value, paramKey).text = self.params[paramKey]
+    #     return property
+
+    # @classmethod
+    # def createProperty(cls, type, key, value=None, params=None) -> ET.Element:
+    #     property = ET.Element("property", attrib={"type": type})
+    #     ET.SubElement(property, "key").text = key
+    #     value = ET.SubElement(property, "value")
+    #     if value:
+    #         value.text = value
+    #         return property
+    #     for paramKey in params:
+    #         ET.SubElement(value, paramKey).text = params[paramKey]
+    #     return property
+
 
 
 @dataclass
@@ -137,12 +140,7 @@ class Value:
     default: str = "false"
     defaultPull: str = "0"
 
-    class Elements(NamedTuple):
-        KEY = "key"
-        LOCKED = "locked"
-        LOCKED_DEFAULT_CURRENT = "lockedDefaultCurrent"
-        DEFAULT = "default"
-        DEFAULT_PULL = "defaultPull"
+
 
 
 @dataclass

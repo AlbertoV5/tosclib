@@ -3,8 +3,9 @@ import tosclib as tosc
 from tosclib import Property
 from .profiler import profile
 
+
 @profile
-def test_collistions() -> tosc.ElementTOSC:
+def test_collisions() -> tosc.ElementTOSC:
     root = tosc.createTemplate()
     element = tosc.ElementTOSC(root[0])
     assert element

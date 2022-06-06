@@ -20,4 +20,8 @@ setuptools.setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     python_requires=">=3.8",
+    install_requires=[
+        "lxml>=4.9.0",
+        "numpy>=1.22.3"
+    ]
 )

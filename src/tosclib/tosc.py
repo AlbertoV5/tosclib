@@ -7,6 +7,7 @@ import re
 import zlib
 import uuid
 from .controls import *
+from lxml import etree as ET
 
 
 class ElementTOSC:
@@ -78,7 +79,7 @@ class ElementTOSC:
     def createProperty(self, property: Property) -> bool:
         if findKey(self.properties, property.key) is not None:
             raise ValueError(f"{property.key} already exists.")
-        self.properties.append(property.create())
+        self.properties.append(property.build())
         return True
 
     def getValue(self, key: str) -> ET.Element:

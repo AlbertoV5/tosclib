@@ -3,6 +3,7 @@ import pytest
 from tosclib.tosc import ControlElements, ControlType
 from .profiler import profile
 
+
 @profile
 def test_copiers():
 
@@ -76,5 +77,3 @@ def test_copiers():
         childList.append(n2.getPropertyValue("name").text)
 
     assert controlsList.sort() == childList.sort()
-
-    return "tests/test_copiers.prof"

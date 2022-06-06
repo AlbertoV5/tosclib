@@ -1,11 +1,10 @@
 """General Layout shortcuts"""
 
 from copy import deepcopy
-from .tosc import *
-from .tosc import ElementTOSC
-from .elements import Property, ControlElements
+from .tosc import ElementTOSC, addGroupTo, createGroup
+from .elements import ControlType, Property, ControlElements
 import numpy as np
-
+from logging import debug
 
 """
 COPY AND MOVE 
@@ -127,18 +126,19 @@ def moveChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
 
 
 """ 
-ARRANGE AND LAYOUT
-"""
 
+ARRANGE AND LAYOUT
+
+"""
 
 def arrangeChildren(
     parent: ElementTOSC, rows: int, columns: int, zeroPad: bool = False
 ) -> bool:
     """Get n number of children and arrange them in rows and columns.
-    
+
     Args:
         parent: Element that has the children
-        rows: how many rows 
+        rows: how many rows
         columns: how many columns
         zeroPad: allows to have incomplete rows/columns of children.
     """
@@ -181,10 +181,28 @@ def colorChecker(color):
     else:
         raise TypeError(f"{color} type is not a valid color.")
 
+"""
+
+LAYOUT FUNCTIONS
+
+"""
+
+def Layout(frame, X, Y, W, H, C, func):
+    """Basic process to append multiple properties to a layout of controls"""
+    layout = ElementTOSC(createGroup())
+    layout.setFrame(frame)
+    controlType, properties = func(layout)
+    children = [ElementTOSC(layout.createChild(controlType)) for i in range(max(X.shape))]
+    for g,f,c in zip(children, np.nditer([X,Y,W,H], order="F"), C):
+        g.setFrame(f)
+        g.setColor(c)
+        [g.properties.append(p.build()) for p in properties]
+    return layout
+
 
 def layoutColumn(func):
     """Create a column of groups with a color gradient.
-    
+
     Args:
         size: The size and ratio of the columns, (1,2,1) means 3 columns with 1:2:1 ratio.
         frame: Parent frame, all children adapt to it.
@@ -192,74 +210,49 @@ def layoutColumn(func):
     """
 
     def wrapper(
-        *,
+        *args,
         size: tuple = (1, 2, 1),
         frame: tuple = (0, 0, 640, 1600),
         colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
-        colors = tuple(colorChecker(i) for i in colors)  # make sure is normalized
-
-        layout = ElementTOSC(createGroup())
-        layout.setFrame(frame)
-        groups = [addGroupTo(layout) for i, r in enumerate(size)]
-        [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
+        colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
 
         H = frame[3] * (np.asarray(size) / np.sum(size))
         W = [frame[2] for i in size]
-        Y = [frame[1] + np.sum(H[0 : i[0]]) for i, v in np.ndenumerate(H)]
-        X = np.asarray(tuple(0 for i in size))
-
-        F = np.asarray(((X), (Y), (W), (H))).T
-        [g.setFrame(f) for f, g in zip(F, groups)]
-
+        Y = np.cumsum(np.concatenate(([0], H)))[:-1]
+        X = np.resize((0),len(size))
         C = np.linspace(colors[0], colors[1], len(size))
-        [g.setColor(c) for c, g in zip(C, groups)]
 
-        func(layout)  # Do stuff to the groups
-
-        return layout
+        return Layout(frame, X, Y, W, H, C, func)
 
     return wrapper
 
 
 def layoutRow(func):
     """Create a row of groups with a color gradient.
-    
+
     Args:
         size: The size and ratio of the rows, (1,2,1) means 3 rows with 1:2:1 ratio.
         frame: Parent frame, all children adapt to it.
         colors: Tuple of two colors for linear gradient.
-    
+
     """
 
     def wrapper(
-        *,
+        *args,
         size: tuple = (1, 2, 1),
         frame: tuple = (0, 0, 1600, 640),
         colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
-        colors = tuple(colorChecker(i) for i in colors)  # make sure is normalized
-
-        layout = ElementTOSC(createGroup())
-        layout.setFrame(frame)
-        groups = [addGroupTo(layout) for i, r in enumerate(size)]
-        [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
-
-        # TO DO : Optimize
+        colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
+        
+        H = np.resize(frame[3], len(size))
         W = frame[2] * (np.asarray(size) / np.sum(size))
-        H = [frame[3] for i in size]
-        X = [frame[0] + np.sum(W[0 : i[0]]) for i, v in np.ndenumerate(W)]
-        Y = np.asarray(tuple(0 for i in size))
-
-        F = np.asarray(((X), (Y), (W), (H))).T
-        [g.setFrame(f) for f, g in zip(F, groups)]
-
+        Y = np.resize((0),len(size))
+        X = np.cumsum(np.concatenate(([0], W)))[:-1]
         C = np.linspace(colors[0], colors[1], len(size))
-        [g.setColor(c) for c, g in zip(C, groups)]
 
-        func(layout)
-
-        return layout
+        return Layout(frame, X, Y, W, H, C, func)
 
     return wrapper
 
@@ -282,7 +275,7 @@ def layoutGrid(func):
     """
 
     def wrapper(
-        *,
+        *args,
         size: int = (4, 4),
         frame: tuple = (0, 0, 800, 1200),
         colors: tuple = (
@@ -292,10 +285,6 @@ def layoutGrid(func):
         colorStyle: int = 0,
     ):
         colors = tuple(colorChecker(i) for i in colors)
-
-        layout = ElementTOSC(createGroup())
-        layout.setFrame(frame)
-        groups = [addGroupTo(layout) for i in range(int(size[0] * size[1]))]
 
         w = frame[2] / size[0]
         h = frame[3] / size[1]
@@ -311,8 +300,6 @@ def layoutGrid(func):
         Y = M[1]
         W = np.repeat(w, X.size)
         H = np.repeat(h, Y.size)
-        F = np.asarray(((X), (Y), (W), (H))).T
-        [g.setFrame(f) for f, g in zip(F, groups)]
 
         # TO DO : Optimize
         if colorStyle == 0:  # horizontal
@@ -335,13 +322,8 @@ def layoutGrid(func):
                 np.roll(C, (-1 - colorStyle) * 4)[0:colorStyle], axis=0
             )
         else:
-            raise ValueError(f"{colorStyle} is not valid.")
+            raise ValueError(f"{colorStyle} is not a valid colorStyle.")
 
-        [g.setColor(c) for c, g in zip(C, groups)]
-
-        [g.setName(f"group{str(i+1)}") for i, g in enumerate(groups)]
-        func(layout)
-
-        return layout
+        return Layout(frame, X, Y, W, H, C, func)
 
     return wrapper

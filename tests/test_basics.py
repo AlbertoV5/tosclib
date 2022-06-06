@@ -1,4 +1,3 @@
-
 import tosclib as tosc
 from .profiler import profile
 from tosclib import Value, Partial, ControlType, OSC
@@ -101,5 +100,5 @@ function init()
 end
 """
         )
-        
+
     return "tests/test_basics.prof"

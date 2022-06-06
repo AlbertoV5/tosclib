@@ -4,6 +4,7 @@ from typing import NamedTuple
 from dataclasses import dataclass, field
 from typing import List
 import xml.etree.ElementTree as ET
+from lxml import etree as ET
 
 
 class ControlElements(NamedTuple):
@@ -87,7 +88,7 @@ class Property:
             ET.SubElement(value, paramKey).text = self.params[paramKey]
         return True
 
-    def create(self) -> ET.Element:
+    def build(self) -> ET.Element:
         """Returns an xml Element <property>"""
         property = ET.Element("property", attrib={"type": self.type})
         ET.SubElement(property, "key").text = self.key

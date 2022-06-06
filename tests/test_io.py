@@ -4,9 +4,9 @@ from pathlib import Path
 from tosclib import Property
 from .profiler import profile
 
+
 class TestTemplate(unittest.TestCase):
     @classmethod
-    @profile
     def setUpClass(cls):
         cls.directory = Path(__file__).absolute().parent / "files"
 
@@ -19,34 +19,32 @@ class TestTemplate(unittest.TestCase):
         cls.fileName = "test.tosc"
         cls.root = tosc.createTemplate()
         cls.template = tosc.ElementTOSC(cls.root[0])
-        cls.template.createChild("GROUP")
-        assert cls.template.createProperty(Property("b", "background", "0"))
-        assert cls.template.setColor((0, 0, 0, 1))
-        assert cls.template.createProperty(Property("f", "cornerRadius", "0"))
-        assert cls.template.setFrame((0, 0, 640, 860))
-        assert cls.template.createProperty(Property("b", "grabFocus", "0"))
-        assert cls.template.createProperty(Property("b", "interactive", "0"))
-        assert cls.template.createProperty(Property("b", "locked", "0"))
-        assert cls.template.createProperty(Property("i", "orientation", "0"))
-        assert cls.template.createProperty(Property("b", "outline", "1"))
-        assert cls.template.createProperty(Property("i", "outlineStyle", "0"))
-        assert cls.template.createProperty(Property("i", "pointerPriority", "0"))
-        assert cls.template.createProperty(Property("i", "shape", "1"))
-        assert cls.template.createProperty(Property("b", "visible", "1"))
-        assert cls.template.createValue(tosc.Value("touch", "0", "0", "false", "0"))
         tosc.write(cls.root, cls.directory / cls.fileName)
-        return "tests/test_io.prof"
 
-    def test_change_properties(self):
+    @profile
+    def test_io(self):
+        self.assertIsInstance(
+            tosc.ElementTOSC.fromFile(self.directory / self.fileName), tosc.ElementTOSC
+        )
+        self.template.createChild("GROUP")
+        assert self.template.createProperty(Property("b", "background", "0"))
+        assert self.template.setColor((0, 0, 0, 1))
+        assert self.template.createProperty(Property("f", "cornerRadius", "0"))
+        assert self.template.setFrame((0, 0, 640, 860))
+        assert self.template.createProperty(Property("b", "grabFocus", "0"))
+        assert self.template.createProperty(Property("b", "interactive", "0"))
+        assert self.template.createProperty(Property("b", "locked", "0"))
+        assert self.template.createProperty(Property("i", "orientation", "0"))
+        assert self.template.createProperty(Property("b", "outline", "1"))
+        assert self.template.createProperty(Property("i", "outlineStyle", "0"))
+        assert self.template.createProperty(Property("i", "pointerPriority", "0"))
+        assert self.template.createProperty(Property("i", "shape", "1"))
+        assert self.template.createProperty(Property("b", "visible", "1"))
+        assert self.template.createValue(tosc.Value("touch", "0", "0", "false", "0"))
         (x, y, w, h) = (0, 0, 1920, 1080)
         assert self.template.setFrame((x, y, w, h))
         self.assertEqual(self.template.getPropertyParam("frame", "w").text, str(w))
         self.assertEqual(self.template.getPropertyParam("frame", "h").text, str(h))
-
-    def test_from_file(self):
-        self.assertIsInstance(
-            tosc.ElementTOSC.fromFile(self.directory / self.fileName), tosc.ElementTOSC
-        )
 
     @classmethod
     def tearDownClass(cls):

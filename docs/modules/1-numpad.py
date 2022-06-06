@@ -4,12 +4,12 @@ import tosclib as tosc
 from tosclib import Control, Value
 from tosclib.elements import LOCAL, Trigger
 from tosclib.tosc import ControlType, ElementTOSC
-from tosclib import layout
+from tosclib.layout import layoutColumn
 
 """WORK IN PROGRESS June-2-2022"""
 
 
-@layout.layoutColumn
+@layoutColumn
 def numpadLayout(groups: list[ElementTOSC]) -> ElementTOSC:
     # do stuff to the layout
     top, mid, bot = groups[0], groups[1], groups[2]

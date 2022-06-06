@@ -4,6 +4,7 @@ Hexler Enumerations as Controls
 
 from dataclasses import dataclass, field
 from typing import Final
+import uuid
 from .elements import *
 
 
@@ -241,7 +242,12 @@ class Control:
 
     @dataclass
     class Group(Properties, PropertiesGroup):
-        pass
+        @classmethod
+        def build(cls) -> ET.Element:
+            return ET.Element(
+                ControlElements.NODE,
+                attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
+            )
 
     @dataclass
     class Pager(Properties):

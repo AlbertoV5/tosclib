@@ -3,7 +3,7 @@ from .profiler import profile
 
 
 @profile
-def test_all_parsers():
+def test_parsers():
 
     known = "name"
     unknown = "script"
@@ -21,5 +21,3 @@ def test_all_parsers():
             break
 
     assert script0 == script1 == script2
-
-    return "tests/test_parsers.prof"

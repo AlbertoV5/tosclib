@@ -1,3 +1,4 @@
+from typing import List
 from tosclib.elements import ControlType, Property
 from tosclib.tosc import ElementTOSC, createTemplate, write
 from tosclib.layout import layoutGrid, layoutRow, layoutColumn
@@ -31,30 +32,41 @@ return statement of the decorated function.
 """
 
 
-@layoutColumn
-def columns(layout: ElementTOSC):
-    layout.setName("Column")
-    return ControlType.BUTTON, (
-        Property.outline(False),
-        Property.tag("column"),
-    )
-
-
 @layoutRow
-def row(layout: ElementTOSC):
-    layout.setName("Row")
-    return ControlType.FADER, (
+def lay2b(children:List[ElementTOSC]):
+    return (
         Property.outline(False),
-        Property.tag("row"),
-    )
+        Property.tag("row"),)
+
+
+@layoutColumn
+def lay2(children:List[ElementTOSC]):
+    return (
+        Property.name("lay2"), 
+        Property.outline(False),)
+
 
 @layoutGrid
-def grid(layout: ElementTOSC):
-    layout.setName("grid")
-    return ControlType.XY, (
-        Property.outline(False),
-        Property.tag("grid"),
-    )
+def lay1(children:List[ElementTOSC]):
+    """Layout
+    
+    Args:
+        children: This receives the children list after frame, color processing
+
+    Returns:
+        args: you can return a list of properties to apply to the parent
+    """
+
+    # Create nested layouts
+    lay2(children[4], ControlType.BUTTON, size = (1,1,1,1), colors = bgColor)
+    lay2b(children[6], ControlType.FADER, size=(2,2), colors=bgColor)
+
+    return (Property.name("lay1"),)
+
+
+# GLOBALS
+bgColor = ("#CE6A85", "#5C374C")
+
 
 @profile
 def test_layout():
@@ -63,31 +75,15 @@ def test_layout():
     frame = (0, 0, 1600, 1600)
 
     root = createTemplate(frame=frame)
-    rootosc = ElementTOSC(root[0])
-
-    colorBackground = ("#CE6A85", "#5C374C")
-
-    columnLayout: ElementTOSC = columns(
-        size=tuple(1 for i in range(4)),
-        frame=(0, 0, 400, 1200),
-        colors=colorBackground,
-    )
-
-    rowLayout: ElementTOSC = row(
-        frame=(0, 1200, 1600, 400), colors=colorBackground)
-
-    gridLayout: ElementTOSC = grid(
-        frame=(400, 0, 1200, 1200),
-        size=(5, 3),
-        colors=colorBackground,
-        colorStyle=0,
-    )
-
-    assert isinstance(rootosc, ElementTOSC)
-    assert isinstance(columnLayout, ElementTOSC)
-    assert isinstance(gridLayout, ElementTOSC)
-    assert isinstance(rowLayout, ElementTOSC)
-    assert rootosc.append(gridLayout)
-    assert rootosc.append(columnLayout)
-    assert rootosc.append(rowLayout)
+    node = ElementTOSC(root[0])
+    
+    lay1(node, ControlType.GROUP, (3,3), ("#CE6A85", "#5C374C"))
+    
+    # assert isinstance(rootosc, ElementTOSC)
+    # assert isinstance(columnLayout, ElementTOSC)
+    # assert isinstance(gridLayout, ElementTOSC)
+    # assert isinstance(rowLayout, ElementTOSC)
+    # assert node.append(gridLayout)
+    # assert node.append(columnLayout)
+    # assert node.append(rowLayout)
     assert write(root, "tests/test_layout.tosc")

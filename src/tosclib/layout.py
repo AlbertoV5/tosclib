@@ -2,7 +2,7 @@
 
 from copy import deepcopy
 from .tosc import ElementTOSC, addGroupTo, createGroup
-from .elements import ControlElements
+from .elements import ControlElements, ControlType
 import numpy as np
 from logging import debug
 
@@ -189,20 +189,37 @@ LAYOUT FUNCTIONS
 
 """
 
-
-def Layout(args, frame, X, Y, W, H, C, func):
+def Layout(layout:ElementTOSC, controlType, X, Y, W, H, C, func):
     """Basic process to append multiple properties to a layout of controls"""
-    layout = ElementTOSC(createGroup())
-    layout.setFrame(frame)
-    controlType, properties = func(layout=layout)
+
     children = [
         ElementTOSC(layout.createChild(controlType)) for i in range(max(X.shape))
     ]
     for g, f, c in zip(children, np.nditer([X, Y, W, H], order="F"), C):
         g.setFrame(f)
         g.setColor(c)
-        [g.createPropertyUnsafe(p) for p in properties]
+
+    # Add extra properties to the parent, optional return
+    properties = func(children)
+    if properties is not None:
+        [layout.createProperty(p) for p in properties]
+
     return layout
+
+# def Layout(args, frame, X, Y, W, H, C, func):
+#     """Basic process to append multiple properties to a layout of controls"""
+#     layout = ElementTOSC(createGroup())
+#     layout.setFrame(frame)
+#     controlType, properties = func(layout=layout)
+#     children = [
+#         ElementTOSC(layout.createChild(controlType)) for i in range(max(X.shape))
+#     ]
+#     for g, f, c in zip(children, np.nditer([X, Y, W, H], order="F"), C):
+#         g.setFrame(f)
+#         g.setColor(c)
+#         [g.createPropertyUnsafe(p) for p in properties]
+#     return layout
+
 
 
 def layoutColumn(func):
@@ -215,12 +232,13 @@ def layoutColumn(func):
     """
 
     def wrapper(
-        *args,
+        parent:ElementTOSC,
+        controlType:ControlType,
         size: tuple = (1, 2, 1),
-        frame: tuple = (0, 0, 640, 1600),
         colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
+        frame = parent.getFrame()
 
         H = frame[3] * (np.asarray(size) / np.sum(size))
         W = [frame[2] for i in size]
@@ -228,7 +246,7 @@ def layoutColumn(func):
         X = np.resize((0), len(size))
         C = np.linspace(colors[0], colors[1], len(size))
 
-        return Layout(args, frame, X, Y, W, H, C, func)
+        return Layout(parent, controlType, X, Y, W, H, C, func)
 
     return wrapper
 
@@ -244,12 +262,14 @@ def layoutRow(func):
     """
 
     def wrapper(
-        *args,
+        parent:ElementTOSC,
+        controlType:ControlType,
         size: tuple = (1, 2, 1),
         frame: tuple = (0, 0, 1600, 640),
         colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
+        frame = parent.getFrame()
 
         H = np.resize(frame[3], len(size))
         W = frame[2] * (np.asarray(size) / np.sum(size))
@@ -257,7 +277,7 @@ def layoutRow(func):
         X = np.cumsum(np.concatenate(([0], W)))[:-1]
         C = np.linspace(colors[0], colors[1], len(size))
 
-        return Layout(args, frame, X, Y, W, H, C, func)
+        return Layout(parent, controlType, X, Y, W, H, C, func)
 
     return wrapper
 
@@ -280,15 +300,17 @@ def layoutGrid(func):
     """
 
     def wrapper(
-        *args,
+        parent: ElementTOSC,
+        controlType: ControlType,
         size: int = (4, 4),
-        frame: tuple = (0, 0, 800, 1200),
         colors: tuple = (
             (0.25, 0.25, 0.25, 1.0),
             (0.5, 0.5, 0.5, 1.0),
         ),
         colorStyle: int = 0,
     ):
+
+        frame = parent.getFrame()
         colors = tuple(colorChecker(i) for i in colors)
 
         w = frame[2] / size[0]
@@ -329,6 +351,80 @@ def layoutGrid(func):
         else:
             raise ValueError(f"{colorStyle} is not a valid colorStyle.")
 
-        return Layout(args, frame, X, Y, W, H, C, func)
+        return Layout(parent, controlType, X, Y, W, H, C, func)
 
     return wrapper
+
+
+# def layoutGrid(func):
+#     """Create an x*y grid of groups.
+
+#     Args:
+#         size: the row x column size in tuple, ej (4,4) or (5, 3), etc
+#         frame: parent frame, all children adapt to it
+#         colors: tuple of two colors gradient, see colorStyle
+#         colorStyle:
+#             Select a gradient style.
+#             0: horizontal gradient
+#             1: vetical gradient
+#             2: sequential gradient 1
+#             3: sequential gradient 2
+#             >= 4: centered/mirrored gradient, moves position with number
+
+#     """
+
+#     def wrapper(
+#         *args,
+#         size: int = (4, 4),
+#         frame: tuple = (0, 0, 800, 1200),
+#         colors: tuple = (
+#             (0.25, 0.25, 0.25, 1.0),
+#             (0.5, 0.5, 0.5, 1.0),
+#         ),
+#         colorStyle: int = 0,
+#     ):
+    
+#         frame = parent.getFrame()
+#         colors = tuple(colorChecker(i) for i in colors)
+
+#         w = frame[2] / size[0]
+#         h = frame[3] / size[1]
+#         M = np.asarray(
+#             tuple(
+#                 (row, column)
+#                 for row in np.arange(stop=frame[2], step=w)
+#                 for column in np.arange(stop=frame[3], step=h)
+#             )
+#         ).T
+
+#         X = M[0]
+#         Y = M[1]
+#         W = np.repeat(w, X.size)
+#         H = np.repeat(h, Y.size)
+
+#         # TO DO : Optimize
+#         if colorStyle == 0:  # horizontal
+#             C = np.linspace(colors[0], colors[1], size[0])
+#             C = np.repeat(C.T, size[1]).T.reshape(4, size[0] * size[1]).T
+#         elif colorStyle == 1:  # vertical
+#             C = np.linspace(colors[0], colors[1], size[1])
+#             C = np.asarray(np.resize(C, size[0] * C.size)).reshape(size[0] * size[1], 4)
+#         elif colorStyle == 2:  # sequential
+#             C = np.linspace(colors[0], colors[1], size[0] * size[1])
+#         elif colorStyle == 3:  # sequential inverted
+#             C = np.linspace(colors[0], colors[1], size[0] * size[1])
+#             C = np.asarray([C[i :: size[0]] for i in range(size[0])]).reshape(
+#                 size[0] * size[1], 4
+#             )
+#         elif colorStyle >= 4:  # centered / mirrored
+#             C = np.linspace(colors[0], colors[1], size[0] * size[1])
+#             C = np.roll(C, colorStyle * 4)
+#             C[0:colorStyle] = np.flip(
+#                 np.roll(C, (-1 - colorStyle) * 4)[0:colorStyle], axis=0
+#             )
+#         else:
+#             raise ValueError(f"{colorStyle} is not a valid colorStyle.")
+
+#         return Layout(args, frame, X, Y, W, H, C, func)
+
+#     return wrapper

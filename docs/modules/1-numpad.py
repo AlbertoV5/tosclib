@@ -2,24 +2,50 @@ import cProfile
 import pstats
 import tosclib as tosc
 from tosclib import Control, Value
-from tosclib.elements import LOCAL, Trigger
+from tosclib.controls import ButtonProperties, LabelProperties
+from tosclib.elements import LOCAL, Trigger, Property
 from tosclib.tosc import ControlType, ElementTOSC
-from tosclib.layout import layoutColumn
+from tosclib.layout import layoutColumn, layoutGrid
 
 """WORK IN PROGRESS June-2-2022"""
 """ CURRENTLY DEPRECATED FOR >0.3.0"""
 
+bgColor = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0))
+
+@layoutGrid
+def numbers(layout:ElementTOSC):
+    layout.setName("numbers")
+    frame = layout.getFrame()
+    buttonT = Control.Button(name="button", frame=frame, color=bgColor)
+    label = Control.Label(properties= LabelProperties(name="label", textSize=48, background=False, frame=frame))
+    button = Control.Button()
+
+    for e in layout:
+        print(e)
+    
+    return ControlType.GROUP, (Property.outline(True))
+
+
 @layoutColumn
-def numpadLayout(groups: list[ElementTOSC]) -> ElementTOSC:
-    # do stuff to the layout
-    top, mid, bot = groups[0], groups[1], groups[2]
+def numpadLayout(layout:ElementTOSC):
+    layout.setName("numpad")
+    return ControlType.GROUP, ()
 
 
 def main():
 
-    root = tosc.createTemplate(0, 0, 400, 400)
-    layout: ElementTOSC = numpadLayout(ratio=(1, 2, 1), frame=(0, 0, 400, 400))
 
+    mid = ElementTOSC(layout.children[1])
+
+    frame = mid.getFrame()
+    numbers = numbers(size = (3,3), frame = frame, colors = bgColor)
+
+    layout = numpadLayout(size = (1,4,1),frame=(0,0,400,400),color = bgColor)
+
+    mid = ElementTOSC(layout.children[1])
+    numbers = numbers(size = (3,3), frame = mid.getFrame(), colors = bgColor)
+
+    
     frame = nx, ny, nw, nh = layout.getFrame()
     numGrp = layout.children[1]
 

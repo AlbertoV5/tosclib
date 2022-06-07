@@ -520,8 +520,6 @@ def parseProperties(node: ET.Element, *args) -> list:
 
     For example:
 
-    >>>Control.parseProperties(node, "name", "script")
-
     [{"name":"control1", "script":"scriptContent1"},
     {"name":"control2", "script":""},
     {"name":"control3", "script":"scriptContent3"}]

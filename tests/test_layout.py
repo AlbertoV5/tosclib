@@ -1,5 +1,5 @@
 from typing import List
-from tosclib.elements import ControlType, Property
+from tosclib.elements import ControlType, Property, PropertyFactory
 from tosclib.tosc import ElementTOSC, createTemplate, write
 from tosclib.layout import layoutGrid, layoutRow, layoutColumn
 from .profiler import profile
@@ -9,59 +9,55 @@ import inspect
 # from memory_profiler import profile
 
 """
-Layouts are decorator functions that receive size, frame, color, etc
-and return a Group Control that holds n number of groups.
+Layouts are decorators that receive a parent ElementTOSC, ControlType for children, 
+size and color and append a bunch of children whose frames and color follow the
+type of layout as well as size and colors specified.
 
 To define a layout, add one of the preset layouts: layoutColumn, layoutRow, etc.
-to your function and set that function to receive a layout ElementTOSC and
-return any number of Property objects, which will be added to all the 
-children Controls of the layout GROUP.
+to your function and set that function to receive a list of ElementTOSC.
+Then return any number of Property objects that you want to add to the parent
+ElementTOSC (the parent ElementTOSC will be renamed as layout).
 
-The reason for this configuration is so the process of appending properties
-to all subgroups is only done in one iteration. 
-This includes r,g,b,a and x,y,w,h params of color and frame respectively.
+The order of the function is:
 
-Then on your own function you can modify the top GROUP (refered to as layout)
-to have any other properties you want like name, tag, script, etc.
+1. Obtain the frame of the parent ElementTOSC.
+2. Check the size and colors and calculate arrays for Frame and Color.
+3. Create a bunch of children Controls and set their properties to the array.
+4. Then the decorated function happens.
+5. Finally apply any Properties from the func(children) to the parent ElementTOSC.
 
-In order to add children, messages or values to the children controls of layout
-you will need to do your own iterations wherever you want in the code. 
+Because your function will be executed towards the end, you can add any number of 
+nested layouts to the children as they will have their frame and color set already.
 
-Just remember that the frame, color and your own properties are set after the
-return statement of the decorated function.
+You can also use the space in your function to add any Messages, Values, etc. to
+the children Elements.
+
 """
 
 
 @layoutRow
-def lay2b(children:List[ElementTOSC]):
+def layout3(children:list[ElementTOSC]):
     return (
-        Property.outline(False),
-        Property.tag("row"),)
+        PropertyFactory.outline(False),
+        PropertyFactory.tag("row"),)
 
 
 @layoutColumn
-def lay2(children:List[ElementTOSC]):
+def layout2(children:list[ElementTOSC]):
     return (
-        Property.name("lay2"), 
-        Property.outline(False),)
+        PropertyFactory.name("lay2"), 
+        PropertyFactory.outline(False),)
 
 
 @layoutGrid
-def lay1(children:List[ElementTOSC]):
-    """Layout
-    
-    Args:
-        children: This receives the children list after frame, color processing
-
-    Returns:
-        args: you can return a list of properties to apply to the parent
-    """
+def mainLayout(children:list[ElementTOSC]):
+    """Decorator receives ElementTOSC, ControlType, size, colors and colorStyle"""
 
     # Create nested layouts
-    lay2(children[4], ControlType.BUTTON, size = (1,1,1,1), colors = bgColor)
-    lay2b(children[6], ControlType.FADER, size=(2,2), colors=bgColor)
+    layout2(children[4], ControlType.BUTTON, size = (1,1,1,1), colors = bgColor)
+    layout3(children[6], ControlType.FADER, size=(2,2), colors=bgColor)
 
-    return (Property.name("lay1"),)
+    return (PropertyFactory.name("lay1"),)
 
 
 # GLOBALS
@@ -70,20 +66,11 @@ bgColor = ("#CE6A85", "#5C374C")
 
 @profile
 def test_layout():
-
-    # TO DO: Expand layout tests!
+    
     frame = (0, 0, 1600, 1600)
 
     root = createTemplate(frame=frame)
     node = ElementTOSC(root[0])
     
-    lay1(node, ControlType.GROUP, (3,3), ("#CE6A85", "#5C374C"))
-    
-    # assert isinstance(rootosc, ElementTOSC)
-    # assert isinstance(columnLayout, ElementTOSC)
-    # assert isinstance(gridLayout, ElementTOSC)
-    # assert isinstance(rowLayout, ElementTOSC)
-    # assert node.append(gridLayout)
-    # assert node.append(columnLayout)
-    # assert node.append(rowLayout)
+    assert mainLayout(node, ControlType.GROUP, (3,3), ("#CE6A85", "#5C374C")) is node
     assert write(root, "tests/test_layout.tosc")

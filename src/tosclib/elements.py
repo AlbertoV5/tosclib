@@ -1,7 +1,7 @@
 """ Enumerations for constructing XML Elements"""
 
 from enum import Enum, unique
-from typing import List
+from typing import List, Literal, Protocol
 import xml.etree.ElementTree as ET
 from lxml import etree as ET
 
@@ -60,30 +60,65 @@ Objects
 
 """
 
+
+# class Property2(Protocol):
+#     __slots__ = ("type", "key", "value", "params")
+#     type: Literal[
+#         PropertyType.BOOLEAN,
+#         PropertyType.COLOR,
+#         PropertyType.FLOAT,
+#         PropertyType.FRAME,
+#         PropertyType.INTEGER,
+#         PropertyType.STRING,
+#     ] = type
+#     key: str = key
+#     value: str | int | float | bool = value
+#     params: dict = params
+
+
 class Property:
     """Struct like object to carry the property values"""
 
     __slots__ = ("type", "key", "value", "params")
 
-    def __init__(self, type: str, key: str, value: str = "", params: dict = {}):
+    def __init__(
+        self, type: str, key: str, value: str = "", params: dict = {}
+    ) -> "Property":
         self.type: str = type
         self.key: str = key
         self.value: str = value
         self.params: dict = params
 
+
+class PropertyFactory:
     @classmethod
-    def name(cls, value: str):
-        return Property(PropertyType.STRING.value, "name", value=value)
+    def name(cls, value: str) -> Property:
+        return Property(PropertyType.STRING.value, "name", value)
 
     @classmethod
-    def tag(cls, value: str):
-        return Property(PropertyType.STRING.value, "tag", value=value)
+    def tag(cls, value: str) -> Property:
+        return Property(PropertyType.STRING.value, "tag", value)
+
+    @classmethod
+    def script(cls, value: str) -> Property:
+        return Property(PropertyType.STRING.value, "script", value)
+
+    # def frame
+
+    # color
+
+    # locked
+
+    # visible
+
+    # interactive
+
+    # background
 
     @classmethod
     def outline(cls, value: bool):
         return Property(PropertyType.BOOLEAN.value, "outline", value=str(int(value)))
 
-    
 
 class Value:
     """Default Elements for <value>.
@@ -188,6 +223,10 @@ class MidiValue:
         self.key = key
         self.scaleMin = scaleMin
         self.scaleMax = scaleMax
+
+
+class Message:
+    pass
 
 
 class OSC:

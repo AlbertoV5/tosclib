@@ -2,7 +2,7 @@
 
 from copy import deepcopy
 from .tosc import ElementTOSC, addGroupTo, createGroup
-from .elements import ControlElements, ControlType
+from .elements import ControlElements, ControlType, Property
 import numpy as np
 from logging import debug
 
@@ -176,9 +176,8 @@ def colorChecker(color):
         return (
             tuple(int(color[i : i + 2], 16) / 255 for i in (0, 2, 4, 6))
             if len(color) > 7
-            else 
-            tuple(int(color[i : i + 2], 16) / 255 for i in (0, 2, 4)) + (1,)
-            )
+            else tuple(int(color[i : i + 2], 16) / 255 for i in (0, 2, 4)) + (1,)
+        )
     else:
         raise TypeError(f"{color} type is not a valid color.")
 
@@ -189,7 +188,8 @@ LAYOUT FUNCTIONS
 
 """
 
-def Layout(layout:ElementTOSC, controlType, X, Y, W, H, C, func):
+
+def Layout(layout: ElementTOSC, controlType, X, Y, W, H, C, func):
     """Basic process to append multiple properties to a layout of controls"""
 
     children = [
@@ -200,26 +200,11 @@ def Layout(layout:ElementTOSC, controlType, X, Y, W, H, C, func):
         g.setColor(c)
 
     # Add extra properties to the parent, optional return
-    properties = func(children)
+    properties: tuple(Property) = func(children)
     if properties is not None:
         [layout.createProperty(p) for p in properties]
 
     return layout
-
-# def Layout(args, frame, X, Y, W, H, C, func):
-#     """Basic process to append multiple properties to a layout of controls"""
-#     layout = ElementTOSC(createGroup())
-#     layout.setFrame(frame)
-#     controlType, properties = func(layout=layout)
-#     children = [
-#         ElementTOSC(layout.createChild(controlType)) for i in range(max(X.shape))
-#     ]
-#     for g, f, c in zip(children, np.nditer([X, Y, W, H], order="F"), C):
-#         g.setFrame(f)
-#         g.setColor(c)
-#         [g.createPropertyUnsafe(p) for p in properties]
-#     return layout
-
 
 
 def layoutColumn(func):
@@ -232,8 +217,8 @@ def layoutColumn(func):
     """
 
     def wrapper(
-        parent:ElementTOSC,
-        controlType:ControlType,
+        parent: ElementTOSC,
+        controlType: ControlType,
         size: tuple = (1, 2, 1),
         colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
@@ -262,8 +247,8 @@ def layoutRow(func):
     """
 
     def wrapper(
-        parent:ElementTOSC,
-        controlType:ControlType,
+        parent: ElementTOSC,
+        controlType: ControlType,
         size: tuple = (1, 2, 1),
         frame: tuple = (0, 0, 1600, 640),
         colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
@@ -383,7 +368,7 @@ def layoutGrid(func):
 #         ),
 #         colorStyle: int = 0,
 #     ):
-    
+
 #         frame = parent.getFrame()
 #         colors = tuple(colorChecker(i) for i in colors)
 

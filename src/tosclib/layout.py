@@ -1,8 +1,10 @@
 """General Layout shortcuts"""
 
 from copy import deepcopy
-from .tosc import ElementTOSC, addGroupTo, createGroup
-from .elements import ControlElements, ControlType, Property
+import logging
+from typing import Callable
+from .tosc import ElementTOSC
+from .elements import *
 import numpy as np
 from logging import debug
 
@@ -134,38 +136,38 @@ ARRANGE AND LAYOUT
 """
 
 
-def arrangeChildren(
-    parent: ElementTOSC, rows: int, columns: int, zeroPad: bool = False
-) -> bool:
-    """Get n number of children and arrange them in rows and columns.
+# def arrangeChildren(
+#     parent: ElementTOSC, rows: int, columns: int, zeroPad: bool = False
+# ) -> bool:
+#     """Get n number of children and arrange them in rows and columns.
 
-    Args:
-        parent: Element that has the children
-        rows: how many rows
-        columns: how many columns
-        zeroPad: allows to have incomplete rows/columns of children.
-    """
-    number = len(parent.children)
-    number = rows * columns
+#     Args:
+#         parent: Element that has the children
+#         rows: how many rows
+#         columns: how many columns
+#         zeroPad: allows to have incomplete rows/columns of children.
+#     """
+#     number = len(parent.children)
+#     number = rows * columns
 
-    fw = int(parent.getPropertyParam("frame", "w").text)
-    fh = int(parent.getPropertyParam("frame", "h").text)
-    w, h = fw / rows, fh / columns
-    N = np.asarray(range(0, number)).reshape(rows, columns)
-    X = np.asarray([(N[0][:columns] * w) for i in range(rows)]).reshape(1, number)
-    Y = np.repeat(N[0][:rows] * h, columns).reshape(1, number)
-    XYN = np.stack((X, Y, N.reshape(1, number)), axis=2)[0]
+#     fw = int(parent.getPropertyParam("frame", "w").text)
+#     fh = int(parent.getPropertyParam("frame", "h").text)
+#     w, h = fw / rows, fh / columns
+#     N = np.asarray(range(0, number)).reshape(rows, columns)
+#     X = np.asarray([(N[0][:columns] * w) for i in range(rows)]).reshape(1, number)
+#     Y = np.repeat(N[0][:rows] * h, columns).reshape(1, number)
+#     XYN = np.stack((X, Y, N.reshape(1, number)), axis=2)[0]
 
-    for x, y, n in XYN:
-        if zeroPad and n >= len(parent.children):
-            continue
-        e = ElementTOSC(parent.children[int(n)])
-        e.setFrame((x, y, w, h))
+#     for x, y, n in XYN:
+#         if zeroPad and n >= len(parent.children):
+#             continue
+#         e = ElementTOSC(parent.children[int(n)])
+#         e.setFrame((x, y, w, h))
 
-    return True
+#     return True
 
 
-def colorChecker(color):
+def colorChecker(color: tuple[tuple]):
     """Allow for passing rgba in 0-255, 0-1 and hex, then convert to 0-1"""
     if isinstance(color[0], int):
         return tuple(i / 255 for i in color)
@@ -189,18 +191,22 @@ LAYOUT FUNCTIONS
 """
 
 
-def Layout(layout: ElementTOSC, controlType, X, Y, W, H, C, func):
+def Layout(
+    layout: ElementTOSC,
+    controlT: controlType,
+    F: np.ndarray,
+    C: np.ndarray,
+    func: Callable[[list[ElementTOSC]], Properties],
+):
     """Basic process to append multiple properties to a layout of controls"""
 
-    children = [
-        ElementTOSC(layout.createChild(controlType)) for i in range(max(X.shape))
-    ]
-    for g, f, c in zip(children, np.nditer([X, Y, W, H], order="F"), C):
+    children = [ElementTOSC(layout.createChild(controlT)) for i in range(F.shape[0])]
+    for g, f, c in zip(children, F, C):
         g.setFrame(f)
         g.setColor(c)
 
     # Add extra properties to the parent, optional return
-    properties: tuple(Property) = func(children)
+    properties: Properties = func(children)
     if properties is not None:
         [layout.createProperty(p) for p in properties]
 
@@ -220,7 +226,7 @@ def layoutColumn(func):
         parent: ElementTOSC,
         controlType: ControlType,
         size: tuple = (1, 2, 1),
-        colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
+        colors: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
         frame = parent.getFrame()
@@ -229,9 +235,9 @@ def layoutColumn(func):
         W = [frame[2] for i in size]
         Y = np.cumsum(np.concatenate(([0], H)))[:-1]
         X = np.resize((0), len(size))
+        F = np.asarray((X, Y, W, H, X)).T
         C = np.linspace(colors[0], colors[1], len(size))
-
-        return Layout(parent, controlType, X, Y, W, H, C, func)
+        return Layout(parent, controlType, F, C, func)
 
     return wrapper
 
@@ -251,7 +257,7 @@ def layoutRow(func):
         controlType: ControlType,
         size: tuple = (1, 2, 1),
         frame: tuple = (0, 0, 1600, 640),
-        colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
+        colors: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
         frame = parent.getFrame()
@@ -260,9 +266,9 @@ def layoutRow(func):
         W = frame[2] * (np.asarray(size) / np.sum(size))
         Y = np.resize((0), len(size))
         X = np.cumsum(np.concatenate(([0], W)))[:-1]
+        F = np.asarray((X, Y, W, H, X)).T
         C = np.linspace(colors[0], colors[1], len(size))
-
-        return Layout(parent, controlType, X, Y, W, H, C, func)
+        return Layout(parent, controlType, F, C, func)
 
     return wrapper
 
@@ -288,7 +294,7 @@ def layoutGrid(func):
         parent: ElementTOSC,
         controlType: ControlType,
         size: int = (4, 4),
-        colors: tuple = (
+        colors: tuple[tuple] = (
             (0.25, 0.25, 0.25, 1.0),
             (0.5, 0.5, 0.5, 1.0),
         ),
@@ -312,6 +318,7 @@ def layoutGrid(func):
         Y = M[1]
         W = np.repeat(w, X.size)
         H = np.repeat(h, Y.size)
+        F = np.asarray((X, Y, W, H, X)).T
 
         # TO DO : Optimize
         if colorStyle == 0:  # horizontal
@@ -336,80 +343,6 @@ def layoutGrid(func):
         else:
             raise ValueError(f"{colorStyle} is not a valid colorStyle.")
 
-        return Layout(parent, controlType, X, Y, W, H, C, func)
+        return Layout(parent, controlType, F, C, func)
 
     return wrapper
-
-
-# def layoutGrid(func):
-#     """Create an x*y grid of groups.
-
-#     Args:
-#         size: the row x column size in tuple, ej (4,4) or (5, 3), etc
-#         frame: parent frame, all children adapt to it
-#         colors: tuple of two colors gradient, see colorStyle
-#         colorStyle:
-#             Select a gradient style.
-#             0: horizontal gradient
-#             1: vetical gradient
-#             2: sequential gradient 1
-#             3: sequential gradient 2
-#             >= 4: centered/mirrored gradient, moves position with number
-
-#     """
-
-#     def wrapper(
-#         *args,
-#         size: int = (4, 4),
-#         frame: tuple = (0, 0, 800, 1200),
-#         colors: tuple = (
-#             (0.25, 0.25, 0.25, 1.0),
-#             (0.5, 0.5, 0.5, 1.0),
-#         ),
-#         colorStyle: int = 0,
-#     ):
-
-#         frame = parent.getFrame()
-#         colors = tuple(colorChecker(i) for i in colors)
-
-#         w = frame[2] / size[0]
-#         h = frame[3] / size[1]
-#         M = np.asarray(
-#             tuple(
-#                 (row, column)
-#                 for row in np.arange(stop=frame[2], step=w)
-#                 for column in np.arange(stop=frame[3], step=h)
-#             )
-#         ).T
-
-#         X = M[0]
-#         Y = M[1]
-#         W = np.repeat(w, X.size)
-#         H = np.repeat(h, Y.size)
-
-#         # TO DO : Optimize
-#         if colorStyle == 0:  # horizontal
-#             C = np.linspace(colors[0], colors[1], size[0])
-#             C = np.repeat(C.T, size[1]).T.reshape(4, size[0] * size[1]).T
-#         elif colorStyle == 1:  # vertical
-#             C = np.linspace(colors[0], colors[1], size[1])
-#             C = np.asarray(np.resize(C, size[0] * C.size)).reshape(size[0] * size[1], 4)
-#         elif colorStyle == 2:  # sequential
-#             C = np.linspace(colors[0], colors[1], size[0] * size[1])
-#         elif colorStyle == 3:  # sequential inverted
-#             C = np.linspace(colors[0], colors[1], size[0] * size[1])
-#             C = np.asarray([C[i :: size[0]] for i in range(size[0])]).reshape(
-#                 size[0] * size[1], 4
-#             )
-#         elif colorStyle >= 4:  # centered / mirrored
-#             C = np.linspace(colors[0], colors[1], size[0] * size[1])
-#             C = np.roll(C, colorStyle * 4)
-#             C[0:colorStyle] = np.flip(
-#                 np.roll(C, (-1 - colorStyle) * 4)[0:colorStyle], axis=0
-#             )
-#         else:
-#             raise ValueError(f"{colorStyle} is not a valid colorStyle.")
-
-#         return Layout(args, frame, X, Y, W, H, C, func)
-
-#     return wrapper

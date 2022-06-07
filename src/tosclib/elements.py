@@ -1,9 +1,21 @@
 """ Enumerations for constructing XML Elements"""
 
 from enum import Enum, unique
-from typing import List, Literal, Protocol
-import xml.etree.ElementTree as ET
-from lxml import etree as ET
+from typing import List, Literal, Protocol, TypeAlias, TypeVar, TypedDict
+from xmlrpc.client import boolean
+
+"""
+
+FIRST SECTION: 
+
+Define Enumerations and Literal types from Hexler's Touch OSC design.
+
+SECOND SECTION:
+
+Define struct like classes that carry the data to create xml Elements.
+Plus Factory classes to create them.
+
+"""
 
 
 @unique
@@ -54,26 +66,70 @@ class PropertyType(Enum):
     COLOR = "c"  #: <property type="c">
 
 
+elementType = Literal[
+    ControlElements.CHILDREN,
+    ControlElements.GAMEPAD,
+    ControlElements.LOCAL,
+    ControlElements.MESSAGES,
+    ControlElements.MIDI,
+    ControlElements.NODE,
+    ControlElements.OSC,
+    ControlElements.PROPERTIES,
+    ControlElements.PROPERTY,
+    ControlElements.VALUES,
+    ControlElements.VALUE,
+]
+
+
+controlType = Literal[
+    ControlType.BOX,
+    ControlType.BUTTON,
+    ControlType.ENCODER,
+    ControlType.FADER,
+    ControlType.GRID,
+    ControlType.GROUP,
+    ControlType.LABEL,
+    ControlType.PAGER,
+    ControlType.RADAR,
+    ControlType.RADIAL,
+    ControlType.RADIO,
+    ControlType.TEXT,
+    ControlType.XY,
+]
+
+propertyType = Literal[
+    PropertyType.BOOLEAN,
+    PropertyType.COLOR,
+    PropertyType.FLOAT,
+    PropertyType.FRAME,
+    PropertyType.INTEGER,
+    PropertyType.STRING,
+]
+
+
+class Frame(TypedDict):
+    """Typed dictionary of 4 floats"""
+
+    x: int
+    y: int
+    w: int
+    h: int
+
+
+class Color(TypedDict):
+    """Typed dictionary of 4 floats"""
+
+    r: float
+    g: float
+    b: float
+    a: float
+
+
 """
 
-Objects
+SECOND SECTION:
 
 """
-
-
-# class Property2(Protocol):
-#     __slots__ = ("type", "key", "value", "params")
-#     type: Literal[
-#         PropertyType.BOOLEAN,
-#         PropertyType.COLOR,
-#         PropertyType.FLOAT,
-#         PropertyType.FRAME,
-#         PropertyType.INTEGER,
-#         PropertyType.STRING,
-#     ] = type
-#     key: str = key
-#     value: str | int | float | bool = value
-#     params: dict = params
 
 
 class Property:
@@ -82,15 +138,93 @@ class Property:
     __slots__ = ("type", "key", "value", "params")
 
     def __init__(
-        self, type: str, key: str, value: str = "", params: dict = {}
+        self, type: str, key: str, value: str = None, params: Frame | Color = None
     ) -> "Property":
-        self.type: str = type
+        self.type: propertyType = type
         self.key: str = key
         self.value: str = value
-        self.params: dict = params
+        self.params: Frame | Color = params if params is not None else {}
 
 
 class PropertyFactory:
+    @classmethod
+    def build(
+        cls, key, value: int | bool | float | str | tuple[int] | tuple[float]
+    ) -> Property:
+        """_summary_
+
+        Args:
+            key (_type_): _description_
+            value (int | bool | float | str | tuple[int] | tuple[float]):
+            Whatever value with one of those python types.
+            Tuples of ints are considered Frames.
+            Tuples of floats are considered Colors.
+
+        Raises:
+            ValueError: If value type is not compatible with TouchOSC's equivalent.
+
+        Returns:
+            Property: _description_
+        """
+        if type(value) is str:
+            return cls.buildString(key, value)
+        elif type(value) is bool:
+            return cls.buildBoolean(key, value)
+        elif type(value) is int:
+            return cls.buildInteger(key, value)
+        elif type(value) is float:
+            return cls.buildFloat(key, value)
+        elif type(value) is tuple and type(value[0]) is int:
+            return cls.buildFrame(key, value)
+        elif type(value) is tuple and type(value[0]) is float:
+            return cls.buildColor(key, value)
+        else:
+            raise ValueError(f"{key}-{value} type is not a valid PropertyType.")
+
+    @classmethod
+    def buildBoolean(cls, key: str, value: bool) -> Property:
+        return Property(PropertyType.BOOLEAN.value, key, str(int(value)))
+
+    @classmethod
+    def buildString(cls, key: str, value: str) -> Property:
+        return Property(PropertyType.STRING.value, key, value)
+
+    @classmethod
+    def buildInteger(cls, key: str, value: int) -> Property:
+        return Property(PropertyType.INTEGER.value, key, str(value))
+
+    @classmethod
+    def buildFloat(cls, key: str, value: float) -> Property:
+        return Property(PropertyType.FLOAT.value, key, str(value))
+
+    @classmethod
+    def buildColor(cls, key: str, value: tuple) -> Property:
+        return Property(
+            PropertyType.COLOR.value,
+            key,
+            "",
+            {
+                "r": str(value[0]),
+                "g": str(value[1]),
+                "b": str(value[2]),
+                "a": str(value[3]),
+            },
+        )
+
+    @classmethod
+    def buildFrame(cls, key: str, value: tuple) -> Property:
+        return Property(
+            PropertyType.FRAME.value,
+            key,
+            "",
+            {
+                "x": str(value[0]),
+                "y": str(value[1]),
+                "w": str(value[2]),
+                "h": str(value[3]),
+            },
+        )
+
     @classmethod
     def name(cls, value: str) -> Property:
         return Property(PropertyType.STRING.value, "name", value)
@@ -103,9 +237,13 @@ class PropertyFactory:
     def script(cls, value: str) -> Property:
         return Property(PropertyType.STRING.value, "script", value)
 
-    # def frame
+    @classmethod
+    def frame(cls, params: Frame) -> Property:
+        return Property(PropertyType.FRAME.value, "frame", params=params)
 
-    # color
+    @classmethod
+    def color(cls, params: Color) -> Property:
+        return Property(PropertyType.COLOR.value, "color", params=params)
 
     # locked
 
@@ -113,7 +251,9 @@ class PropertyFactory:
 
     # interactive
 
-    # background
+    @classmethod
+    def background(cls, value: bool):
+        return Property(PropertyType.BOOLEAN.value, "background", value=str(int(value)))
 
     @classmethod
     def outline(cls, value: bool):
@@ -192,13 +332,21 @@ class Trigger:
 
 
 class MidiMessage:
+    """_summary_
+
+    Args:
+        type (str, optional): CONTROLCHANGE, NOTE_ON/OFF, etc. Defaults to "CONTROLCHANGE".
+        channel (str, optional): Midi Channel. Defaults to "1".
+        data1 (str, optional): Depends on type. Defaults to "0".
+        data2 (str, optional): Depends on type. Defaults to "0".
+    """
 
     __slots__ = ("type", "channel", "data1", "data2")
 
     def __init__(
         self,
         type: str = "CONTROLCHANGE",
-        channel: str = "0",
+        channel: str = "1",
         data1: str = "0",
         data2: str = "0",
     ):
@@ -209,24 +357,29 @@ class MidiMessage:
 
 
 class MidiValue:
+    """The Value of the control to send as Midi, generally 0-127 scale.
+
+    Args:
+        type (str, optional): CONSTANT, INDEX, VALUE, PROPERTY. Defaults to "VALUE".
+        key (str, optional): Value or Property of the control. Defaults to "x".
+        scaleMin (str, optional): Scale of the control. Defaults to "0".
+        scaleMax (str, optional): Scale of the control. Defaults to "127".
+    """
 
     __slots__ = ("type", "key", "scaleMin", "scaleMax")
 
     def __init__(
         self,
-        type: str = "CONSTANT",
-        key: str = "",
+        type: str = "VALUE",
+        key: str = "x",
         scaleMin: str = "0",
-        scaleMax: str = "15",
+        scaleMax: str = "127",
     ):
+
         self.type = type
         self.key = key
         self.scaleMin = scaleMin
         self.scaleMax = scaleMax
-
-
-class Message:
-    pass
 
 
 class OSC:
@@ -261,9 +414,9 @@ class OSC:
         receive: str = "1",
         feedback: str = "0",
         connections: str = "00001",
-        triggers: List[Trigger] = [Trigger()],
-        path: List[Partial] = [Partial(), Partial(type="PROPERTY", value="name")],
-        arguments: List[Partial] = [
+        triggers: list[Trigger] = [Trigger()],
+        path: list[Partial] = [Partial(), Partial(type="PROPERTY", value="name")],
+        arguments: list[Partial] = [
             Partial(type="VALUE", conversion="FLOAT", value="x")
         ],
     ):
@@ -296,9 +449,9 @@ class MIDI:
         receive: str = "1",
         feedback: str = "0",
         connections: str = "00001",
-        triggers: List[Trigger] = [Trigger()],
+        triggers: list[Trigger] = [Trigger()],
         message: MidiMessage = MidiMessage(),
-        values: List[MidiValue] = [
+        values: list[MidiValue] = [
             MidiValue(),
             MidiValue("INDEX", "", "0", "1"),
             MidiValue("VALUE", "x", "0", "127"),
@@ -345,7 +498,7 @@ class LOCAL:
     def __init__(
         self,
         enabled: str = "1",
-        triggers: List[Trigger] = [Trigger()],
+        triggers: list[Trigger] = [Trigger()],
         type: str = "VALUE",
         conversion: str = "FLOAT",
         value: str = "x",
@@ -365,3 +518,14 @@ class LOCAL:
         self.dstType = dstType
         self.dstVar = dstVar
         self.dstID = dstID
+
+
+# class Message(Protocol):
+#     enabled: str
+#     triggers: list[Trigger]
+
+
+Properties: TypeAlias = tuple[Property]
+Values: TypeAlias = tuple[Value]
+Message: TypeAlias = OSC | MIDI | LOCAL
+Messages: TypeAlias = tuple[OSC | MIDI | LOCAL]

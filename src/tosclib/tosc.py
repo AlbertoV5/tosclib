@@ -242,7 +242,9 @@ class ElementTOSC:
             element = self.getProperty(key)
             if element is not None:
                 self.properties.remove(element)
-            return self.createPropertyUnsafe(Property(type.value, key, str(int(value))))
+            return self.createPropertyUnsafe(
+                Property(type.value, key, repr(int(value)))
+            )
 
         return wrapper
 
@@ -258,7 +260,7 @@ class ElementTOSC:
                 Property(
                     type.value,
                     key,
-                    params={k: str(params[i]) for i, k in enumerate(paramKeys)},
+                    params={k: repr(params[i]) for i, k in enumerate(paramKeys)},
                 )
             )
 
@@ -356,7 +358,7 @@ def showElement(e: ET.Element):
     print(ET.tostring(e).decode("utf-8"))
 
 
-def createTemplate(*, frame: tuple = None) -> ET.Element:
+def createTemplate(frame: tuple = None) -> ET.Element:
     """Generates a root xml Element and adds the base GROUP node to it."""
     root = ET.Element("lexml", attrib={"version": "3"})
     node = ET.SubElement(

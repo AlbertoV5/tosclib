@@ -4,8 +4,10 @@ Hexler's Enumerations
 
 from dataclasses import dataclass, field
 import logging
-from typing import ClassVar, Final, Protocol, Tuple
+from typing import ClassVar, Final, NewType, Protocol, Tuple, Literal
 from .elements import *
+import xml.etree.ElementTree as ET
+from lxml import etree as ET
 
 
 @dataclass
@@ -38,59 +40,16 @@ class _ControlProperties:
     """An integer number value ranging from 0 to 10"""
     orientation: int = 0
     """0,1,2,3 = North, East, South, West"""
-    props: list[Property] = field(default_factory=lambda: [])
-    """Use build to populate this dict"""
 
-    def build(self, *args) -> list[Property]:
-        """Use attributes to create Property Elements.
-        Pass args to chose which Properties to build.
-        Any Properties built will be stored in the props attribute.
-
+    def build(self, *args) -> tuple[Property]:
+        """ Build all Property objects of this class.
         Returns:
-            Stores tuple in self.props"""
+            tuple[Property] from this class' attributes.
+        """
         if len(args) == 0:
             args = [key for key in vars(self) if key != "props"]
 
-        for key in args:
-            value = getattr(self, key)
-            if type(value) is tuple and key == "frame":
-                prop = Property(
-                    PropertyType.FRAME.value,
-                    key,
-                    "",
-                    {
-                        "x": str(value[0]),
-                        "y": str(value[1]),
-                        "w": str(value[2]),
-                        "h": str(value[3]),
-                    },
-                )
-            elif type(value) is tuple and key != "frame":
-                prop = Property(
-                    PropertyType.COLOR.value,
-                    key,
-                    "",
-                    {
-                        "r": str(value[0]),
-                        "g": str(value[1]),
-                        "b": str(value[2]),
-                        "a": str(value[3]),
-                    },
-                )
-            elif type(value) is int:
-                prop = Property(PropertyType.INTEGER.value, key, str(value))
-            elif type(value) is bool:
-                prop = Property(PropertyType.BOOLEAN.value, key, (str(int(value))))
-            elif type(value) is float:
-                prop = Property(PropertyType.FLOAT.value, key, str(value))
-            elif isinstance(value, str):
-                prop = Property(PropertyType.STRING.value, key, str(value))
-            else:
-                raise TypeError(f"{key}, {type(key)}, is not compatible.")
-
-            self.props.append(prop)
-
-        return self.props
+        return (PropertyFactory.build(arg, getattr(self, arg)) for arg in args if arg in vars(self))
 
 
 @dataclass
@@ -294,23 +253,16 @@ class PageProperties(_ControlProperties, _GroupProperties):
 class Page:
     """Not a main control"""
 
-    controlType: ClassVar[ControlType] = ControlType.GROUP
+    controlT: ClassVar[controlType] = ControlType.GROUP
     properties: tuple[Property] = field(default_factory=PageProperties())
     values: tuple[Value] = field(default_factory=lambda: ())
     messages: tuple[Message] = field(default_factory=lambda: ())
-    children: tuple[ControlType] = field(default_factory=lambda: ())
-
-
-class Control(Protocol):
-    controlType: ClassVar[ControlType]
-    properties: tuple[Property]
-    values: tuple[Value]
-    messages: tuple[Message]
+    children: tuple[controlType] = field(default_factory=lambda: ())
 
 
 @dataclass
 class Box:
-    controlType: ClassVar[ControlType] = ControlType.BOX
+    controlT: ClassVar[controlType] = ControlType.BOX
     properties: tuple[Property] = field(default_factory=lambda: BoxProperties().build())
     values: tuple[Value] = field(default_factory=lambda: ())
     messages: tuple[Message] = field(default_factory=lambda: ())
@@ -318,7 +270,7 @@ class Box:
 
 @dataclass
 class Button:
-    controlType: ClassVar[ControlType] = ControlType.BUTTON
+    controlT: ClassVar[controlType] = ControlType.BUTTON
     properties: tuple[Property] = field(
         default_factory=lambda: ButtonProperties().build()
     )
@@ -328,7 +280,7 @@ class Button:
 
 @dataclass
 class Label:
-    controlType: ClassVar[ControlType] = ControlType.LABEL
+    controlT: ClassVar[controlType] = ControlType.LABEL
     properties: tuple[Property] = field(
         default_factory=lambda: LabelProperties().build()
     )
@@ -338,7 +290,7 @@ class Label:
 
 @dataclass
 class Text:
-    controlType: ClassVar[ControlType] = ControlType.TEXT
+    controlT: ClassVar[controlType] = ControlType.TEXT
     properties: tuple[Property] = field(
         default_factory=lambda: TextProperties().build()
     )
@@ -348,7 +300,7 @@ class Text:
 
 @dataclass
 class Fader:
-    controlType: ClassVar[ControlType] = ControlType.FADER
+    controlT: ClassVar[controlType] = ControlType.FADER
     properties: tuple[Property] = field(
         default_factory=lambda: FaderProperties().build()
     )
@@ -358,7 +310,7 @@ class Fader:
 
 @dataclass
 class Xy:
-    controlType: ClassVar[ControlType] = ControlType.XY
+    controlT: ClassVar[controlType] = ControlType.XY
     properties: tuple[Property] = field(default_factory=lambda: XyProperties().build())
     values: tuple[Value] = field(default_factory=lambda: ())
     messages: tuple[Message] = field(default_factory=lambda: ())
@@ -366,7 +318,7 @@ class Xy:
 
 @dataclass
 class Radial:
-    controlType: ClassVar[ControlType] = ControlType.RADIAL
+    controlT: ClassVar[controlType] = ControlType.RADIAL
     properties: tuple[Property] = field(
         default_factory=lambda: RadialProperties().build()
     )
@@ -376,7 +328,7 @@ class Radial:
 
 @dataclass
 class Encoder:
-    controlType: ClassVar[ControlType] = ControlType.ENCODER
+    controlT: ClassVar[controlType] = ControlType.ENCODER
     properties: tuple[Property] = field(
         default_factory=lambda: EncoderProperties().build()
     )
@@ -386,7 +338,7 @@ class Encoder:
 
 @dataclass
 class Radar:
-    controlType: ClassVar[ControlType] = ControlType.RADAR
+    controlT: ClassVar[controlType] = ControlType.RADAR
     properties: tuple[Property] = field(
         default_factory=lambda: RadarProperties().build()
     )
@@ -396,7 +348,7 @@ class Radar:
 
 @dataclass
 class Radio:
-    controlType: ClassVar[ControlType] = ControlType.RADIO
+    controlT: ClassVar[controlType] = ControlType.RADIO
     properties: tuple[Property] = field(
         default_factory=lambda: RadioProperties().build()
     )
@@ -406,53 +358,89 @@ class Radio:
 
 @dataclass
 class Group:
-    controlType: ClassVar[ControlType] = ControlType.GROUP
+    controlT: ClassVar[controlType] = ControlType.GROUP
     properties: tuple[Property] = field(
         default_factory=lambda: GroupProperties().build()
     )
     values: tuple[Value] = field(default_factory=lambda: ())
     messages: tuple[Message] = field(default_factory=lambda: ())
-    children: tuple[ControlType] = field(default_factory=lambda: ())
+    children: tuple[controlType] = field(default_factory=lambda: ())
 
 
 @dataclass
 class Grid:
-    controlType: ClassVar[ControlType] = ControlType.GRID
+    controlT: ClassVar[controlType] = ControlType.GRID
     properties: tuple[Property] = field(
         default_factory=lambda: GridProperties().build()
     )
     values: tuple[Value] = field(default_factory=lambda: ())
     messages: tuple[Message] = field(default_factory=lambda: ())
-    children: tuple[ControlType] = field(default_factory=lambda: ())
+    children: tuple[controlType] = field(default_factory=lambda: ())
 
 
 @dataclass
 class Pager:
-    controlType: ClassVar[ControlType] = ControlType.PAGER
+    controlT: ClassVar[controlType] = ControlType.PAGER
     properties: tuple[Property] = field(
         default_factory=lambda: PagerProperties().build()
     )
     values: tuple[Value] = field(default_factory=lambda: ())
     messages: tuple[Message] = field(default_factory=lambda: ())
-    children: tuple[ControlType] = field(
+    children: tuple[controlType] = field(
         default_factory=lambda: (Page(), Page(), Page())
     )
+
+
+class Control(Protocol):
+    controlT: ClassVar[controlType]
+    properties: tuple[Property]
+    values: tuple[Value]
+    messages: tuple[Message]
+
 
 
 class ControlFactory:
     @classmethod
     def build(cls, control: Control):
-        node = ET.Element(ControlElements.NODE.value, attrib = {"type":control.controlType.value})
-        properties = ET.SubElement(node, ControlElements.PROPERTIES.value)
+        node = ET.Element(
+            ControlElements.NODE.value, attrib={"type": control.controlT.value}
+        )
+        properties = ET.Element(ControlElements.PROPERTIES.value)
         values = ET.SubElement(node, ControlElements.VALUES.value)
         messages = ET.SubElement(node, ControlElements.MESSAGES.value)
         children = ET.SubElement(node, ControlElements.CHILDREN.value)
-        for prop in control.properties:
-            property = ET.SubElement(properties, ControlElements.PROPERTY.value, attrib={"type":prop.type})
+
+        xmlFactory.buildProperties(control.properties, properties)
+        xmlFactory.buildValues(control.values, values)
+        xmlFactory.buildMessages(control.messages, messages)
+
+
+class xmlFactory:
+    @classmethod
+    def buildProperties(cls, props: tuple[Property], e: ET.Element) -> bool:
+        for prop in props:
+            property = ET.SubElement(
+                e, ControlElements.PROPERTY.value, attrib={"type": prop.type}
+            )
             ET.SubElement(property, "key").text = prop.key
             value = ET.SubElement(property, "value")
             value.text = prop.value
             for k in prop.params:
                 ET.SubElement(value, k).text = prop.params[k]
+        return True
 
-        return node
+    @classmethod
+    def buildValues(cls, vals: tuple[Value], e: ET.Element) -> bool:
+        for val in vals:
+            value = ET.SubElement(e, ControlElements.VALUE.value)
+            for k in val.__slots__:
+                ET.SubElement(value, k).text = getattr(val, k)
+        return True
+
+    @classmethod
+    def buildMessages(cls, msgs: tuple[Message], e: ET.Element) -> bool:
+        for msg in msgs:
+            message = ET.SubElement(e, ControlElements[type(msg)])
+            for k in msg.__slots__:
+                ET.SubElement(message, k).text = getattr(msg, k)
+        return True

@@ -2,11 +2,31 @@
 Higher level wrapper for a TOSC Control Element.
 """
 import sys
-import xml.etree.ElementTree as ET
 import re
+from typing import TypeGuard
 import zlib
 import uuid
-from .controls import *
+from .elements import (
+    Partial,
+    Trigger,
+    Property,
+    Value,
+    OSC,
+    MIDI,
+    LOCAL,
+    MidiMessage,
+    PropertyType,
+    ControlElements,
+    ControlType,
+    PropertyFactory,
+)
+from .controls import (
+    XmlFactory,
+    Properties,
+    controlType
+)
+
+# import xml.etree.ElementTree as ET
 from lxml import etree as ET
 
 
@@ -65,32 +85,20 @@ class ElementTOSC:
     def hasProperty(self, key: str) -> bool:
         return True if findKey(self.properties, key) else False
 
-    def setProperty(self, key: str, value: str = "", params: dict = {}) -> bool:
-        if not findKey(self.properties, key):
+    def setProperty(self, key: str, value: str = "",
+                    params: dict = {}) -> bool:
+        e = findKey(self.properties, key)
+        if e is None:
             raise ValueError(f"{key} doesn't exist.")
-        val = self.getPropertyValue(key)
-        if value is not None:
-            val.text = value
-            return True
-        for paramKey in params:
-            val.find(paramKey).text = params[paramKey]
-        return True
+        return XmlFactory.modifyProperty(value, params, e)
 
     def createProperty(self, property: Property) -> bool:
         if findKey(self.properties, property.key) is not None:
             raise ValueError(f"{property.key} already exists.")
-        self.createPropertyUnsafe(property)
-        return True
+        return XmlFactory.buildProperties((property,),self.properties)
 
-    def createPropertyUnsafe(self, prop: Property) -> bool:
-        property = ET.Element("property", attrib={"type": prop.type})
-        ET.SubElement(property, "key").text = prop.key
-        value = ET.SubElement(property, "value")
-        value.text = prop.value
-        for paramKey in prop.params:
-            ET.SubElement(value, paramKey).text = prop.params[paramKey]
-        self.properties.append(property)
-        return True
+    def createPropertyUnsafe(self, property: Property) -> bool:
+        return XmlFactory.buildProperties((property,),self.properties)
 
     def getValue(self, key: str) -> ET.Element:
         return findKey(self.values, key)
@@ -99,81 +107,46 @@ class ElementTOSC:
         return findKey(self.values, key).find(param)
 
     def hasValue(self, key: str) -> bool:
-        return ET.iselement(findKey(self.values, key))
+        return findKey(self.values, key)
 
     def createValue(self, value: Value) -> bool:
-        if self.hasValue(value.key):
+        if findKey(self.values, value.key) is not None:
             raise ValueError(f"{value.key} already exists.")
-        element = ET.SubElement(self.values, "value")
-        for k in value.__slots__:
-            ET.SubElement(element, k).text = getattr(value, k)
-        return True
+        return XmlFactory.buildValues((value,),self.values)
 
     def setValue(self, value: Value) -> bool:
-        if not self.hasValue(value.key):
+        e = findKey(self.values, value.key)
+        if e is None:
             raise ValueError(f"{value.key} doesn't exist.")
-        element = findKey(self.values, value.key)
-        for k in value.__slots__:
-            element.find(k).text = getattr(value, k)
-        return True
+        return XmlFactory.modifyValue(value, e)
 
-    def _createMessage(func) -> ET.Element:
-        def wrapper(self, message=None):
-            name, message = func(message)
-            msg = ET.SubElement(self.messages, name.value)
-            for k in message.__slots__:
-                element = ET.SubElement(msg, k)
-                v = getattr(message, k)
-                if isinstance(v, list):
-                    for pt in v:
-                        e = ET.SubElement(element, type(pt).__name__.lower())
-                        for x in pt.__slots__:
-                            ET.SubElement(e, x).text = getattr(pt, x)
-                elif isinstance(v, MidiMessage):
-                    for x in pt.__slots__:
-                        ET.SubElement(element, x).text = getattr(pt, x)
-                else:
-                    element.text = v
-            return msg
-
-        return wrapper
-
-    def _removeMessage(func) -> bool:
-        def wrapper(self):
-            [msg.remove for msg in self.messages.findall(func(self).value)]
-            return True
-
-        return wrapper
-
-    @_createMessage
     def createOSC(self, message: OSC = OSC()) -> ET.Element:
         """Builds and appends an OSC message"""
-        return ControlElements.OSC, message
+        # return ControlElements.OSC, message
+        return XmlFactory.buildMessages((message,),self.messages)
 
-    @_createMessage
     def createMIDI(self, message: MIDI = MIDI()) -> ET.Element:
         """Builds and appends a M1D1 message"""
-        return ControlElements.MIDI, message
+        return XmlFactory.buildMessages((message,),self.messages)
 
-    @_createMessage
     def createLOCAL(self, message: LOCAL = LOCAL()) -> ET.Element:
         """Builds and appends a LOCAL message"""
-        return ControlElements.LOCAL, message
+        return XmlFactory.buildMessages((message,),self.messages)
 
-    @_removeMessage
     def removeOSC(self) -> bool:
         """Find and remove all OSC messages"""
-        return ControlElements.OSC
+        [msg.remove for msg in self.messages.findall(ControlElements.OSC.value)]
+        return True
 
-    @_removeMessage
     def removeMIDI(self) -> bool:
         """Find and remove all MIDI messages"""
-        return ControlElements.MIDI
+        [msg.remove for msg in self.messages.findall(ControlElements.MIDI.value)]
+        return True
 
-    @_removeMessage
     def removeLOCAL(self) -> bool:
         """Find and remove all LOCAL messages"""
-        return ControlElements.LOCAL
+        [msg.remove for msg in self.messages.findall(ControlElements.LOCAL.value)]
+        return True
 
     def findChildByName(self, name: str) -> ET.Element:
         for child in self.children:
@@ -188,12 +161,8 @@ class ElementTOSC:
                 return child
         return None
 
-    def createChild(self, type: ControlType) -> ET.Element:
-        return ET.SubElement(
-            self.children,
-            ControlElements.NODE.value,
-            attrib={"ID": str(uuid.uuid4()), "type": type.value},
-        )
+    def createChild(self, type: controlType) -> ET.Element:
+        return XmlFactory.buildNode(type, self.children)
 
     def getID(self) -> str:
         return str(self.node.attrib["ID"])
@@ -230,12 +199,13 @@ class ElementTOSC:
             element = self.getProperty(key)
             if element is not None:
                 self.properties.remove(element)
-            return self.createPropertyUnsafe(Property(type.value, key, str(value)))
+            return self.createPropertyUnsafe(
+                Property(type.value, key, str(value)))
 
         return wrapper
 
     def booleanProperty(fun):
-        """Pass value as text arg, so name is Craig"""
+        """Pass value as bool, so outline is True"""
 
         def wrapper(self: "ElementTOSC", value):
             type, key = fun(self)
@@ -260,7 +230,8 @@ class ElementTOSC:
                 Property(
                     type.value,
                     key,
-                    params={k: repr(params[i]) for i, k in enumerate(paramKeys)},
+                    params={k: repr(params[i])
+                            for i, k in enumerate(paramKeys)},
                 )
             )
 
@@ -335,14 +306,14 @@ class ElementTOSC:
             raise ValueError(f"{name} doesn't exist")
 
 
-""" 
+"""
 
-GENERAL FUNCTIONS 
+GENERAL FUNCTIONS
 
 """
 
 
-def findKey(elements: ET.Element, key: str) -> ET.Element:
+def findKey(elements: ET.Element, key: str) -> TypeGuard[ET.Element]:
     """Iterate through element with children and return child whose key matches"""
     return elements.find(f"*[key='{key}']")
     # for e in elements:
@@ -407,7 +378,8 @@ GENERAL PARSERS
 """
 
 
-def pullValueFromKey(inputFile: str, key: str, value: str, targetKey: str) -> str:
+def pullValueFromKey(inputFile: str, key: str, value: str,
+                     targetKey: str) -> str:
     """If you know the name of an element but don't know its other properties.
     This function uses a .tosc file and gets its root.
     For passing an element see pullValueFromKey2
@@ -427,7 +399,8 @@ def pullValueFromKey(inputFile: str, key: str, value: str, targetKey: str) -> st
         for _, e in parser.read_events():  # event, element
             if e.find("properties") is None:
                 continue
-            if re.fullmatch(getTextValueFromKey(e.find("properties"), key), value):
+            if re.fullmatch(getTextValueFromKey(
+                    e.find("properties"), key), value):
                 parser.close()
                 return getTextValueFromKey(e.find("properties"), targetKey)
 
@@ -435,7 +408,8 @@ def pullValueFromKey(inputFile: str, key: str, value: str, targetKey: str) -> st
     return ""
 
 
-def pullValueFromKey2(root: ET.Element, key: str, value: str, targetKey: str) -> str:
+def pullValueFromKey2(root: ET.Element, key: str,
+                      value: str, targetKey: str) -> str:
     """If you know the name of an element but don't know its other properties.
     This parses an Element and has to convert it to string so its slower.
 

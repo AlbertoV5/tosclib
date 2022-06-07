@@ -3,11 +3,28 @@ Hexler's Enumerations
 """
 
 from dataclasses import dataclass, field
-import logging
-from typing import ClassVar, Final, NewType, Protocol, Tuple, Literal
-from .elements import *
-import xml.etree.ElementTree as ET
+from typing import ClassVar, Final, Protocol, TypeAlias
+import uuid
+from .elements import (
+    MidiMessage,
+    Property,
+    Value,
+    OSC,
+    MIDI,
+    LOCAL,
+    PropertyFactory,
+    controlType,
+    ControlType,
+    ControlElements,
+)
+
+# import xml.etree.ElementTree as ET
 from lxml import etree as ET
+
+Properties: TypeAlias = tuple[Property]
+Values: TypeAlias = tuple[Value]
+Message: TypeAlias = OSC | MIDI | LOCAL
+Messages: TypeAlias = tuple[OSC | MIDI | LOCAL]
 
 
 @dataclass
@@ -42,14 +59,14 @@ class _ControlProperties:
     """0,1,2,3 = North, East, South, West"""
 
     def build(self, *args) -> tuple[Property]:
-        """ Build all Property objects of this class.
+        """Build all Property objects of this class.
         Returns:
             tuple[Property] from this class' attributes.
         """
         if len(args) == 0:
-            args = [key for key in vars(self) if key != "props"]
+            args = [key for key in vars(self)]
 
-        return (PropertyFactory.build(arg, getattr(self, arg)) for arg in args if arg in vars(self))
+        return tuple(PropertyFactory.build(arg, getattr(self, arg)) for arg in args)
 
 
 @dataclass
@@ -398,6 +415,16 @@ class Control(Protocol):
     messages: tuple[Message]
 
 
+class ControlProperties(Protocol):
+    name: str
+    tag: str
+    script: str
+    frame: tuple
+    color: tuple
+
+    def build(self) -> tuple[Property]:
+        ...
+
 
 class ControlFactory:
     @classmethod
@@ -405,19 +432,19 @@ class ControlFactory:
         node = ET.Element(
             ControlElements.NODE.value, attrib={"type": control.controlT.value}
         )
-        properties = ET.Element(ControlElements.PROPERTIES.value)
+        properties = ET.SubElement(node, ControlElements.PROPERTIES.value)
         values = ET.SubElement(node, ControlElements.VALUES.value)
         messages = ET.SubElement(node, ControlElements.MESSAGES.value)
         children = ET.SubElement(node, ControlElements.CHILDREN.value)
 
-        xmlFactory.buildProperties(control.properties, properties)
-        xmlFactory.buildValues(control.values, values)
-        xmlFactory.buildMessages(control.messages, messages)
+        XmlFactory.buildProperties(control.properties, properties)
+        XmlFactory.buildValues(control.values, values)
+        XmlFactory.buildMessages(control.messages, messages)
 
 
-class xmlFactory:
+class XmlFactory:
     @classmethod
-    def buildProperties(cls, props: tuple[Property], e: ET.Element) -> bool:
+    def buildProperties(cls, props: Properties, e: ET.Element) -> bool:
         for prop in props:
             property = ET.SubElement(
                 e, ControlElements.PROPERTY.value, attrib={"type": prop.type}
@@ -430,7 +457,15 @@ class xmlFactory:
         return True
 
     @classmethod
-    def buildValues(cls, vals: tuple[Value], e: ET.Element) -> bool:
+    def modifyProperty(cls, value, params, p: ET.Element) -> bool:
+        v = p.find("value")
+        v.text = value
+        for k in params:
+            value.find(k).text = params[k]
+        return True
+
+    @classmethod
+    def buildValues(cls, vals: Values, e: ET.Element) -> bool:
         for val in vals:
             value = ET.SubElement(e, ControlElements.VALUE.value)
             for k in val.__slots__:
@@ -438,9 +473,34 @@ class xmlFactory:
         return True
 
     @classmethod
-    def buildMessages(cls, msgs: tuple[Message], e: ET.Element) -> bool:
-        for msg in msgs:
-            message = ET.SubElement(e, ControlElements[type(msg)])
-            for k in msg.__slots__:
-                ET.SubElement(message, k).text = getattr(msg, k)
+    def modifyValue(cls, val: Value, e: ET.Element) -> bool:
+        for k in val.__slots__:
+            e.find(k).text = getattr(val, k)
         return True
+
+    @classmethod
+    def buildMessages(cls, msgs: tuple[Message], e: ET.Element) -> bool:
+        for message in msgs:
+            msg = ET.SubElement(e, message.__class__.__name__.lower())
+            for k in message.__slots__:
+                element = ET.SubElement(msg, k)
+                v = getattr(message, k)
+                if isinstance(v, list):
+                    for pt in v:
+                        e = ET.SubElement(element, type(pt).__name__.lower())
+                        for x in pt.__slots__:
+                            ET.SubElement(e, x).text = getattr(pt, x)
+                elif isinstance(v, MidiMessage):
+                    for x in pt.__slots__:
+                        ET.SubElement(element, x).text = getattr(pt, x)
+                else:
+                    element.text = v
+        return True
+
+    @classmethod
+    def buildNode(cls, type: controlType, e):
+        return ET.SubElement(
+            e,
+            ControlElements.NODE.value,
+            attrib={"ID": str(uuid.uuid4()), "type": type.value},
+        )

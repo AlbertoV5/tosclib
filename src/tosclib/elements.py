@@ -1,12 +1,11 @@
 """ Enumerations for constructing XML Elements"""
 
 from enum import Enum, unique
-from typing import List, Literal, Protocol, TypeAlias, TypeVar, TypedDict
-from xmlrpc.client import boolean
+from typing import Literal, TypedDict
 
 """
 
-FIRST SECTION: 
+FIRST SECTION:
 
 Define Enumerations and Literal types from Hexler's Touch OSC design.
 
@@ -146,120 +145,6 @@ class Property:
         self.params: Frame | Color = params if params is not None else {}
 
 
-class PropertyFactory:
-    @classmethod
-    def build(
-        cls, key, value: int | bool | float | str | tuple[int] | tuple[float]
-    ) -> Property:
-        """_summary_
-
-        Args:
-            key (_type_): _description_
-            value (int | bool | float | str | tuple[int] | tuple[float]):
-            Whatever value with one of those python types.
-            Tuples of ints are considered Frames.
-            Tuples of floats are considered Colors.
-
-        Raises:
-            ValueError: If value type is not compatible with TouchOSC's equivalent.
-
-        Returns:
-            Property: _description_
-        """
-        if type(value) is str:
-            return cls.buildString(key, value)
-        elif type(value) is bool:
-            return cls.buildBoolean(key, value)
-        elif type(value) is int:
-            return cls.buildInteger(key, value)
-        elif type(value) is float:
-            return cls.buildFloat(key, value)
-        elif type(value) is tuple and type(value[0]) is int:
-            return cls.buildFrame(key, value)
-        elif type(value) is tuple and type(value[0]) is float:
-            return cls.buildColor(key, value)
-        else:
-            raise ValueError(f"{key}-{value} type is not a valid PropertyType.")
-
-    @classmethod
-    def buildBoolean(cls, key: str, value: bool) -> Property:
-        return Property(PropertyType.BOOLEAN.value, key, str(int(value)))
-
-    @classmethod
-    def buildString(cls, key: str, value: str) -> Property:
-        return Property(PropertyType.STRING.value, key, value)
-
-    @classmethod
-    def buildInteger(cls, key: str, value: int) -> Property:
-        return Property(PropertyType.INTEGER.value, key, str(value))
-
-    @classmethod
-    def buildFloat(cls, key: str, value: float) -> Property:
-        return Property(PropertyType.FLOAT.value, key, str(value))
-
-    @classmethod
-    def buildColor(cls, key: str, value: tuple) -> Property:
-        return Property(
-            PropertyType.COLOR.value,
-            key,
-            "",
-            {
-                "r": str(value[0]),
-                "g": str(value[1]),
-                "b": str(value[2]),
-                "a": str(value[3]),
-            },
-        )
-
-    @classmethod
-    def buildFrame(cls, key: str, value: tuple) -> Property:
-        return Property(
-            PropertyType.FRAME.value,
-            key,
-            "",
-            {
-                "x": str(value[0]),
-                "y": str(value[1]),
-                "w": str(value[2]),
-                "h": str(value[3]),
-            },
-        )
-
-    @classmethod
-    def name(cls, value: str) -> Property:
-        return Property(PropertyType.STRING.value, "name", value)
-
-    @classmethod
-    def tag(cls, value: str) -> Property:
-        return Property(PropertyType.STRING.value, "tag", value)
-
-    @classmethod
-    def script(cls, value: str) -> Property:
-        return Property(PropertyType.STRING.value, "script", value)
-
-    @classmethod
-    def frame(cls, params: Frame) -> Property:
-        return Property(PropertyType.FRAME.value, "frame", params=params)
-
-    @classmethod
-    def color(cls, params: Color) -> Property:
-        return Property(PropertyType.COLOR.value, "color", params=params)
-
-    # locked
-
-    # visible
-
-    # interactive
-
-    @classmethod
-    def background(cls, value: bool):
-        return Property(PropertyType.BOOLEAN.value, "background", value=str(int(value)))
-
-    @classmethod
-    def outline(cls, value: bool):
-        return Property(PropertyType.BOOLEAN.value, "outline", value=str(int(value)))
-
-
 class Value:
     """Default Elements for <value>.
 
@@ -292,8 +177,10 @@ class Partial:
     """Default Elements for <partial>
 
     Args:
-        type (str, optional): "CONSTANT", "INDEX", "VALUE", "PROPERTY". Defaults to "CONSTANT".
-        conversion (str, optional): "BOOLEAN", "INTEGER", "FLOAT", "STRING". Defaults to "STRING".
+        type (str, optional):
+        "CONSTANT", "INDEX", "VALUE", "PROPERTY". Defaults to "CONSTANT".
+        conversion (str, optional):
+        "BOOLEAN", "INTEGER", "FLOAT", "STRING". Defaults to "STRING".
         value (str, optional): Depends on the context. Defaults to "/".
         scaleMin (str, optional): If "VALUE", set range. Defaults to "0".
         scaleMax (str, optional): If "VALUE", set range. Defaults to "1".
@@ -335,7 +222,8 @@ class MidiMessage:
     """_summary_
 
     Args:
-        type (str, optional): CONTROLCHANGE, NOTE_ON/OFF, etc. Defaults to "CONTROLCHANGE".
+        type (str, optional): CONTROLCHANGE, NOTE_ON/OFF, etc.
+        Defaults to "CONTROLCHANGE".
         channel (str, optional): Midi Channel. Defaults to "1".
         data1 (str, optional): Depends on type. Defaults to "0".
         data2 (str, optional): Depends on type. Defaults to "0".
@@ -360,7 +248,8 @@ class MidiValue:
     """The Value of the control to send as Midi, generally 0-127 scale.
 
     Args:
-        type (str, optional): CONSTANT, INDEX, VALUE, PROPERTY. Defaults to "VALUE".
+        type (str, optional): CONSTANT, INDEX, VALUE, PROPERTY.
+        Defaults to "VALUE".
         key (str, optional): Value or Property of the control. Defaults to "x".
         scaleMin (str, optional): Scale of the control. Defaults to "0".
         scaleMax (str, optional): Scale of the control. Defaults to "127".
@@ -390,10 +279,14 @@ class OSC:
         send (str, optional): Boolean. Defaults to "1".
         receive (str, optional): Boolean. Defaults to "1".
         feedback (str, optional): Boolean. Defaults to "0".
-        connections (str, optional): Binary. Defaults to "00001" (channel 1, "00011" means 1 and 2).
-        triggers (List[Trigger], optional): [Trigger]. Defaults to [Trigger()].
-        path (List[Partial], optional): [Partial]. Defaults to [Partial(), Partial(typ="PROPERTY", val="name")].
-        arguments (List[Partial], optional): [Partial]. Defaults to [Partial(typ="VALUE", con="FLOAT", val="x")].
+        connections (str, optional): Binary.
+        Defaults to "00001" (channel 1, "00011" means 1 and 2).
+        triggers (List[Trigger], optional): [Trigger].
+        Defaults to [Trigger()].
+        path (List[Partial], optional): [Partial].
+        Defaults to [Partial(), Partial(typ="PROPERTY", val="name")].
+        arguments (List[Partial], optional): [Partial].
+        Defaults to [Partial(typ="VALUE", con="FLOAT", val="x")].
     """
 
     __slots__ = (
@@ -520,12 +413,116 @@ class LOCAL:
         self.dstID = dstID
 
 
-# class Message(Protocol):
-#     enabled: str
-#     triggers: list[Trigger]
+class PropertyFactory:
+    @classmethod
+    def build(
+        cls, key, value: int | bool | float | str | tuple[int] | tuple[float]
+    ) -> Property:
+        """_summary_
 
+        Args:
+            key (_type_): _description_
+            value (int | bool | float | str | tuple[int] | tuple[float]):
+            Whatever value with one of those python types.
+            Tuples of ints are considered Frames.
+            Tuples of floats are considered Colors.
 
-Properties: TypeAlias = tuple[Property]
-Values: TypeAlias = tuple[Value]
-Message: TypeAlias = OSC | MIDI | LOCAL
-Messages: TypeAlias = tuple[OSC | MIDI | LOCAL]
+        Raises:
+            ValueError:
+            If value type is not compatible with TouchOSC's equivalent.
+
+        Returns:
+            Property: _description_
+        """
+        if isinstance(value, str):
+            return cls.buildString(key, value)
+        elif isinstance(value, bool):
+            return cls.buildBoolean(key, value)
+        elif isinstance(value, int):
+            return cls.buildInteger(key, value)
+        elif isinstance(value, float):
+            return cls.buildFloat(key, value)
+        elif isinstance(value, tuple) and isinstance(value[0], int):
+            return cls.buildFrame(key, value)
+        elif isinstance(value, tuple) and isinstance(value[0], float):
+            return cls.buildColor(key, value)
+        else:
+            raise ValueError(f"{key}-{value} type is not a valid PropertyType.")
+
+    @classmethod
+    def buildBoolean(cls, key: str, value: bool) -> Property:
+        return Property(PropertyType.BOOLEAN.value, key, str(int(value)))
+
+    @classmethod
+    def buildString(cls, key: str, value: str) -> Property:
+        return Property(PropertyType.STRING.value, key, value)
+
+    @classmethod
+    def buildInteger(cls, key: str, value: int) -> Property:
+        return Property(PropertyType.INTEGER.value, key, str(value))
+
+    @classmethod
+    def buildFloat(cls, key: str, value: float) -> Property:
+        return Property(PropertyType.FLOAT.value, key, str(value))
+
+    @classmethod
+    def buildColor(cls, key: str, value: tuple) -> Property:
+        return Property(
+            PropertyType.COLOR.value,
+            key,
+            "",
+            {
+                "r": str(value[0]),
+                "g": str(value[1]),
+                "b": str(value[2]),
+                "a": str(value[3]),
+            },
+        )
+
+    @classmethod
+    def buildFrame(cls, key: str, value: tuple) -> Property:
+        return Property(
+            PropertyType.FRAME.value,
+            key,
+            "",
+            {
+                "x": str(value[0]),
+                "y": str(value[1]),
+                "w": str(value[2]),
+                "h": str(value[3]),
+            },
+        )
+
+    @classmethod
+    def name(cls, value: str) -> Property:
+        return Property(PropertyType.STRING.value, "name", value)
+
+    @classmethod
+    def tag(cls, value: str) -> Property:
+        return Property(PropertyType.STRING.value, "tag", value)
+
+    @classmethod
+    def script(cls, value: str) -> Property:
+        return Property(PropertyType.STRING.value, "script", value)
+
+    @classmethod
+    def frame(cls, params: Frame) -> Property:
+        return Property(PropertyType.FRAME.value, "frame", params=params)
+
+    @classmethod
+    def color(cls, params: Color) -> Property:
+        return Property(PropertyType.COLOR.value, "color", params=params)
+
+    # locked
+
+    # visible
+
+    # interactive
+
+    @classmethod
+    def background(cls, value: bool):
+        return Property(PropertyType.BOOLEAN.value, "background", value=str(int(value)))
+
+    @classmethod
+    def outline(cls, value: bool):
+        return Property(PropertyType.BOOLEAN.value, "outline", value=str(int(value)))

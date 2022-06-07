@@ -1,15 +1,20 @@
 """General Layout shortcuts"""
 
 from copy import deepcopy
-import logging
 from typing import Callable
 from .tosc import ElementTOSC
-from .elements import *
+from .elements import (
+    ControlElements,
+    controlType,
+    ControlType,
+)
+from .controls import (
+    Properties,
+)
 import numpy as np
-from logging import debug
 
 """
-COPY AND MOVE 
+COPY AND MOVE
 """
 
 
@@ -129,7 +134,7 @@ def moveChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
     return True
 
 
-""" 
+"""
 
 ARRANGE AND LAYOUT
 

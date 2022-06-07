@@ -32,7 +32,7 @@ def test_copiers():
     assert node.createValue(tosc.Value())
     assert tosc.moveValues(node, node2, "touch")
     assert node2.getValue("touch") is not None
-    assert node2.setValue(tosc.Value("touch", "1"))
+    assert node2.setValue(tosc.Value("touch", "1")) is not None
     assert node2.getValueParam("touch", "locked").text == "1"
 
     # COPY MESSAGES

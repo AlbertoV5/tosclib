@@ -3,6 +3,8 @@ from PIL import Image
 import numpy as np
 import time
 
+from tosclib.elements import ControlType
+
 
 class ImageConverter:
     def __init__(self, inputFile, outputFile, imagePath, canvasName="canvas"):
@@ -33,7 +35,7 @@ class ImageConverter:
 
         pxs = self.pixel_size
         for iy, ix in np.ndindex(self.pixels.shape[:2]):
-            box = tosc.ElementTOSC(canvas.createChild("BOX"))
+            box = tosc.ElementTOSC(canvas.createChild(ControlType.BOX))
             (r, g, b) = self.pixels[iy, ix]
             box.setName(f"p{ix}{iy}")
             box.setColor((r, g, b, 1))

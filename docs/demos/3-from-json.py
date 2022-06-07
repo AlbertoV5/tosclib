@@ -1,6 +1,8 @@
 import tosclib as tosc
 import json
 
+from tosclib.elements import ControlElements, ControlType
+
 
 def getJson(fileName: str):
     with open(fileName, "r") as file:
@@ -20,7 +22,7 @@ def oscMsg() -> tosc.OSC:
 
 
 def createFader(e: tosc.ElementTOSC, name, width, limit, i, msg):
-    fader = tosc.ElementTOSC(e.createChild("FADER"))
+    fader = tosc.ElementTOSC(e.createChild(ControlType.FADER))
     fader.setName(name)
     fader.setFrame((width * i, 0, width, 1080))
     fader.setColor((i / limit, 0, 1 - i / limit, 1))
@@ -34,7 +36,7 @@ def main(jsonFile, outputFile):
     base.setFrame((0, 0, 1920, 1080))
 
     # Group container for the faders
-    group = tosc.ElementTOSC(base.createChild("GROUP"))
+    group = tosc.ElementTOSC(base.createChild(ControlType.GROUP))
     group.setName("Controls")
     group.setFrame((420, 0, 1080, 1080))
     group.setColor((0.25, 0.25, 0.25, 1))

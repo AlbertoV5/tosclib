@@ -2,6 +2,7 @@ import unittest
 import tosclib as tosc
 from pathlib import Path
 from tosclib import Property
+from tosclib.elements import ControlType
 from .profiler import profile
 
 
@@ -26,7 +27,7 @@ class TestTemplate(unittest.TestCase):
         self.assertIsInstance(
             tosc.ElementTOSC.fromFile(self.directory / self.fileName), tosc.ElementTOSC
         )
-        self.template.createChild("GROUP")
+        self.template.createChild(ControlType.GROUP)
         assert self.template.createProperty(Property("b", "background", "0"))
         assert self.template.setColor((0, 0, 0, 1))
         assert self.template.createProperty(Property("f", "cornerRadius", "0"))

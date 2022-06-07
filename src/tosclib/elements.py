@@ -1,32 +1,31 @@
 """ Enumerations for constructing XML Elements"""
 
-from typing import NamedTuple
-from dataclasses import dataclass, field
+from enum import Enum, unique
 from typing import List
 import xml.etree.ElementTree as ET
 from lxml import etree as ET
 
 
-class ControlElements(NamedTuple):
-    """Valid Elements of a Node"""
+@unique
+class ControlElements(Enum):
+    """Valid xml tags for a Control"""
 
     PROPERTIES = "properties"  #: <properties>
     VALUES = "values"  #: <values>
     MESSAGES = "messages"  #: <messages>
     CHILDREN = "children"  #: <children>
-    PROPERTY = (
-        "property"  #: <property type = `PropertyType <#tosclib.tosc.PropertyType>`_>
-    )
+    PROPERTY = "property"  #: <property type=>
     VALUE = "value"  #: <value>
     OSC = "osc"  #: <osc>
     MIDI = "midi"  #: <midi>
     LOCAL = "local"  #: <local>
     GAMEPAD = "gamepad"  #: <gamepad>
-    NODE = "node"  #: <node type = `ControlType <#tosclib.tosc.ControlType>`_>
+    NODE = "node"  #: <node type =>
 
 
-class ControlType(NamedTuple):
-    """Enum of valid <node type=>"""
+@unique
+class ControlType(Enum):
+    """Valid xml attrib = {"type":ControlType} for <node>"""
 
     BOX = "BOX"  #: <node type = "BOX">
     BUTTON = "BUTTON"  #: <node type = "BUTTON">
@@ -43,8 +42,9 @@ class ControlType(NamedTuple):
     GRID = "GRID"  #: <node type = "GRID">
 
 
-class PropertyType(NamedTuple):
-    """Enum of valid <property type=>"""
+@unique
+class PropertyType(Enum):
+    """Valid xml attrib = {"type":PropertyType} for <property>"""
 
     STRING = "s"  #: <property type="s">
     BOOLEAN = "b"  #: <property type="b">
@@ -54,75 +54,37 @@ class PropertyType(NamedTuple):
     COLOR = "c"  #: <property type="c">
 
 
-class Property(NamedTuple):
-    """Tuple to carry the Property values"""
+"""
 
-    type: str
-    key: str
-    value: str = ""
-    params: dict = {}
+Objects
 
+"""
 
-# @dataclass
-# class PropertyOld:
-#     """Element structure for a <property>
+class Property:
+    """Struct like object to carry the property values"""
 
-#     Args:
-#         type (str): See PropertyType.
-#         key (str): See parameters of inner classes of Controls.
-#         value (str, optional): Exclusive with params.
-#         params (dict[str,str], optional): Exclusive with value.
-#     """
-#     type: str
-#     key: str
-#     value: str = ""
-#     params: dict = field(default_factory=lambda: {})
+    __slots__ = ("type", "key", "value", "params")
 
-#     def __post_init__(self):
-#         if self.value and self.params:
-#             raise ValueError(f"{self} can't have both value and params.")
-#         if not self.value and not self.params:
-#             raise ValueError(f"{self} is missing both value and params.")
+    def __init__(self, type: str, key: str, value: str = "", params: dict = {}):
+        self.type: str = type
+        self.key: str = key
+        self.value: str = value
+        self.params: dict = params
 
-    # def applyTo(self, e: ET.Element) -> bool:
-    #     """Create SubElement Property in passed Element"""
-    #     property = ET.SubElement(e, "property", attrib={"type": self.type})
-    #     ET.SubElement(property, "key").text = self.key
-    #     value = ET.SubElement(property, "value")
-    #     if self.value:
-    #         value.text = self.value
-    #         return True
-    #     for paramKey in self.params:
-    #         ET.SubElement(value, paramKey).text = self.params[paramKey]
-    #     return True
+    @classmethod
+    def name(cls, value: str):
+        return Property(PropertyType.STRING.value, "name", value=value)
 
-    # def build(self) -> ET.Element:
-    #     """Returns an xml Element <property>"""
-    #     property = ET.Element("property", attrib={"type": self.type})
-    #     ET.SubElement(property, "key").text = self.key
-    #     value = ET.SubElement(property, "value")
-    #     if self.value:
-    #         value.text = self.value
-    #         return property
-    #     for paramKey in self.params:
-    #         ET.SubElement(value, paramKey).text = self.params[paramKey]
-    #     return property
+    @classmethod
+    def tag(cls, value: str):
+        return Property(PropertyType.STRING.value, "tag", value=value)
 
-    # @classmethod
-    # def createProperty(cls, type, key, value=None, params=None) -> ET.Element:
-    #     property = ET.Element("property", attrib={"type": type})
-    #     ET.SubElement(property, "key").text = key
-    #     value = ET.SubElement(property, "value")
-    #     if value:
-    #         value.text = value
-    #         return property
-    #     for paramKey in params:
-    #         ET.SubElement(value, paramKey).text = params[paramKey]
-    #     return property
+    @classmethod
+    def outline(cls, value: bool):
+        return Property(PropertyType.BOOLEAN.value, "outline", value=str(int(value)))
 
+    
 
-
-@dataclass
 class Value:
     """Default Elements for <value>.
 
@@ -134,16 +96,23 @@ class Value:
         defaultPull (str, optional): 0 to 100. Defaults to "0".
     """
 
-    key: str = "touch"
-    locked: str = "0"
-    lockedDefaultCurrent: str = "0"
-    default: str = "false"
-    defaultPull: str = "0"
+    __slots__ = ("key", "locked", "lockedDefaultCurrent", "default", "defaultPull")
+
+    def __init__(
+        self,
+        key: str = "touch",
+        locked: str = "0",
+        lockedDefaultCurrent: str = "0",
+        default: str = "false",
+        defaultPull: str = "0",
+    ):
+        self.key: str = key
+        self.locked: str = locked
+        self.lockedDefaultCurrent: str = lockedDefaultCurrent
+        self.default: str = default
+        self.defaultPull: str = defaultPull
 
 
-
-
-@dataclass
 class Partial:
     """Default Elements for <partial>
 
@@ -155,14 +124,23 @@ class Partial:
         scaleMax (str, optional): If "VALUE", set range. Defaults to "1".
     """
 
-    type: str = "CONSTANT"
-    conversion: str = "STRING"
-    value: str = "/"
-    scaleMin: str = "0"
-    scaleMax: str = "1"
+    __slots__ = ("type", "conversion", "value", "scaleMin", "scaleMax")
+
+    def __init__(
+        self,
+        type: str = "CONSTANT",
+        conversion: str = "STRING",
+        value: str = "/",
+        scaleMin: str = "0",
+        scaleMax: str = "1",
+    ):
+        self.type = type
+        self.conversion = conversion
+        self.value = value
+        self.scaleMin = scaleMin
+        self.scaleMax = scaleMax
 
 
-@dataclass
 class Trigger:
     """Default Elements for <trigger>
 
@@ -171,11 +149,47 @@ class Trigger:
         con (str, optional): "ANY", "RISE" or "FALL". Defaults to "ANY".
     """
 
-    var: str = "x"
-    condition: str = "ANY"
+    __slots__ = ("var", "condition")
+
+    def __init__(self, var: str = "x", condition: str = "ANY"):
+        self.var = var
+        self.condition = condition
 
 
-@dataclass
+class MidiMessage:
+
+    __slots__ = ("type", "channel", "data1", "data2")
+
+    def __init__(
+        self,
+        type: str = "CONTROLCHANGE",
+        channel: str = "0",
+        data1: str = "0",
+        data2: str = "0",
+    ):
+        self.type = type
+        self.channel = channel
+        self.data1 = data1
+        self.data2 = data2
+
+
+class MidiValue:
+
+    __slots__ = ("type", "key", "scaleMin", "scaleMax")
+
+    def __init__(
+        self,
+        type: str = "CONSTANT",
+        key: str = "",
+        scaleMin: str = "0",
+        scaleMax: str = "15",
+    ):
+        self.type = type
+        self.key = key
+        self.scaleMin = scaleMin
+        self.scaleMax = scaleMax
+
+
 class OSC:
     """Default Elements and Sub Elements for <osc>
 
@@ -190,67 +204,77 @@ class OSC:
         arguments (List[Partial], optional): [Partial]. Defaults to [Partial(typ="VALUE", con="FLOAT", val="x")].
     """
 
-    enabled: str = "1"
-    send: str = "1"
-    receive: str = "1"
-    feedback: str = "0"
-    connections: str = "00001"
-    triggers: List[Trigger] = field(default_factory=lambda: [Trigger()])
-    path: List[Partial] = field(
-        default_factory=lambda: [Partial(), Partial(type="PROPERTY", value="name")]
-    )
-    arguments: List[Partial] = field(
-        default_factory=lambda: [Partial(type="VALUE", conversion="FLOAT", value="x")]
+    __slots__ = (
+        "enabled",
+        "send",
+        "receive",
+        "feedback",
+        "connections",
+        "triggers",
+        "path",
+        "arguments",
     )
 
+    def __init__(
+        self,
+        enabled: str = "1",
+        send: str = "1",
+        receive: str = "1",
+        feedback: str = "0",
+        connections: str = "00001",
+        triggers: List[Trigger] = [Trigger()],
+        path: List[Partial] = [Partial(), Partial(type="PROPERTY", value="name")],
+        arguments: List[Partial] = [
+            Partial(type="VALUE", conversion="FLOAT", value="x")
+        ],
+    ):
+        self.enabled = enabled
+        self.send = send
+        self.receive = receive
+        self.feedback = feedback
+        self.connections = connections
+        self.triggers = triggers
+        self.path = path
+        self.arguments = arguments
 
-@dataclass
-class MidiMessage:
-    type: str = "CONTROLCHANGE"
-    channel: str = "0"
-    data1: str = "0"
-    data2: str = "0"
 
-
-@dataclass
-class MidiValue:
-    type: str = "CONSTANT"
-    key: str = ""
-    scaleMin: str = "0"
-    scaleMax: str = "15"
-
-
-@dataclass
 class MIDI:
-    """Default elements for <midi>
-    Args:
-        enabled: bool
-        send : bool
-        receive : bool
-        feedback : bool
-        connections : bool
-        triggers : List of Trigger
-        messages : MidiMessage
-        values : List of MidiValue
-    """
+    __slots__ = (
+        "enabled",
+        "send",
+        "receive",
+        "feedback",
+        "connections",
+        "triggers",
+        "message",
+        "values",
+    )
 
-    enabled: str = "1"
-    send: str = "1"
-    receive: str = "1"
-    feedback: str = "0"
-    connections: str = "00001"
-    triggers: List[Trigger] = field(default_factory=lambda: [Trigger()])
-    message: MidiMessage = MidiMessage()
-    values: List[MidiValue] = field(
-        default_factory=lambda: [
+    def __init__(
+        self,
+        enabled: str = "1",
+        send: str = "1",
+        receive: str = "1",
+        feedback: str = "0",
+        connections: str = "00001",
+        triggers: List[Trigger] = [Trigger()],
+        message: MidiMessage = MidiMessage(),
+        values: List[MidiValue] = [
             MidiValue(),
             MidiValue("INDEX", "", "0", "1"),
             MidiValue("VALUE", "x", "0", "127"),
-        ]
-    )
+        ],
+    ):
+        self.enabled = enabled
+        self.send = send
+        self.receive = receive
+        self.feedback = feedback
+        self.connections = connections
+        self.triggers = triggers
+        self.message = message
+        self.values = values
 
 
-@dataclass
 class LOCAL:
     """Default elements for <midi>
     Args:
@@ -266,13 +290,39 @@ class LOCAL:
         dstID : The node {ID} of the target.
     """
 
-    enabled: str = "1"
-    triggers: List[Trigger] = field(default_factory=lambda: [Trigger()])
-    type: str = "VALUE"
-    conversion: str = "FLOAT"
-    value: str = "x"
-    scaleMin: str = "0"
-    scaleMax: str = "1"
-    dstType: str = ""
-    dstVar: str = ""
-    dstID: str = ""
+    __slots__ = (
+        "enabled",
+        "triggers",
+        "type",
+        "conversion",
+        "value",
+        "scaleMin",
+        "scaleMax",
+        "dstType",
+        "dstVar",
+        "dstID",
+    )
+
+    def __init__(
+        self,
+        enabled: str = "1",
+        triggers: List[Trigger] = [Trigger()],
+        type: str = "VALUE",
+        conversion: str = "FLOAT",
+        value: str = "x",
+        scaleMin: str = "0",
+        scaleMax: str = "1",
+        dstType: str = "",
+        dstVar: str = "",
+        dstID: str = "",
+    ):
+        self.enabled = enabled
+        self.triggers = triggers
+        self.type = type
+        self.conversion = conversion
+        self.value = value
+        self.scaleMin = scaleMin
+        self.scaleMax = scaleMax
+        self.dstType = dstType
+        self.dstVar = dstVar
+        self.dstID = dstID

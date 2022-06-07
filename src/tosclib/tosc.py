@@ -79,11 +79,10 @@ class ElementTOSC:
     def createProperty(self, property: Property) -> bool:
         if findKey(self.properties, property.key) is not None:
             raise ValueError(f"{property.key} already exists.")
-        # self.properties.append(property.build())
-        self.createPropertyFast(property)
+        self.createPropertyUnsafe(property)
         return True
 
-    def createPropertyFast(self, prop: Property) -> bool:        
+    def createPropertyUnsafe(self, prop: Property) -> bool:
         property = ET.Element("property", attrib={"type": prop.type})
         ET.SubElement(property, "key").text = prop.key
         value = ET.SubElement(property, "value")
@@ -106,63 +105,84 @@ class ElementTOSC:
         if self.hasValue(value.key):
             raise ValueError(f"{value.key} already exists.")
         element = ET.SubElement(self.values, "value")
-        for v in vars(value):
-            ET.SubElement(element, v).text = getattr(value, v)
+        for k in value.__slots__:
+            ET.SubElement(element, k).text = getattr(value, k)
         return True
 
     def setValue(self, value: Value) -> bool:
         if not self.hasValue(value.key):
             raise ValueError(f"{value.key} doesn't exist.")
         element = findKey(self.values, value.key)
-        for v in vars(value):
-            element.find(v).text = getattr(value, v)
+        for k in value.__slots__:
+            element.find(k).text = getattr(value, k)
         return True
 
-    def _createMessage(self, name, message) -> ET.Element:
-        msg = ET.SubElement(self.messages, name)
-        for key in vars(message):
-            element = ET.SubElement(
-                msg, key
-            )  # enabled, send, receive, message, values, etc.
-            attribute = getattr(message, key)
-            if isinstance(attribute, list):  # For Partials and Triggers
-                for partialOrTrigger in attribute:
-                    subElement = ET.SubElement(
-                        element, type(partialOrTrigger).__name__.lower()
-                    )  # Create <partial> or <trigger>
-                    for v in vars(partialOrTrigger):  # Attributes of Partials/Triggers
-                        ET.SubElement(subElement, v).text = getattr(partialOrTrigger, v)
-            elif isinstance(attribute, MidiMessage):  # not a list of Partials, not str
-                for v in vars(attribute):
-                    ET.SubElement(element, v).text = getattr(attribute, v)
-            else:
-                element.text = getattr(message, key)
-        return msg
+    def _createMessage(func) -> ET.Element:
+        def wrapper(self, message=None):
+            name, message = func(message)
+            msg = ET.SubElement(self.messages, name.value)
+            for k in message.__slots__:
+                element = ET.SubElement(msg, k)
+                v = getattr(message, k)
+                if isinstance(v, list):
+                    for pt in v:
+                        e = ET.SubElement(element, type(pt).__name__.lower())
+                        for x in pt.__slots__:
+                            ET.SubElement(e, x).text = getattr(pt, x)
+                elif isinstance(v, MidiMessage):
+                    for x in pt.__slots__:
+                        ET.SubElement(element, x).text = getattr(pt, x)
+                else:
+                    element.text = v
+            return msg
 
+        return wrapper
+
+    def _removeMessage(func) -> bool:
+        def wrapper(self):
+            [msg.remove for msg in self.messages.findall(func(self).value)]
+            return True
+
+        return wrapper
+
+    @_createMessage
     def createOSC(self, message: OSC = OSC()) -> ET.Element:
-        return self._createMessage(ControlElements.OSC, message)
+        """Builds and appends an OSC message"""
+        return ControlElements.OSC, message
 
+    @_createMessage
     def createMIDI(self, message: MIDI = MIDI()) -> ET.Element:
-        return self._createMessage(ControlElements.MIDI, message)
+        """Builds and appends a M1D1 message"""
+        return ControlElements.MIDI, message
 
+    @_createMessage
     def createLOCAL(self, message: LOCAL = LOCAL()) -> ET.Element:
-        return self._createMessage(ControlElements.LOCAL, message)
+        """Builds and appends a LOCAL message"""
+        return ControlElements.LOCAL, message
 
+    @_removeMessage
     def removeOSC(self) -> bool:
-        return [e.remove for e in self.messages.findall(ControlElements.OSC)]
+        """Find and remove all OSC messages"""
+        return ControlElements.OSC
 
+    @_removeMessage
     def removeMIDI(self) -> bool:
-        return [e.remove for e in self.messages.findall(ControlElements.MIDI)]
+        """Find and remove all MIDI messages"""
+        return ControlElements.MIDI
 
+    @_removeMessage
     def removeLOCAL(self) -> bool:
-        return [e.remove for e in self.messages.findall(ControlElements.LOCAL)]
+        """Find and remove all LOCAL messages"""
+        return ControlElements.LOCAL
 
     def findChildByName(self, name: str) -> ET.Element:
         for child in self.children:
-            if child.find(ControlElements.PROPERTIES) is None:
+            if child.find(ControlElements.PROPERTIES.value) is None:
                 continue
             if re.fullmatch(
-                getTextValueFromKey(child.find(ControlElements.PROPERTIES), "name"),
+                getTextValueFromKey(
+                    child.find(ControlElements.PROPERTIES.value), "name"
+                ),
                 name,
             ):
                 return child
@@ -171,19 +191,19 @@ class ElementTOSC:
     def createChild(self, type: ControlType) -> ET.Element:
         return ET.SubElement(
             self.children,
-            ControlElements.NODE,
-            attrib={"ID": str(uuid.uuid4()), "type": type},
+            ControlElements.NODE.value,
+            attrib={"ID": str(uuid.uuid4()), "type": type.value},
         )
 
     def getID(self) -> str:
         return str(self.node.attrib["ID"])
 
-    def isControlType(self, control: str):
-        return str(self.node.attrib["type"]) == control
+    def isControlType(self, control: ControlType):
+        return str(self.node.attrib["type"]) == control.value
 
-    def setControlType(self, value: str):
+    def setControlType(self, value: ControlType):
         """See ControlType Element"""
-        self.node.attrib["type"] = value
+        self.node.attrib["type"] = value.value
         return True
 
     def getFrame(self) -> tuple:
@@ -205,38 +225,38 @@ class ElementTOSC:
     def simpleProperty(fun):
         """Pass value as text arg, so name is Craig"""
 
-        def wrapper(self, value):
+        def wrapper(self: "ElementTOSC", value):
             type, key = fun(self)
             element = self.getProperty(key)
             if element is not None:
                 self.properties.remove(element)
-            return self.createPropertyFast(Property(type, key, str(value)))
+            return self.createPropertyUnsafe(Property(type.value, key, str(value)))
 
         return wrapper
 
     def booleanProperty(fun):
         """Pass value as text arg, so name is Craig"""
 
-        def wrapper(self, value):
+        def wrapper(self: "ElementTOSC", value):
             type, key = fun(self)
             element = self.getProperty(key)
             if element is not None:
                 self.properties.remove(element)
-            return self.createPropertyFast(Property(type, key, str(int(value))))
+            return self.createPropertyUnsafe(Property(type.value, key, str(int(value))))
 
         return wrapper
 
     def multiProperty(fun):
         """Pass args as tuple of keys, so color is ("r","g","b","a")"""
 
-        def wrapper(self, params):
+        def wrapper(self: "ElementTOSC", params):
             type, key, paramKeys = fun(self)
             element = self.getProperty(key)
             if element is not None:
                 self.properties.remove(element)
-            return self.createPropertyFast(
+            return self.createPropertyUnsafe(
                 Property(
-                    type,
+                    type.value,
                     key,
                     params={k: str(params[i]) for i, k in enumerate(paramKeys)},
                 )
@@ -341,8 +361,8 @@ def createTemplate(*, frame: tuple = None) -> ET.Element:
     root = ET.Element("lexml", attrib={"version": "3"})
     node = ET.SubElement(
         root,
-        ControlElements.NODE,
-        attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
+        ControlElements.NODE.value,
+        attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP.value},
     )
     if frame is not None:
         ElementTOSC(node).setFrame(frame)
@@ -352,8 +372,8 @@ def createTemplate(*, frame: tuple = None) -> ET.Element:
 def createGroup() -> ET.Element:
     """Simple create Node type GROUP"""
     return ET.Element(
-        ControlElements.NODE,
-        attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
+        ControlElements.NODE.value,
+        attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP.value},
     )
 
 
@@ -435,6 +455,7 @@ def pullValueFromKey2(root: ET.Element, key: str, value: str, targetKey: str) ->
             parser.close()
             return getTextValueFromKey(e.find("properties"), targetKey)
 
+
 class PropertyParser:
     """Find all defined properties in the Node"""
 
@@ -450,11 +471,11 @@ class PropertyParser:
         self.index = -1
 
     def start(self, tag, attrib):
-        if tag == ControlElements.NODE:
+        if tag == ControlElements.NODE.value:
             self.index += 1
             self.node = True
             self.targetList.append({arg: "" for arg in [*self.args]})
-        elif self.node and tag == ControlElements.PROPERTY:
+        elif self.node and tag == ControlElements.PROPERTY.value:
             self.property = True
         elif self.property and tag == "key":
             self.key = True
@@ -462,9 +483,9 @@ class PropertyParser:
             self.value = True
 
     def end(self, tag):
-        if tag == ControlElements.NODE:
+        if tag == ControlElements.NODE.value:
             self.node = False
-        elif self.node and tag == ControlElements.PROPERTY:
+        elif self.node and tag == ControlElements.PROPERTY.value:
             self.property = False
         elif self.property and tag == "key":
             self.key = False
@@ -490,6 +511,7 @@ class PropertyParser:
 
     def close(self):
         return self.targetList
+
 
 def parseProperties(node: ET.Element, *args) -> list:
     """
@@ -530,8 +552,8 @@ def addBoxTo(e: ElementTOSC):
     return ElementTOSC(
         ET.SubElement(
             e.children,
-            ControlElements.NODE,
-            attrib={"ID": str(uuid.uuid4()), "type": ControlType.BOX},
+            ControlElements.NODE.value,
+            attrib={"ID": str(uuid.uuid4()), "type": ControlType.BOX.value},
         )
     )
 
@@ -542,8 +564,8 @@ def addGroupTo(e: ElementTOSC, *args: str):
     group = ElementTOSC(
         ET.SubElement(
             e.children,
-            ControlElements.NODE,
-            attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP},
+            ControlElements.NODE.value,
+            attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP.value},
         )
     )
     if not args:
@@ -552,7 +574,7 @@ def addGroupTo(e: ElementTOSC, *args: str):
         ElementTOSC(
             ET.SubElement(
                 group.children,
-                ControlElements.NODE,
+                ControlElements.NODE.value,
                 attrib={"ID": str(uuid.uuid4()), "type": arg},
             )
         )

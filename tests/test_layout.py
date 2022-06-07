@@ -1,10 +1,9 @@
-import unittest
 from tosclib.elements import ControlType, Property
-from tosclib.controls import Control
 from tosclib.tosc import ElementTOSC, createTemplate, write
 from tosclib.layout import layoutGrid, layoutRow, layoutColumn
 from .profiler import profile
 from logging import debug
+import inspect
 
 # from memory_profiler import profile
 
@@ -36,8 +35,8 @@ return statement of the decorated function.
 def columns(layout: ElementTOSC):
     layout.setName("Column")
     return ControlType.BUTTON, (
-        Property("b", "outline", "0"),
-        Property("s", "tag", "col"),
+        Property.outline(False),
+        Property.tag("column"),
     )
 
 
@@ -45,19 +44,17 @@ def columns(layout: ElementTOSC):
 def row(layout: ElementTOSC):
     layout.setName("Row")
     return ControlType.FADER, (
-        Property("b", "outline", "0"),
-        Property("s", "tag", "row"),
+        Property.outline(False),
+        Property.tag("row"),
     )
-
 
 @layoutGrid
 def grid(layout: ElementTOSC):
-    layout.setName("Grid")
+    layout.setName("grid")
     return ControlType.XY, (
-        Property("b", "outline", "0"),
-        Property("s", "tag", "grid"),
+        Property.outline(False),
+        Property.tag("grid"),
     )
-
 
 @profile
 def test_layout():
@@ -68,20 +65,21 @@ def test_layout():
     root = createTemplate(frame=frame)
     rootosc = ElementTOSC(root[0])
 
+    colorBackground = ("#CE6A85", "#5C374C")
+
     columnLayout: ElementTOSC = columns(
         size=tuple(1 for i in range(4)),
         frame=(0, 0, 400, 1200),
-        colors=((0.8, 0.8, 0.8, 1.0), (0.2, 0.2, 0.2, 1.0)),
+        colors=colorBackground,
     )
 
     rowLayout: ElementTOSC = row(
-        frame=(0, 1200, 1600, 400), colors=("#3E8989FF", "#564D65FF")
-    )
+        frame=(0, 1200, 1600, 400), colors=colorBackground)
 
     gridLayout: ElementTOSC = grid(
         frame=(400, 0, 1200, 1200),
         size=(5, 3),
-        colors=("#3E8989FF", "#564D65FF"),
+        colors=colorBackground,
         colorStyle=0,
     )
 
@@ -92,4 +90,4 @@ def test_layout():
     assert rootosc.append(gridLayout)
     assert rootosc.append(columnLayout)
     assert rootosc.append(rowLayout)
-    # assert write(root, "tests/test_layout.tosc")
+    assert write(root, "tests/test_layout.tosc")

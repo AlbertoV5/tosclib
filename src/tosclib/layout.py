@@ -2,7 +2,7 @@
 
 from copy import deepcopy
 from .tosc import ElementTOSC, addGroupTo, createGroup
-from .elements import ControlType, Property, ControlElements
+from .elements import ControlElements
 import numpy as np
 from logging import debug
 
@@ -73,10 +73,10 @@ def copyMessages(source: ElementTOSC, target: ElementTOSC, *args: str):
         [target.messages.append(deepcopy(e)) for e in source.messages]
         return True
     for arg in args:
-        if elements := source.messages.findall(f"./{arg}"):
+        if elements := source.messages.findall(f"./{arg.value}"):
             [target.messages.append(deepcopy(e)) for e in elements]
         else:
-            raise ValueError(f"Failed to find all elements with {args}")
+            raise ValueError(f"Failed to find all elements with {arg.value}")
     return True
 
 
@@ -85,10 +85,10 @@ def moveMessages(source: ElementTOSC, target: ElementTOSC, *args: str):
     if args is None:
         elements = source.messages
     for arg in args:
-        if e := source.messages.findall(f"./{arg}"):
+        if e := source.messages.findall(f"./{arg.value}"):
             elements += e
         else:
-            raise ValueError(f"Failed to find all elements with {args}")
+            raise ValueError(f"Failed to find all elements with {arg.value}")
 
     [target.messages.append(deepcopy(e)) for e in elements]
     [source.messages.remove(e) for e in elements]
@@ -102,11 +102,11 @@ def copyChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
         return True
     for arg in args:
         if elements := source.children.findall(
-            f"./{ControlElements.NODE}[@type='{arg}']"
+            f"./{ControlElements.NODE.value}[@type='{arg.value}']"
         ):
             [target.children.append(deepcopy(e)) for e in elements]
         else:
-            raise ValueError(f"Failed to find all elements with {args}")
+            raise ValueError(f"Failed to find all elements with {arg.value}")
     return True
 
 
@@ -115,10 +115,12 @@ def moveChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
     if args is None:
         elements = source.children
     for arg in args:
-        if e := source.children.findall(f"./{ControlElements.NODE}[@type='{arg}']"):
+        if e := source.children.findall(
+            f"./{ControlElements.NODE}[@type='{arg.value}']"
+        ):
             elements += e
         else:
-            raise ValueError(f"Failed to find all elements with {args}")
+            raise ValueError(f"Failed to find all elements with {arg.value}")
 
     [target.children.append(deepcopy(e)) for e in elements]
     [source.children.remove(e) for e in elements]
@@ -130,6 +132,7 @@ def moveChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
 ARRANGE AND LAYOUT
 
 """
+
 
 def arrangeChildren(
     parent: ElementTOSC, rows: int, columns: int, zeroPad: bool = False
@@ -173,13 +176,12 @@ def colorChecker(color):
         return (
             tuple(int(color[i : i + 2], 16) / 255 for i in (0, 2, 4, 6))
             if len(color) > 7
-            else tuple(
-                *tuple(int(color[i : i + 2], 16) / 255 for i in (0, 2, 4)),
-                1,
+            else 
+            tuple(int(color[i : i + 2], 16) / 255 for i in (0, 2, 4)) + (1,)
             )
-        )
     else:
         raise TypeError(f"{color} type is not a valid color.")
+
 
 """
 
@@ -187,16 +189,19 @@ LAYOUT FUNCTIONS
 
 """
 
-def Layout(frame, X, Y, W, H, C, func):
+
+def Layout(args, frame, X, Y, W, H, C, func):
     """Basic process to append multiple properties to a layout of controls"""
     layout = ElementTOSC(createGroup())
     layout.setFrame(frame)
-    controlType, properties = func(layout)
-    children = [ElementTOSC(layout.createChild(controlType)) for i in range(max(X.shape))]
-    for g,f,c in zip(children, np.nditer([X,Y,W,H], order="F"), C):
+    controlType, properties = func(layout=layout)
+    children = [
+        ElementTOSC(layout.createChild(controlType)) for i in range(max(X.shape))
+    ]
+    for g, f, c in zip(children, np.nditer([X, Y, W, H], order="F"), C):
         g.setFrame(f)
         g.setColor(c)
-        [g.createPropertyFast(p) for p in properties]
+        [g.createPropertyUnsafe(p) for p in properties]
     return layout
 
 
@@ -220,10 +225,10 @@ def layoutColumn(func):
         H = frame[3] * (np.asarray(size) / np.sum(size))
         W = [frame[2] for i in size]
         Y = np.cumsum(np.concatenate(([0], H)))[:-1]
-        X = np.resize((0),len(size))
+        X = np.resize((0), len(size))
         C = np.linspace(colors[0], colors[1], len(size))
 
-        return Layout(frame, X, Y, W, H, C, func)
+        return Layout(args, frame, X, Y, W, H, C, func)
 
     return wrapper
 
@@ -245,14 +250,14 @@ def layoutRow(func):
         colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
-        
+
         H = np.resize(frame[3], len(size))
         W = frame[2] * (np.asarray(size) / np.sum(size))
-        Y = np.resize((0),len(size))
+        Y = np.resize((0), len(size))
         X = np.cumsum(np.concatenate(([0], W)))[:-1]
         C = np.linspace(colors[0], colors[1], len(size))
 
-        return Layout(frame, X, Y, W, H, C, func)
+        return Layout(args, frame, X, Y, W, H, C, func)
 
     return wrapper
 
@@ -324,6 +329,6 @@ def layoutGrid(func):
         else:
             raise ValueError(f"{colorStyle} is not a valid colorStyle.")
 
-        return Layout(frame, X, Y, W, H, C, func)
+        return Layout(args, frame, X, Y, W, H, C, func)
 
     return wrapper

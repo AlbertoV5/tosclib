@@ -1,3 +1,4 @@
+import logging
 import tosclib as tosc
 import pytest
 from tosclib.tosc import ControlElements, ControlType
@@ -50,11 +51,10 @@ def test_copiers():
 
     # COPY CHILDREN
     controlsList = []
-    for var in vars(ControlType):
-        if not "_" in var:
-            child = tosc.ElementTOSC(node.createChild(var))
-            child.setName(var.lower())
-            controlsList.append(var.lower())
+    for c in ControlType:
+        child = tosc.ElementTOSC(node.createChild(c))
+        child.setName(c.value)
+        controlsList.append(c.value)
 
     assert tosc.copyChildren(
         node,

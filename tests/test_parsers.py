@@ -1,6 +1,7 @@
 import tosclib as tosc
 from .profiler import profile
 
+
 @profile
 def test_parsers():
 

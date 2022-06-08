@@ -417,7 +417,9 @@ class LOCAL:
 class PropertyFactory:
     @classmethod
     def build(
-        cls, key:str, value: int | bool | float | str | tuple[int] | tuple[float]
+        cls, 
+        key:str, 
+        value: int | bool | float | str | tuple[int,...] | tuple[float,...]
     ) -> Property:
         """_summary_
 
@@ -467,7 +469,7 @@ class PropertyFactory:
         return Property(PropertyType.FLOAT.value, key, repr(value))
 
     @classmethod
-    def buildColor(cls, key: str, value: tuple) -> Property:
+    def buildColor(cls, key: str, value: tuple[float,...]) -> Property:
         return Property(
             PropertyType.COLOR.value,
             key,
@@ -481,7 +483,7 @@ class PropertyFactory:
         )
 
     @classmethod
-    def buildFrame(cls, key: str, value: tuple) -> Property:
+    def buildFrame(cls, key: str, value: tuple[int,...]) -> Property:
         return Property(
             PropertyType.FRAME.value,
             key,
@@ -539,7 +541,7 @@ class PropertyFactory:
         return cls.buildInteger("outline", value)
 
     @classmethod
-    def textColor(cls, params: tuple) -> Property:
+    def textColor(cls, params: tuple[float,...]) -> Property:
         return cls.buildColor("textColor", params)
 
     @classmethod

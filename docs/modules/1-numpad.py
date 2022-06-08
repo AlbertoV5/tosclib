@@ -161,11 +161,11 @@ end""")
 def layoutNumbers(children: list[et]):
 
     f = children[0].getFrame()
-    framepad = (f[2]*0.1,f[3]*0.1,f[2]*0.8,f[3]*0.8)
+    framepad = (int(f[2]*0.1),int(f[3]*0.1),int(f[2]*0.8),int(f[3]*0.8))
     label = controls.Label(
         properties = [
             pf.frame(framepad),
-            pf.textColor((1.0,1.0,1.0,1.0)),
+            pf.textColor((1.0,1.0,1.0,1.0,)),
             pf.textSize(48),
             pf.background(False),
         ]
@@ -174,7 +174,7 @@ def layoutNumbers(children: list[et]):
         properties=[
             pf.frame(f),
             pf.outline(False),
-            pf.build("color2", (0.5,0.5,0.5,1.0)),
+            pf.build("color2", (0.5,0.5,0.5,1.0,)),
         ]
     )
     names = (7,4,1,8,5,2,9,6,3,)

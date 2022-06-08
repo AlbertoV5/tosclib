@@ -6,7 +6,7 @@ from tosclib.elements import ControlType
 
 
 @profile
-def test_collisions() -> tosc.ElementTOSC:
+def test_collisions():
     root = tosc.createTemplate()
     element = tosc.ElementTOSC(root[0])
     assert element
@@ -35,4 +35,3 @@ def test_collisions() -> tosc.ElementTOSC:
     assert fader.createOSC(tosc.OSC(path=path)) is not None
     assert fader.createOSC(tosc.OSC(path=path)) is not None
 
-    return "tests/test_collisions.prof"

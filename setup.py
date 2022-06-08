@@ -19,6 +19,7 @@ setuptools.setup(
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
+    package_data={"tosclib": ["py.typed"]},
     python_requires=">=3.10",
     install_requires=[
         "lxml>=4.9.0",

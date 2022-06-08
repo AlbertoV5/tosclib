@@ -180,35 +180,35 @@ class ElementTOSC:
         self.node.attrib["type"] = value.value
         return True
 
-    def getFrame(self) -> tuple:
+    def getFrame(self) -> tuple[int, ...]:
         """Wrapper for getX, getY, etc."""
         return (self.getX(), self.getY(), self.getW(), self.getH())
 
-    def getColor(self) -> tuple:
+    def getColor(self) -> tuple[float, ...]:
         return (self.getR(), self.getG(), self.getB(), self.getA())
 
-    def getR(self):
+    def getR(self) -> float:
         return float(self.getPropertyParam("color", "r").text)
 
-    def getG(self):
+    def getG(self) -> float:
         return float(self.getPropertyParam("color", "g").text)
 
-    def getB(self):
+    def getB(self) -> float:
         return float(self.getPropertyParam("color", "b").text)
 
-    def getA(self):
+    def getA(self) -> float:
         return float(self.getPropertyParam("color", "a").text)
 
-    def getX(self):
+    def getX(self) -> int:
         return float(self.getPropertyParam("frame", "x").text)
 
-    def getY(self):
+    def getY(self) -> int:
         return float(self.getPropertyParam("frame", "y").text)
 
-    def getW(self):
+    def getW(self) -> int:
         return float(self.getPropertyParam("frame", "w").text)
 
-    def getH(self):
+    def getH(self) -> int:
         return float(self.getPropertyParam("frame", "h").text)
 
     def simpleProperty(fun):

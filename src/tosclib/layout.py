@@ -108,7 +108,7 @@ def column(func):
         parent: ElementTOSC,
         controlType: controlType,
         size: tuple = (1, 2, 1),
-        colors: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
+        colors: tuple[tuple] | str = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
         frame = parent.getFrame()
@@ -139,7 +139,7 @@ def row(func):
         controlType: ControlType,
         size: tuple = (1, 2, 1),
         frame: tuple = (0, 0, 1600, 640),
-        colors: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
+        colors: tuple[tuple] | str = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
         frame = parent.getFrame()
@@ -177,7 +177,7 @@ def grid(func):
         parent: ElementTOSC,
         controlType: ControlType,
         size: int = (4, 4),
-        colors: tuple[tuple] = (
+        colors: tuple[tuple] | str = (
             (0.25, 0.25, 0.25, 1.0),
             (0.5, 0.5, 0.5, 1.0),
         ),

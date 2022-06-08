@@ -17,14 +17,14 @@ bgGradient2 = ((1.0, 0.0, 0.0, 1.0), (0.5, 0.0, 0.5, 1.0))
 @tosc.layout.column
 def layoutBase(children: list[et]):
 
-    layTop: et = layoutValues(
+    layoutTop: et = layoutValues(
         children[0],
         ControlType.GROUP,
         size=(1,1),
         colors=bgGradient1,
     )
 
-    layMid: et = layoutNumbers(
+    layoutMid: et = layoutNumbers(
         children[1], 
         ControlType.GROUP, 
         size=(3, 3), 
@@ -32,12 +32,60 @@ def layoutBase(children: list[et]):
         colorStyle=2
         )
     
-    layBot: et = layoutClear(
+    layoutBot: et = layoutClear(
         children[2],
         ControlType.GROUP,
         size = (1,1,1),
         colors=bgGradient1,
     )
+
+    id = tosc.pullIdfromName(layoutTop.node, "valueLabel")
+
+    local0 = LOCAL(
+        triggers=[Trigger("x", "RISE")],
+        type="PROPERTY",
+        conversion="STRING",
+        value = "name",
+        dstType="VALUE",
+        dstVar="text",
+        dstID=id,)
+
+    for c in layoutMid:
+        et(c)[0].createLOCAL(local0)
+
+    layoutBot[1][0].createLOCAL(local0)
+
+    local1 = LOCAL(
+        triggers=[Trigger("x", "RISE")],
+        type="CONSTANT",
+        conversion="STRING",
+        value = "0",
+        dstType="PROPERTY",
+        dstVar="sum",
+        dstID=id,)
+
+    local2 = LOCAL(
+        triggers=[Trigger("x", "FALL")],
+        type="CONSTANT",
+        conversion="STRING",
+        value = "",
+        dstType="VALUE",
+        dstVar="text",
+        dstID=id,)
+
+    layoutBot[0][0].createLOCAL(local1)
+    layoutBot[0][0].createLOCAL(local2)
+
+    local3 = LOCAL(
+        triggers=[Trigger("x", "FALL")],
+        type="CONSTANT",
+        conversion="STRING",
+        value = "",
+        dstType="VALUE",
+        dstVar="text",
+        dstID=id,)
+        
+    layoutBot[2][0].createLOCAL(local3)
 
     return [pf.name("Numpad")]
 
@@ -225,60 +273,12 @@ def main():
     root = tosc.createTemplate(frame=(0, 0, 500, 800))
     template = et(root[0])
 
-    layout: et = layoutBase(
+    layoutBase(
         template, 
         ControlType.GROUP, 
         size=(1, 3, 1), 
         colors=bgGradient1
         )
-
-    id = tosc.pullIdfromName(layout[0].node, "valueLabel")
-
-    local0 = LOCAL(
-        triggers=[Trigger("x", "RISE")],
-        type="PROPERTY",
-        conversion="STRING",
-        value = "name",
-        dstType="VALUE",
-        dstVar="text",
-        dstID=id,)
-
-    for c in layout[1]:
-        et(c)[0].createLOCAL(local0)
-
-    layout[2][1][0].createLOCAL(local0)
-
-    local1 = LOCAL(
-        triggers=[Trigger("x", "RISE")],
-        type="CONSTANT",
-        conversion="STRING",
-        value = "0",
-        dstType="PROPERTY",
-        dstVar="sum",
-        dstID=id,)
-
-    local2 = LOCAL(
-        triggers=[Trigger("x", "FALL")],
-        type="CONSTANT",
-        conversion="STRING",
-        value = "",
-        dstType="VALUE",
-        dstVar="text",
-        dstID=id,)
-
-    layout[2][0][0].createLOCAL(local1)
-    layout[2][0][0].createLOCAL(local2)
-
-    local3 = LOCAL(
-        triggers=[Trigger("x", "FALL")],
-        type="CONSTANT",
-        conversion="STRING",
-        value = "",
-        dstType="VALUE",
-        dstVar="text",
-        dstID=id,)
-        
-    layout[2][2][0].createLOCAL(local2)
     
     """Save it as a template"""
     tosc.write(root, "docs/modules/numpad.tosc")

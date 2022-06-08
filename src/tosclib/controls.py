@@ -410,6 +410,14 @@ class Pager:
 
 
 class Control(Protocol):
+    """Protocol type of Control
+
+    Attributes:
+        controlT: Control Type
+        properties: List of Property
+        values: List of Value
+        messsages: List of Message
+    """
     controlT: ClassVar[controlType]
     properties: Properties
     values: Values
@@ -417,6 +425,8 @@ class Control(Protocol):
 
 
 class ControlProperties(Protocol):
+    """Data structure to store control properties and defaults
+    for reference."""
     name: str
     tag: str
     script: str
@@ -427,9 +437,18 @@ class ControlProperties(Protocol):
         ...
 
 
-class ControlFactory:
+class ControlConverter:
+    """Convert from Control to XML"""
     @classmethod
     def build(cls, control: Control) -> ET.Element:
+        """Generate the XML Element and its SubElements
+
+        Args:
+            control (Control): Control
+
+        Returns:
+            ET.Element: XML
+        """
         node = ET.Element(
             ControlElements.NODE.value,
             attrib={"ID": str(uuid.uuid4()), "type": control.controlT.value},
@@ -447,8 +466,18 @@ class ControlFactory:
 
 
 class XmlFactory:
+    """Generate specific XML structures"""
     @classmethod
     def buildProperties(cls, props: Properties, e: ET.Element) -> bool:
+        """Create many <property> XML
+
+        Args:
+            props (Properties): List of Properties
+            e (ET.Element): Element to append the properties to
+
+        Returns:
+            bool: bool
+        """
         for prop in props:
             property = ET.SubElement(
                 e, ControlElements.PROPERTY.value, attrib={"type": prop.type}
@@ -461,7 +490,17 @@ class XmlFactory:
         return True
 
     @classmethod
-    def modifyProperty(cls, value, params, p: ET.Element) -> bool:
+    def modifyProperty(cls, value:str, params:dict, p: ET.Element) -> bool:
+        """Modify an existing property XML
+
+        Args:
+            value (str): New value
+            params (dict): New params
+            p (ET.Element): <property>
+
+        Returns:
+            bool: bool
+        """
         v = p.find("value")
         v.text = value
         for k in params:

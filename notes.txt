@@ -10,6 +10,8 @@ python -m pip install -e .
 
 docs\make html
 
+sphinx-build docs/ docs/build
+
 Release:
 
 python -m build

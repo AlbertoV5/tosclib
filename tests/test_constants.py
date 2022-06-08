@@ -33,7 +33,7 @@ def test_constants(capture_stdout):
     buttonProps = controls.ButtonProperties().build()
     button = controls.Button(properties=buttonProps)
 
-    controls.ControlFactory.build(button)
+    controls.ControlConverter.build(button)
 
     return "tests/test_constants.prof"
 

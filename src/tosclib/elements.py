@@ -547,3 +547,13 @@ class PropertyFactory:
     @classmethod
     def textSize(cls, value: int) -> Property:
         return cls.buildInteger("textSize", value)
+
+
+class ValueFactory:
+    @classmethod
+    def build(
+        cls, 
+        key:str, 
+        value: int | bool | float | str | tuple[int,...] | tuple[float,...]
+    ) -> Value:
+        return

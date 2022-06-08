@@ -177,8 +177,8 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../api/ControlEnums.html">Control Enumerations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/ElementEnums.html">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/1-ElementEnums.html">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/2-ControlEnums.html">Control Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/shortcuts.html">Shortcuts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/tglobals.html">Globals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/tosclib.tosc.html">tosclib.tosc</a></li>
@@ -628,14 +628,14 @@
     <span class="p">)</span>
 
 
-<div class="viewcode-block" id="Control"><a class="viewcode-back" href="../../api/ControlEnums.html#tosclib.controls.Control">[docs]</a><span class="k">class</span> <span class="nc">Control</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<div class="viewcode-block" id="Control"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.Control">[docs]</a><span class="k">class</span> <span class="nc">Control</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
     <span class="sd">"""Protocol type of Control</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        controlT: Control Type</span>
 <span class="sd">        properties: List of Property</span>
 <span class="sd">        values: List of Value</span>
-<span class="sd">        messsages: List of Message</span>
+<span class="sd">        messages: List of Message</span>
 <span class="sd">    """</span>
     <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span>
     <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span>
@@ -656,9 +656,9 @@
         <span class="o">...</span>
 
 
-<div class="viewcode-block" id="ControlConverter"><a class="viewcode-back" href="../../api/ControlEnums.html#tosclib.controls.ControlConverter">[docs]</a><span class="k">class</span> <span class="nc">ControlConverter</span><span class="p">:</span>
+<div class="viewcode-block" id="ControlConverter"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.ControlConverter">[docs]</a><span class="k">class</span> <span class="nc">ControlConverter</span><span class="p">:</span>
     <span class="sd">"""Convert from Control to XML"""</span>
-<div class="viewcode-block" id="ControlConverter.build"><a class="viewcode-back" href="../../api/ControlEnums.html#tosclib.controls.ControlConverter.build">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ControlConverter.build"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.ControlConverter.build">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">control</span><span class="p">:</span> <span class="n">Control</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
         <span class="sd">"""Generate the XML Element and its SubElements</span>
 
@@ -684,9 +684,9 @@
 
 
 
-<div class="viewcode-block" id="XmlFactory"><a class="viewcode-back" href="../../api/ControlEnums.html#tosclib.controls.XmlFactory">[docs]</a><span class="k">class</span> <span class="nc">XmlFactory</span><span class="p">:</span>
+<div class="viewcode-block" id="XmlFactory"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.XmlFactory">[docs]</a><span class="k">class</span> <span class="nc">XmlFactory</span><span class="p">:</span>
     <span class="sd">"""Generate specific XML structures"""</span>
-<div class="viewcode-block" id="XmlFactory.buildProperties"><a class="viewcode-back" href="../../api/ControlEnums.html#tosclib.controls.XmlFactory.buildProperties">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="XmlFactory.buildProperties"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.XmlFactory.buildProperties">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">buildProperties</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">props</span><span class="p">:</span> <span class="n">Properties</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">"""Create many &lt;property&gt; XML</span>
 
@@ -708,7 +708,7 @@
                 <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="XmlFactory.modifyProperty"><a class="viewcode-back" href="../../api/ControlEnums.html#tosclib.controls.XmlFactory.modifyProperty">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="XmlFactory.modifyProperty"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.XmlFactory.modifyProperty">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">modifyProperty</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span><span class="nb">dict</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">"""Modify an existing property XML</span>
 

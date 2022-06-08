@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Modules" href="../modules.html" /><link rel="prev" title="Reaper to Touch OSC" href="5-reaper-tosclib.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>Module: Numpad - tosclib 0.3 documentation</title>
+        <title>Numpad Module Recreation - tosclib 0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -170,7 +170,7 @@
 <li class="toctree-l2"><a class="reference internal" href="3-from-json.html">Elements from Json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4-image-converter.html">Image Converter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="5-reaper-tosclib.html">Reaper to Touch OSC</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Module: Numpad</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Numpad Module Recreation</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -178,8 +178,8 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/ControlEnums.html">Control Enumerations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/ElementEnums.html">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/1-ElementEnums.html">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/2-ControlEnums.html">Control Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/shortcuts.html">Shortcuts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/tglobals.html">Globals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/tosclib.tosc.html">tosclib.tosc</a></li>
@@ -217,11 +217,14 @@
           </label>
         </div>
         <article role="main">
-          <section id="module-numpad">
-<h1>Module: Numpad<a class="headerlink" href="#module-numpad" title="Permalink to this headline">#</a></h1>
+          <section id="numpad-module-recreation">
+<h1>Numpad Module Recreation<a class="headerlink" href="#numpad-module-recreation" title="Permalink to this headline">#</a></h1>
 <p>This is a re-construction of the integer numpad from <a class="reference external" href="https://github.com/F-l-i-x">Felix</a> here: <a class="reference external" href="https://github.com/F-l-i-x/TouchOSC/tree/main/modules/numpad#readme">https://github.com/F-l-i-x/TouchOSC/tree/main/modules/numpad#readme</a></p>
 <p>Original:</p>
 <img alt="https://github.com/F-l-i-x/TouchOSC/raw/main/modules/numpad/pics/numpad.gif" src="https://github.com/F-l-i-x/TouchOSC/raw/main/modules/numpad/pics/numpad.gif"/>
+<p>Result:</p>
+<img alt="../_images/numpad1.GIF" src="../_images/numpad1.GIF"/>
+<p>Code:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cProfile</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pstats</span>
@@ -237,6 +240,8 @@
 
 <span class="n">bgGradient1</span> <span class="o">=</span> <span class="p">((</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
 <span class="n">bgGradient2</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+<span class="n">names</span> <span class="o">=</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">,)</span>
+
 
 <span class="nd">@tosc</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">column</span>
 <span class="k">def</span> <span class="nf">layoutBase</span><span class="p">(</span><span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">et</span><span class="p">]):</span>
@@ -401,7 +406,7 @@
             <span class="n">pf</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s2">"color2"</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,)),</span>
         <span class="p">]</span>
     <span class="p">)</span>
-    <span class="n">names</span> <span class="o">=</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">,)</span>
+    
 
     <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">children</span><span class="p">):</span>
 

@@ -13,6 +13,8 @@ import subprocess
 
 bgGradient1 = ((0.25, 0.25, 0.25, 1.0), (0.5, 0.25, 0.25, 1.0))
 bgGradient2 = ((1.0, 0.0, 0.0, 1.0), (0.5, 0.0, 0.5, 1.0))
+names = (7,4,1,8,5,2,9,6,3,)
+
 
 @tosc.layout.column
 def layoutBase(children: list[et]):
@@ -177,7 +179,7 @@ def layoutNumbers(children: list[et]):
             pf.build("color2", (0.5,0.5,0.5,1.0,)),
         ]
     )
-    names = (7,4,1,8,5,2,9,6,3,)
+    
 
     for n, c in zip(names, children):
 

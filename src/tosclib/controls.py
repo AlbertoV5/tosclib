@@ -416,7 +416,7 @@ class Control(Protocol):
         controlT: Control Type
         properties: List of Property
         values: List of Value
-        messsages: List of Message
+        messages: List of Message
     """
     controlT: ClassVar[controlType]
     properties: Properties

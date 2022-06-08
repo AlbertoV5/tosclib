@@ -25,6 +25,13 @@ Installation
 Changelog
 ------------------
 
+- 0.3.5
+   - Moved to python 3.10 only.
+   - Added mypy support.
+   - Improved code structure to use factories.
+   - Added numpad demo.
+   - Polished layouts.
+
 - 0.3.0
    - Final code refactoring for the library's structure.
    - The abstraction flows like this:

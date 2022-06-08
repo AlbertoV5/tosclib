@@ -5,7 +5,7 @@ Generate and edit Touch OSC templates with XML trees through a few custom classe
 
 For more go to the `TouchOSC control reference. <https://hexler.net/touchosc/manual/controls>`_
 
-And more details on the `TouchOSC scripting reference <https://hexler.net/touchosc/manual/script>`_
+And more details on the `TouchOSC scripting reference. <https://hexler.net/touchosc/manual/script>`_
 
 .. attention::
 
@@ -24,6 +24,13 @@ Installation
 
 Changelog
 ------------------
+
+- 0.3.5
+   - Moved to python 3.10 only.
+   - Added mypy support.
+   - Improved code structure to use factories.
+   - Added numpad demo.
+   - Polished layouts.
 
 - 0.3.0
    - Final code refactoring for the library's structure.

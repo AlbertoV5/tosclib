@@ -1,6 +1,8 @@
 """
 Higher level wrapper for a TOSC Control Element.
 """
+import logging
+from copy import deepcopy
 import sys
 import re
 from typing import TypeGuard
@@ -57,6 +59,9 @@ class ElementTOSC:
         """Return iter over children"""
         return iter(self.children)
 
+    def __getitem__(self,item):
+        return self.__class__(self.children[item])
+
     def append(self, e: "ElementTOSC") -> "ElementTOSC":
         """Append an ElementTOSC's Node to this element's Children"""
         self.children.append(e.node)
@@ -95,10 +100,10 @@ class ElementTOSC:
     def createProperty(self, property: Property) -> bool:
         if findKey(self.properties, property.key) is not None:
             raise ValueError(f"{property.key} already exists.")
-        return XmlFactory.buildProperties((property,),self.properties)
+        return XmlFactory.buildProperties([property],self.properties)
 
     def createPropertyUnsafe(self, property: Property) -> bool:
-        return XmlFactory.buildProperties((property,),self.properties)
+        return XmlFactory.buildProperties([property],self.properties)
 
     def getValue(self, key: str) -> ET.Element:
         return findKey(self.values, key)
@@ -178,6 +183,21 @@ class ElementTOSC:
     def getFrame(self) -> tuple:
         """Wrapper for getX, getY, etc."""
         return (self.getX(), self.getY(), self.getW(), self.getH())
+
+    def getColor(self) -> tuple:
+        return (self.getR(), self.getG(), self.getB(), self.getA())
+
+    def getR(self):
+        return float(self.getPropertyParam("color", "r").text)
+
+    def getG(self):
+        return float(self.getPropertyParam("color", "g").text)
+
+    def getB(self):
+        return float(self.getPropertyParam("color", "b").text)
+
+    def getA(self):
+        return float(self.getPropertyParam("color", "a").text)
 
     def getX(self):
         return float(self.getPropertyParam("frame", "x").text)
@@ -371,6 +391,131 @@ def getTextValueFromKey(properties: ET.Element, key: str) -> str:
             return property.find("value").text
 
 
+
+"""
+COPY AND MOVE
+"""
+
+
+def copyProperties(source: ElementTOSC, target: ElementTOSC, *args: str):
+    """Args can be any number of property keys"""
+    if args is None:
+        [target.properties.append(deepcopy(e)) for e in source.properties]
+        return True
+    for arg in args:
+        if elements := source.properties.findall(f"*[key='{arg}']"):
+            [target.properties.append(deepcopy(e)) for e in elements]
+        else:
+            raise ValueError(f"Failed to find all elements with {args}")
+    return True
+
+
+def moveProperties(source: ElementTOSC, target: ElementTOSC, *args):
+    elements = []
+    if args is None:
+        elements = source.properties
+    for arg in args:
+        if e := source.properties.findall(f"*[key='{arg}']"):
+            elements += e
+        else:
+            raise ValueError(f"Failed to find all elements with {args}")
+
+    [target.properties.append(deepcopy(e)) for e in elements]
+    [source.properties.remove(e) for e in elements]
+    return True
+
+
+def copyValues(source: ElementTOSC, target: ElementTOSC, *args: str):
+    """Args can be any number of value keys"""
+    if args is None:
+        [target.values.append(deepcopy(e)) for e in source.values]
+        return True
+    for arg in args:
+        if elements := source.values.findall(f"*[key='{arg}']"):
+            [target.values.append(deepcopy(e)) for e in elements]
+        else:
+            raise ValueError(f"Failed to find all elements with {args}")
+    return True
+
+
+def moveValues(source: ElementTOSC, target: ElementTOSC, *args: str):
+    elements = []
+    if args is None:
+        elements = source.values
+    for arg in args:
+        if e := source.values.findall(f"*[key='{arg}']"):
+            elements += e
+        else:
+            raise ValueError(f"Failed to find all elements with {args}")
+
+    [target.values.append(deepcopy(e)) for e in elements]
+    [source.values.remove(e) for e in elements]
+    return True
+
+
+def copyMessages(source: ElementTOSC, target: ElementTOSC, *args: str):
+    """Args can be ControlElements.OSC, MIDI, LOCAL, GAMEPAD"""
+    if args is None:
+        [target.messages.append(deepcopy(e)) for e in source.messages]
+        return True
+    for arg in args:
+        if elements := source.messages.findall(f"./{arg.value}"):
+            [target.messages.append(deepcopy(e)) for e in elements]
+        else:
+            raise ValueError(f"Failed to find all elements with {arg.value}")
+    return True
+
+
+def moveMessages(source: ElementTOSC, target: ElementTOSC, *args: str):
+    elements = []
+    if args is None:
+        elements = source.messages
+    for arg in args:
+        if e := source.messages.findall(f"./{arg.value}"):
+            elements += e
+        else:
+            raise ValueError(f"Failed to find all elements with {arg.value}")
+
+    [target.messages.append(deepcopy(e)) for e in elements]
+    [source.messages.remove(e) for e in elements]
+    return True
+
+
+def copyChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
+    """Args can be ControlType.BOX, BUTTON, etc."""
+    if args is None:
+        [target.children.append(deepcopy(e)) for e in source.children]
+        return True
+    for arg in args:
+        if elements := source.children.findall(
+            f"./{ControlElements.NODE.value}[@type='{arg.value}']"
+        ):
+            [target.children.append(deepcopy(e)) for e in elements]
+        else:
+            raise ValueError(f"Failed to find all elements with {arg.value}")
+    return True
+
+
+def moveChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
+    elements = []
+    if args is None:
+        elements = source.children
+    for arg in args:
+        if e := source.children.findall(
+            f"./{ControlElements.NODE}[@type='{arg.value}']"
+        ):
+            elements += e
+        else:
+            raise ValueError(f"Failed to find all elements with {arg.value}")
+
+    [target.children.append(deepcopy(e)) for e in elements]
+    [source.children.remove(e) for e in elements]
+    return True
+
+
+
+
+
 """
 
 GENERAL PARSERS
@@ -430,6 +575,22 @@ def pullValueFromKey2(root: ET.Element, key: str,
         if re.fullmatch(getTextValueFromKey(e.find("properties"), key), value):
             parser.close()
             return getTextValueFromKey(e.find("properties"), targetKey)
+
+def pullIdfromName(root: ET.Element, name: str) -> str:
+    """
+    """
+    parser = ET.XMLPullParser()
+    parser.feed(ET.tostring(root, encoding="UTF-8"))
+    for _, e in parser.read_events():  # event, element
+        if e.find("properties") is None:
+            continue
+        # xpath ftw
+        if e.find(f"./properties/property/[value='{name}']") is not None:            
+            parser.close()
+            return e.attrib["ID"]
+    
+    raise ValueError(f"{name}'s ID wasn't found.")
+
 
 
 class PropertyParser:

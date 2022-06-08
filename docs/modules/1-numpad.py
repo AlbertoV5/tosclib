@@ -1,55 +1,285 @@
 import cProfile
 import logging
 import pstats
+
 import tosclib as tosc
-from tosclib import Value
 from tosclib import controls
-from tosclib.controls import ButtonProperties, ControlFactory, LabelProperties
-from tosclib.elements import LOCAL, PropertyFactory, Trigger, Property
-from tosclib.tosc import ControlType, ElementTOSC
-from tosclib.layout import layoutColumn, layoutGrid
+from tosclib.elements import LOCAL, Trigger
+from tosclib.tosc import ControlType, Value
+from tosclib.controls import PropertyFactory as pf
+from tosclib.controls import ControlFactory as cf
+from tosclib.tosc import ElementTOSC as et
+import subprocess
 
-"""WORK IN PROGRESS"""
+bgGradient1 = ((0.25, 0.25, 0.25, 1.0), (0.5, 0.25, 0.25, 1.0))
+bgGradient2 = ((1.0, 0.0, 0.0, 1.0), (0.5, 0.0, 0.5, 1.0))
 
-bgColor = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0))
+@tosc.layout.column
+def layoutBase(children: list[et]):
 
-
-@layoutColumn
-def layoutBase(children: list[ElementTOSC]):
-
-    numbers(children[1], ControlType.GROUP, size=(3, 3), colors=bgColor)
-
-    return (PropertyFactory.name("Numpad"),)
-
-@layoutGrid
-def numbers(children: list[ElementTOSC]):
-
-    frame = children[0].getFrame()
-    with open("docs/modules/button.lua", "r") as file:
-        script = file.read()
-    buttonProps = ButtonProperties(name="button", frame=frame, script=script)
-    labelProps = LabelProperties(
-        name="label", textSize=48, background=False, frame=frame
+    layTop: et = layoutValues(
+        children[0],
+        ControlType.GROUP,
+        size=(1,1),
+        colors=bgGradient1,
     )
 
-    label = controls.Label(properties=labelProps.build())
-    button = controls.Button(properties=buttonProps.build())
-    logging.warning(button)
+    layMid: et = layoutNumbers(
+        children[1], 
+        ControlType.GROUP, 
+        size=(3, 3), 
+        colors=bgGradient1,
+        colorStyle=2
+        )
+    
+    layBot: et = layoutClear(
+        children[2],
+        ControlType.GROUP,
+        size = (1,1,1),
+        colors=bgGradient1,
+    )
 
-    for c in children:
-        c.children.append(ControlFactory.build(label))
-        c.children.append(ControlFactory.build(button))
+    return [pf.name("Numpad")]
 
-    return (PropertyFactory.outline(False),PropertyFactory.name("numbers"))
 
+@tosc.layout.row
+def layoutValues(children: list[et]):
+
+    frame = children[0].getFrame()
+    button0 = controls.Button(
+        properties = [
+            pf.name("valueButton"),
+            pf.color(children[0].getColor()),
+            pf.frame(frame)
+        ]
+    )
+    label0 = controls.Label(
+        properties = [
+            pf.name("valueLabel"),
+            pf.background(False),
+            pf.color(children[0].getColor()),
+            pf.build("frame", frame),
+            pf.textSize(60),
+            pf.build("sum", ""),
+            pf.build("max", "127"),
+            pf.script("""
+self.sum = "0"
+self.values.text = self.sum
+
+function onValueChanged(key,value)
+    self.sum = self.sum..self.values.text
+    if tonumber(self.sum) >= tonumber(self.max) then
+        self.sum = self.max
+    end
+    if tonumber(self.sum) == 0 then
+        self.values.text = "0"
+    end
+    self.values.text = self.sum
+end""")
+        ],
+        values = [Value("text", default="0")]
+    )
+    
+    children[0].setName("value")
+    children[0].children.append(cf.build(button0))
+    children[0].children.append(cf.build(label0))
+
+    label1 = controls.Label(
+        properties = [
+            pf.name("sendLabel"),
+            pf.color(children[1].getColor()),
+            pf.frame(frame),
+            pf.textSize(60),
+            pf.background(False),
+        ],
+        values=[Value("text", default="SEND")]
+    )
+    button1 = controls.Button(
+        properties = [
+            pf.name("sendButton"),
+            pf.color(children[1].getColor()),
+            pf.frame(frame),
+        ]
+    )
+
+    children[1].setName("send")
+    children[1].children.append(cf.build(button1))
+    children[1].children.append(cf.build(label1))
+
+    return [pf.name("Values")]
+
+
+@tosc.layout.grid
+def layoutNumbers(children: list[et]):
+
+    f = children[0].getFrame()
+    framepad = (f[2]*0.1,f[3]*0.1,f[2]*0.8,f[3]*0.8)
+    label = controls.Label(
+        properties = [
+            pf.frame(framepad),
+            pf.textColor((1.0,1.0,1.0,1.0)),
+            pf.textSize(48),
+            pf.background(False),
+        ]
+    )
+    button = controls.Button(
+        properties=[
+            pf.frame(f),
+            pf.outline(False),
+            pf.build("color2", (0.5,0.5,0.5,1.0)),
+        ]
+    )
+    names = (7,4,1,8,5,2,9,6,3,)
+
+    for n, c in zip(names, children):
+
+        label.values.append(Value("text", default = str(n)))
+        label.properties.append(pf.name(str(n)))
+        button.properties.append(pf.name(str(n)))
+        button.properties.append(pf.color(c.getColor()))
+
+        c.children.append(cf.build(button))
+        c.children.append(cf.build(label))
+        
+    return [pf.outline(True),pf.name("numbers")]
+
+
+@tosc.layout.row
+def layoutClear(children: list[et]):
+
+    button0 = controls.Button(
+        properties= [
+            pf.name("clearButton"),
+            pf.frame(children[0].getFrame()),
+            pf.color(children[0].getColor()),
+        ]
+    )
+    label0 = controls.Label(
+        properties= [
+            pf.name("clearLabel"),
+            pf.outlineStyle(1),
+            pf.frame(children[0].getFrame()),
+            pf.color(children[0].getColor()),
+            pf.textSize(48),
+            pf.background(False),
+        ],
+        values = [Value("text", default="CLR")]
+    )
+
+    children[0].setName("clear")
+    children[0].children.append(cf.build(button0))
+    children[0].children.append(cf.build(label0))
+
+    frame = children[0].getFrame()
+    button1 = controls.Button(
+        properties= [
+            pf.name("0"),
+            pf.frame(frame),
+            pf.color(children[1].getColor()),
+        ]
+    )
+    label1 = controls.Label(
+        properties= [
+            pf.name("0"),
+            pf.outlineStyle(1),
+            pf.frame(frame),
+            pf.color(children[1].getColor()),
+            pf.textSize(48),
+            pf.background(False),
+        ],
+        values = [Value("text", default="0")]
+    )
+
+    children[1].setName("zero")
+    children[1].children.append(cf.build(button1))
+    children[1].children.append(cf.build(label1))
+
+    button2 = controls.Button(
+        properties= [
+            pf.name("0"),
+            pf.frame(frame),
+            pf.color(children[2].getColor()),
+        ]
+    )
+    label2 = controls.Label(
+        properties= [
+            pf.name("0"),
+            pf.outlineStyle(1),
+            pf.frame(frame),
+            pf.color(children[2].getColor()),
+            pf.textSize(48),
+            pf.background(False),
+        ],
+        values = [Value("text", default="DEL")]
+    )
+
+    children[2].setName("del")
+    children[2].children.append(cf.build(button2))
+    children[2].children.append(cf.build(label2))
+    
+
+    return [pf.name("ClearDel")]
 
 def main():
 
-    root = tosc.createTemplate(frame=(0, 0, 800, 800))
-    template = ElementTOSC(root[0])
+    root = tosc.createTemplate(frame=(0, 0, 500, 800))
+    template = et(root[0])
 
-    layoutBase(template, ControlType.GROUP, size=(1, 3, 1), colors=bgColor)
+    layout: et = layoutBase(
+        template, 
+        ControlType.GROUP, 
+        size=(1, 3, 1), 
+        colors=bgGradient1
+        )
 
+    id = tosc.pullIdfromName(layout[0].node, "valueLabel")
+
+    local0 = LOCAL(
+        triggers=[Trigger("x", "RISE")],
+        type="PROPERTY",
+        conversion="STRING",
+        value = "name",
+        dstType="VALUE",
+        dstVar="text",
+        dstID=id,)
+
+    for c in layout[1]:
+        et(c)[0].createLOCAL(local0)
+
+    layout[2][1][0].createLOCAL(local0)
+
+    local1 = LOCAL(
+        triggers=[Trigger("x", "RISE")],
+        type="CONSTANT",
+        conversion="STRING",
+        value = "0",
+        dstType="PROPERTY",
+        dstVar="sum",
+        dstID=id,)
+
+    local2 = LOCAL(
+        triggers=[Trigger("x", "FALL")],
+        type="CONSTANT",
+        conversion="STRING",
+        value = "",
+        dstType="VALUE",
+        dstVar="text",
+        dstID=id,)
+
+    layout[2][0][0].createLOCAL(local1)
+    layout[2][0][0].createLOCAL(local2)
+
+    local3 = LOCAL(
+        triggers=[Trigger("x", "FALL")],
+        type="CONSTANT",
+        conversion="STRING",
+        value = "",
+        dstType="VALUE",
+        dstVar="text",
+        dstID=id,)
+        
+    layout[2][2][0].createLOCAL(local2)
+    
     """Save it as a template"""
     tosc.write(root, "docs/modules/numpad.tosc")
 
@@ -61,3 +291,5 @@ if __name__ == "__main__":
     stats = pstats.Stats(pr)
     stats.sort_stats(pstats.SortKey.TIME)
     stats.dump_stats(filename="docs/modules/test.prof")
+
+    subprocess.run(["open", "docs/modules/numpad.tosc"])

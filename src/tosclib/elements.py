@@ -1,5 +1,6 @@
 """ Enumerations for constructing XML Elements"""
 
+from copy import deepcopy
 from enum import Enum, unique
 from typing import Literal, TypedDict
 
@@ -416,7 +417,7 @@ class LOCAL:
 class PropertyFactory:
     @classmethod
     def build(
-        cls, key, value: int | bool | float | str | tuple[int] | tuple[float]
+        cls, key:str, value: int | bool | float | str | tuple[int] | tuple[float]
     ) -> Property:
         """_summary_
 
@@ -451,7 +452,7 @@ class PropertyFactory:
 
     @classmethod
     def buildBoolean(cls, key: str, value: bool) -> Property:
-        return Property(PropertyType.BOOLEAN.value, key, str(int(value)))
+        return Property(PropertyType.BOOLEAN.value, key, repr(int(value)))
 
     @classmethod
     def buildString(cls, key: str, value: str) -> Property:
@@ -459,11 +460,11 @@ class PropertyFactory:
 
     @classmethod
     def buildInteger(cls, key: str, value: int) -> Property:
-        return Property(PropertyType.INTEGER.value, key, str(value))
+        return Property(PropertyType.INTEGER.value, key, repr(value))
 
     @classmethod
     def buildFloat(cls, key: str, value: float) -> Property:
-        return Property(PropertyType.FLOAT.value, key, str(value))
+        return Property(PropertyType.FLOAT.value, key, repr(value))
 
     @classmethod
     def buildColor(cls, key: str, value: tuple) -> Property:
@@ -472,10 +473,10 @@ class PropertyFactory:
             key,
             "",
             {
-                "r": str(value[0]),
-                "g": str(value[1]),
-                "b": str(value[2]),
-                "a": str(value[3]),
+                "r": repr(value[0]),
+                "g": repr(value[1]),
+                "b": repr(value[2]),
+                "a": repr(value[3]),
             },
         )
 
@@ -486,43 +487,61 @@ class PropertyFactory:
             key,
             "",
             {
-                "x": str(value[0]),
-                "y": str(value[1]),
-                "w": str(value[2]),
-                "h": str(value[3]),
+                "x": repr(value[0]),
+                "y": repr(value[1]),
+                "w": repr(value[2]),
+                "h": repr(value[3]),
             },
         )
 
     @classmethod
     def name(cls, value: str) -> Property:
-        return Property(PropertyType.STRING.value, "name", value)
+        return cls.buildString("name", value)
 
     @classmethod
     def tag(cls, value: str) -> Property:
-        return Property(PropertyType.STRING.value, "tag", value)
+        return cls.buildString("tag", value)
 
     @classmethod
     def script(cls, value: str) -> Property:
-        return Property(PropertyType.STRING.value, "script", value)
+        return cls.buildString("script", value)
 
     @classmethod
-    def frame(cls, params: Frame) -> Property:
-        return Property(PropertyType.FRAME.value, "frame", params=params)
+    def frame(cls, params: tuple) -> Property:
+        return cls.buildFrame("frame", params)
 
     @classmethod
-    def color(cls, params: Color) -> Property:
-        return Property(PropertyType.COLOR.value, "color", params=params)
-
-    # locked
-
-    # visible
-
-    # interactive
+    def color(cls, params: tuple) -> Property:
+        return cls.buildColor("color", params)
 
     @classmethod
-    def background(cls, value: bool):
-        return Property(PropertyType.BOOLEAN.value, "background", value=str(int(value)))
+    def locked(cls, value: bool) -> Property:
+        return cls.buildBoolean("locked", value)
 
     @classmethod
-    def outline(cls, value: bool):
-        return Property(PropertyType.BOOLEAN.value, "outline", value=str(int(value)))
+    def visible(cls, value: bool) -> Property:
+        return cls.buildBoolean("visible", value)
+
+    @classmethod
+    def interactive(cls, value: bool) -> Property:
+        return cls.buildBoolean("interactive", value)
+
+    @classmethod
+    def background(cls, value: bool) -> Property:
+        return cls.buildBoolean("background", value)
+
+    @classmethod
+    def outline(cls, value: bool) -> Property:
+        return cls.buildBoolean("outline", value)
+
+    @classmethod
+    def outlineStyle(cls, value: int) -> Property:
+        return cls.buildInteger("outline", value)
+
+    @classmethod
+    def textColor(cls, params: tuple) -> Property:
+        return cls.buildColor("textColor", params)
+
+    @classmethod
+    def textSize(cls, value: int) -> Property:
+        return cls.buildInteger("textSize", value)

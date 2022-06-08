@@ -1,4 +1,32 @@
-"""General Layout shortcuts"""
+"""
+General Layout shortcuts.
+
+Layouts are decorators that receive a parent ElementTOSC, ControlType 
+for children, size and color and create a bunch of children whose 
+frames align inside the parent's frame.
+
+To define a layout, add one of the preset layouts: layoutColumn, 
+layoutRow, etc.to your function and set that function to receive a 
+list of ElementTOSC. Then return a list[Property] (Properties)
+that you want to add to the layout.
+
+The order is:
+
+1. Calculate Frame and Color arrays
+2. Create the children Controls and transform them.
+3. Then the decorated function happens.
+4. You can return a list[Property] (Properties) to apply to the layout.
+5. Then the layout is returned to whoever called the decorated function.
+
+Because your function will be executed towards the end, you can add
+any number of nested layouts to the children as they will have their 
+frame and color set already.
+
+The decorated function is also a good place to add Values and Messages
+to the children.
+
+All Layouts are currently built in top > bottom, left > right order.
+"""
 
 from copy import deepcopy
 from typing import Callable
@@ -13,164 +41,12 @@ from .controls import (
 )
 import numpy as np
 
-"""
-COPY AND MOVE
-"""
-
-
-def copyProperties(source: ElementTOSC, target: ElementTOSC, *args: str):
-    """Args can be any number of property keys"""
-    if args is None:
-        [target.properties.append(deepcopy(e)) for e in source.properties]
-        return True
-    for arg in args:
-        if elements := source.properties.findall(f"*[key='{arg}']"):
-            [target.properties.append(deepcopy(e)) for e in elements]
-        else:
-            raise ValueError(f"Failed to find all elements with {args}")
-    return True
-
-
-def moveProperties(source: ElementTOSC, target: ElementTOSC, *args):
-    elements = []
-    if args is None:
-        elements = source.properties
-    for arg in args:
-        if e := source.properties.findall(f"*[key='{arg}']"):
-            elements += e
-        else:
-            raise ValueError(f"Failed to find all elements with {args}")
-
-    [target.properties.append(deepcopy(e)) for e in elements]
-    [source.properties.remove(e) for e in elements]
-    return True
-
-
-def copyValues(source: ElementTOSC, target: ElementTOSC, *args: str):
-    """Args can be any number of value keys"""
-    if args is None:
-        [target.values.append(deepcopy(e)) for e in source.values]
-        return True
-    for arg in args:
-        if elements := source.values.findall(f"*[key='{arg}']"):
-            [target.values.append(deepcopy(e)) for e in elements]
-        else:
-            raise ValueError(f"Failed to find all elements with {args}")
-    return True
-
-
-def moveValues(source: ElementTOSC, target: ElementTOSC, *args: str):
-    elements = []
-    if args is None:
-        elements = source.values
-    for arg in args:
-        if e := source.values.findall(f"*[key='{arg}']"):
-            elements += e
-        else:
-            raise ValueError(f"Failed to find all elements with {args}")
-
-    [target.values.append(deepcopy(e)) for e in elements]
-    [source.values.remove(e) for e in elements]
-    return True
-
-
-def copyMessages(source: ElementTOSC, target: ElementTOSC, *args: str):
-    """Args can be ControlElements.OSC, MIDI, LOCAL, GAMEPAD"""
-    if args is None:
-        [target.messages.append(deepcopy(e)) for e in source.messages]
-        return True
-    for arg in args:
-        if elements := source.messages.findall(f"./{arg.value}"):
-            [target.messages.append(deepcopy(e)) for e in elements]
-        else:
-            raise ValueError(f"Failed to find all elements with {arg.value}")
-    return True
-
-
-def moveMessages(source: ElementTOSC, target: ElementTOSC, *args: str):
-    elements = []
-    if args is None:
-        elements = source.messages
-    for arg in args:
-        if e := source.messages.findall(f"./{arg.value}"):
-            elements += e
-        else:
-            raise ValueError(f"Failed to find all elements with {arg.value}")
-
-    [target.messages.append(deepcopy(e)) for e in elements]
-    [source.messages.remove(e) for e in elements]
-    return True
-
-
-def copyChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
-    """Args can be ControlType.BOX, BUTTON, etc."""
-    if args is None:
-        [target.children.append(deepcopy(e)) for e in source.children]
-        return True
-    for arg in args:
-        if elements := source.children.findall(
-            f"./{ControlElements.NODE.value}[@type='{arg.value}']"
-        ):
-            [target.children.append(deepcopy(e)) for e in elements]
-        else:
-            raise ValueError(f"Failed to find all elements with {arg.value}")
-    return True
-
-
-def moveChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
-    elements = []
-    if args is None:
-        elements = source.children
-    for arg in args:
-        if e := source.children.findall(
-            f"./{ControlElements.NODE}[@type='{arg.value}']"
-        ):
-            elements += e
-        else:
-            raise ValueError(f"Failed to find all elements with {arg.value}")
-
-    [target.children.append(deepcopy(e)) for e in elements]
-    [source.children.remove(e) for e in elements]
-    return True
-
 
 """
 
 ARRANGE AND LAYOUT
 
 """
-
-
-# def arrangeChildren(
-#     parent: ElementTOSC, rows: int, columns: int, zeroPad: bool = False
-# ) -> bool:
-#     """Get n number of children and arrange them in rows and columns.
-
-#     Args:
-#         parent: Element that has the children
-#         rows: how many rows
-#         columns: how many columns
-#         zeroPad: allows to have incomplete rows/columns of children.
-#     """
-#     number = len(parent.children)
-#     number = rows * columns
-
-#     fw = int(parent.getPropertyParam("frame", "w").text)
-#     fh = int(parent.getPropertyParam("frame", "h").text)
-#     w, h = fw / rows, fh / columns
-#     N = np.asarray(range(0, number)).reshape(rows, columns)
-#     X = np.asarray([(N[0][:columns] * w) for i in range(rows)]).reshape(1, number)
-#     Y = np.repeat(N[0][:rows] * h, columns).reshape(1, number)
-#     XYN = np.stack((X, Y, N.reshape(1, number)), axis=2)[0]
-
-#     for x, y, n in XYN:
-#         if zeroPad and n >= len(parent.children):
-#             continue
-#         e = ElementTOSC(parent.children[int(n)])
-#         e.setFrame((x, y, w, h))
-
-#     return True
-
 
 def colorChecker(color: tuple[tuple]):
     """Allow for passing rgba in 0-255, 0-1 and hex, then convert to 0-1"""
@@ -218,18 +94,19 @@ def Layout(
     return layout
 
 
-def layoutColumn(func):
+def column(func):
     """Create a column of groups with a color gradient.
 
     Args:
+        parent: The Control that becomes the layout.
+        controlType: The Control type of the generated children.
         size: The size and ratio of the columns, (1,2,1) means 3 columns with 1:2:1 ratio.
-        frame: Parent frame, all children adapt to it.
         colors: Tuple of two colors for linear gradient.
     """
 
     def wrapper(
         parent: ElementTOSC,
-        controlType: ControlType,
+        controlType: controlType,
         size: tuple = (1, 2, 1),
         colors: tuple[tuple] = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
@@ -247,14 +124,14 @@ def layoutColumn(func):
     return wrapper
 
 
-def layoutRow(func):
+def row(func):
     """Create a row of groups with a color gradient.
 
     Args:
+        parent: The Control that becomes the layout.
+        controlType: The Control type of the generated children.
         size: The size and ratio of the rows, (1,2,1) means 3 rows with 1:2:1 ratio.
-        frame: Parent frame, all children adapt to it.
         colors: Tuple of two colors for linear gradient.
-
     """
 
     def wrapper(
@@ -278,12 +155,13 @@ def layoutRow(func):
     return wrapper
 
 
-def layoutGrid(func):
+def grid(func):
     """Create an x*y grid of groups.
 
     Args:
+        parent: The Control that becomes the layout.
+        controlType: The Control type of the generated children.
         size: the row x column size in tuple, ej (4,4) or (5, 3), etc
-        frame: parent frame, all children adapt to it
         colors: tuple of two colors gradient, see colorStyle
         colorStyle:
             Select a gradient style.

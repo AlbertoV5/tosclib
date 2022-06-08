@@ -28,8 +28,8 @@ from .controls import (
     controlType
 )
 
-# import xml.etree.ElementTree as ET
-from lxml import etree as ET
+import xml.etree.ElementTree as ET
+# from lxml import etree as ET
 
 
 class ElementTOSC:

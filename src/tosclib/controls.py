@@ -19,8 +19,8 @@ from .elements import (
     ControlElements,
 )
 
-# import xml.etree.ElementTree as ET
-from lxml import etree as ET
+import xml.etree.ElementTree as ET
+# from lxml import etree as ET
 
 Properties: TypeAlias = list[Property]
 Values: TypeAlias = list[Value]

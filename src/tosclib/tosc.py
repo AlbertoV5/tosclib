@@ -1,13 +1,14 @@
 """
-Higher level wrapper for a TOSC Control Element.
+API for TOSC Control Elements.
 """
 import logging
 from copy import deepcopy
 import sys
 import re
-from typing import TypeGuard
+from typing import TypeAlias, TypeGuard
 import zlib
 import uuid
+from typing import Any
 from .elements import (
     Partial,
     Trigger,
@@ -23,13 +24,19 @@ from .elements import (
     PropertyFactory,
 )
 from .controls import (
+    ControlConverter,
+    ControlFactory,
+    Message,
     XmlFactory,
     Properties,
-    controlType
+    controlType,
+    Control
 )
 
 import xml.etree.ElementTree as ET
 # from lxml import etree as ET
+
+xmlElement: TypeAlias = ET.Element
 
 
 class ElementTOSC:
@@ -392,6 +399,26 @@ def getTextValueFromKey(properties: ET.Element, key: str) -> str:
 
 
 
+def asctrl(xml:ET.Element) -> Control:
+    pass
+
+def asxml(source: Control) -> ET.Element:
+    return ControlConverter.build(source)
+
+def asroot(source: Control) -> ET.Element:
+    root = ET.Element("lexml", attrib={"version": "3"})
+    root.append(asxml(source))
+    return root
+
+def asetosc(source: xmlElement | Control) -> ElementTOSC:
+    if isinstance(source, ET.Element):
+        return ElementTOSC(source)
+    elif isinstance(source, Control):
+        return ElementTOSC(ControlConverter.build(source))
+    else:
+        raise TypeError(f"{source} is not a valid type")
+
+
 """
 COPY AND MOVE
 """
@@ -511,8 +538,6 @@ def moveChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
     [target.children.append(deepcopy(e)) for e in elements]
     [source.children.remove(e) for e in elements]
     return True
-
-
 
 
 

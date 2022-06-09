@@ -145,6 +145,13 @@ class Property:
         self.value: str = value
         self.params: Frame | Color = params if params is not None else {}
 
+    def __repr__(self):
+        return f"""
+Property:
+    type:{self.type}
+    key:{self.key}
+    value:{self.value}
+    params:{self.params}"""
 
 class Value:
     """Default Elements for <value>.

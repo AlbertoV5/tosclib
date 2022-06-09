@@ -4,6 +4,7 @@ Hexler's Enumerations
 
 from copy import deepcopy
 from dataclasses import dataclass, field
+from types import UnionType
 from typing import ClassVar, Final, Protocol, TypeAlias
 import uuid
 from .elements import (
@@ -59,7 +60,7 @@ class _ControlProperties:
     orientation: int = 0
     """0,1,2,3 = North, East, South, West"""
 
-    def build(self, *args) -> list[Property]:
+    def build(self, *args) -> Properties:
         """Build all Property objects of this class.
         Returns:
             list[Property] from this class' attributes.
@@ -67,7 +68,7 @@ class _ControlProperties:
         if len(args) == 0:
             args = [key for key in vars(self)]
 
-        return tuple(PropertyFactory.build(arg, getattr(self, arg)) for arg in args)
+        return [PropertyFactory.build(arg, getattr(self, arg)) for arg in args]
 
 
 @dataclass
@@ -272,7 +273,8 @@ class Page:
     """Not a main control"""
 
     controlT: ClassVar[controlType] = ControlType.GROUP
-    properties: Properties = field(default_factory=PageProperties())
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
+    properties: Properties = field(default_factory=PageProperties().build())
     values: Values = field(default_factory=lambda: [])
     messages: Messages = field(default_factory=lambda: [])
     children: list[controlType] = field(default_factory=lambda: [])
@@ -281,6 +283,7 @@ class Page:
 @dataclass
 class Box:
     controlT: ClassVar[controlType] = ControlType.BOX
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
     properties: Properties = field(default_factory=lambda: BoxProperties().build())
     values: Values = field(default_factory=lambda: [])
     messages: Messages = field(default_factory=lambda: [])
@@ -289,6 +292,7 @@ class Box:
 @dataclass
 class Button:
     controlT: ClassVar[controlType] = ControlType.BUTTON
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
     properties: Properties = field(
         default_factory=lambda: ButtonProperties().build()
     )
@@ -299,6 +303,7 @@ class Button:
 @dataclass
 class Label:
     controlT: ClassVar[controlType] = ControlType.LABEL
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
     properties: Properties = field(
         default_factory=lambda: LabelProperties().build()
     )
@@ -309,6 +314,7 @@ class Label:
 @dataclass
 class Text:
     controlT: ClassVar[controlType] = ControlType.TEXT
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
     properties: Properties = field(
         default_factory=lambda: TextProperties().build()
     )
@@ -319,6 +325,7 @@ class Text:
 @dataclass
 class Fader:
     controlT: ClassVar[controlType] = ControlType.FADER
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
     properties: Properties = field(
         default_factory=lambda: FaderProperties().build()
     )
@@ -329,6 +336,7 @@ class Fader:
 @dataclass
 class Xy:
     controlT: ClassVar[controlType] = ControlType.XY
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
     properties: Properties = field(default_factory=lambda: XyProperties().build())
     values: Values = field(default_factory=lambda: [])
     messages: Messages = field(default_factory=lambda: [])
@@ -337,6 +345,7 @@ class Xy:
 @dataclass
 class Radial:
     controlT: ClassVar[controlType] = ControlType.RADIAL
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
     properties: Properties = field(
         default_factory=lambda: RadialProperties().build()
     )
@@ -347,6 +356,7 @@ class Radial:
 @dataclass
 class Encoder:
     controlT: ClassVar[controlType] = ControlType.ENCODER
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
     properties: Properties = field(
         default_factory=lambda: EncoderProperties().build()
     )
@@ -357,6 +367,7 @@ class Encoder:
 @dataclass
 class Radar:
     controlT: ClassVar[controlType] = ControlType.RADAR
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
     properties: Properties = field(
         default_factory=lambda: RadarProperties().build()
     )
@@ -367,6 +378,7 @@ class Radar:
 @dataclass
 class Radio:
     controlT: ClassVar[controlType] = ControlType.RADIO
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
     properties: Properties = field(
         default_factory=lambda: RadioProperties().build()
     )
@@ -377,51 +389,60 @@ class Radio:
 @dataclass
 class Group:
     controlT: ClassVar[controlType] = ControlType.GROUP
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
     properties: Properties = field(
         default_factory=lambda: GroupProperties().build()
     )
     values: Values = field(default_factory=lambda: [])
     messages: Messages = field(default_factory=lambda: [])
-    children: list[controlType] = field(default_factory=lambda: [])
+    children: list["Control"] = field(default_factory=lambda: [])
 
 
 @dataclass
 class Grid:
     controlT: ClassVar[controlType] = ControlType.GRID
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
     properties: Properties = field(
         default_factory=lambda: GridProperties().build()
     )
     values: Values = field(default_factory=lambda: [])
     messages: Messages = field(default_factory=lambda: [])
-    children: list[controlType] = field(default_factory=lambda: [])
+    children: list["Control"] = field(default_factory=lambda: [])
 
 
 @dataclass
 class Pager:
     controlT: ClassVar[controlType] = ControlType.PAGER
+    id: str = field(default_factory=lambda:str(uuid.uuid4()))
     properties: Properties = field(
         default_factory=lambda: PagerProperties().build()
     )
     values: Values = field(default_factory=lambda: [])
     messages: Messages = field(default_factory=lambda: [])
-    children: list[controlType] = field(
+    children: list["Control"] = field(
         default_factory=lambda: [Page(), Page(), Page()]
     )
 
 
-class Control(Protocol):
-    """Protocol type of Control
+# class Control(Protocol):
+#     """Protocol type of Control
 
-    Attributes:
-        controlT: Control Type
-        properties: List of Property
-        values: List of Value
-        messages: List of Message
-    """
-    controlT: ClassVar[controlType]
-    properties: Properties
-    values: Values
-    messages: Messages
+#     Attributes:
+#         controlT: Control Type
+#         properties: List of Property
+#         values: List of Value
+#         messages: List of Message
+#     """
+#     controlT: ClassVar[controlType]
+#     id: str
+#     properties: Properties
+#     values: Values
+#     messages: Messages
+#     children: list["Control"]
+
+Control:TypeAlias = (
+    Label | Text | Box | Button | Group | Encoder | Page |
+    Grid | Fader | Pager | Radial | Radio | Radar | Xy)
 
 
 class ControlProperties(Protocol):
@@ -435,6 +456,50 @@ class ControlProperties(Protocol):
 
     def build(self) -> Properties:
         ...
+
+
+
+class ControlFactory:
+    @classmethod
+    def build(cls, 
+    controlT: controlType, 
+    id: str = None,
+    properties: Properties = None,
+    values: Values = None,
+    messages: Messages = None) -> Control:
+        id = str(uuid.uuid4()) if id is None else id
+        properties = [] if properties is None else properties
+        values = [] if values is None else values
+        messages = [] if messages is None else messages
+        match controlT:
+            case ControlType.BOX:
+                return Box(id, properties, values, messages)
+            case ControlType.BUTTON:
+                return Button(id, properties, values, messages)
+            case ControlType.ENCODER:
+                return Encoder(id, properties, values, messages)
+            case ControlType.FADER:
+                return Fader(id, properties, values, messages)
+            case ControlType.GRID:
+                return Grid(id, properties, values, messages)
+            case ControlType.GROUP:
+                return Group(id, properties, values, messages)
+            case ControlType.LABEL:
+                return Label(id, properties, values, messages)
+            case ControlType.PAGER:
+                return Pager(id, properties, values, messages)
+            case ControlType.RADAR:
+                return Radar(id, properties, values, messages)
+            case ControlType.RADIAL:
+                return Radial(id, properties, values, messages)
+            case ControlType.RADIO:
+                return Radio(id, properties, values, messages)
+            case ControlType.TEXT:
+                return Text(id, properties, values, messages)
+            case ControlType.XY:
+                return Xy(id, properties, values, messages)
+            case _:
+                raise ValueError(f"{controlT} not found.")
 
 
 class ControlConverter:
@@ -451,18 +516,22 @@ class ControlConverter:
         """
         node = ET.Element(
             ControlElements.NODE.value,
-            attrib={"ID": str(uuid.uuid4()), "type": control.controlT.value},
+            attrib={"ID": control.id, "type": control.controlT.value},
         )
         properties = ET.SubElement(node, ControlElements.PROPERTIES.value)
         values = ET.SubElement(node, ControlElements.VALUES.value)
         messages = ET.SubElement(node, ControlElements.MESSAGES.value)
-        children = ET.SubElement(node, ControlElements.CHILDREN.value)
-
+        
         XmlFactory.buildProperties(control.properties, properties)
         XmlFactory.buildValues(control.values, values)
         XmlFactory.buildMessages(control.messages, messages)
-        return node
 
+        if "children" in vars(control):
+            children = ET.SubElement(node, ControlElements.CHILDREN.value)
+            for child in control.children:
+                children.append(cls.build(child))
+
+        return node
 
 
 class XmlFactory:

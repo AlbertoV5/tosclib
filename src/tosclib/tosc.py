@@ -267,52 +267,52 @@ class ElementTOSC:
         self.node.attrib["type"] = value.value
         return True
 
-    def getFrame(self) -> tuple[int|None, ...]:
+    def getFrame(self) -> tuple[int, ...]:
         """Wrapper for getX, getY, etc."""
         return (self.getX(), self.getY(), self.getW(), self.getH(),)
 
-    def getColor(self) -> tuple[float|None, ...]:
+    def getColor(self) -> tuple[float, ...]:
         return (self.getR(), self.getG(), self.getB(), self.getA(),)
 
-    def getR(self) -> float | None:
+    def getR(self) -> float:
         if (p:=self.getPropertyParam("color", "r")) is not None:
             return float(str(p.text))
-        return None
+        raise ValueError("Could not find color: r")
 
-    def getG(self) -> float | None:
+    def getG(self) -> float:
         if (p:=self.getPropertyParam("color", "g")) is not None:
             return float(str(p.text))
-        return None
+        raise ValueError("Could not find color: g")
 
-    def getB(self) -> float | None:
+    def getB(self) -> float:
         if (p:=self.getPropertyParam("color", "b")) is not None:
             return float(str(p.text))
-        return None
+        raise ValueError("Could not find color: b")
         
-    def getA(self) -> float | None:
+    def getA(self) -> float:
         if (p:=self.getPropertyParam("color", "a")) is not None:
             return float(str(p.text))
-        return None
+        raise ValueError("Could not find color: a")
 
-    def getX(self) -> int | None:
+    def getX(self) -> int:
         if (p:=self.getPropertyParam("frame", "x")) is not None:
             return int(str(p.text))
-        return None
+        raise ValueError("Could not find frame: x")
 
-    def getY(self) -> int | None:
+    def getY(self) -> int:
         if (p:=self.getPropertyParam("frame", "y")) is not None:
             return int(str(p.text))
-        return None
+        raise ValueError("Could not find frame: y")
 
-    def getW(self) -> int | None:
+    def getW(self) -> int:
         if (p:=self.getPropertyParam("frame", "w")) is not None:
             return int(str(p.text))
-        return None
+        raise ValueError("Could not find frame: w")
 
-    def getH(self) -> int | None:
+    def getH(self) -> int:
         if (p:=self.getPropertyParam("frame", "h")) is not None:
             return int(str(p.text))
-        return None
+        raise ValueError("Could not find frame: h")
 
     @simpleProperty
     def setName(self):

@@ -1,5 +1,5 @@
 import tosclib as tosc
-from PIL import Image
+from PIL import Image # type: ignore
 import numpy as np
 import time
 

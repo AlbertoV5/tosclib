@@ -200,16 +200,16 @@ def layoutClear(children: list[et]):
     button0 = controls.Button(
         properties= [
             pf.name("clearButton"),
-            pf.frame(children[0].getFrame()),
-            pf.color(children[0].getColor()),
+            pf.frame(children[0].getFrame()), #type: ignore
+            pf.color(children[0].getColor()), #type: ignore
         ]
     )
     label0 = controls.Label(
         properties= [
             pf.name("clearLabel"),
             pf.outlineStyle(1),
-            pf.frame(children[0].getFrame()),
-            pf.color(children[0].getColor()),
+            pf.frame(children[0].getFrame()), #type: ignore
+            pf.color(children[0].getColor()), #type: ignore
             pf.textSize(48),
             pf.background(False),
         ],

@@ -16,7 +16,7 @@ root = tosc.createTemplate(frame = (0, 0, 800, 800))
 template = tosc.ElementTOSC(root[0])
 
 
-box = tosc.addBoxTo(template)
+box = tosc.asEtosc(template.createChild(ControlType.BOX))
 box.createProperty(frame)
 box.createProperty(color)
 

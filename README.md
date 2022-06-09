@@ -13,12 +13,6 @@ Generate and edit Touch OSC templates with XML trees through a few custom classe
 $ pip install tosclib
 ```
 
-Requirements:
-```
-numpy==1.22.3
-```
-
-
 # Contribute:
 
 Feel free to make a fork and contribute to the tosclib or documentation or whatever.

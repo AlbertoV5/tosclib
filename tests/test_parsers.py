@@ -3,7 +3,7 @@ from .profiler import profile
 
 
 @profile
-def test_all_parsers():
+def test_parsers():
 
     known = "name"
     unknown = "script"
@@ -11,7 +11,7 @@ def test_all_parsers():
     sameName = "num7"
     root = tosc.load(sameFile)
 
-    script0 = tosc.Control.parseProperties(root, known, unknown)
+    script0 = tosc.parseProperties(root, known, unknown)
     script1 = tosc.pullValueFromKey(sameFile, known, sameName, unknown)
     script2 = tosc.pullValueFromKey2(root, known, sameName, unknown)
 
@@ -22,4 +22,6 @@ def test_all_parsers():
 
     assert script0 == script1 == script2
 
-    return "tests/test_parsers.prof"
+
+if __name__ == "__main__":
+    test_parsers()

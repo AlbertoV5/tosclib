@@ -1,7 +1,9 @@
+import logging
 import tosclib as tosc
 import pytest
 from tosclib.tosc import ControlElements, ControlType
 from .profiler import profile
+
 
 @profile
 def test_copiers():
@@ -30,7 +32,7 @@ def test_copiers():
     assert node.createValue(tosc.Value())
     assert tosc.moveValues(node, node2, "touch")
     assert node2.getValue("touch") is not None
-    assert node2.setValue(tosc.Value("touch", "1"))
+    assert node2.setValue(tosc.Value("touch", "1")) is not None
     assert node2.getValueParam("touch", "locked").text == "1"
 
     # COPY MESSAGES
@@ -49,11 +51,10 @@ def test_copiers():
 
     # COPY CHILDREN
     controlsList = []
-    for var in vars(ControlType):
-        if not "_" in var:
-            child = tosc.ElementTOSC(node.createChild(var))
-            child.setName(var.lower())
-            controlsList.append(var.lower())
+    for c in ControlType:
+        child = tosc.ElementTOSC(node.createChild(c))
+        child.setName(c.value)
+        controlsList.append(c.value)
 
     assert tosc.copyChildren(
         node,
@@ -76,5 +77,3 @@ def test_copiers():
         childList.append(n2.getPropertyValue("name").text)
 
     assert controlsList.sort() == childList.sort()
-
-    return "tests/test_copiers.prof"

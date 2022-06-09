@@ -1,4 +1,3 @@
-
 import tosclib as tosc
 from .profiler import profile
 from tosclib import Value, Partial, ControlType, OSC
@@ -40,9 +39,6 @@ def test_basics():
             count += 1
 
     tag2 = tosc.pullValueFromKey2(root, "name", "Craig", "tag")
-
-    x = tosc.ControlElements.PROPERTIES
-    x = element.setColor((1, 0, 0, 1))
 
     assert tag == tag2
 
@@ -101,5 +97,5 @@ function init()
 end
 """
         )
-        
+
     return "tests/test_basics.prof"

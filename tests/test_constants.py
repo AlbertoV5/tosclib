@@ -1,8 +1,9 @@
 from .profiler import profile2
 import tosclib as tosc
-from tosclib import Control
 import pytest
 import sys
+from tosclib import controls
+
 
 @profile2
 def test_constants(capture_stdout):
@@ -26,17 +27,13 @@ def test_constants(capture_stdout):
     e = tosc.ElementTOSC(tosc.createTemplate()[0])
     for attribute, value in e.__dict__.items():
         print(attribute)
-    assert (
-        capture_stdout["stdout"] == "node\nproperties\nvalues\nmessages\nchildren\n"
-    )
+    assert capture_stdout["stdout"] == "node\nproperties\nvalues\nmessages\nchildren\n"
     capture_stdout["stdout"] = ""
 
-    for i in Control.__dict__:
-        assert Control.__dict__[i]
+    buttonProps = controls.ButtonProperties().build()
+    button = controls.Button(properties=buttonProps)
 
-    for i in Control.hasChildren():
-        assert i.__name__
-
+    controls.ControlConverter.build(button)
 
     return "tests/test_constants.prof"
 

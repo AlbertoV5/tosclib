@@ -170,7 +170,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../demos/3-from-json.html">Elements from Json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../demos/4-image-converter.html">Image Converter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../demos/5-reaper-tosclib.html">Reaper to Touch OSC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../demos/6-numpad.html">Module: Numpad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../demos/6-numpad.html">Numpad Module Recreation</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -178,8 +178,8 @@
 </ul>
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="ControlEnums.html">Control Enumerations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ElementEnums.html">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1-ElementEnums.html">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2-ControlEnums.html">Control Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="shortcuts.html">Shortcuts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tglobals.html">Globals</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">tosclib.tosc</a></li>
@@ -219,7 +219,7 @@
         <article role="main">
           <section id="module-tosclib.tosc">
 <span id="tosclib-tosc"></span><h1>tosclib.tosc<a class="headerlink" href="#module-tosclib.tosc" title="Permalink to this headline">#</a></h1>
-<p>Higher level wrapper for a TOSC Control Element.</p>
+<p>API for TOSC Control Elements.</p>
 <p class="rubric">Functions</p>
 <div class="table-wrapper"><table class="autosummary longtable docutils align-default">
 <colgroup>
@@ -248,7 +248,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="tglobals.html#tosclib.tosc.showElement" title="tosclib.tosc.showElement"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showElement</span></code></a>(e)</p></td>
 <td><p>Generic print string function, UTF-8, indented 2 spaces</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.write" title="tosclib.tosc.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a>(root[, outputPath])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../guide/3-tosclib.html#tosclib.tosc.write" title="tosclib.tosc.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a>(root, outputPath)</p></td>
 <td><p>Encodes a root Element to .tosc</p></td>
 </tr>
 </tbody>
@@ -288,46 +288,46 @@
 <td><p>Default Elements for &lt;value&gt;.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Box</span></code></p></td>
-<td><p>Box(properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;)</p></td>
+<td><p>Box(id: str = &lt;factory&gt;, properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list['Control'] | None | list = None)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Button</span></code></p></td>
-<td><p>Button(properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;)</p></td>
+<td><p>Button(id: str = &lt;factory&gt;, properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list['Control'] | None | list = None)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Encoder</span></code></p></td>
-<td><p>Encoder(properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;)</p></td>
+<td><p>Encoder(id: str = &lt;factory&gt;, properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list['Control'] | None | list = None)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Fader</span></code></p></td>
-<td><p>Fader(properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;)</p></td>
+<td><p>Fader(id: str = &lt;factory&gt;, properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list['Control'] | None | list = None)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Grid</span></code></p></td>
-<td><p>Grid(properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list[typing.Literal[&lt;ControlType.BOX: 'BOX'&gt;, &lt;ControlType.BUTTON: 'BUTTON'&gt;, &lt;ControlType.ENCODER: 'ENCODER'&gt;, &lt;ControlType.FADER: 'FADER'&gt;, &lt;ControlType.GRID: 'GRID'&gt;, &lt;ControlType.GROUP: 'GROUP'&gt;, &lt;ControlType.LABEL: 'LABEL'&gt;, &lt;ControlType.PAGER: 'PAGER'&gt;, &lt;ControlType.RADAR: 'RADAR'&gt;, &lt;ControlType.RADIAL: 'RADIAL'&gt;, &lt;ControlType.RADIO: 'RADIO'&gt;, &lt;ControlType.TEXT: 'TEXT'&gt;, &lt;ControlType.XY: 'XY'&gt;]] = &lt;factory&gt;)</p></td>
+<td><p>Grid(id: str = &lt;factory&gt;, properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list['Control'] | None | list = None)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Group</span></code></p></td>
-<td><p>Group(properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list[typing.Literal[&lt;ControlType.BOX: 'BOX'&gt;, &lt;ControlType.BUTTON: 'BUTTON'&gt;, &lt;ControlType.ENCODER: 'ENCODER'&gt;, &lt;ControlType.FADER: 'FADER'&gt;, &lt;ControlType.GRID: 'GRID'&gt;, &lt;ControlType.GROUP: 'GROUP'&gt;, &lt;ControlType.LABEL: 'LABEL'&gt;, &lt;ControlType.PAGER: 'PAGER'&gt;, &lt;ControlType.RADAR: 'RADAR'&gt;, &lt;ControlType.RADIAL: 'RADIAL'&gt;, &lt;ControlType.RADIO: 'RADIO'&gt;, &lt;ControlType.TEXT: 'TEXT'&gt;, &lt;ControlType.XY: 'XY'&gt;]] = &lt;factory&gt;)</p></td>
+<td><p>Group(id: str = &lt;factory&gt;, properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list['Control'] | None | list = None)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Label</span></code></p></td>
-<td><p>Label(properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;)</p></td>
+<td><p>Label(id: str = &lt;factory&gt;, properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list['Control'] | None | list = None)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Page</span></code></p></td>
 <td><p>Not a main control</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Pager</span></code></p></td>
-<td><p>Pager(properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list[typing.Literal[&lt;ControlType.BOX: 'BOX'&gt;, &lt;ControlType.BUTTON: 'BUTTON'&gt;, &lt;ControlType.ENCODER: 'ENCODER'&gt;, &lt;ControlType.FADER: 'FADER'&gt;, &lt;ControlType.GRID: 'GRID'&gt;, &lt;ControlType.GROUP: 'GROUP'&gt;, &lt;ControlType.LABEL: 'LABEL'&gt;, &lt;ControlType.PAGER: 'PAGER'&gt;, &lt;ControlType.RADAR: 'RADAR'&gt;, &lt;ControlType.RADIAL: 'RADIAL'&gt;, &lt;ControlType.RADIO: 'RADIO'&gt;, &lt;ControlType.TEXT: 'TEXT'&gt;, &lt;ControlType.XY: 'XY'&gt;]] = &lt;factory&gt;)</p></td>
+<td><p>Pager(id: str = &lt;factory&gt;, properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list['Control'] | None | list = &lt;factory&gt;)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Radar</span></code></p></td>
-<td><p>Radar(properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;)</p></td>
+<td><p>Radar(id: str = &lt;factory&gt;, properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list['Control'] | None | list = None)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Radial</span></code></p></td>
-<td><p>Radial(properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;)</p></td>
+<td><p>Radial(id: str = &lt;factory&gt;, properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list['Control'] | None | list = None)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Radio</span></code></p></td>
-<td><p>Radio(properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;)</p></td>
+<td><p>Radio(id: str = &lt;factory&gt;, properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list['Control'] | None | list = None)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Text</span></code></p></td>
-<td><p>Text(properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;)</p></td>
+<td><p>Text(id: str = &lt;factory&gt;, properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list['Control'] | None | list = None)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosclib.controls.Xy</span></code></p></td>
-<td><p>Xy(properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;)</p></td>
+<td><p>Xy(id: str = &lt;factory&gt;, properties: list[tosclib.elements.Property] = &lt;factory&gt;, values: list[tosclib.elements.Value] = &lt;factory&gt;, messages: list[tosclib.elements.OSC | tosclib.elements.MIDI | tosclib.elements.LOCAL] = &lt;factory&gt;, children: list['Control'] | None | list = None)</p></td>
 </tr>
 </tbody>
 </table></div>

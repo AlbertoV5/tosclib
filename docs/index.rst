@@ -26,9 +26,9 @@ Changelog
 ------------------
 
 - 0.3.5
-   - Moved to python 3.10 only.
+   - Moved to python 3.10 only for now. 
    - Added mypy support.
-   - Improved code structure to use factories.
+   - Improved code structure.
    - Added numpad demo.
    - Polished layouts.
 

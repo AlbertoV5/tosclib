@@ -169,7 +169,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../demos/3-from-json.html">Elements from Json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../demos/4-image-converter.html">Image Converter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../demos/5-reaper-tosclib.html">Reaper to Touch OSC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../demos/6-numpad.html">Module: Numpad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../demos/6-numpad.html">Numpad Module Recreation</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../modules.html">Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -177,8 +177,8 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../api/ControlEnums.html">Control Enumerations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/ElementEnums.html">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/1-ElementEnums.html">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/2-ControlEnums.html">Control Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/shortcuts.html">Shortcuts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/tglobals.html">Globals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/tosclib.tosc.html">tosclib.tosc</a></li>
@@ -221,7 +221,7 @@
 
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">unique</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TypedDict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">TypeGuard</span><span class="p">,</span> <span class="n">TypedDict</span>
 
 <span class="sd">"""</span>
 
@@ -237,7 +237,7 @@
 <span class="sd">"""</span>
 
 
-<div class="viewcode-block" id="ControlElements"><a class="viewcode-back" href="../../api/ElementEnums.html#tosclib.elements.ControlElements">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="ControlElements"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.ControlElements">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">ControlElements</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">"""Valid xml tags for a Control"""</span>
 
@@ -254,7 +254,7 @@
     <span class="n">NODE</span> <span class="o">=</span> <span class="s2">"node"</span>  <span class="c1">#: &lt;node type =&gt;</span></div>
 
 
-<div class="viewcode-block" id="ControlType"><a class="viewcode-back" href="../../api/ElementEnums.html#tosclib.elements.ControlType">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="ControlType"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.ControlType">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">ControlType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">"""Valid xml attrib = {"type":ControlType} for &lt;node&gt;"""</span>
 
@@ -273,7 +273,7 @@
     <span class="n">GRID</span> <span class="o">=</span> <span class="s2">"GRID"</span>  <span class="c1">#: &lt;node type = "GRID"&gt;</span></div>
 
 
-<div class="viewcode-block" id="PropertyType"><a class="viewcode-back" href="../../api/ElementEnums.html#tosclib.elements.PropertyType">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="PropertyType"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.PropertyType">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">PropertyType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">"""Valid xml attrib = {"type":PropertyType} for &lt;property&gt;"""</span>
 
@@ -357,15 +357,23 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"key"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Property.__init__"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.elements.Property.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Frame</span> <span class="o">|</span> <span class="n">Color</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Property"</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span> <span class="n">propertyType</span> <span class="o">=</span> <span class="nb">type</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span> <span class="n">Frame</span> <span class="o">|</span> <span class="n">Color</span> <span class="o">=</span> <span class="n">params</span> <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">value</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">params</span> <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span></div>
 
 
-<div class="viewcode-block" id="Value"><a class="viewcode-back" href="../../api/ElementEnums.html#tosclib.elements.Value">[docs]</a><span class="k">class</span> <span class="nc">Value</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">Property:</span>
+<span class="s2">    type:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">    key:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">    value:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">    params:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="si">}</span><span class="s2">"""</span></div>
+
+<div class="viewcode-block" id="Value"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.Value">[docs]</a><span class="k">class</span> <span class="nc">Value</span><span class="p">:</span>
     <span class="sd">"""Default Elements for &lt;value&gt;.</span>
 
 <span class="sd">    Args:</span>
@@ -378,7 +386,7 @@
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"key"</span><span class="p">,</span> <span class="s2">"locked"</span><span class="p">,</span> <span class="s2">"lockedDefaultCurrent"</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">,</span> <span class="s2">"defaultPull"</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Value.__init__"><a class="viewcode-back" href="../../api/ElementEnums.html#tosclib.elements.Value.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="Value.__init__"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.Value.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"touch"</span><span class="p">,</span>
         <span class="n">locked</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
@@ -543,7 +551,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="n">arguments</span></div></div>
 
 
-<div class="viewcode-block" id="MIDI"><a class="viewcode-back" href="../../api/ElementEnums.html#tosclib.elements.MIDI">[docs]</a><span class="k">class</span> <span class="nc">MIDI</span><span class="p">:</span>
+<div class="viewcode-block" id="MIDI"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.MIDI">[docs]</a><span class="k">class</span> <span class="nc">MIDI</span><span class="p">:</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">"enabled"</span><span class="p">,</span>
         <span class="s2">"send"</span><span class="p">,</span>
@@ -555,7 +563,7 @@
         <span class="s2">"values"</span><span class="p">,</span>
     <span class="p">)</span>
 
-<div class="viewcode-block" id="MIDI.__init__"><a class="viewcode-back" href="../../api/ElementEnums.html#tosclib.elements.MIDI.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="MIDI.__init__"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.MIDI.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">enabled</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
         <span class="n">send</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
@@ -580,7 +588,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">values</span></div></div>
 
 
-<div class="viewcode-block" id="LOCAL"><a class="viewcode-back" href="../../api/ElementEnums.html#tosclib.elements.LOCAL">[docs]</a><span class="k">class</span> <span class="nc">LOCAL</span><span class="p">:</span>
+<div class="viewcode-block" id="LOCAL"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.LOCAL">[docs]</a><span class="k">class</span> <span class="nc">LOCAL</span><span class="p">:</span>
     <span class="sd">"""Default elements for &lt;midi&gt;</span>
 <span class="sd">    Args:</span>
 <span class="sd">        enabled: bool</span>
@@ -608,7 +616,7 @@
         <span class="s2">"dstID"</span><span class="p">,</span>
     <span class="p">)</span>
 
-<div class="viewcode-block" id="LOCAL.__init__"><a class="viewcode-back" href="../../api/ElementEnums.html#tosclib.elements.LOCAL.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="LOCAL.__init__"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.LOCAL.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">enabled</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
         <span class="n">triggers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Trigger</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Trigger</span><span class="p">()],</span>
@@ -664,12 +672,18 @@
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildInteger</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildFloat</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">cls</span><span class="o">.</span><span class="n">isTupleInts</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildFrame</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">value</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildColor</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> type is not a valid PropertyType."</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""</span>
+<span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> type is not a valid PropertyType.</span>
+<span class="s2">Make sure all types in the tuples match."""</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">isTupleInts</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span><span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="o">...</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">val</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">buildBoolean</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
@@ -728,11 +742,11 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildString</span><span class="p">(</span><span class="s2">"script"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">frame</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">frame</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildFrame</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span><span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildColor</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
@@ -774,7 +788,7 @@
         <span class="bp">cls</span><span class="p">,</span> 
         <span class="n">key</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> 
         <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
+    <span class="p">):</span>
         <span class="k">return</span>
 </pre></div>
         </article>

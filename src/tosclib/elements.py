@@ -2,7 +2,7 @@
 
 from copy import deepcopy
 from enum import Enum, unique
-from typing import Literal, TypedDict
+from typing import Dict, Literal, TypeAlias, TypeGuard, TypedDict
 
 """
 
@@ -138,12 +138,13 @@ class Property:
     __slots__ = ("type", "key", "value", "params")
 
     def __init__(
-        self, type: str, key: str, value: str = None, params: Frame | Color = None
-    ) -> "Property":
-        self.type: propertyType = type
+        self, type: str, key: str, value: str | None = None, params: dict[str,str] = None
+    ):
+        self.type: str = type
         self.key: str = key
-        self.value: str = value
-        self.params: Frame | Color = params if params is not None else {}
+        self.value: str | None = value if value is not None else value
+        self.params: dict[str, str] | dict = params if params is not None else {}
+
 
     def __repr__(self):
         return f"""
@@ -452,12 +453,18 @@ class PropertyFactory:
             return cls.buildInteger(key, value)
         elif isinstance(value, float):
             return cls.buildFloat(key, value)
-        elif isinstance(value, tuple) and isinstance(value[0], int):
+        elif isinstance(value, tuple) and cls.isTupleInts(value):
             return cls.buildFrame(key, value)
-        elif isinstance(value, tuple) and isinstance(value[0], float):
+        elif isinstance(value, tuple) and all(isinstance(x, float) for x in value):
             return cls.buildColor(key, value)
         else:
-            raise ValueError(f"{key}-{value} type is not a valid PropertyType.")
+            raise ValueError(f"""
+{key}-{value} type is not a valid PropertyType.
+Make sure all types in the tuples match.""")
+
+    @classmethod
+    def isTupleInts(cls, val:tuple[object,...]) -> TypeGuard[tuple[int,...]]:
+        return all(isinstance(x, int) for x in val)
 
     @classmethod
     def buildBoolean(cls, key: str, value: bool) -> Property:
@@ -516,11 +523,11 @@ class PropertyFactory:
         return cls.buildString("script", value)
 
     @classmethod
-    def frame(cls, params: tuple) -> Property:
+    def frame(cls, params: tuple[int,...]) -> Property:
         return cls.buildFrame("frame", params)
 
     @classmethod
-    def color(cls, params: tuple) -> Property:
+    def color(cls, params: tuple[float,...]) -> Property:
         return cls.buildColor("color", params)
 
     @classmethod
@@ -562,5 +569,5 @@ class ValueFactory:
         cls, 
         key:str, 
         value: int | bool | float | str | tuple[int,...] | tuple[float,...]
-    ) -> Value:
+    ):
         return

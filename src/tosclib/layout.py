@@ -29,7 +29,7 @@ All Layouts are currently built in top > bottom, left > right order.
 """
 
 from copy import deepcopy
-from typing import Callable
+from typing import Any, Callable
 from .tosc import ElementTOSC
 from .elements import (
     ControlElements,
@@ -48,7 +48,7 @@ ARRANGE AND LAYOUT
 
 """
 
-def colorChecker(color: tuple[tuple]):
+def colorChecker(color: Any) -> tuple:
     """Allow for passing rgba in 0-255, 0-1 and hex, then convert to 0-1"""
     if isinstance(color[0], int):
         return tuple(i / 255 for i in color)
@@ -83,7 +83,7 @@ def Layout(
 
     children = [ElementTOSC(layout.createChild(controlT)) for i in range(F.shape[0])]
     for g, f, c in zip(children, F, C):
-        g.setFrame(f)
+        g.setFrame(f.astype(int))
         g.setColor(c)
 
     # Add extra properties to the parent, optional return
@@ -108,7 +108,8 @@ def column(func):
         parent: ElementTOSC,
         controlType: controlType,
         size: tuple = (1, 2, 1),
-        colors: tuple[tuple] | str = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
+        colors: tuple = (
+            (0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
         frame = parent.getFrame()
@@ -139,12 +140,12 @@ def row(func):
         controlType: ControlType,
         size: tuple = (1, 2, 1),
         frame: tuple = (0, 0, 1600, 640),
-        colors: tuple[tuple] | str = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
+        colors: tuple | str = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
         frame = parent.getFrame()
 
-        H = np.resize(frame[3], len(size))
+        H = np.resize(frame[3], len(size)) # type: ignore
         W = frame[2] * (np.asarray(size) / np.sum(size))
         Y = np.resize((0), len(size))
         X = np.cumsum(np.concatenate(([0], W)))[:-1]
@@ -176,15 +177,17 @@ def grid(func):
     def wrapper(
         parent: ElementTOSC,
         controlType: ControlType,
-        size: int = (4, 4),
-        colors: tuple[tuple] | str = (
+        size: tuple = (4, 4),
+        colors: tuple=  (
             (0.25, 0.25, 0.25, 1.0),
             (0.5, 0.5, 0.5, 1.0),
         ),
         colorStyle: int = 0,
     ):
 
-        frame = parent.getFrame()
+        if (frame:=parent.getFrame()) is None:
+            raise ValueError(f"{parent} has no frame.")
+
         colors = tuple(colorChecker(i) for i in colors)
 
         w = frame[2] / size[0]
@@ -192,8 +195,8 @@ def grid(func):
         M = np.asarray(
             tuple(
                 (row, column)
-                for row in np.arange(stop=frame[2], step=w)
-                for column in np.arange(stop=frame[3], step=h)
+                for row in np.arange(stop=frame[2], step=w) # type: ignore
+                for column in np.arange(stop=frame[3], step=h) # type: ignore
             )
         ).T
 

@@ -5,10 +5,12 @@ import logging
 from copy import deepcopy
 import sys
 import re
-from typing import TypeAlias, TypeGuard
+from typing import Callable, Generic, NewType, TypeAlias, TypeGuard, TypeVar
 import zlib
 import uuid
 from typing import Any
+
+from pyparsing import Optional
 from .elements import (
     Partial,
     Trigger,
@@ -22,6 +24,7 @@ from .elements import (
     ControlElements,
     ControlType,
     PropertyFactory,
+    elementType
 )
 from .controls import (
     ControlConverter,
@@ -30,13 +33,60 @@ from .controls import (
     XmlFactory,
     Properties,
     controlType,
-    Control
+    Control,
 )
 
 import xml.etree.ElementTree as ET
 # from lxml import etree as ET
 
-xmlElement: TypeAlias = ET.Element
+ElementXML: TypeAlias = ET.Element
+
+
+def simpleProperty(func):
+    """Pass value as text arg"""
+
+    def wrapper(self: "ElementTOSC", value):
+        type, key = func(self)
+        element = self.getProperty(key)
+        if element is not None:
+            self.properties.remove(element)
+        return self.createPropertyUnsafe(
+            Property(type.value, key, str(value)))
+
+    return wrapper
+
+def booleanProperty(func):
+    """Pass value as bool, so outline is True"""
+
+    def wrapper(self: "ElementTOSC", value):
+        type, key = func(self)
+        element = self.getProperty(key)
+        if element is not None:
+            self.properties.remove(element)
+        return self.createPropertyUnsafe(
+            Property(type.value, key, repr(int(value)))
+        )
+
+    return wrapper
+
+def multiProperty(func):
+    """Pass args as tuple of keys, so color is ("r","g","b","a")"""
+
+    def wrapper(self: "ElementTOSC", params):
+        type, key, paramKeys = func(self)
+        element = self.getProperty(key)
+        if element is not None:
+            self.properties.remove(element)
+        return self.createPropertyUnsafe(
+            Property(
+                type.value,
+                key,
+                params={k: repr(params[i])
+                        for i, k in enumerate(paramKeys)},
+            )
+        )
+
+    return wrapper
 
 
 class ElementTOSC:
@@ -44,7 +94,7 @@ class ElementTOSC:
     Contains a Node Element and its SubElements. Creates them if not found.
     """
 
-    def __init__(self, e: ET.Element):
+    def __init__(self, e: ElementXML):
         """Find SubElements on init
 
         Args:
@@ -57,10 +107,10 @@ class ElementTOSC:
             children (ET.Element): Find <children>
         """
         self.node = e
-        self.properties = self.getSet("properties")
-        self.values = self.getSet("values")
-        self.messages = self.getSet("messages")
-        self.children = self.getSet("children")
+        self.properties = self.getCreate("properties")
+        self.values = self.getCreate("values")
+        self.messages = self.getCreate("messages")
+        self.children = self.getCreate("children")
 
     def __iter__(self):
         """Return iter over children"""
@@ -74,7 +124,7 @@ class ElementTOSC:
         self.children.append(e.node)
         return self
 
-    def getSet(self, target):
+    def getCreate(self, target):
         s = self.node.find(target)
         if s is not None:
             return s
@@ -85,65 +135,95 @@ class ElementTOSC:
         """Load a .tosc file into an XML Element and then as ElementTOSC"""
         return cls(load(file)[0])
 
-    def getProperty(self, key: str) -> ET.Element:
+    def getProperty(self, key: str) -> ElementXML | None:
+        """Finds property that has a key child that matches
+
+        Args:
+            key (str): Key text
+
+        Returns:
+            ElementXML | None: ./property
+        """
         return findKey(self.properties, key)
 
-    def getPropertyValue(self, key: str) -> ET.Element:
+    def getPropertyValue(self, key: str) -> ElementXML | None:
+        """Finds value child of property with given key.
+
+        Args:
+            key (str): Key text
+
+        Returns:
+            ElementXML | None: ./property/value
+        """
         return findKey(self.properties, key).find("value")
 
-    def getPropertyParam(self, key: str, param: str) -> ET.Element:
-        return findKey(self.properties, key).find("value").find(param)
+    def getPropertyParam(self, key: str, param: str) -> ElementXML | None:
+        """Finds value child of property with given key, then
+        finds the param child of value.
+
+        Args:
+            key (str): Key text
+            param (str): Param tag
+
+        Returns:
+            ElementXML | None: ./property/value/param
+        """
+        if (value := findKey(self.properties, key).find("value")) is not None:
+            return value.find(param)
+        return None
 
     def hasProperty(self, key: str) -> bool:
         return True if findKey(self.properties, key) else False
 
     def setProperty(self, key: str, value: str = "",
                     params: dict = {}) -> bool:
-        e = findKey(self.properties, key)
-        if e is None:
+        if (e:=findKey(self.properties, key)) is None:
             raise ValueError(f"{key} doesn't exist.")
-        return XmlFactory.modifyProperty(value, params, e)
+        return XmlFactory.modifyProperty(e, value, params)
 
     def createProperty(self, property: Property) -> bool:
         if findKey(self.properties, property.key) is not None:
             raise ValueError(f"{property.key} already exists.")
-        return XmlFactory.buildProperties([property],self.properties)
+        return self.createPropertyUnsafe(property)
 
     def createPropertyUnsafe(self, property: Property) -> bool:
-        return XmlFactory.buildProperties([property],self.properties)
+        return XmlFactory.buildProperties(self.properties,[property])
 
-    def getValue(self, key: str) -> ET.Element:
+    def getValue(self, key: str) -> ElementXML | None:
         return findKey(self.values, key)
 
-    def getValueParam(self, key: str, param: str) -> ET.Element:
-        return findKey(self.values, key).find(param)
+    def getValueParam(self, key: str, param: str) -> ElementXML | None:
+        try:
+            return findKey(self.values, key).find(param)
+        except:
+            raise ValueError
 
     def hasValue(self, key: str) -> bool:
-        return findKey(self.values, key)
+        return True if findKey(self.values, key) is not None else False
 
     def createValue(self, value: Value) -> bool:
         if findKey(self.values, value.key) is not None:
             raise ValueError(f"{value.key} already exists.")
-        return XmlFactory.buildValues((value,),self.values)
+        return XmlFactory.buildValues(self.values, [value])
 
     def setValue(self, value: Value) -> bool:
         e = findKey(self.values, value.key)
         if e is None:
             raise ValueError(f"{value.key} doesn't exist.")
-        return XmlFactory.modifyValue(value, e)
+        return XmlFactory.modifyValue(e, value)
 
-    def createOSC(self, message: OSC = OSC()) -> ET.Element:
+    def createOSC(self, message: OSC = OSC()) -> bool:
         """Builds and appends an OSC message"""
         # return ControlElements.OSC, message
-        return XmlFactory.buildMessages((message,),self.messages)
+        return XmlFactory.buildMessages(self.messages, [message])
 
-    def createMIDI(self, message: MIDI = MIDI()) -> ET.Element:
+    def createMIDI(self, message: MIDI = MIDI()) -> bool:
         """Builds and appends a M1D1 message"""
-        return XmlFactory.buildMessages((message,),self.messages)
+        return XmlFactory.buildMessages(self.messages, [message])
 
-    def createLOCAL(self, message: LOCAL = LOCAL()) -> ET.Element:
+    def createLOCAL(self, message: LOCAL = LOCAL()) -> bool:
         """Builds and appends a LOCAL message"""
-        return XmlFactory.buildMessages((message,),self.messages)
+        return XmlFactory.buildMessages(self.messages, [message])
 
     def removeOSC(self) -> bool:
         """Find and remove all OSC messages"""
@@ -160,7 +240,7 @@ class ElementTOSC:
         [msg.remove for msg in self.messages.findall(ControlElements.LOCAL.value)]
         return True
 
-    def findChildByName(self, name: str) -> ET.Element:
+    def findChildByName(self, name: str) -> ElementXML | None:
         for child in self.children:
             if child.find(ControlElements.PROPERTIES.value) is None:
                 continue
@@ -173,8 +253,8 @@ class ElementTOSC:
                 return child
         return None
 
-    def createChild(self, type: controlType) -> ET.Element:
-        return XmlFactory.buildNode(type, self.children)
+    def createChild(self, type: controlType) -> ElementXML:
+        return XmlFactory.buildNode(self.children, type)
 
     def getID(self) -> str:
         return str(self.node.attrib["ID"])
@@ -187,82 +267,52 @@ class ElementTOSC:
         self.node.attrib["type"] = value.value
         return True
 
-    def getFrame(self) -> tuple[int, ...]:
+    def getFrame(self) -> tuple[int|None, ...]:
         """Wrapper for getX, getY, etc."""
-        return (self.getX(), self.getY(), self.getW(), self.getH())
+        return (self.getX(), self.getY(), self.getW(), self.getH(),)
 
-    def getColor(self) -> tuple[float, ...]:
-        return (self.getR(), self.getG(), self.getB(), self.getA())
+    def getColor(self) -> tuple[float|None, ...]:
+        return (self.getR(), self.getG(), self.getB(), self.getA(),)
 
-    def getR(self) -> float:
-        return float(self.getPropertyParam("color", "r").text)
+    def getR(self) -> float | None:
+        if (p:=self.getPropertyParam("color", "r")) is not None:
+            return float(str(p.text))
+        return None
 
-    def getG(self) -> float:
-        return float(self.getPropertyParam("color", "g").text)
+    def getG(self) -> float | None:
+        if (p:=self.getPropertyParam("color", "g")) is not None:
+            return float(str(p.text))
+        return None
 
-    def getB(self) -> float:
-        return float(self.getPropertyParam("color", "b").text)
+    def getB(self) -> float | None:
+        if (p:=self.getPropertyParam("color", "b")) is not None:
+            return float(str(p.text))
+        return None
+        
+    def getA(self) -> float | None:
+        if (p:=self.getPropertyParam("color", "a")) is not None:
+            return float(str(p.text))
+        return None
 
-    def getA(self) -> float:
-        return float(self.getPropertyParam("color", "a").text)
+    def getX(self) -> int | None:
+        if (p:=self.getPropertyParam("frame", "x")) is not None:
+            return int(str(p.text))
+        return None
 
-    def getX(self) -> int:
-        return float(self.getPropertyParam("frame", "x").text)
+    def getY(self) -> int | None:
+        if (p:=self.getPropertyParam("frame", "y")) is not None:
+            return int(str(p.text))
+        return None
 
-    def getY(self) -> int:
-        return float(self.getPropertyParam("frame", "y").text)
+    def getW(self) -> int | None:
+        if (p:=self.getPropertyParam("frame", "w")) is not None:
+            return int(str(p.text))
+        return None
 
-    def getW(self) -> int:
-        return float(self.getPropertyParam("frame", "w").text)
-
-    def getH(self) -> int:
-        return float(self.getPropertyParam("frame", "h").text)
-
-    def simpleProperty(fun):
-        """Pass value as text arg, so name is Craig"""
-
-        def wrapper(self: "ElementTOSC", value):
-            type, key = fun(self)
-            element = self.getProperty(key)
-            if element is not None:
-                self.properties.remove(element)
-            return self.createPropertyUnsafe(
-                Property(type.value, key, str(value)))
-
-        return wrapper
-
-    def booleanProperty(fun):
-        """Pass value as bool, so outline is True"""
-
-        def wrapper(self: "ElementTOSC", value):
-            type, key = fun(self)
-            element = self.getProperty(key)
-            if element is not None:
-                self.properties.remove(element)
-            return self.createPropertyUnsafe(
-                Property(type.value, key, repr(int(value)))
-            )
-
-        return wrapper
-
-    def multiProperty(fun):
-        """Pass args as tuple of keys, so color is ("r","g","b","a")"""
-
-        def wrapper(self: "ElementTOSC", params):
-            type, key, paramKeys = fun(self)
-            element = self.getProperty(key)
-            if element is not None:
-                self.properties.remove(element)
-            return self.createPropertyUnsafe(
-                Property(
-                    type.value,
-                    key,
-                    params={k: repr(params[i])
-                            for i, k in enumerate(paramKeys)},
-                )
-            )
-
-        return wrapper
+    def getH(self) -> int | None:
+        if (p:=self.getPropertyParam("frame", "h")) is not None:
+            return int(str(p.text))
+        return None
 
     @simpleProperty
     def setName(self):
@@ -283,7 +333,7 @@ class ElementTOSC:
         return PropertyType.STRING, "script"
 
     @multiProperty
-    def setFrame(self) -> bool:
+    def setFrame(self):
         """Tuple of x,y,w,h"""
         return PropertyType.FRAME, "frame", ("x", "y", "w", "h")
 
@@ -340,7 +390,7 @@ GENERAL FUNCTIONS
 """
 
 
-def findKey(elements: ET.Element, key: str) -> TypeGuard[ET.Element]:
+def findKey(elements: ElementXML, key: str) -> ElementXML | Any:
     """Iterate through element with children and return child whose key matches"""
     return elements.find(f"*[key='{key}']")
     # for e in elements:
@@ -349,14 +399,14 @@ def findKey(elements: ET.Element, key: str) -> TypeGuard[ET.Element]:
     # return None
 
 
-def showElement(e: ET.Element):
+def showElement(e: ElementXML | None):
     """Generic print string function, UTF-8, indented 2 spaces"""
-    if sys.version_info[0] == 3 and sys.version_info[1] >= 9:
+    if e is not None:
         ET.indent(e, "  ")
-    print(ET.tostring(e).decode("utf-8"))
+        print(ET.tostring(e).decode("utf-8"))
 
 
-def createTemplate(frame: tuple = None) -> ET.Element:
+def createTemplate(frame: tuple = None) -> ElementXML:
     """Generates a root xml Element and adds the base GROUP node to it."""
     root = ET.Element("lexml", attrib={"version": "3"})
     node = ET.SubElement(
@@ -369,7 +419,7 @@ def createTemplate(frame: tuple = None) -> ET.Element:
     return root
 
 
-def createGroup() -> ET.Element:
+def createGroup() -> ElementXML:
     """Simple create Node type GROUP"""
     return ET.Element(
         ControlElements.NODE.value,
@@ -377,46 +427,43 @@ def createGroup() -> ET.Element:
     )
 
 
-def load(inputPath: str) -> ET.Element:
+def load(inputPath: str) -> ElementXML:
     """Reads a .tosc file and returns the XML root Element"""
     with open(inputPath, "rb") as file:
         return ET.fromstring(zlib.decompress(file.read()))
 
 
-def write(root: ET.Element, outputPath: str = None) -> bool:
+def write(root: ElementXML, outputPath: str) -> bool:
     """Encodes a root Element to .tosc"""
     with open(outputPath, "wb") as file:
         treeFile = ET.tostring(root, encoding="UTF-8", method="xml")
         file.write(zlib.compress(treeFile))
-        return True
+    return True
 
 
-def getTextValueFromKey(properties: ET.Element, key: str) -> str:
+def getTextValueFromKey(properties: ElementXML | Any, key: str) -> str | Any:
     """Find the value.text from a known key"""
-    for property in properties:
-        if re.fullmatch(property.find("key").text, key):
-            return property.find("value").text
+    if prop:= properties.find(f"./property/[key='{key}']"):
+        value = prop.find("value")
+        return value.text if value is not None else ""
+    return None
 
-
-
-def asctrl(xml:ET.Element) -> Control:
+def asCtrl(xml:ElementXML) -> Control:
     pass
 
-def asxml(source: Control) -> ET.Element:
+def asXml(source: Control) -> ElementXML:
     return ControlConverter.build(source)
 
-def asroot(source: Control) -> ET.Element:
+def asRoot(source: Control) -> ElementXML:
     root = ET.Element("lexml", attrib={"version": "3"})
-    root.append(asxml(source))
+    root.append(asXml(source))
     return root
 
-def asetosc(source: xmlElement | Control) -> ElementTOSC:
-    if isinstance(source, ET.Element):
+def asEtosc(source: ElementXML | Control) -> ElementTOSC:
+    if isinstance(source, ElementXML):
         return ElementTOSC(source)
-    elif isinstance(source, Control):
-        return ElementTOSC(ControlConverter.build(source))
     else:
-        raise TypeError(f"{source} is not a valid type")
+        return ElementTOSC(ControlConverter.build(source))
 
 
 """
@@ -480,7 +527,7 @@ def moveValues(source: ElementTOSC, target: ElementTOSC, *args: str):
     return True
 
 
-def copyMessages(source: ElementTOSC, target: ElementTOSC, *args: str):
+def copyMessages(source: ElementTOSC, target: ElementTOSC, *args: elementType):
     """Args can be ControlElements.OSC, MIDI, LOCAL, GAMEPAD"""
     if args is None:
         [target.messages.append(deepcopy(e)) for e in source.messages]
@@ -493,7 +540,7 @@ def copyMessages(source: ElementTOSC, target: ElementTOSC, *args: str):
     return True
 
 
-def moveMessages(source: ElementTOSC, target: ElementTOSC, *args: str):
+def moveMessages(source: ElementTOSC, target: ElementTOSC, *args: elementType):
     elements = []
     if args is None:
         elements = source.messages
@@ -508,7 +555,7 @@ def moveMessages(source: ElementTOSC, target: ElementTOSC, *args: str):
     return True
 
 
-def copyChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
+def copyChildren(source: ElementTOSC, target: ElementTOSC, *args: elementType):
     """Args can be ControlType.BOX, BUTTON, etc."""
     if args is None:
         [target.children.append(deepcopy(e)) for e in source.children]
@@ -523,7 +570,7 @@ def copyChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
     return True
 
 
-def moveChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
+def moveChildren(source: ElementTOSC, target: ElementTOSC, *args: elementType):
     elements = []
     if args is None:
         elements = source.children
@@ -540,7 +587,6 @@ def moveChildren(source: ElementTOSC, target: ElementTOSC, *args: str):
     return True
 
 
-
 """
 
 GENERAL PARSERS
@@ -549,7 +595,7 @@ GENERAL PARSERS
 
 
 def pullValueFromKey(inputFile: str, key: str, value: str,
-                     targetKey: str) -> str:
+                     targetKey: str) -> str | None:
     """If you know the name of an element but don't know its other properties.
     This function uses a .tosc file and gets its root.
     For passing an element see pullValueFromKey2
@@ -575,11 +621,11 @@ def pullValueFromKey(inputFile: str, key: str, value: str,
                 return getTextValueFromKey(e.find("properties"), targetKey)
 
     parser.close()
-    return ""
+    return None
 
 
-def pullValueFromKey2(root: ET.Element, key: str,
-                      value: str, targetKey: str) -> str:
+def pullValueFromKey2(root: ElementXML, key: str,
+                      value: str, targetKey: str) -> str | None:
     """If you know the name of an element but don't know its other properties.
     This parses an Element and has to convert it to string so its slower.
 
@@ -600,8 +646,9 @@ def pullValueFromKey2(root: ET.Element, key: str,
         if re.fullmatch(getTextValueFromKey(e.find("properties"), key), value):
             parser.close()
             return getTextValueFromKey(e.find("properties"), targetKey)
+    return None
 
-def pullIdfromName(root: ET.Element, name: str) -> str:
+def pullIdfromName(root: ElementXML, name: str) -> str:
     """
     """
     parser = ET.XMLPullParser()
@@ -675,7 +722,7 @@ class PropertyParser:
         return self.targetList
 
 
-def parseProperties(node: ET.Element, *args) -> list:
+def parseProperties(node: ElementXML, *args) -> list:
     """
     Specify all properties you want to find and this will parse
     the entire Node and its children and return a list of key value pairs.
@@ -701,53 +748,9 @@ def parseProperties(node: ET.Element, *args) -> list:
 
 """
 
-FUNCTIONS TO ADD CONTROL ELEMENTS TO A ELEMENTTOSC
-
-Creating ElementTOSC directly to a parent.
+Testing stuff
 
 """
-
-
-def addBoxTo(e: ElementTOSC):
-    return ElementTOSC(
-        ET.SubElement(
-            e.children,
-            ControlElements.NODE.value,
-            attrib={"ID": str(uuid.uuid4()), "type": ControlType.BOX.value},
-        )
-    )
-
-
-def addGroupTo(e: ElementTOSC, *args: str):
-    """Pass Control Types as arguments to append children to the group.
-    Then the result will be a tuple (group, child, child, ...)"""
-    group = ElementTOSC(
-        ET.SubElement(
-            e.children,
-            ControlElements.NODE.value,
-            attrib={"ID": str(uuid.uuid4()), "type": ControlType.GROUP.value},
-        )
-    )
-    if not args:
-        return group
-    return [group] + [
-        ElementTOSC(
-            ET.SubElement(
-                group.children,
-                ControlElements.NODE.value,
-                attrib={"ID": str(uuid.uuid4()), "type": arg},
-            )
-        )
-        for arg in args
-    ]
-
-
-def addButtonTo(e: ElementTOSC):
-    return ElementTOSC(e.createChild(ControlType.BUTTON))
-
-
-def addLabelTo(e: ElementTOSC):
-    return ElementTOSC(e.createChild(ControlType.LABEL))
 
 
 def testFromString(data):

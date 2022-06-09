@@ -22,7 +22,6 @@ setuptools.setup(
     package_data={"tosclib": ["py.typed"]},
     python_requires=">=3.10",
     install_requires=[
-        "lxml>=4.9.0",
         "numpy>=1.22.3"
     ]
 )

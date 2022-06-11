@@ -32,6 +32,6 @@ def test_collisions():
     path = [tosc.Partial(), tosc.Partial(type="PROPERTY", value="name")]
     assert type(path[0]) is tosc.Partial
     assert fader.createOSC() is not None
-    assert fader.createOSC(tosc.OSC(path=path)) is not None
-    assert fader.createOSC(tosc.OSC(path=path)) is not None
+    assert fader.createOSC(tosc.MessageOSC(path=path)) is not None
+    assert fader.createOSC(tosc.MessageOSC(path=path)) is not None
 

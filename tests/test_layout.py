@@ -1,6 +1,6 @@
 from typing import List
 from tosclib.elements import ControlType, Property, PropertyFactory
-from tosclib.tosc import ElementTOSC, createTemplate, write
+from tosclib.node import ElementTOSC, createTemplate, write
 from tosclib import layout
 from .profiler import profile
 from logging import debug

@@ -1,6 +1,6 @@
 import tosclib as tosc
 from .profiler import profile
-from tosclib import Value, Partial, ControlType, OSC
+from tosclib import Value, Partial, ControlType, MessageOSC
 
 
 @profile
@@ -18,7 +18,7 @@ def test_basics():
     element.setValue(Value("touch", "1", "1", "true", "1"))
 
     element.createOSC(
-        message=tosc.OSC(
+        message=tosc.MessageOSC(
             "0",
             "0",
             "0",
@@ -48,7 +48,7 @@ def test_basics():
     parent = tosc.ElementTOSC(root[0])
 
     group = tosc.ElementTOSC(parent.createChild(ControlType.GROUP))
-    msg = OSC(
+    msg = MessageOSC(
         arguments=[
             Partial(),
             Partial("PROPERTY", "parent.name"),

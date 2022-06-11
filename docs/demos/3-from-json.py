@@ -9,9 +9,9 @@ def getJson(fileName: str):
         return json.loads(file.read())
 
 
-def oscMsg() -> tosc.OSC:
+def oscMsg() -> tosc.MessageOSC:
     """Create a message with a path constructed with custom Partials"""
-    return tosc.OSC(
+    return tosc.MessageOSC(
         path=[
             tosc.Partial(),  # Default is the constant '/'
             tosc.Partial(type="PROPERTY", value="parent.name"),

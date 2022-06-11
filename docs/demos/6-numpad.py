@@ -4,11 +4,11 @@ import pstats
 
 import tosclib as tosc
 from tosclib import controls
-from tosclib.elements import LOCAL, Trigger
-from tosclib.tosc import ControlType, Value
+from tosclib.elements import MessageLOCAL, Trigger
+from tosclib.etosc import ControlType, Value
 from tosclib.controls import PropertyFactory as pf
 from tosclib.controls import ControlConverter as cc
-from tosclib.tosc import ElementTOSC as et
+from tosclib.etosc import ElementTOSC as et
 import subprocess
 
 bgGradient1 = ((0.25, 0.25, 0.25, 1.0), (0.5, 0.25, 0.25, 1.0))
@@ -43,7 +43,7 @@ def layoutBase(children: list[et]):
 
     id = tosc.pullIdfromName(layoutTop.node, "valueLabel")
 
-    local0 = LOCAL(
+    local0 = MessageLOCAL(
         triggers=[Trigger("x", "RISE")],
         type="PROPERTY",
         conversion="STRING",
@@ -57,7 +57,7 @@ def layoutBase(children: list[et]):
 
     layoutBot[1][0].createLOCAL(local0)
 
-    local1 = LOCAL(
+    local1 = MessageLOCAL(
         triggers=[Trigger("x", "RISE")],
         type="CONSTANT",
         conversion="STRING",
@@ -66,7 +66,7 @@ def layoutBase(children: list[et]):
         dstVar="sum",
         dstID=id,)
 
-    local2 = LOCAL(
+    local2 = MessageLOCAL(
         triggers=[Trigger("x", "FALL")],
         type="CONSTANT",
         conversion="STRING",
@@ -78,7 +78,7 @@ def layoutBase(children: list[et]):
     layoutBot[0][0].createLOCAL(local1)
     layoutBot[0][0].createLOCAL(local2)
 
-    local3 = LOCAL(
+    local3 = MessageLOCAL(
         triggers=[Trigger("x", "FALL")],
         type="CONSTANT",
         conversion="STRING",
@@ -108,10 +108,10 @@ def layoutValues(children: list[et]):
             pf.name("valueLabel"),
             pf.background(False),
             pf.color(children[0].getColor()),
-            pf.build("frame", frame),
+            pf.buildAny("frame", frame),
             pf.textSize(60),
-            pf.build("sum", ""),
-            pf.build("max", "127"),
+            pf.buildAny("sum", ""),
+            pf.buildAny("max", "127"),
             pf.script("""
 self.sum = "0"
 self.values.text = self.sum
@@ -131,8 +131,8 @@ end""")
     )
     
     children[0].setName("value")
-    children[0].children.append(cc.build(button0))
-    children[0].children.append(cc.build(label0))
+    children[0].children.append(cc.toXML(button0))
+    children[0].children.append(cc.toXML(label0))
 
     label1 = controls.Label(
         properties = [
@@ -153,8 +153,8 @@ end""")
     )
 
     children[1].setName("send")
-    children[1].children.append(cc.build(button1))
-    children[1].children.append(cc.build(label1))
+    children[1].children.append(cc.toXML(button1))
+    children[1].children.append(cc.toXML(label1))
 
     return [pf.name("Values")]
 
@@ -176,7 +176,7 @@ def layoutNumbers(children: list[et]):
         properties=[
             pf.frame(f),
             pf.outline(False),
-            pf.build("color2", (0.5,0.5,0.5,1.0,)),
+            pf.buildAny("color2", (0.5,0.5,0.5,1.0,)),
         ]
     )
     
@@ -188,8 +188,8 @@ def layoutNumbers(children: list[et]):
         button.properties.append(pf.name(str(n)))
         button.properties.append(pf.color(c.getColor()))
 
-        c.children.append(cc.build(button))
-        c.children.append(cc.build(label))
+        c.children.append(cc.toXML(button))
+        c.children.append(cc.toXML(label))
         
     return [pf.outline(True),pf.name("numbers")]
 
@@ -217,8 +217,8 @@ def layoutClear(children: list[et]):
     )
 
     children[0].setName("clear")
-    children[0].children.append(cc.build(button0))
-    children[0].children.append(cc.build(label0))
+    children[0].children.append(cc.toXML(button0))
+    children[0].children.append(cc.toXML(label0))
 
     frame = children[0].getFrame()
     button1 = controls.Button(
@@ -241,8 +241,8 @@ def layoutClear(children: list[et]):
     )
 
     children[1].setName("zero")
-    children[1].children.append(cc.build(button1))
-    children[1].children.append(cc.build(label1))
+    children[1].children.append(cc.toXML(button1))
+    children[1].children.append(cc.toXML(label1))
 
     button2 = controls.Button(
         properties= [
@@ -264,8 +264,8 @@ def layoutClear(children: list[et]):
     )
 
     children[2].setName("del")
-    children[2].children.append(cc.build(button2))
-    children[2].children.append(cc.build(label2))
+    children[2].children.append(cc.toXML(button2))
+    children[2].children.append(cc.toXML(label2))
     
 
     return [pf.name("ClearDel")]

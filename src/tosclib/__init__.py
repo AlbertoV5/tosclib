@@ -1,2 +1,2 @@
-from .tosc import *
+from .etosc import *
 from .layout import *

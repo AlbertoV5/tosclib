@@ -28,11 +28,10 @@ to the children.
 All Layouts are currently built in top > bottom, left > right order.
 """
 
-from copy import deepcopy
 from typing import Any, Callable
-from .tosc import ElementTOSC
+from .etosc import ElementTOSC
+from tosclib import etosc as etc
 from .elements import (
-    ControlElements,
     controlType,
     ControlType,
 )
@@ -47,6 +46,7 @@ import numpy as np
 ARRANGE AND LAYOUT
 
 """
+
 
 def colorChecker(color: Any) -> tuple:
     """Allow for passing rgba in 0-255, 0-1 and hex, then convert to 0-1"""
@@ -81,15 +81,17 @@ def Layout(
 ):
     """Basic process to append multiple properties to a layout of controls"""
 
-    children = [ElementTOSC(layout.createChild(controlT)) for i in range(F.shape[0])]
+    children = [
+        ElementTOSC(etc.createChild(layout, controlT)) for i in range(F.shape[0])
+    ]
     for g, f, c in zip(children, F, C):
-        g.setFrame(f.astype(int))
-        g.setColor(c)
+        etc.setFrame(f.astype(int))
+        etc.setColor(layout, c)
 
     # Add extra properties to the parent, optional return
     properties: Properties = func(children)
     if properties is not None:
-        [layout.createProperty(p) for p in properties]
+        [etc.createProperty(layout, p) for p in properties]
 
     return layout
 
@@ -108,11 +110,10 @@ def column(func):
         parent: ElementTOSC,
         controlType: controlType,
         size: tuple = (1, 2, 1),
-        colors: tuple = (
-            (0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
+        colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
-        frame = parent.getFrame()
+        frame = etc.getFrame(parent)
 
         H = frame[3] * (np.asarray(size) / np.sum(size))
         W = [frame[2] for i in size]
@@ -143,9 +144,9 @@ def row(func):
         colors: tuple | str = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
-        frame = parent.getFrame()
+        frame = etc.getFrame(parent)
 
-        H = np.resize(frame[3], len(size)) # type: ignore
+        H = np.resize(frame[3], len(size))  # type: ignore
         W = frame[2] * (np.asarray(size) / np.sum(size))
         Y = np.resize((0), len(size))
         X = np.cumsum(np.concatenate(([0], W)))[:-1]
@@ -178,14 +179,14 @@ def grid(func):
         parent: ElementTOSC,
         controlType: ControlType,
         size: tuple = (4, 4),
-        colors: tuple=  (
+        colors: tuple = (
             (0.25, 0.25, 0.25, 1.0),
             (0.5, 0.5, 0.5, 1.0),
         ),
         colorStyle: int = 0,
     ):
 
-        if (frame:=parent.getFrame()) is None:
+        if (frame := etc.getFrame(parent)) is None:
             raise ValueError(f"{parent} has no frame.")
 
         colors = tuple(colorChecker(i) for i in colors)
@@ -195,8 +196,8 @@ def grid(func):
         M = np.asarray(
             tuple(
                 (row, column)
-                for row in np.arange(stop=frame[2], step=w) # type: ignore
-                for column in np.arange(stop=frame[3], step=h) # type: ignore
+                for row in np.arange(stop=frame[2], step=w)  # type: ignore
+                for column in np.arange(stop=frame[3], step=h)  # type: ignore
             )
         ).T
 

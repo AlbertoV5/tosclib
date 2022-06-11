@@ -69,11 +69,34 @@ def xml_property(prop: Property) -> ET.Element:
 
 
 def xml_value(val: Value) -> ET.Element:
+    """Value Converter"""
     value = ET.Element("value")
     ET.SubElement(value, "key").text = val[0]
     ET.SubElement(value, "locked").text = str(int(val[1]))
     ET.SubElement(value, "lockedDefaultCurrent").text = str(int(val[2]))
     ET.SubElement(value, "valueDefault").text = str(int(val[3]))
-    ET.SubElement(value, "defaultPull").text = str(int(val[4]))
-
+    ET.SubElement(value, "defaultPull").text = str(val[4])
     return value
+
+
+@overload
+def xml_message(msg: MessageOSC) -> ET.Element:
+    message = ET.Element("osc")
+    return message
+
+
+@overload
+def xml_message(msg: MessageMIDI) -> ET.Element:
+    message = ET.Element("midi")
+    return message
+
+
+@overload
+def xml_message(msg: MessageLOCAL) -> ET.Element:
+    message = ET.Element("local")
+    return message
+
+
+def xml_message(msg: MessageOSC | MessageMIDI | MessageLOCAL) -> ET.Element:
+    """Overloaded Message Converter"""
+    ...

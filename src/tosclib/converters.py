@@ -2,18 +2,61 @@
 Python Typed-hinted-tuples to XML Converters
 """
 
+import logging
 from .elements import *
+from typing import Literal
 from xml.etree.ElementTree import Element, SubElement
 from typing import overload
 
+__all__ = [
+    # Property
+    "xml_property",
+    # Value
+    "xml_value",
+    # Message
+    "xml_msgconfig",
+    "xml_triggers",
+    "xml_partials",
+    "xml_midimsg",
+    "xml_midivals",
+    "xml_localSrc",
+    "xml_localDst",
+    "xml_message",
+]
 
-def _xml_property(prop: Property) -> tuple[Element, Element]:
-    """Internal Property util"""
-    name = f"{prop=}".partition("=")[0]
+
+def _xml_property_generic(name: str) -> tuple[Element, Element]:
+    """Create an XML <property> Element of unspecified <value>.
+
+    Args:
+        name (str): Name/key of the property.
+
+    Returns:
+        tuple[Element, Element]: <property> and <value> Elements.
+    """
     property = Element("property")
     SubElement(property, "key").text = name
     value = SubElement(property, "value")
     return property, value
+
+
+def _xml_value_generic(val: tuple[str, bool, bool, str, int]) -> Element:
+    """Create an XML <value> with all its children.
+
+    Args:
+        val (tuple[str,bool,bool,str,int]):
+        Pass a generic Value with Literal and optionals converted to str.
+
+    Returns:
+        Element: <value> Element.
+    """
+    value = Element("value")
+    SubElement(value, "key").text = val[0]
+    SubElement(value, "locked").text = str(int(val[1]))
+    SubElement(value, "lockedDefaultCurrent").text = str(int(val[2]))
+    SubElement(value, "valueDefault").text = val[3]
+    SubElement(value, "defaultPull").text = str(val[4])
+    return value
 
 
 def xml_msgconfig(parent: Element, msg: MsgConfig) -> Element:
@@ -92,69 +135,89 @@ OVERLOADS
 
 
 @overload
-def xml_property(prop: str) -> Element:
-    property, value = _xml_property(prop)
+def xml_property(prop: tuple[str, str]) -> Element:
+    """Overload for <property type="s">"""
+    property, value = _xml_property_generic(prop[0])
     property.attrib["type"] = "s"
-    value.text = prop
+    value.text = prop[1]
     return property
 
 
 @overload
-def xml_property(prop: bool) -> Element:
-    property, value = _xml_property(prop)
+def xml_property(prop: tuple[str, bool]) -> Element:
+    """Overload for <property type="b">"""
+    property, value = _xml_property_generic(prop[0])
     property.attrib["type"] = "b"
-    value.text = str(int(prop))
+    value.text = str(int(prop[1]))
     return property
 
 
 @overload
-def xml_property(prop: int) -> Element:
-    property, value = _xml_property(prop)
+def xml_property(prop: tuple[str, int]) -> Element:
+    """Overload for <property type="i">"""
+    property, value = _xml_property_generic(prop[0])
     property.attrib["type"] = "i"
-    value.text = str(prop)
+    value.text = str(prop[1])
     return property
 
 
 @overload
-def xml_property(prop: float) -> Element:
-    property, value = _xml_property(prop)
+def xml_property(prop: tuple[str, float]) -> Element:
+    """Overload for <property type="f">"""
+    property, value = _xml_property_generic(prop[0])
     property.attrib["type"] = "f"
-    value.text = str(prop)
+    value.text = str(prop[1])
     return property
 
 
 @overload
-def xml_property(prop: tuple[int, ...]) -> Element:
-    property, value = _xml_property(prop)
+def xml_property(prop: tuple[str, tuple[int, ...]]) -> Element:
+    """Overload for <property type="r">"""
+    property, value = _xml_property_generic(prop[0])
     property.attrib["type"] = "r"
-    for k, p in zip(("x", "y", "w", "h"), prop):
+    for k, p in zip(("x", "y", "w", "h"), prop[1]):
         SubElement(value, k).text = str(p)
     return property
 
 
 @overload
-def xml_property(prop: tuple[float, ...]) -> Element:
-    property, value = _xml_property(prop)
+def xml_property(prop: tuple[str, tuple[float, ...]]) -> Element:
+    """Overload for <property type="c">"""
+    property, value = _xml_property_generic(prop[0])
     property.attrib["type"] = "c"
-    for k, p in zip(("r", "g", "b", "a"), prop):
+    for k, p in zip(("r", "g", "b", "a"), prop[1]):
         SubElement(value, k).text = str(p)
     return property
 
 
-def xml_property(prop: Property) -> Element:
+def xml_property(prop: Property) -> Element | None:
     """Overloaded Property Converter"""
-    ...
+    logging.warning(f"{prop} is not specific.")
+    return None
 
 
-def xml_value(val: Value) -> Element:
-    """Value Converter, not overloaded."""
-    value = Element("value")
-    SubElement(value, "key").text = val[0]
-    SubElement(value, "locked").text = str(int(val[1]))
-    SubElement(value, "lockedDefaultCurrent").text = str(int(val[2]))
-    SubElement(value, "valueDefault").text = str(int(val[3]))
-    SubElement(value, "defaultPull").text = str(val[4])
-    return value
+@overload
+def xml_value(val: tuple[Literal["x", "y"], bool, bool, float, int]) -> Element:
+    """Literal "x" or "y" Value overload"""
+    return _xml_value_generic((str(val[0]), val[1], val[2], str(val[3]), val[4]))
+
+
+@overload
+def xml_value(val: tuple[Literal["text"], bool, bool, str, int]) -> Element:
+    """Literal "text" Value overload"""
+    return _xml_value_generic((str(val[0]), val[1], val[2], val[3], val[4]))
+
+
+@overload
+def xml_value(val: tuple[Literal["touch"], bool, bool, bool, int]) -> Element:
+    """Touch Value overload"""
+    return _xml_value_generic((str(val[0]), val[1], val[2], str(int(val[3])), val[4]))
+
+
+def xml_value(val: Value) -> Element | None:
+    """Overloaded Value to XML Converter"""
+    logging.warning(f"{val} is not specific.")
+    return None
 
 
 @overload
@@ -185,6 +248,7 @@ def xml_message(msg: MessageLOCAL) -> Element:
     return message
 
 
-def xml_message(msg: MessageOSC | MessageMIDI | MessageLOCAL) -> Element:
-    """Overloaded XML Message Converter"""
-    ...
+def xml_message(msg: MessageOSC | MessageMIDI | MessageLOCAL) -> Element | None:
+    """Overloaded Message to XML Converter"""
+    logging.warning(f"{msg} is not specific.")
+    return None

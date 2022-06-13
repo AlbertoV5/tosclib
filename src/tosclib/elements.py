@@ -1,8 +1,96 @@
 """
-Types based on the Hexler Touch OSC Enumerations
+Types based on Hexler's Touch OSC Enumerations.
+
+Using typing to define specific tuple shapes and Literals.
+
+The result is no regular classes for these data structures,
+this means that most of the logical work relies on the factory
+and converter methods in other modules. 
+
+The alternatives were dataclasses, slots or named tuples but
+I decided to bet on the newest python >=3.10 typing features 
+as a way to future-enable this library and have fun.
+
+A TouchOSC Control is divided into 4 parts:
+
+Control:
+
+    1. Properties: list[Property,...]
+    2. Values: list[Value,...]
+    3. Messages: list[Message,...]
+    4. Children: list[Control,...]
+
+From those parts the following are Type Aliases for tuples:
+
+    Property, Value
+
+Then the Message type is a Type Alias for any of these New Types:
+
+    MessageOSC, MessageMIDI, MessageLOCAL
+
+MessageOSC is made of these New Types:
+
+    MsgConfig: Tuple of various base types, bool, str etc.
+    Triggers: Tuple of Trigger.
+        Trigger: Tuple of Literal, Literal.
+    Address: Tuple of Partials.
+        Partial: Tuple of Literal, Literal, str, int, int
+    Arguments: Tuple of Partials.
+
+MessageMIDI is made of these New Types:
+
+    MsgConfig.
+    Triggers.
+    MidiMsg: New Type of tuple of Literal, Literal, etc.
+    MidiValues: Tuple of MidiValue.
+        MidiValue: Tuple of Literal, str, etc.
+    
+MessageLOCAL is made of:
+
+    Enabled: bool.
+    Triggers.
+    LocalSrc: Tuple of Literals, str, etc.
+    LocalDst: Tuple of Literals, str, etc.
+
+
+
 """
 
-from typing import Literal, NewType, Protocol, TypeAlias
+from typing import Literal, NewType, Protocol, TypeAlias, Callable
+
+__all__ = [
+    # Enums
+    "ElementTag",
+    "ControlType",
+    "ControlList",
+    # Properties
+    "PropertyType",
+    "PropertyValue",
+    "Property",
+    # Values
+    "Value",
+    "Values",
+    # Messages
+    "MsgConfig",
+    "Partial",
+    "Trigger",
+    "MidiMsg",
+    "MidiValue",
+    "MidiValues",
+    "LocalSrc",
+    "LocalDst",
+    "Triggers",
+    "Address",
+    "Arguments",
+    "MessageOSC",
+    "MessageMIDI",
+    "MessageLOCAL",
+    "Message",
+    "Messages",
+    # Children
+    "Children",
+    "Control",
+]
 
 ElementTag: TypeAlias = Literal[
     "node",
@@ -53,24 +141,30 @@ PropertyType: TypeAlias = Literal["b", "c", "r", "f", "i", "s"]
 """Valid literals for <property type:PropertyType>
     b: boolean, c: color, r: frame, f: float, i: int, s: string
 """
-Property: TypeAlias = str | int | float | bool | tuple[int, ...] | tuple[float, ...]
+PropertyValue: TypeAlias = (
+    str | int | float | bool | tuple[int, ...] | tuple[float, ...]
+)
+Property: TypeAlias = tuple[
+    str, str | int | float | bool | tuple[int, ...] | tuple[float, ...]
+]
 """
 Property:
-    [0] - PropertyValue: Any str, int, float, bool, PropertyFrame or PropertyColor.
+    [0] - Property Key(str): Name/key of the property.
+    [1] - PropertyValue: Any str, int, float, bool, PropertyFrame or PropertyColor.
     The Python type/TypeAlias will be converted to a literal for XML.
     Type str will be "s", bool will be "b", etc.
     PropertyFrame converts to:
         {"x":[1][0], "y":[1][1], "w":[1][2], "h":[1][3]}
 
 Example:
-    name = "Craig"
+    ("name", "Craig")
 
     <property type="s">
         <key>name</key>
         <value>Craig</value>
     </property>
 
-    frame = (0,0,100,100)
+    ("frame",(0,0,100,100))
 
     <property type="r">
         <key>frame</key>
@@ -83,10 +177,13 @@ Example:
     </property>
 
 """
-Value = NewType(
-    "Value",
-    tuple[Literal["x", "y", "touch", "text"], bool, bool, float | bool | str, int],
-)
+# Value = NewType(
+#     "Value",
+#     tuple[Literal["x", "y", "touch", "text"], bool, bool, float | bool | str, int],
+# )
+Value: TypeAlias = tuple[
+    Literal["x", "y", "touch", "text"], bool, bool, float | bool | str, int
+]
 """ 
 Value:
     [0] - ValueKey: Any of the allowed literals.
@@ -95,6 +192,7 @@ Value:
     [3] - ValueDefault: str, bool or float. "x" and "y" use floats, "touch" is bool, "text" is str.
     [4] - defaultPull: Integer between 0 and 100.
 """
+Values: TypeAlias = list[Value]
 Partial = NewType(
     "Partial",
     tuple[
@@ -179,11 +277,11 @@ Connection:
     [3] - Feedback: Bool.
     [4] - Connections (str as binary), so connection 1 is 00001, connection 2 is 00010, both are 00011.
 """
-Triggers = NewType("Triggers", tuple[Trigger, ...])
+Triggers: TypeAlias = tuple[Trigger, ...]
 """Tuple of Trigger"""
-Address = NewType("Address", tuple[Partial, ...])
+Address: TypeAlias = tuple[Partial, ...]
 """Tuple of Partial"""
-Arguments = NewType("Arguments", tuple[Partial, ...])
+Arguments: TypeAlias = tuple[Partial, ...]
 """Tuple of Partial"""
 MessageOSC = NewType("MessageOSC", tuple[MsgConfig, Triggers, Address, Arguments])
 """
@@ -194,21 +292,21 @@ MessageOSC:
     [2] - Address: Construct a message with tuple of Partial.
     [3] - Arguments: Construct arguments with tuple of Partial.
 """
-msgo = MessageOSC(
-    (
-        MsgConfig((True, True, True, False, "00001")),
-        Triggers((Trigger(("x", "ANY")),)),
-        Address(
-            (
-                Partial(("CONSTANT", "STRING", "/", 0, 1)),
-                Partial(("PROPERTY", "STRING", "name", 0, 1)),
-            )
-        ),
-        Arguments((Partial(("VALUE", "FLOAT", "x", 0, 1)),)),
-    )
-)
+# msgo = MessageOSC(
+#     (
+#         MsgConfig((True, True, True, False, "00001")),
+#         Triggers((Trigger(("x", "ANY")),)),
+#         Address(
+#             (
+#                 Partial(("CONSTANT", "STRING", "/", 0, 1)),
+#                 Partial(("PROPERTY", "STRING", "name", 0, 1)),
+#             )
+#         ),
+#         Arguments((Partial(("VALUE", "FLOAT", "x", 0, 1)),)),
+#     )
+# )
 """Tuple of MidiMsg"""
-MidiValues = NewType("MidiValues", tuple[MidiValue, ...])
+MidiValues: TypeAlias = tuple[MidiValue, ...]
 """Tuple of MidiValue"""
 MessageMIDI = NewType("MessageMIDI", tuple[MsgConfig, Triggers, MidiMsg, MidiValues])
 """
@@ -243,18 +341,28 @@ MessageLOCAL:
     [1] - Triggers: Tuple of Trigger. 
     [2] - Source: Tuple of value, valid literal.
     [3] - Target: Tuple of value, id.
-    [4] - Con: Tuple of Min, Max, valid literal.
 """
-Values = NewType("Values", tuple[Value, ...])
-Messages = NewType("Messages", tuple[MessageOSC | MessageMIDI | MessageLOCAL, ...])
-Children = NewType("Children", list["Control"])
+Message: TypeAlias = MessageOSC | MessageMIDI | MessageLOCAL
+Messages: TypeAlias = list[MessageOSC | MessageMIDI | MessageLOCAL]
+Children: TypeAlias = list["Control"]
 
 
 class Control(Protocol):
-    """The Control Type Protocol. Touch OSC Control"""
+    """The Control Type Protocol. Touch OSC Control
+
+    All attributes are tuples except for children which is a list.
+
+    Attributes:
+        type(ControlType): Any of the valid literals.
+        id(str): Any hash function result as str.
+        values(Values|[]]): The Control's Values.
+        messages(Values|[]]): The Control's Messages.
+        children(Children|[]]): The Control's Control children.
+
+    """
 
     type: ControlType
     id: str
-    values: Values | None
-    messages: Messages | None
-    children: Children | None
+    values: Values
+    messages: Messages
+    children: Children

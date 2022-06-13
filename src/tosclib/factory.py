@@ -2,9 +2,32 @@
 Tuple factories for the types hinted in elements.py
 """
 
-from typing import TypeGuard
+from typing import TypeGuard, Literal
 from .elements import *
 from logging import debug
+
+
+__all__ = [
+    "prop_prop",
+    "val_value",
+    "msg_config",
+    "msg_trigger",
+    "msg_partial",
+    "msg_midimsg",
+    "msg_midival",
+    "msg_localsrc",
+    "msg_localdst",
+    "osc",
+    "midi",
+    "local",
+]
+
+
+def prop_prop(
+    key: str, value: str | int | float | bool | tuple[int, ...] | tuple[float, ...]
+) -> Property:
+    """Property factory"""
+    return (key, value)
 
 
 def val_value(
@@ -15,12 +38,7 @@ def val_value(
     pull: int = 0,
 ) -> Value:
     """Value factory"""
-    return Value((key, locked, lockedCD, default, pull))
-
-
-def val_values(*args: Value) -> Values:
-    """Values factory"""
-    return Values(tuple(arg for arg in args))
+    return (key, locked, lockedCD, default, pull)
 
 
 def msg_config(
@@ -42,11 +60,6 @@ def msg_trigger(
     return Trigger((key, condition))
 
 
-def msg_triggers(*args: Trigger):
-    """Triggers factory"""
-    return Triggers(tuple(arg for arg in args))
-
-
 def msg_partial(
     typ: Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"] = "CONSTANT",
     conv: Literal["BOOLEAN", "INTEGER", "FLOAT", "STRING"] = "STRING",
@@ -56,16 +69,6 @@ def msg_partial(
 ) -> Partial:
     """Partial factory"""
     return Partial((typ, conv, value, scaleMin, scaleMax))
-
-
-def msg_address(*args: Partial) -> Address:
-    """Message Address factory"""
-    return Address(tuple(arg for arg in args))
-
-
-def msg_args(*args: Partial) -> Arguments:
-    """Message Arguments factory"""
-    return Arguments(tuple(arg for arg in args))
 
 
 def msg_midimsg(
@@ -97,11 +100,6 @@ def msg_midival(
     return MidiValue((key, typ, scaleMin, scaleMax))
 
 
-def msg_midivals(*args: MidiValue) -> MidiValues:
-    """Midi Values factory"""
-    return MidiValues(tuple(arg for arg in args))
-
-
 def msg_localsrc(
     key: str = "x",
     typ: Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"] = "VALUE",
@@ -129,10 +127,18 @@ def osc(
     arguments: Arguments = None,
 ) -> MessageOSC:
     """OSC message factory"""
-    config = msg_config() if config is None else config
-    triggers = msg_triggers() if triggers is None else triggers
-    address = msg_address() if address is None else address
-    arguments = msg_args() if arguments is None else arguments
+    if config is None:
+        config = msg_config()
+    if triggers is None:
+        triggers = (msg_trigger(),)
+    if address is None:
+        address = (
+            msg_partial(),
+            msg_partial("PROPERTY", "STRING", "name"),
+            msg_partial(),
+        )
+    if arguments is None:
+        arguments = (msg_partial(),)
     return MessageOSC((config, triggers, address, arguments))
 
 
@@ -143,53 +149,28 @@ def midi(
     values: MidiValues = None,
 ) -> MessageMIDI:
     """MIDI Message Factory"""
-    config = msg_config() if config is None else config
-    triggers = msg_triggers() if triggers is None else triggers
-    message = msg_midimsg() if message is None else message
-    values = msg_midivals() if values is None else values
+    if config is None:
+        config = msg_config()
+    if triggers is None:
+        triggers = (msg_trigger(),)
+    if message is None:
+        message = msg_midimsg()
+    if values is None:
+        values = (msg_midival(),)
     return MessageMIDI((config, triggers, message, values))
 
 
 def local(
-    enabled: bool = None,
+    enabled: bool = True,
     triggers: Triggers = None,
     source: LocalSrc = None,
     destination: LocalDst = None,
 ) -> MessageLOCAL:
     """LOCAL Message factory"""
-    enabled = True if enabled is None else enabled
-    triggers = msg_triggers() if triggers is None else triggers
-    source = msg_localsrc() if source is None else source
-    destination = msg_localdst() if destination is None else destination
+    if triggers is None:
+        triggers = (msg_trigger(),)
+    if source is None:
+        source = msg_localsrc()
+    if destination is None:
+        destination = msg_localdst()
     return MessageLOCAL((enabled, triggers, source, destination))
-
-
-"""
-
-UTIL
-
-"""
-
-
-def is_property(property: Property) -> TypeGuard[Property]:
-    """Verify if property is Property"""
-    if isinstance(property, int):
-        debug("int")
-        return True
-    elif isinstance(property, float):
-        debug("float")
-        return True
-    elif isinstance(property, bool):
-        debug("bool")
-        return True
-    elif isinstance(property, str):
-        debug("str")
-        return True
-    elif isinstance(property, tuple) and isinstance(property[0], int):
-        debug("frame")
-        return True
-    elif isinstance(property, tuple) and isinstance(property[0], float):
-        debug("color")
-        return True
-    else:
-        return False

@@ -3,7 +3,8 @@ import re
 from typing import get_args
 from tosclib.controls import ControlBuilder
 from .elements import *
-from xml.etree.ElementTree import Element, SubElement
+from xml.etree.ElementTree import Element, SubElement, fromstring
+import zlib
 
 
 class ElementTOSC:
@@ -52,34 +53,7 @@ class ElementTOSC:
         return SubElement(self.node, target)
 
 
-def is_ctrl(s: str) -> ControlType:
-    match s:
-        case [
-            "BOX" | "BUTTON" | "ENCODER" | "FADER"
-            "GROUP" | "GRID" | "RADIO" | "RADAR" | "RADIAL"
-            "LABEL" | "TEXT" | "PAGER" | "XY"
-        ]:
-            return s
-        case _:
-            raise TypeError(f"{s} is not a valid ControlType.")
-
-
-def is_val(tup: tuple) -> Value:
-    tup = Value(("x", True, True, 0, 0))
-    match tup[0]:
-        case ["x" | "y" | "touch" | "text"]:
-            return tup
-        case _:
-            raise TypeError(f"{tup} is not a valid Value.")
-
-
-def as_ctrl(e: ElementTOSC) -> Control:
-
-    control = ControlBuilder(
-        is_ctrl(e.node.attrib["type"]),
-        e.node.attrib["ID"],
-    )
-
-    e.values[0].find("key")
-
-    return control
+def load(inputPath: str) -> Element:
+    """Reads a .tosc file and returns the XML root Element"""
+    with open(inputPath, "rb") as file:
+        return fromstring(zlib.decompress(file.read()))

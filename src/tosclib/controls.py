@@ -26,13 +26,24 @@ class ControlBuilder:
             values (Values, optional): Tuple of Value objects. Defaults to None.
             messages (Messages, optional): Tuple of Message objects. Defaults to None.
             children (tuple[&quot;Node&quot;], optional): Tuple of Node objects. Defaults to None.
-            kwargs (dict[str, Property]): Pass any extra keyword arguments as Property objects.
+            kwargs (Property): Pass any extra Property types as keyword arguments.
+
+        Example (using a subclass of ControlBuilder):
+
+            class Box(ControlBuilder):
+                type: ControlType = "BOX"
+                ...
+
+            box = Box(name = ("name", "boxy")) # with kwargs only
+
+            assert box.name == ("name", "boxy")
+            assert box.type == "BOX"
         """
         self.id: str = str(uuid.uuid4()) if id is None else id
         self.type: ControlType = type
-        self.values: Values | None = None if values is None else values
-        self.messages: Messages | None = None if messages is None else messages
-        self.children: Children | None = None if children is None else children
+        self.values: Values = [] if values is None else values
+        self.messages: Messages = [] if messages is None else messages
+        self.children: Children = [] if children is None else children
 
         for k in kwargs:
             setattr(self, k, kwargs[k])

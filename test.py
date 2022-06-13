@@ -14,9 +14,11 @@ xml = """
 
 e = fromstring(xml)
 
-root = etosc2.load("docs/demos/files/controls.tosc")
+root = etosc2.load("docs/demos/files/msgs.tosc")
 e = root[0]
 
 ctrl = verify.to_ctrl(e)
 
-print(ctrl.children)
+
+for m in ctrl.messages:
+    print(m)

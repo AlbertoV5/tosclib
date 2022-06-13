@@ -7,7 +7,7 @@ from .controls import *
 from .elements import *
 from xml.etree.ElementTree import Element
 
-__all__ = ["to_prop", "to_val", "to_msg", "to_ctrl"]
+__all__ = ["to_prop", "to_val", "to_msg", "to_typ", "to_ctrl"]
 
 
 def to_prop(e: Element) -> Property | None:
@@ -75,24 +75,134 @@ def to_osc(e: Element) -> MessageOSC | None:
     ...
 
 
+
+def to_msgconfig(e: Element) -> MsgConfig | None:
+    enabled, send, receive, feedback, connections = (
+        e[0].text, e[1].text, e[2].text, e[3].text, e[4].text
+    )
+    if None in (enabled,send,receive,feedback,connections):
+        return None
+    
+    return MsgConfig((
+        True if enabled == "1" else False,
+        True if send == "1" else False,
+        True if receive == "1" else False,
+        True if feedback == "1" else False,
+        str(connections)
+    ))
+
+def to_trigger(t:Element)-> Trigger | None:
+    """Check for Literals on <trigger> children
+
+    Args:
+        t (Element): <trigger>
+
+    Returns:
+        Trigger | None: Returns Trigger if Literals match.
+    """
+    if (var:=t[0].text) is None or (cond:=t[1].text) is None:
+        return None
+    match var,cond:
+        case (
+            "x" | "y" | "touch" | "text",
+            "ANY" | "RISE" | "FALL",):
+            return var,cond
+        case _:
+            return None
+
+def to_triggers(e:Element)-> Triggers | None:
+    """Iterator over to_trigger
+
+    Args:
+        e (Element): <triggers>
+
+    Returns:
+        Triggers | None: Returns tuple of Trigger
+    """
+    triggers = tuple(trig for t in e if (trig:=to_trigger(t)) is not None)
+    if None in triggers:
+        return None
+    return triggers
+
+def to_partial(e:Element)-> Partial | None:
+    """Checks if first two elements' text have the required Literals.
+
+    Args:
+        e (Element): <partial>
+
+    Returns:
+        Partial | None: Returns Partial if Literals match.
+    """
+    typ,con,val,smin,smax = e[0].text,e[1].text,e[2].text,e[3].text,e[4].text
+    if None in (typ,con,val,smin,smax):
+        return None
+
+    match typ,con,val,smin,smax:
+        case (
+            "CONSTANT"| "INDEX" | "VALUE"| "PROPERTY",
+            "BOOLEAN", "INTEGER", "FLOAT", "STRING",
+            str(_),int(_),int(_)):
+            return Partial((typ,con,val,int(smin),int(smax)))
+        case _:
+            return None
+
+
+def to_address(e:Element)-> Address | None:
+    """Iterate over elements as Partial
+
+    Args:
+        e (Element): <path>
+
+    Returns:
+        Address | None: Returns tuple of Partials if they all match.
+    """
+    path = tuple(part for p in e if (part:=to_partial(p)) is not None)
+    if None in path:
+        return None
+    return path
+
+def to_args(e:Element)-> Arguments | None:
+    """Iterate over elements as Partial
+
+    Args:
+        e (Element): <arguments>
+
+    Returns:
+        Arguments | None: Returns tuple of Partials if they all match.
+    """
+    args = tuple(arg for a in e if (arg:=to_partial(a)) is not None)
+    if None in args:
+        return None
+    return args
+
 def to_msg(e: Element) -> Message | None:
-    ...
+    msg = e.tag
+    match msg:
+        case "osc":
+            if (msgconfig:= to_msgconfig(e)) is None:
+                return None
+            if (triggers:= to_triggers(e[5])) is None:
+                return None
+            if (path:= to_address(e[6])) is None:
+                return None
+            if (arguments:= to_args(e[7])) is None:
+                return None
+            return MessageOSC((msgconfig,triggers,path,arguments))
+        # case "midi":
+        #     if (msgconfig:= to_msgconfig(e)) is None:
+        #             return None
+        #     if (triggers:= to_triggers(e)) is None:
+        #         return None
+        #     return MessageMIDI((msgconfig,))
+        # case "local":
+        #     return MessageLOCAL(())
+        case _:
+            raise ValueError(f"{e} is not a valid message.")
 
 
 def to_typ(e: Element) -> Control | None:
     id = e.attrib["ID"]
-    t = e.attrib["type"]
-    # match t:
-    #     case (
-    #         "BOX" | "BUTTON" | "ENCODER" | "FADER" |
-    #         "GROUP" | "GRID" | "PAGER" | "LABEL" |
-    #         "TEXT" | "RADIO" | "RADIAL" | "RADAR" |
-    #         "XY"):
-    #         ControlBuilder(t, id)
-    #     case ControlList[0]:
-    #         ControlBuilder(t, id)
-
-    match t:
+    match e.attrib["type"]:
         case "BOX":
             return Box(id)
         case "BUTTON":
@@ -139,6 +249,8 @@ def to_ctrl(e: Element) -> Control:
             case "messages":
                 for m in n:
                     if (msg := to_msg(m)) is not None:
+                        logging.warning("msg")
+                        logging.warning(msg)
                         control.messages.append(msg)
             case "children":
                 for c in n:

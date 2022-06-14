@@ -77,18 +77,18 @@ def to_osc(e: Element) -> MessageOSC | None:
 
 
 def to_msgconfig(e: Element) -> MsgConfig | None:
-    enabled, send, receive, feedback, connections = (
+    text = (
         e[0].text, e[1].text, e[2].text, e[3].text, e[4].text
     )
-    if None in (enabled,send,receive,feedback,connections):
+    if None in text:
         return None
-    
+
     return MsgConfig((
-        True if enabled == "1" else False,
-        True if send == "1" else False,
-        True if receive == "1" else False,
-        True if feedback == "1" else False,
-        str(connections)
+        True if text[0] == "1" else False,
+        True if text[1] == "1" else False,
+        True if text[2] == "1" else False,
+        True if text[3] == "1" else False,
+        str(text[4])
     ))
 
 def to_trigger(t:Element)-> Trigger | None:
@@ -103,10 +103,10 @@ def to_trigger(t:Element)-> Trigger | None:
     if (var:=t[0].text) is None or (cond:=t[1].text) is None:
         return None
     match var,cond:
-        case (
+        case( 
             "x" | "y" | "touch" | "text",
-            "ANY" | "RISE" | "FALL",):
-            return var,cond
+            "ANY" | "RISE" | "FALL"):
+            return var,cond # type: ignore
         case _:
             return None
 
@@ -119,10 +119,12 @@ def to_triggers(e:Element)-> Triggers | None:
     Returns:
         Triggers | None: Returns tuple of Trigger
     """
-    triggers = tuple(trig for t in e if (trig:=to_trigger(t)) is not None)
-    if None in triggers:
-        return None
-    return triggers
+    triggers = []
+    for t in e:
+        if (trigg:=to_trigger(t)) is None:
+            return None
+        triggers.append(trigg)
+    return tuple(triggers)
 
 def to_partial(e:Element)-> Partial | None:
     """Checks if first two elements' text have the required Literals.
@@ -133,18 +135,24 @@ def to_partial(e:Element)-> Partial | None:
     Returns:
         Partial | None: Returns Partial if Literals match.
     """
-    typ,con,val,smin,smax = e[0].text,e[1].text,e[2].text,e[3].text,e[4].text
-    if None in (typ,con,val,smin,smax):
+    text = tuple(t for i in e if (t:=i.text) is not None)
+    if None in text:
         return None
-
-    match typ,con,val,smin,smax:
+    match text:
         case (
             "CONSTANT"| "INDEX" | "VALUE"| "PROPERTY",
-            "BOOLEAN", "INTEGER", "FLOAT", "STRING",
-            str(_),int(_),int(_)):
-            return Partial((typ,con,val,int(smin),int(smax)))
+            "BOOLEAN" | "INTEGER" | "FLOAT" | "STRING",
+            _, _, _):
+            return Partial(( # type: ignore
+                text[0],
+                text[1],
+                text[2],
+                int(text[3]),
+                int(text[4])
+                ))
         case _:
             return None
+    
 
 
 def to_address(e:Element)-> Address | None:
@@ -156,10 +164,12 @@ def to_address(e:Element)-> Address | None:
     Returns:
         Address | None: Returns tuple of Partials if they all match.
     """
-    path = tuple(part for p in e if (part:=to_partial(p)) is not None)
-    if None in path:
-        return None
-    return path
+    address = []
+    for p in e:
+        if (part:=to_partial(p)) is None:
+            return None
+        address.append(part)
+    return tuple(address)
 
 def to_args(e:Element)-> Arguments | None:
     """Iterate over elements as Partial
@@ -170,10 +180,12 @@ def to_args(e:Element)-> Arguments | None:
     Returns:
         Arguments | None: Returns tuple of Partials if they all match.
     """
-    args = tuple(arg for a in e if (arg:=to_partial(a)) is not None)
-    if None in args:
-        return None
-    return args
+    args = []
+    for p in e:
+        if (part:=to_partial(p)) is None:
+            return None
+        args.append(part)
+    return tuple(args)
 
 def to_msg(e: Element) -> Message | None:
     msg = e.tag
@@ -249,8 +261,6 @@ def to_ctrl(e: Element) -> Control:
             case "messages":
                 for m in n:
                     if (msg := to_msg(m)) is not None:
-                        logging.warning("msg")
-                        logging.warning(msg)
                         control.messages.append(msg)
             case "children":
                 for c in n:

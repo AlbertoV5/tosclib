@@ -21,31 +21,26 @@ def to_prop(e: Element) -> Property | None:
     """
     if (key := e[0].text) is None:
         return None
-    if (typ := e.attrib["type"]) is None:
-        return None
+    value = e[1].text
+    params = tuple(i.text for i in e[1] if i.text)
 
-    if (value := e[1].text) is not None:
-        params = None
-    else:
-        params = tuple(i.text for i in e[1] if i.text is not None)
-
-    match typ, value, params:
-        case "s", str(value), None:
+    print(key, value)
+    match e.attrib["type"]:
+        case "s" if value is not None:
             return (key, value)
-        case "b", "false", None:
-            return (key, False)
-        case "b", "true", None:
-            return (key, True)
-        case "f", str(value), None:
+        case "b":
+            return (key, True if value == "1" else False)
+        case "f" if value is not None:
             return (key, float(value))
-        case "i", str(value), None:
+        case "i" if value is not None:
             return (key, int(value))
-        case "r", (_, _, _, _):
+        case "r":
             return (key, tuple(int(i) for i in params))
-        case "c", (_, _, _, _):
+        case "c":
             return (key, tuple(float(i) for i in params))
         case _:
             return None
+    return None
 
 
 def to_val(e: Element) -> Value | None:

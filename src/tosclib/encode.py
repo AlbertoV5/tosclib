@@ -190,11 +190,12 @@ def xml_property(prop: tuple[str, tuple[float, ...]]) -> Element:
     return property
 
 
-def xml_property(prop: Property) -> Element | None:
+def xml_property(prop) -> Element | None:
     """Overloaded Property Converter"""
-    logging.warning(f"{prop} is not specific.")
-    return None
-
+    # p, v = _xml_property_generic(prop[0])
+    # v.text = str(prop[1])
+    # return p
+    ...
 
 @overload
 def xml_value(val: tuple[Literal["x", "y"], bool, bool, float, int]) -> Element:

@@ -2,7 +2,7 @@
 Tuple factories for the types hinted in elements.py
 """
 
-from typing import TypeGuard, Literal
+from typing import Literal
 from .elements import *
 from logging import debug
 

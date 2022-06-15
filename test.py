@@ -1,7 +1,7 @@
 from tosclib import decode
 from tosclib import etosc2
-from tosclib.elements import Message, Control
-from xml.etree import ElementTree as ET
+from tosclib import controls
+import tosclib as tosc
 
 root = etosc2.load("docs/demos/files/msgs.tosc")
 e = root[0]
@@ -12,14 +12,7 @@ button = decode.to_ctrl(b)
 
 button.print()
 
-ctrl = decode.to_ctrl(e)
+frame = tosc.get_prop(button, "frame")
 
-def print_msgs(ctrl:Control):
-    for m in ctrl.messages:
-        # print(d)
-        print(m)
-
-
-# for m in ctrl.children:
-#     print_msgs(m)
-
+e = tosc.xml_property(("frame", (0,0,100,100)))
+print(e)

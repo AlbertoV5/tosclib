@@ -143,7 +143,7 @@ PropertyValue: TypeAlias = (
     str | int | float | bool | tuple[int, ...] | tuple[float, ...]
 )
 Property: TypeAlias = tuple[
-    str, str | int | float | bool | tuple[int, ...] | tuple[float, ...]
+    str, PropertyValue
 ]
 """
 Property:
@@ -348,6 +348,8 @@ MessageLOCAL:
 """
 Message: TypeAlias = MessageOSC | MessageMIDI | MessageLOCAL
 Messages: TypeAlias = list[MessageOSC | MessageMIDI | MessageLOCAL]
+
+Properties: TypeAlias = list[Property]
 Children: TypeAlias = list["Control"]
 
 
@@ -368,6 +370,7 @@ class Control(Protocol):
     values: Values
     messages: Messages
     children: Children
+    # properties: Properties
 
     def print(self):
         ...

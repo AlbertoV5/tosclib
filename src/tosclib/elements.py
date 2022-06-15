@@ -257,7 +257,7 @@ Midi Message:
     [3] - data2: Depends, WIP.
 """
 MidiValue = NewType(
-    "MidiValue", tuple[str, Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"], int, int]
+    "MidiValue", tuple[Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"], str, int, int]
 )
 """
 MidiValue:

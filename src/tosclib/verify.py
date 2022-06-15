@@ -24,7 +24,7 @@ def to_prop(e: Element) -> Property | None:
     if (typ := e.attrib["type"]) is None:
         return None
 
-    if (value:= e[1].text) is not None:
+    if (value := e[1].text) is not None:
         params = None
     else:
         params = tuple(i.text for i in e[1] if i.text is not None)
@@ -71,27 +71,31 @@ def to_val(e: Element) -> Value | None:
             return None
 
 
-def to_osc(e: Element) -> MessageOSC | None:
-    ...
-
-
-
 def to_msgconfig(e: Element) -> MsgConfig | None:
-    text = (
-        e[0].text, e[1].text, e[2].text, e[3].text, e[4].text
-    )
+    """Checks for enabled, send, receive, feedback, connections.
+
+    Args:
+        e (Element): <osc> or <midi> or <local>, etc
+
+    Returns:
+        MsgConfig | None: Returns MsgConfig if any Element text is not None
+    """
+    text = (e[0].text, e[1].text, e[2].text, e[3].text, e[4].text)
     if None in text:
         return None
 
-    return MsgConfig((
-        True if text[0] == "1" else False,
-        True if text[1] == "1" else False,
-        True if text[2] == "1" else False,
-        True if text[3] == "1" else False,
-        str(text[4])
-    ))
+    return MsgConfig(
+        (
+            True if text[0] == "1" else False,
+            True if text[1] == "1" else False,
+            True if text[2] == "1" else False,
+            True if text[3] == "1" else False,
+            str(text[4]),
+        )
+    )
 
-def to_trigger(t:Element)-> Trigger | None:
+
+def to_trigger(t: Element) -> Trigger | None:
     """Check for Literals on <trigger> children
 
     Args:
@@ -100,17 +104,16 @@ def to_trigger(t:Element)-> Trigger | None:
     Returns:
         Trigger | None: Returns Trigger if Literals match.
     """
-    if (var:=t[0].text) is None or (cond:=t[1].text) is None:
+    if (var := t[0].text) is None or (cond := t[1].text) is None:
         return None
-    match var,cond:
-        case( 
-            "x" | "y" | "touch" | "text",
-            "ANY" | "RISE" | "FALL"):
-            return var,cond # type: ignore
+    match var, cond:
+        case ("x" | "y" | "touch" | "text", "ANY" | "RISE" | "FALL"):
+            return var, cond  # type: ignore
         case _:
             return None
 
-def to_triggers(e:Element)-> Triggers | None:
+
+def to_triggers(e: Element) -> Triggers | None:
     """Iterator over to_trigger
 
     Args:
@@ -121,12 +124,13 @@ def to_triggers(e:Element)-> Triggers | None:
     """
     triggers = []
     for t in e:
-        if (trigg:=to_trigger(t)) is None:
+        if (trigg := to_trigger(t)) is None:
             return None
         triggers.append(trigg)
     return tuple(triggers)
 
-def to_partial(e:Element)-> Partial | None:
+
+def to_partial(e: Element) -> Partial | None:
     """Checks if first two elements' text have the required Literals.
 
     Args:
@@ -135,27 +139,25 @@ def to_partial(e:Element)-> Partial | None:
     Returns:
         Partial | None: Returns Partial if Literals match.
     """
-    text = tuple(t for i in e if (t:=i.text) is not None)
+    text = tuple(t for i in e if (t := i.text) is not None)
     if None in text:
         return None
     match text:
         case (
-            "CONSTANT"| "INDEX" | "VALUE"| "PROPERTY",
+            "CONSTANT" | "INDEX" | "VALUE" | "PROPERTY",
             "BOOLEAN" | "INTEGER" | "FLOAT" | "STRING",
-            _, _, _):
-            return Partial(( # type: ignore
-                text[0],
-                text[1],
-                text[2],
-                int(text[3]),
-                int(text[4])
-                ))
+            _,
+            _,
+            _,
+        ):
+            return Partial(
+                (text[0], text[1], text[2], int(text[3]), int(text[4]))  # type: ignore
+            )
         case _:
             return None
-    
 
 
-def to_address(e:Element)-> Address | None:
+def to_address(e: Element) -> Address | None:
     """Iterate over elements as Partial
 
     Args:
@@ -166,12 +168,13 @@ def to_address(e:Element)-> Address | None:
     """
     address = []
     for p in e:
-        if (part:=to_partial(p)) is None:
+        if (part := to_partial(p)) is None:
             return None
         address.append(part)
     return tuple(address)
 
-def to_args(e:Element)-> Arguments | None:
+
+def to_args(e: Element) -> Arguments | None:
     """Iterate over elements as Partial
 
     Args:
@@ -182,60 +185,96 @@ def to_args(e:Element)-> Arguments | None:
     """
     args = []
     for p in e:
-        if (part:=to_partial(p)) is None:
+        if (part := to_partial(p)) is None:
             return None
         args.append(part)
     return tuple(args)
 
-def to_midimsg(e: Element) -> MidiMsg:
-    ...
 
-def to_midivalue(e: Element) -> MidiValue:
-    ...
+def to_midimsg(e: Element) -> MidiMsg | None:
+    t = e[0].text, e[1].text, e[2].text, e[3].text
+    if t[1] is None or t[2] is None or t[3] is None:
+        return None
+    match t[0]:
+        case (
+                "NOTE_OFF"
+                | "NOTE_ON"
+                | "POLYPRESSURE"
+                | "CONTROLCHANGE"
+                | "PROGRAMCHANGE"
+                | "CHANNELPRESSURE"
+                | "PITCHBEND"
+                | "SYSTEMEXCLUSIVE"
+        ):
+            return MidiMsg((t[0], int(t[1]), t[2], t[3]))
+        case _:
+            return None
 
-def to_midivals(e: Element) -> MidiValues:
-    ...
+
+def to_midivalue(e: Element) -> MidiValue | None:
+    if (t:=e[0].text) is None or (x0:=e[2].text) is None or (x1:=e[3].text) is None:
+        raise ValueError(f"{e} is not a valid MidiValue")
+    if (k:=e[1].text) is None:
+        k = ""
+    match t:
+        case "CONSTANT" | "INDEX" | "VALUE" | "PROPERTY":
+            
+            return MidiValue((t, k, int(x0), int(x1)))
+        case _:
+            raise ValueError(f"{e} is not a valid MidiValue")
+
+
+def to_midivals(e: Element) -> MidiValues | None:
+    vals = []
+    for v in e:
+        if (val := to_midivalue(v)) is None:
+            return None
+        vals.append(val)
+    return tuple(vals)
+
 
 def to_localsrc(e: Element) -> LocalSrc:
     ...
 
+
 def to_localdst(e: Element) -> LocalDst:
     ...
+
 
 def to_msg(e: Element) -> Message | None:
     msg = e.tag
     match msg:
         case "osc":
-            if (msgconfig:= to_msgconfig(e)) is None:
+            if (msgconfig := to_msgconfig(e)) is None:
                 return None
-            if (triggers:= to_triggers(e[5])) is None:
+            if (triggers := to_triggers(e[5])) is None:
                 return None
-            if (path:= to_address(e[6])) is None:
+            if (path := to_address(e[6])) is None:
                 return None
-            if (arguments:= to_args(e[7])) is None:
+            if (arguments := to_args(e[7])) is None:
                 return None
-            return MessageOSC((msgconfig,triggers,path,arguments))
+            return MessageOSC((msgconfig, triggers, path, arguments))
         case "midi":
-            if (msgconfig:= to_msgconfig(e)) is None:
+            if (msgconfig := to_msgconfig(e)) is None:
                 return None
-            if (triggers:= to_triggers(e[5])) is None:
+            if (triggers := to_triggers(e[5])) is None:
                 return None
-            if (midimsg:= to_midimsg(e[6])) is None:
+            if (midimsg := to_midimsg(e[6])) is None:
                 return None
-            if (midivals:= to_midivals(e[7])) is None:
+            if (midivals := to_midivals(e[7])) is None:
                 return None
-            return MessageMIDI((msgconfig,triggers,midimsg,midivals))
+            return MessageMIDI((msgconfig, triggers, midimsg, midivals))
         case "local":
-            if (enabled:= e[0].text) is None:
+            if (enabled := e[0].text) is None:
                 return None
             b = True if enabled == "1" else False
-            if (triggers:= to_triggers(e[1])) is None:
+            if (triggers := to_triggers(e[1])) is None:
                 return None
-            if (src:= to_localsrc(e)) is None:
+            if (src := to_localsrc(e)) is None:
                 return None
-            if (dst:= to_localdst(e)) is None:
+            if (dst := to_localdst(e)) is None:
                 return None
-            return MessageLOCAL((b,triggers,src,dst))
+            return MessageLOCAL((b, triggers, src, dst))
         case _:
             raise ValueError(f"{e} is not a valid message.")
 
@@ -274,7 +313,7 @@ def to_typ(e: Element) -> Control | None:
 
 
 def to_ctrl(e: Element) -> Control:
-    if (control:= to_typ(e)) is None:
+    if (control := to_typ(e)) is None:
         raise ValueError(f"{e} type is not valid.")
     for n in e:
         match n.tag:
@@ -290,6 +329,8 @@ def to_ctrl(e: Element) -> Control:
                 for m in n:
                     if (msg := to_msg(m)) is not None:
                         control.messages.append(msg)
+                    else:
+                        raise ValueError(f"{m} is not a valid Message.")
             case "children":
                 for c in n:
                     if (ctrl := to_ctrl(c)) is not None:
@@ -298,4 +339,3 @@ def to_ctrl(e: Element) -> Control:
                 raise ValueError(f"{n} is not valid")
 
     return control
-

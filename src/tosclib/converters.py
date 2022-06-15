@@ -104,8 +104,8 @@ def xml_midivals(parent: Element, vals: MidiValues) -> Element:
     """XML midi values converter. Returns parent, expects <values>"""
     for v in vals:
         value = SubElement(parent, "value")
-        SubElement(value, "type").text = v[1]
-        SubElement(value, "key").text = v[0]
+        SubElement(value, "type").text = v[0]
+        SubElement(value, "key").text = v[1]
         SubElement(value, "scaleMin").text = str(v[2])
         SubElement(value, "scalemax").text = str(v[3])
     return parent

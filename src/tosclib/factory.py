@@ -97,7 +97,7 @@ def msg_midival(
     scaleMax: int = 127,
 ) -> MidiValue:
     """Midi Value factory"""
-    return MidiValue((key, typ, scaleMin, scaleMax))
+    return MidiValue((typ, key, scaleMin, scaleMax))
 
 
 def msg_localsrc(

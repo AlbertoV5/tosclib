@@ -297,8 +297,8 @@
 <property type='r'>
 <key><![CDATA[frame]]></key>
 <value>
-<x>286</x>
-<y>415</y>
+<x>110</x>
+<y>272</y>
 <w>50</w>
 <h>200</h>
 </value>
@@ -416,6 +416,135 @@
 </value>
 </values>
 </midi>
+</messages>
+</node>
+<node ID='fe5fe058-ecce-11ec-a90d-8c8590bdd04f' type='RADIAL'>
+<properties>
+<property type='b'>
+<key><![CDATA[background]]></key>
+<value>1</value>
+</property>
+<property type='b'>
+<key><![CDATA[centered]]></key>
+<value>0</value>
+</property>
+<property type='c'>
+<key><![CDATA[color]]></key>
+<value>
+<r>1</r>
+<g>0</g>
+<b>0</b>
+<a>1</a>
+</value>
+</property>
+<property type='f'>
+<key><![CDATA[cornerRadius]]></key>
+<value>1</value>
+</property>
+<property type='r'>
+<key><![CDATA[frame]]></key>
+<value>
+<x>240</x>
+<y>300</y>
+<w>150</w>
+<h>150</h>
+</value>
+</property>
+<property type='b'>
+<key><![CDATA[grabFocus]]></key>
+<value>1</value>
+</property>
+<property type='b'>
+<key><![CDATA[grid]]></key>
+<value>1</value>
+</property>
+<property type='i'>
+<key><![CDATA[gridSteps]]></key>
+<value>20</value>
+</property>
+<property type='b'>
+<key><![CDATA[interactive]]></key>
+<value>1</value>
+</property>
+<property type='b'>
+<key><![CDATA[inverted]]></key>
+<value>0</value>
+</property>
+<property type='b'>
+<key><![CDATA[locked]]></key>
+<value>0</value>
+</property>
+<property type='s'>
+<key><![CDATA[name]]></key>
+<value><![CDATA[radial1]]></value>
+</property>
+<property type='i'>
+<key><![CDATA[orientation]]></key>
+<value>0</value>
+</property>
+<property type='b'>
+<key><![CDATA[outline]]></key>
+<value>1</value>
+</property>
+<property type='i'>
+<key><![CDATA[outlineStyle]]></key>
+<value>0</value>
+</property>
+<property type='i'>
+<key><![CDATA[pointerPriority]]></key>
+<value>0</value>
+</property>
+<property type='i'>
+<key><![CDATA[response]]></key>
+<value>0</value>
+</property>
+<property type='i'>
+<key><![CDATA[responseFactor]]></key>
+<value>100</value>
+</property>
+<property type='i'>
+<key><![CDATA[shape]]></key>
+<value>2</value>
+</property>
+<property type='b'>
+<key><![CDATA[visible]]></key>
+<value>1</value>
+</property>
+</properties>
+<values>
+<value>
+<key><![CDATA[touch]]></key>
+<locked>0</locked>
+<lockedDefaultCurrent>0</lockedDefaultCurrent>
+<default><![CDATA[false]]></default>
+<defaultPull>0</defaultPull>
+</value>
+<value>
+<key><![CDATA[x]]></key>
+<locked>0</locked>
+<lockedDefaultCurrent>0</lockedDefaultCurrent>
+<default><![CDATA[0]]></default>
+<defaultPull>0</defaultPull>
+</value>
+</values>
+<messages>
+<local>
+<enabled>1</enabled>
+<triggers>
+<trigger>
+<var><![CDATA[x]]></var>
+<condition>ANY</condition>
+</trigger>
+</triggers>
+<type>VALUE</type>
+<conversion>FLOAT</conversion>
+<value><![CDATA[x]]></value>
+<scaleMin>0</scaleMin>
+<scaleMax>1</scaleMax>
+<dstType>VALUE</dstType>
+<dstVar><![CDATA[]]></dstVar>
+<dstID><![CDATA[]]></dstID>
+</local>
 </messages>
 </node>
 </children>

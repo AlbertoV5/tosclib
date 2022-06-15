@@ -1,5 +1,5 @@
 """
-Converter functions that verify XML Elements and return tosclib types.
+Parse XML Elements and return tosclib types.
 """
 
 import logging
@@ -104,11 +104,14 @@ def to_trigger(t: Element) -> Trigger | None:
     Returns:
         Trigger | None: Returns Trigger if Literals match.
     """
-    if (var := t[0].text) is None or (cond := t[1].text) is None:
-        return None
-    match var, cond:
-        case ("x" | "y" | "touch" | "text", "ANY" | "RISE" | "FALL"):
-            return var, cond  # type: ignore
+    var, cond = t[0].text, t[1].text
+    match var:
+        case "x" | "y" | "touch" | "text":
+            match cond:
+                case "ANY" | "RISE" | "FALL":
+                    return Trigger((var, cond))
+                case _:
+                    return None
         case _:
             return None
 
@@ -192,19 +195,27 @@ def to_args(e: Element) -> Arguments | None:
 
 
 def to_midimsg(e: Element) -> MidiMsg | None:
+    """Checks if type is one of the valid Literals.
+
+    Args:
+        e (Element): <message>
+
+    Returns:
+        MidiMsg | None: _description_
+    """
     t = e[0].text, e[1].text, e[2].text, e[3].text
     if t[1] is None or t[2] is None or t[3] is None:
         return None
     match t[0]:
         case (
-                "NOTE_OFF"
-                | "NOTE_ON"
-                | "POLYPRESSURE"
-                | "CONTROLCHANGE"
-                | "PROGRAMCHANGE"
-                | "CHANNELPRESSURE"
-                | "PITCHBEND"
-                | "SYSTEMEXCLUSIVE"
+            "NOTE_OFF"
+            | "NOTE_ON"
+            | "POLYPRESSURE"
+            | "CONTROLCHANGE"
+            | "PROGRAMCHANGE"
+            | "CHANNELPRESSURE"
+            | "PITCHBEND"
+            | "SYSTEMEXCLUSIVE"
         ):
             return MidiMsg((t[0], int(t[1]), t[2], t[3]))
         case _:
@@ -212,19 +223,40 @@ def to_midimsg(e: Element) -> MidiMsg | None:
 
 
 def to_midivalue(e: Element) -> MidiValue | None:
-    if (t:=e[0].text) is None or (x0:=e[2].text) is None or (x1:=e[3].text) is None:
-        raise ValueError(f"{e} is not a valid MidiValue")
-    if (k:=e[1].text) is None:
+    """Checks if the type is one of the valid Literals.
+    Key is allowed to be None/empty.
+
+    Args:
+        e (Element): <value> from <values> from <midi>
+
+    Returns:
+        MidiValue | None: Valid MidiValue.
+    """
+    if (
+        (t := e[0].text) is None
+        or (x0 := e[2].text) is None
+        or (x1 := e[3].text) is None
+    ):
+        return None
+    if (k := e[1].text) is None:
         k = ""
     match t:
         case "CONSTANT" | "INDEX" | "VALUE" | "PROPERTY":
-            
+
             return MidiValue((t, k, int(x0), int(x1)))
         case _:
-            raise ValueError(f"{e} is not a valid MidiValue")
+            return None
 
 
 def to_midivals(e: Element) -> MidiValues | None:
+    """Iterate through all <value> elements.
+
+    Args:
+        e (Element): <values> from <midi>
+
+    Returns:
+        MidiValues | None: tuple of MidiValue.
+    """
     vals = []
     for v in e:
         if (val := to_midivalue(v)) is None:
@@ -233,15 +265,66 @@ def to_midivals(e: Element) -> MidiValues | None:
     return tuple(vals)
 
 
-def to_localsrc(e: Element) -> LocalSrc:
-    ...
+def to_localsrc(e: Element) -> LocalSrc | None:
+    """Checks if type and conversions are valid Literals.
+
+    Args:
+        e (Element): <local>
+
+    Returns:
+        LocalSrc | None: LocalSrc type.
+    """
+    t, c = e[2].text, e[3].text
+    if (
+        (val := e[4].text) is None
+        or (x0 := e[5].text) is None
+        or (x1 := e[6].text) is None
+    ):
+        return None
+    match t:
+        case ("CONSTANT" | "INDEX" | "VALUE" | "PROPERTY"):
+            match c:
+                case ("BOOLEAN" | "INTEGER" | "FLOAT" | "STRING"):
+                    return LocalSrc((t, c, val, int(x0), int(x1)))
+                case _:
+                    return None
+        case _:
+            return None
 
 
-def to_localdst(e: Element) -> LocalDst:
-    ...
+def to_localdst(e: Element) -> LocalDst | None:
+    """Checks if type is a valid Literal.
+
+    Args:
+        e (Element): <local>
+
+    Returns:
+        LocalDst | None: LocalDst type.
+    """
+    if (typ := e[7].text) is None:
+        return None
+    var = "" if (var := e[8].text) is None else var
+    id = "" if (id := e[9].text) is None else id
+
+    match typ:
+        case "CONSTANT" | "INDEX" | "VALUE" | "PROPERTY":
+            return LocalDst((typ, var, id))
+        case _:
+            return None
 
 
 def to_msg(e: Element) -> Message | None:
+    """Checks if the Element is osc,midi,local,etc message.
+
+    Args:
+        e (Element): <osc>, <midi>, etc.
+
+    Raises:
+        ValueError: If element tag is not valid.
+
+    Returns:
+        Message | None: Tuple.
+    """
     msg = e.tag
     match msg:
         case "osc":
@@ -253,7 +336,7 @@ def to_msg(e: Element) -> Message | None:
                 return None
             if (arguments := to_args(e[7])) is None:
                 return None
-            return MessageOSC((msgconfig, triggers, path, arguments))
+            return MessageOSC(("osc", msgconfig, triggers, path, arguments))
         case "midi":
             if (msgconfig := to_msgconfig(e)) is None:
                 return None
@@ -263,18 +346,19 @@ def to_msg(e: Element) -> Message | None:
                 return None
             if (midivals := to_midivals(e[7])) is None:
                 return None
-            return MessageMIDI((msgconfig, triggers, midimsg, midivals))
+            return MessageMIDI(("midi", msgconfig, triggers, midimsg, midivals))
         case "local":
             if (enabled := e[0].text) is None:
                 return None
-            b = True if enabled == "1" else False
             if (triggers := to_triggers(e[1])) is None:
                 return None
             if (src := to_localsrc(e)) is None:
                 return None
             if (dst := to_localdst(e)) is None:
                 return None
-            return MessageLOCAL((b, triggers, src, dst))
+            return MessageLOCAL(
+                ("local", True if enabled == "1" else False, triggers, src, dst)
+            )
         case _:
             raise ValueError(f"{e} is not a valid message.")
 
@@ -312,7 +396,9 @@ def to_typ(e: Element) -> Control | None:
             return None
 
 
-def to_ctrl(e: Element) -> Control:
+def to_ctrl(e: Element | None) -> Control:
+    if e is None:
+        raise ValueError(f"{e} is None.")
     if (control := to_typ(e)) is None:
         raise ValueError(f"{e} type is not valid.")
     for n in e:

@@ -113,9 +113,9 @@ def xml_midivals(parent: Element, vals: MidiValues) -> Element:
 
 def xml_localSrc(parent: Element, msg: LocalSrc) -> Element:
     """XML local source converter. Returns parent, expects <local>, etc"""
-    SubElement(parent, "type").text = msg[1]
-    SubElement(parent, "conversion").text = msg[2]
-    SubElement(parent, "value").text = msg[0]
+    SubElement(parent, "type").text = msg[0]
+    SubElement(parent, "conversion").text = msg[1]
+    SubElement(parent, "value").text = msg[2]
     SubElement(parent, "scaleMin").text = str(msg[3])
     SubElement(parent, "scaleMax").text = str(msg[4])
     return parent
@@ -123,9 +123,9 @@ def xml_localSrc(parent: Element, msg: LocalSrc) -> Element:
 
 def xml_localDst(parent: Element, msg: LocalDst) -> Element:
     """XML local destination converter. Returns parent, expects <local>, etc"""
-    SubElement(parent, "dstType").text = msg[2]
-    SubElement(parent, "dstVar").text = msg[0]
-    SubElement(parent, "dstID").text = msg[1]
+    SubElement(parent, "dstType").text = msg[0]
+    SubElement(parent, "dstVar").text = msg[1]
+    SubElement(parent, "dstID").text = msg[2]
     return parent
 
 
@@ -222,29 +222,29 @@ def xml_value(val: Value) -> Element | None:
 
 @overload
 def xml_message(msg: MessageOSC) -> Element:
-    message = Element("osc")
-    xml_msgconfig(message, msg[0])
-    xml_triggers(SubElement(message, "triggers"), msg[1])
-    xml_partials(SubElement(message, "path"), msg[2])
-    xml_partials(SubElement(message, "arguments"), msg[3])
+    message = Element(msg[0])
+    xml_msgconfig(message, msg[1])
+    xml_triggers(SubElement(message, "triggers"), msg[2])
+    xml_partials(SubElement(message, "path"), msg[3])
+    xml_partials(SubElement(message, "arguments"), msg[4])
     return message
 
 
 @overload
 def xml_message(msg: MessageMIDI) -> Element:
-    message = Element("midi")
-    xml_msgconfig(message, msg[0])
-    xml_triggers(SubElement(message, "triggers"), msg[1])
-    message.append(xml_midimsg(msg[2]))
-    xml_midivals(Element("values"), msg[3])
+    message = Element(msg[0])
+    xml_msgconfig(message, msg[1])
+    xml_triggers(SubElement(message, "triggers"), msg[2])
+    message.append(xml_midimsg(msg[3]))
+    xml_midivals(Element("values"), msg[4])
     return message
 
 
 @overload
 def xml_message(msg: MessageLOCAL) -> Element:
-    message = Element("local")
-    SubElement(message, "enabled").text = str(msg[0])
-    xml_triggers(SubElement(message, "triggers"), msg[1])
+    message = Element(msg[0])
+    SubElement(message, "enabled").text = str(msg[1])
+    xml_triggers(SubElement(message, "triggers"), msg[2])
     return message
 
 

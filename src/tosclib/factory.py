@@ -108,7 +108,7 @@ def msg_localsrc(
     maxRange: int = 1,
 ) -> LocalSrc:
     """Local Source factory"""
-    return LocalSrc((key, typ, conversion, minRange, maxRange))
+    return LocalSrc((typ, conversion, key, minRange, maxRange))
 
 
 def msg_localdst(
@@ -117,7 +117,7 @@ def msg_localdst(
     typ: Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"] = "VALUE",
 ) -> LocalDst:
     """Local Destination factory"""
-    return LocalDst((key, id, typ))
+    return LocalDst((typ, key, id))
 
 
 def osc(
@@ -139,7 +139,7 @@ def osc(
         )
     if arguments is None:
         arguments = (msg_partial(),)
-    return MessageOSC((config, triggers, address, arguments))
+    return MessageOSC(("osc", config, triggers, address, arguments))
 
 
 def midi(
@@ -157,7 +157,7 @@ def midi(
         message = msg_midimsg()
     if values is None:
         values = (msg_midival(),)
-    return MessageMIDI((config, triggers, message, values))
+    return MessageMIDI(("midi", config, triggers, message, values))
 
 
 def local(
@@ -173,4 +173,4 @@ def local(
         source = msg_localsrc()
     if destination is None:
         destination = msg_localdst()
-    return MessageLOCAL((enabled, triggers, source, destination))
+    return MessageLOCAL(("local", enabled, triggers, source, destination))

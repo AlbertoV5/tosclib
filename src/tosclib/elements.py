@@ -52,8 +52,6 @@ MessageLOCAL is made of:
     LocalSrc: Tuple of Literals, str, etc.
     LocalDst: Tuple of Literals, str, etc.
 
-
-
 """
 
 from typing import Literal, NewType, Protocol, TypeAlias, Callable
@@ -283,64 +281,70 @@ Address: TypeAlias = tuple[Partial, ...]
 """Tuple of Partial"""
 Arguments: TypeAlias = tuple[Partial, ...]
 """Tuple of Partial"""
-MessageOSC = NewType("MessageOSC", tuple[MsgConfig, Triggers, Address, Arguments])
+MessageOSC = NewType(
+    "MessageOSC", tuple[Literal["osc"], MsgConfig, Triggers, Address, Arguments]
+)
 """
 MessageOSC:
-
-    [0] - MsgConfig: Tuple of Enabled, Send, Receive, Feedback, Connections.
-    [1] - Triggers: Tuple of Trigger.
-    [2] - Address: Construct a message with tuple of Partial.
-    [3] - Arguments: Construct arguments with tuple of Partial.
+    [0] - Tag: osc
+    [1] - MsgConfig: Tuple of Enabled, Send, Receive, Feedback, Connections.
+    [2] - Triggers: Tuple of Trigger.
+    [3] - Address: Construct a message with tuple of Partial.
+    [4] - Arguments: Construct arguments with tuple of Partial.
 """
-# msgo = MessageOSC(
-#     (
-#         MsgConfig((True, True, True, False, "00001")),
-#         Triggers((Trigger(("x", "ANY")),)),
-#         Address(
-#             (
-#                 Partial(("CONSTANT", "STRING", "/", 0, 1)),
-#                 Partial(("PROPERTY", "STRING", "name", 0, 1)),
-#             )
-#         ),
-#         Arguments((Partial(("VALUE", "FLOAT", "x", 0, 1)),)),
-#     )
-# )
-"""Tuple of MidiMsg"""
 MidiValues: TypeAlias = tuple[MidiValue, ...]
 """Tuple of MidiValue"""
-MessageMIDI = NewType("MessageMIDI", tuple[MsgConfig, Triggers, MidiMsg, MidiValues])
+MessageMIDI = NewType(
+    "MessageMIDI", tuple[Literal["midi"], MsgConfig, Triggers, MidiMsg, MidiValues]
+)
 """
 MessageMIDI:
 
-    [0] - MsgConfig: Tuple of Enabled, Send, Receive, Feedback, Connections.
-    [1] - Triggers (tuple). 
-    [2] - Message: See MidiMessage.
-    [3] - Value (tuple): See :type:`tosclib.elements.MidiValue`
+    [0] - Tag: midi.
+    [1] - MsgConfig: Tuple of Enabled, Send, Receive, Feedback, Connections.
+    [2] - Triggers (tuple). 
+    [3] - Message: See MidiMessage.
+    [4] - Value (tuple): See :type:`tosclib.elements.MidiValue`
 """
 LocalSrc = NewType(
     "LocalSrc",
     tuple[
-        str,
         Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"],
         Literal["BOOLEAN", "INTEGER", "FLOAT", "STRING"],
+        str,
         int,
         int,
     ],
 )
-"""[0] - Source Value/Property/etc, [1] - Valid Literal Type
-[2] - Valid Literal Conversion", [3] - Min range, [4] - Max range"""
+"""
+LocalSrc:
+
+    [0] - Valid Literal Type
+    [1] - Valid Literal Conversion
+    [2] - Source Value/Property/etc 
+    [3] - Min range
+    [4] - Max range
+"""
 LocalDst = NewType(
-    "LocalDst", tuple[str, str, Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"]]
+    "LocalDst", tuple[Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"], str, str]
 )
-"""[0] - Target Value/Property, [1] - Target ID"""
-MessageLOCAL = NewType("MessageLOCAL", tuple[bool, Triggers, LocalSrc, LocalDst])
+"""
+LocalDst:
+    [0] - Destination Type
+    [1] - Destination Var
+    [2] - Destination ID
+"""
+MessageLOCAL = NewType(
+    "MessageLOCAL", tuple[Literal["local"], bool, Triggers, LocalSrc, LocalDst]
+)
 """
 MessageLOCAL:
 
-    [0] - Enabled: Bool.
-    [1] - Triggers: Tuple of Trigger. 
-    [2] - Source: Tuple of value, valid literal.
-    [3] - Target: Tuple of value, id.
+    [0] - Tag: local.
+    [1] - Enabled: Bool.
+    [2] - Triggers: Tuple of Trigger. 
+    [3] - Source: Tuple of value, valid literal.
+    [4] - Target: Tuple of value, id.
 """
 Message: TypeAlias = MessageOSC | MessageMIDI | MessageLOCAL
 Messages: TypeAlias = list[MessageOSC | MessageMIDI | MessageLOCAL]
@@ -349,8 +353,6 @@ Children: TypeAlias = list["Control"]
 
 class Control(Protocol):
     """The Control Type Protocol. Touch OSC Control
-
-    All attributes are tuples except for children which is a list.
 
     Attributes:
         type(ControlType): Any of the valid literals.
@@ -366,3 +368,6 @@ class Control(Protocol):
     values: Values
     messages: Messages
     children: Children
+
+    def print(self):
+        ...

@@ -187,6 +187,21 @@ def to_args(e:Element)-> Arguments | None:
         args.append(part)
     return tuple(args)
 
+def to_midimsg(e: Element) -> MidiMsg:
+    ...
+
+def to_midivalue(e: Element) -> MidiValue:
+    ...
+
+def to_midivals(e: Element) -> MidiValues:
+    ...
+
+def to_localsrc(e: Element) -> LocalSrc:
+    ...
+
+def to_localdst(e: Element) -> LocalDst:
+    ...
+
 def to_msg(e: Element) -> Message | None:
     msg = e.tag
     match msg:
@@ -200,14 +215,27 @@ def to_msg(e: Element) -> Message | None:
             if (arguments:= to_args(e[7])) is None:
                 return None
             return MessageOSC((msgconfig,triggers,path,arguments))
-        # case "midi":
-        #     if (msgconfig:= to_msgconfig(e)) is None:
-        #             return None
-        #     if (triggers:= to_triggers(e)) is None:
-        #         return None
-        #     return MessageMIDI((msgconfig,))
-        # case "local":
-        #     return MessageLOCAL(())
+        case "midi":
+            if (msgconfig:= to_msgconfig(e)) is None:
+                return None
+            if (triggers:= to_triggers(e[5])) is None:
+                return None
+            if (midimsg:= to_midimsg(e[6])) is None:
+                return None
+            if (midivals:= to_midivals(e[7])) is None:
+                return None
+            return MessageMIDI((msgconfig,triggers,midimsg,midivals))
+        case "local":
+            if (enabled:= e[0].text) is None:
+                return None
+            b = True if enabled == "1" else False
+            if (triggers:= to_triggers(e[1])) is None:
+                return None
+            if (src:= to_localsrc(e)) is None:
+                return None
+            if (dst:= to_localdst(e)) is None:
+                return None
+            return MessageLOCAL((b,triggers,src,dst))
         case _:
             raise ValueError(f"{e} is not a valid message.")
 

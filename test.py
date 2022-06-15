@@ -8,7 +8,12 @@ e = root[0]
 ctrl = verify.to_ctrl(e)
 
 def print_msg(msg:Message):
-    return print(msg)
+    dic = ("config", "triggs", "path", "args")
+    for m, d in zip(msg,dic):
+        print(d)
+        print(m)
+
+
 
 for m in ctrl.children[0].messages:
     print_msg(m)

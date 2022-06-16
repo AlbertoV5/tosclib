@@ -371,6 +371,3 @@ class Control(Protocol):
     messages: Messages
     children: Children
     # properties: Properties
-
-    def print(self):
-        ...

@@ -49,23 +49,69 @@ class ControlBuilder:
             setattr(self, k, kwargs[k])
 
     def __repr__(self):
-        return str(tuple((getattr(self, p) for p in vars(self))))
+        return f"""
+Control:
+    {self.type}, {self.id}
+Values:
+    {self.values}
+Properties:
+    {list(getattr(self, p) for p in vars(self) if p not in ("id","type","values","messages","children"))}
+Messages:
+    {self.messages}
+Children:
+    {self.children}
+"""
+        
 
-    def print(self):
-        print("Control:")
-        print(f"\t{self.type}, {self.id}")
-        print("Values:")
-        for v in self.values:
-            print(f"\t{v}")
-        print("Properties:")
-        for p in vars(self):
-            if p not in ("id", "type", "values", "messages", "children"):
-                print(f"\t{getattr(self, p)}")
-        print("Messages:")
-        for m in self.messages:
-            print(f"\t{m}")
-        print("Children:")
-        print(self.children)
+def get_prop(control: Control, key: str) -> Property:
+    """Get the Property of a Control"""
+    if (p:=getattr(control, key)) is not None:
+        return (key, p[1])
+    raise KeyError(f"{p} is not a valid Property.")
+
+
+def set_prop(control: Control, property: Property) -> Control:
+    """Set the Property of a Control"""
+    setattr(control, property[0], property)
+    return control
+
+
+def get_value(control: Control, key: str) -> Value | None:
+    """Get the Value of a Control"""
+    for v in control.values:
+        if v[0] == key:
+            return v
+    return None
+
+
+def set_value(control: Control, value: Value) -> Control:
+    """Set the Value of a Control"""
+    for i, v in enumerate(control.values):
+        if v[0] == value[0]:
+            control.values[i] = value
+    return control
+
+
+def get_msglist(control: Control, key: Literal["osc", "midi", "local"]) -> Messages:
+    """Get all messages of the same type, osc, midi, etc."""
+    msgs: Messages = []
+    for v in control.messages:
+        if v[0] == key:
+            msgs.append(v)
+    return msgs
+    
+def set_msglist(
+    control: Control, key: Literal["osc", "midi", "local"], msgs: Messages
+) -> Control:
+    """Set all messages of the same type, osc, midi, etc."""
+    for i, v in enumerate(control.messages.copy()):
+        if v[0] == key:
+            control.messages.pop(i)
+    for m in msgs:
+        control.messages.append(m)
+    return control
+
+
 
 
 class Box(ControlBuilder):
@@ -226,55 +272,6 @@ class Xy(ControlBuilder):
     ):
         super().__init__("XY", id, values, messages, None, **kwargs)
 
-
-def get_prop(control: Control, key: str) -> Property:
-    """Get the Property of a Control"""
-    if (p:=getattr(control, key)) is not None:
-        return (key, p[1])
-    raise KeyError(f"{p} is not a valid Property.")
-
-
-def set_prop(control: Control, property: Property) -> Control:
-    """Set the Property of a Control"""
-    setattr(control, property[0], property)
-    return control
-
-
-def get_value(control: Control, key: str) -> Value | None:
-    """Get the Value of a Control"""
-    for v in control.values:
-        if v[0] == key:
-            return v
-    return None
-
-
-def set_value(control: Control, value: Value) -> Control:
-    """Set the Value of a Control"""
-    for i, v in enumerate(control.values):
-        if v[0] == value[0]:
-            control.values[i] = value
-    return control
-
-
-def get_msglist(control: Control, key: Literal["osc", "midi", "local"]) -> Messages:
-    """Get all messages of the same type, osc, midi, etc."""
-    msgs: Messages = []
-    for v in control.messages:
-        if v[0] == key:
-            msgs.append(v)
-    return msgs
-
-
-def set_msglist(
-    control: Control, key: Literal["osc", "midi", "local"], msgs: Messages
-) -> Control:
-    """Set all messages of the same type, osc, midi, etc."""
-    for i, v in enumerate(control.messages.copy()):
-        if v[0] == key:
-            control.messages.pop(i)
-    for m in msgs:
-        control.messages.append(m)
-    return control
 
 
 """ DEPRECATED?? """

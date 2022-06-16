@@ -3,10 +3,9 @@ Python Typed-hinted-tuples to XML Converters
 """
 
 import logging
-from .elements import *
 from typing import Literal
+from .elements import *
 from xml.etree.ElementTree import Element, SubElement
-from typing import overload
 
 __all__ = [
     # Property
@@ -25,37 +24,63 @@ __all__ = [
 ]
 
 
-def _xml_property_generic(name: str) -> tuple[Element, Element]:
-    """Create an XML <property> Element of unspecified <value>.
+def xml_property(prop: Property) -> Element | None:    
+    """Get a Property type tuple and return XML Element
 
     Args:
-        name (str): Name/key of the property.
+        prop (Property): Tuple to convert to XML
 
     Returns:
-        tuple[Element, Element]: <property> and <value> Elements.
+        Element | None: <property> with <key> and <value>
     """
     property = Element("property")
-    SubElement(property, "key").text = name
+    SubElement(property, "key").text = prop[0]
     value = SubElement(property, "value")
-    return property, value
+    val = prop[1]
+    match val:
+        case bool() if val is True:
+            value.text = "1"
+        case bool():
+            value.text = "0"
+        case int() | float() | str():
+            value.text = str(val)
+        case tuple():
+            if isinstance(val[0], int):
+                keys = ("x","y","w","h")
+            else:
+                keys = ("r","g","b","a")
+            for k,n in zip(keys, val):
+                SubElement(value, k).text = str(n)
+        case _:
+            return None
+    return property
 
 
-def _xml_value_generic(val: tuple[str, bool, bool, str, int]) -> Element:
-    """Create an XML <value> with all its children.
+def xml_value(val: Value) -> Element | None:
+    """Get a Value type tuple and return an XML Element
 
     Args:
-        val (tuple[str,bool,bool,str,int]):
-        Pass a generic Value with Literal and optionals converted to str.
+        val (Value): Value type tuple
 
     Returns:
-        Element: <value> Element.
+        Element | None: <value> with <key>, <locked>, etc ...
     """
+    k, v = val[0], val[3]
+
     value = Element("value")
-    SubElement(value, "key").text = val[0]
-    SubElement(value, "locked").text = str(int(val[1]))
-    SubElement(value, "lockedDefaultCurrent").text = str(int(val[2]))
-    SubElement(value, "valueDefault").text = val[3]
+    SubElement(value, "key").text = k
+    SubElement(value, "locked").text = "1" if val[1] is True else "0"
+    SubElement(value, "lockedDefaultCurrent").text = "1" if val[2] is True else "0"
     SubElement(value, "defaultPull").text = str(val[4])
+
+    match k,v:
+        case "x" | "y" | "text", float() | str():
+            SubElement(value, "valueDefault").text = str(v)
+        case "touch", bool():
+            SubElement(value, "valueDefault").text = "1" if v is True else "0"
+        case _:
+            return None
+
     return value
 
 
@@ -90,14 +115,14 @@ def xml_partials(parent: Element, parts: tuple[Partial, ...]) -> Element:
     return parent
 
 
-def xml_midimsg(msg: MidiMsg) -> Element:
+def xml_midimsg(parent: Element, msg: MidiMsg) -> Element:
     """XML midi messages converter. Returns <message>"""
-    message = Element("message")
+    message = SubElement(parent, "message")
     SubElement(message, "type").text = msg[0]
     SubElement(message, "channel").text = str(msg[1])
     SubElement(message, "data1").text = msg[2]
     SubElement(message, "data2").text = msg[3]
-    return message
+    return parent
 
 
 def xml_midivals(parent: Element, vals: MidiValues) -> Element:
@@ -129,127 +154,36 @@ def xml_localDst(parent: Element, msg: LocalDst) -> Element:
     return parent
 
 
-"""
-OVERLOADS
-"""
-
-
-@overload
-def xml_property(prop: tuple[str, str]) -> Element:
-    """Overload for <property type="s">"""
-    property, value = _xml_property_generic(prop[0])
-    property.attrib["type"] = "s"
-    value.text = prop[1]
-    return property
-
-
-@overload
-def xml_property(prop: tuple[str, bool]) -> Element:
-    """Overload for <property type="b">"""
-    property, value = _xml_property_generic(prop[0])
-    property.attrib["type"] = "b"
-    value.text = str(int(prop[1]))
-    return property
-
-
-@overload
-def xml_property(prop: tuple[str, int]) -> Element:
-    """Overload for <property type="i">"""
-    property, value = _xml_property_generic(prop[0])
-    property.attrib["type"] = "i"
-    value.text = str(prop[1])
-    return property
-
-
-@overload
-def xml_property(prop: tuple[str, float]) -> Element:
-    """Overload for <property type="f">"""
-    property, value = _xml_property_generic(prop[0])
-    property.attrib["type"] = "f"
-    value.text = str(prop[1])
-    return property
-
-
-@overload
-def xml_property(prop: tuple[str, tuple[int, ...]]) -> Element:
-    """Overload for <property type="r">"""
-    property, value = _xml_property_generic(prop[0])
-    property.attrib["type"] = "r"
-    for k, p in zip(("x", "y", "w", "h"), prop[1]):
-        SubElement(value, k).text = str(p)
-    return property
-
-
-@overload
-def xml_property(prop: tuple[str, tuple[float, ...]]) -> Element:
-    """Overload for <property type="c">"""
-    property, value = _xml_property_generic(prop[0])
-    property.attrib["type"] = "c"
-    for k, p in zip(("r", "g", "b", "a"), prop[1]):
-        SubElement(value, k).text = str(p)
-    return property
-
-
-def xml_property(prop) -> Element | None:
-    """Overloaded Property Converter"""
-    # p, v = _xml_property_generic(prop[0])
-    # v.text = str(prop[1])
-    # return p
-    ...
-
-@overload
-def xml_value(val: tuple[Literal["x", "y"], bool, bool, float, int]) -> Element:
-    """Literal "x" or "y" Value overload"""
-    return _xml_value_generic((str(val[0]), val[1], val[2], str(val[3]), val[4]))
-
-
-@overload
-def xml_value(val: tuple[Literal["text"], bool, bool, str, int]) -> Element:
-    """Literal "text" Value overload"""
-    return _xml_value_generic((str(val[0]), val[1], val[2], val[3], val[4]))
-
-
-@overload
-def xml_value(val: tuple[Literal["touch"], bool, bool, bool, int]) -> Element:
-    """Touch Value overload"""
-    return _xml_value_generic((str(val[0]), val[1], val[2], str(int(val[3])), val[4]))
-
-
-def xml_value(val: Value) -> Element | None:
-    """Overloaded Value to XML Converter"""
-    logging.warning(f"{val} is not specific.")
-    return None
-
-
-@overload
-def xml_message(msg: MessageOSC) -> Element:
-    message = Element(msg[0])
-    xml_msgconfig(message, msg[1])
-    xml_triggers(SubElement(message, "triggers"), msg[2])
-    xml_partials(SubElement(message, "path"), msg[3])
-    xml_partials(SubElement(message, "arguments"), msg[4])
-    return message
-
-
-@overload
-def xml_message(msg: MessageMIDI) -> Element:
-    message = Element(msg[0])
-    xml_msgconfig(message, msg[1])
-    xml_triggers(SubElement(message, "triggers"), msg[2])
-    message.append(xml_midimsg(msg[3]))
-    xml_midivals(Element("values"), msg[4])
-    return message
-
-
-@overload
-def xml_message(msg: MessageLOCAL) -> Element:
-    message = Element(msg[0])
-    SubElement(message, "enabled").text = str(msg[1])
-    xml_triggers(SubElement(message, "triggers"), msg[2])
-    return message
-
-
 def xml_message(msg: MessageOSC | MessageMIDI | MessageLOCAL) -> Element | None:
-    """Overloaded Message to XML Converter"""
-    logging.warning(f"{msg} is not specific.")
-    return None
+    """Get any Message tuple and returns corresponding XML Element
+
+    Args:
+        msg (MessageOSC | MessageMIDI | MessageLOCAL): Any Message tuple.
+
+    Returns:
+        Element | None: Return either <osc>, <midi>, etc.
+    """
+    key = msg[0]
+    message = Element(key)
+
+    match msg:
+        case ("osc", tuple(), tuple(), tuple(), tuple()):
+            xml_msgconfig(message, msg[1])
+            xml_triggers(SubElement(message, "triggers"), msg[2])
+            xml_partials(SubElement(message, "path"), msg[3])
+            xml_partials(SubElement(message, "arguments"), msg[4])
+        case ("midi", tuple(), tuple(), tuple(), tuple()):
+            xml_msgconfig(message, msg[1])
+            xml_triggers(SubElement(message, "triggers"), msg[2])
+            xml_midimsg(message, msg[3])
+            xml_midivals(SubElement(message, "values"), msg[4])
+        case ("local", bool(), tuple(), tuple(), tuple()):
+            SubElement(message, "enabled").text = "1" if msg[1] is True else "0"
+            xml_triggers(SubElement(message, "triggers"), msg[2])
+            xml_localSrc(message, msg[3])
+            xml_localDst(message, msg[4])
+        case _:
+            return None
+
+    return message
+

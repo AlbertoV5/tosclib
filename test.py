@@ -10,9 +10,16 @@ b = e.find(".//node[@type='BUTTON']/messages/osc/../..")
 
 button = decode.to_ctrl(b)
 
-button.print()
+print(button)
 
 frame = tosc.get_prop(button, "frame")
 
-e = tosc.xml_property(("frame", (0,0,100,100)))
-print(e)
+oscs = tosc.get_msglist(button, "osc")
+
+xml_frame = tosc.xml_property(frame)
+
+xml_osc = tosc.xml_message(oscs[0])
+
+for i in xml_osc:
+    print(i)
+

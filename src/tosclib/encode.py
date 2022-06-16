@@ -3,7 +3,7 @@ Python Typed-hinted-tuples to XML Converters
 """
 
 import logging
-from typing import Literal
+from typing import Callable
 from .elements import *
 from xml.etree.ElementTree import Element, SubElement
 
@@ -23,15 +23,21 @@ __all__ = [
     "xml_message",
 ]
 
+def SENTINEL(origin:Callable)->Element:
+    """None/Invalid XML Element to allow chaining."""
+    e = Element("none")
+    e.text = str(origin)
+    logging.warning(f"Sentinel {e} from {origin}")
+    return e
 
-def xml_property(prop: Property) -> Element | None:    
+def xml_property(prop: Property) -> Element:    
     """Get a Property type tuple and return XML Element
 
     Args:
         prop (Property): Tuple to convert to XML
 
     Returns:
-        Element | None: <property> with <key> and <value>
+        Element: <property> with <key> and <value>
     """
     property = Element("property")
     SubElement(property, "key").text = prop[0]
@@ -52,18 +58,18 @@ def xml_property(prop: Property) -> Element | None:
             for k,n in zip(keys, val):
                 SubElement(value, k).text = str(n)
         case _:
-            return None
+            return SENTINEL()
     return property
 
 
-def xml_value(val: Value) -> Element | None:
+def xml_value(val: Value) -> Element:
     """Get a Value type tuple and return an XML Element
 
     Args:
         val (Value): Value type tuple
 
     Returns:
-        Element | None: <value> with <key>, <locked>, etc ...
+        Element: <value> with <key>, <locked>, etc ...
     """
     k, v = val[0], val[3]
 
@@ -79,7 +85,7 @@ def xml_value(val: Value) -> Element | None:
         case "touch", bool():
             SubElement(value, "valueDefault").text = "1" if v is True else "0"
         case _:
-            return None
+            return SENTINEL(xml_value)
 
     return value
 
@@ -154,36 +160,55 @@ def xml_localDst(parent: Element, msg: LocalDst) -> Element:
     return parent
 
 
-def xml_message(msg: MessageOSC | MessageMIDI | MessageLOCAL) -> Element | None:
+def _xml_osc(message: Element, msg: MessageOSC) -> Element:
+    xml_msgconfig(message, msg[1])
+    xml_triggers(SubElement(message, "triggers"), msg[2])
+    xml_partials(SubElement(message, "path"), msg[3])
+    xml_partials(SubElement(message, "arguments"), msg[4])
+    return message
+
+def _xml_midi(message: Element, msg: MessageMIDI) -> Element:
+    xml_msgconfig(message, msg[1])
+    xml_triggers(SubElement(message, "triggers"), msg[2])
+    xml_midimsg(message, msg[3])
+    xml_midivals(SubElement(message, "values"), msg[4])
+    return message
+
+def _xml_local(message: Element, msg: MessageLOCAL) -> Element:
+    SubElement(message, "enabled").text = "1" if msg[1] is True else "0"
+    xml_triggers(SubElement(message, "triggers"), msg[2])
+    xml_localSrc(message, msg[3])
+    xml_localDst(message, msg[4])
+    return message
+
+def xml_message(msg: MessageOSC | MessageMIDI | MessageLOCAL) -> Element:
     """Get any Message tuple and returns corresponding XML Element
 
     Args:
         msg (MessageOSC | MessageMIDI | MessageLOCAL): Any Message tuple.
 
     Returns:
-        Element | None: Return either <osc>, <midi>, etc.
+        Element: Return either <osc>, <midi>, etc.
     """
-    key = msg[0]
-    message = Element(key)
+    message = Element(msg[0])
 
-    match msg:
-        case ("osc", tuple(), tuple(), tuple(), tuple()):
-            xml_msgconfig(message, msg[1])
-            xml_triggers(SubElement(message, "triggers"), msg[2])
-            xml_partials(SubElement(message, "path"), msg[3])
-            xml_partials(SubElement(message, "arguments"), msg[4])
-        case ("midi", tuple(), tuple(), tuple(), tuple()):
-            xml_msgconfig(message, msg[1])
-            xml_triggers(SubElement(message, "triggers"), msg[2])
-            xml_midimsg(message, msg[3])
-            xml_midivals(SubElement(message, "values"), msg[4])
-        case ("local", bool(), tuple(), tuple(), tuple()):
-            SubElement(message, "enabled").text = "1" if msg[1] is True else "0"
-            xml_triggers(SubElement(message, "triggers"), msg[2])
-            xml_localSrc(message, msg[3])
-            xml_localDst(message, msg[4])
-        case _:
-            return None
-
+    if msg[0] == "osc":
+        _xml_osc(message, msg)
+    elif msg[0] == "midi":
+        _xml_midi(message, msg)
+    elif msg[0] == "local":
+        _xml_local(message, msg)
+    else:
+        return SENTINEL()
+    # https://github.com/python/mypy/issues/12533
+    # match msg[0]: 
+    #     case "osc":
+    #         _xml_osc(message, msg)
+    #     case "midi":
+    #         _xml_midi(message, msg)
+    #     case "local":
+    #         _xml_local(message, msg)
+    #     case _:
+    #         return None
     return message
 

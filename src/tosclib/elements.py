@@ -370,10 +370,15 @@ class Control(Protocol):
     values: Values
     messages: Messages
     children: Children
-    # properties: Properties
 
-    def get_prop(control: "Control", key: str) -> Property:
+    def get_prop(self, key: str) -> Property:
         ...
 
-    def set_prop(control: "Control", *args: Property) -> "Control":
+    def get_frame(self) -> tuple[int,...]:
+        ...
+
+    def get_color(self) -> tuple[float,...]:
+        ...
+
+    def set_prop(self, *args: Property) -> "Control":
         ...

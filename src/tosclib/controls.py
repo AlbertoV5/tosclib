@@ -16,7 +16,7 @@ class ControlBuilder:
         values: Values = None,
         messages: Messages = None,
         children: Children = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         """Default factory for Control. Not an XML Element.
 
@@ -34,8 +34,8 @@ class ControlBuilder:
                 type: ControlType = "BOX"
                 ...
 
-            box = Box(name = ("name", "boxy")) # with kwargs only
-
+            box = Box(name = "boxy") # with kwargs only
+            
             assert box.name == ("name", "boxy")
             assert box.type == "BOX"
         """
@@ -62,18 +62,24 @@ Children:
     {self.children}
 """
         
-    def get_prop(control: Control, key: str) -> Property:
+    def get_prop(self, key: str) -> Property:
         """Get the Property of a Control"""
-        if (p:=getattr(control, key)) is not None:
-            return (key, p[1])
+        p: Property = getattr(self, key)
+        if p is not None:
+            return p
         raise KeyError(f"{p} is not a valid Property.")
 
+    def get_frame(self) -> tuple[int,...]:
+        return getattr(self, "frame")
 
-    def set_prop(control: Control, *args: Property) -> Control:
+    def get_color(self) -> tuple[float,...]:
+        return getattr(self, "color")
+
+    def set_prop(self, *args: Property) -> Control:
         """Set the Property of a Control"""
         for property in args:
-            setattr(control, property[0], property)
-        return control
+            setattr(self, property[0], property)
+        return self
     
 
 class Box(ControlBuilder):
@@ -82,7 +88,7 @@ class Box(ControlBuilder):
         id: str = None,
         values: Values = None,
         messages: Messages = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         super().__init__("BOX", id, values, messages, None, **kwargs)
 
@@ -93,7 +99,7 @@ class Button(ControlBuilder):
         id: str = None,
         values: Values = None,
         messages: Messages = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         super().__init__("BUTTON", id, values, messages, None, **kwargs)
 
@@ -104,7 +110,7 @@ class Encoder(ControlBuilder):
         id: str = None,
         values: Values = None,
         messages: Messages = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         super().__init__("ENCODER", id, values, messages, None, **kwargs)
 
@@ -115,7 +121,7 @@ class Fader(ControlBuilder):
         id: str = None,
         values: Values = None,
         messages: Messages = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         super().__init__("FADER", id, values, messages, None, **kwargs)
 
@@ -127,7 +133,7 @@ class Grid(ControlBuilder):
         values: Values = None,
         messages: Messages = None,
         children: Children = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         super().__init__("GRID", id, values, messages, children, **kwargs)
 
@@ -139,7 +145,7 @@ class Group(ControlBuilder):
         values: Values = None,
         messages: Messages = None,
         children: Children = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         super().__init__("GROUP", id, values, messages, children, **kwargs)
 
@@ -150,7 +156,7 @@ class Label(ControlBuilder):
         id: str = None,
         values: Values = None,
         messages: Messages = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         super().__init__("LABEL", id, values, messages, None, **kwargs)
 
@@ -162,7 +168,7 @@ class Page(ControlBuilder):
         values: Values = None,
         messages: Messages = None,
         children: Children = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         super().__init__("GROUP", id, values, messages, children, **kwargs)
 
@@ -174,7 +180,7 @@ class Pager(ControlBuilder):
         values: Values = None,
         messages: Messages = None,
         children: Children = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         children = Children([Page(), Page(), Page()]) if children is None else children
         super().__init__("PAGER", id, values, messages, children, **kwargs)
@@ -186,7 +192,7 @@ class Radial(ControlBuilder):
         id: str = None,
         values: Values = None,
         messages: Messages = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         super().__init__("RADIAL", id, values, messages, None, **kwargs)
 
@@ -197,7 +203,7 @@ class Radar(ControlBuilder):
         id: str = None,
         values: Values = None,
         messages: Messages = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         super().__init__("RADAR", id, values, messages, None, **kwargs)
 
@@ -208,7 +214,7 @@ class Radio(ControlBuilder):
         id: str = None,
         values: Values = None,
         messages: Messages = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         super().__init__("RADIO", id, values, messages, None, **kwargs)
 
@@ -219,7 +225,7 @@ class Text(ControlBuilder):
         id: str = None,
         values: Values = None,
         messages: Messages = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         super().__init__("TEXT", id, values, messages, None, **kwargs)
 
@@ -230,7 +236,7 @@ class Xy(ControlBuilder):
         id: str = None,
         values: Values = None,
         messages: Messages = None,
-        **kwargs: Property,
+        **kwargs: PropertyValue,
     ):
         super().__init__("XY", id, values, messages, None, **kwargs)
 

@@ -1,13 +1,10 @@
 import cProfile
 import logging
 import pstats
-
 import tosclib as tosc
 from tosclib import controls
-from tosclib.elements import MessageLOCAL, Trigger
+from tosclib.elements import Control, LocalDst, LocalSrc, MessageLOCAL, Trigger
 from tosclib.etosc import ControlType, Value
-from tosclib.controls import PropertyFactory as pf
-from tosclib.controls import ControlConverter as cc
 from tosclib.etosc import ElementTOSC as et
 import subprocess
 
@@ -19,16 +16,16 @@ names = (7,4,1,8,5,2,9,6,3,)
 @tosc.layout.column
 def layoutBase(children: list[et]):
 
-    layoutTop: et = layoutValues(
+    layoutTop: Control = layoutValues(
         children[0],
-        ControlType.GROUP,
+        "GROUP",
         size=(1,1),
         colors=bgGradient1,
     )
 
     layoutMid: et = layoutNumbers(
         children[1], 
-        ControlType.GROUP, 
+        "GROUP", 
         size=(3, 3), 
         colors=bgGradient1,
         colorStyle=2
@@ -36,21 +33,20 @@ def layoutBase(children: list[et]):
     
     layoutBot: et = layoutClear(
         children[2],
-        ControlType.GROUP,
+        "GROUP",
         size = (1,1,1),
         colors=bgGradient1,
     )
-
+    
     id = tosc.pullIdfromName(layoutTop.node, "valueLabel")
+    id = layoutTop.id
 
-    local0 = MessageLOCAL(
-        triggers=[Trigger("x", "RISE")],
-        type="PROPERTY",
-        conversion="STRING",
-        value = "name",
-        dstType="VALUE",
-        dstVar="text",
-        dstID=id,)
+    local0 = tosc.local(
+        True,
+        triggers=(Trigger(("x", "RISE")),),
+        source = LocalSrc(("PROPERTY", "STRING", "name", 0, 1)),
+        destination= LocalDst(("VALUE", "text", id))
+        )
 
     for c in layoutMid:
         et(c)[0].createLOCAL(local0)
@@ -93,15 +89,13 @@ def layoutBase(children: list[et]):
 
 
 @tosc.layout.row
-def layoutValues(children: list[et]):
+def layoutValues(children: list[Control]):
 
-    frame = children[0].getFrame()
+    frame = children[0].get_frame()
     button0 = controls.Button(
-        properties = [
-            pf.name("valueButton"),
-            pf.color(children[0].getColor()),
-            pf.frame(frame)
-        ]
+        name = "valueButton",
+        color = children[0].get_color(),
+        frame = frame
     )
     label0 = controls.Label(
         properties = [

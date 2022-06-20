@@ -1,3 +1,4 @@
+# type: ignore
 """
 API for TOSC Control Elements.
 """

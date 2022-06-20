@@ -29,12 +29,9 @@ All Layouts are currently built in top > bottom, left > right order.
 """
 
 from typing import Any, Callable
-from .etosc import ElementTOSC
-from tosclib import etosc
 from .elements import (
     Properties,
     Control,
-    controlType,
     ControlType,
 )
 from .controls import (
@@ -104,14 +101,14 @@ def column(func):
     """
 
     def wrapper(
-        parent: ElementTOSC,
-        controlType: controlType,
+        parent: Control,
+        controlType: ControlType,
         size: tuple = (1, 2, 1),
         colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
-        frame = etosc.getFrame(parent)
-
+        frame: tuple[int,...] = parent.get_frame()
+        
         H = frame[3] * (np.asarray(size) / np.sum(size))
         W = [frame[2] for i in size]
         Y = np.cumsum(np.concatenate(([0], H)))[:-1]
@@ -134,14 +131,13 @@ def row(func):
     """
 
     def wrapper(
-        parent: ElementTOSC,
+        parent: Control,
         controlType: ControlType,
         size: tuple = (1, 2, 1),
-        frame: tuple = (0, 0, 1600, 640),
         colors: tuple | str = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
-        frame = etosc.getFrame(parent)
+        frame: tuple[int,...] = parent.get_frame()
 
         H = np.resize(frame[3], len(size))  # type: ignore
         W = frame[2] * (np.asarray(size) / np.sum(size))
@@ -173,7 +169,7 @@ def grid(func):
     """
 
     def wrapper(
-        parent: ElementTOSC,
+        parent: Control,
         controlType: ControlType,
         size: tuple = (4, 4),
         colors: tuple = (
@@ -183,10 +179,8 @@ def grid(func):
         colorStyle: int = 0,
     ):
 
-        if (frame := etosc.getFrame(parent)) is None:
-            raise ValueError(f"{parent} has no frame.")
-
         colors = tuple(colorChecker(i) for i in colors)
+        frame: tuple[int,...] = parent.get_frame()
 
         w = frame[2] / size[0]
         h = frame[3] / size[1]

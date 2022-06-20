@@ -371,3 +371,9 @@ class Control(Protocol):
     messages: Messages
     children: Children
     # properties: Properties
+
+    def get_prop(control: "Control", key: str) -> Property:
+        ...
+
+    def set_prop(control: "Control", *args: Property) -> "Control":
+        ...

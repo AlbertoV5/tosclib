@@ -1,58 +1,63 @@
 import tosclib as tosc
 import json
 
-from tosclib.elements import ControlElements, ControlType
-
-
-def getJson(fileName: str):
+def get_json(fileName: str):
     with open(fileName, "r") as file:
         return json.loads(file.read())
 
 
-def oscMsg() -> tosc.MessageOSC:
+def create_osc() -> tosc.MessageOSC:
     """Create a message with a path constructed with custom Partials"""
-    return tosc.MessageOSC(
-        path=[
-            tosc.Partial(),  # Default is the constant '/'
-            tosc.Partial(type="PROPERTY", value="parent.name"),
-            tosc.Partial(),
-            tosc.Partial(type="PROPERTY", value="name"),
-        ]
+    return tosc.osc(
+        tosc.msgconfig(),
+        (tosc.trigger()),
+        (
+            tosc.partial(),
+            tosc.partial("PROPERTY", "STRING", "parent.name"),
+            tosc.partial(),
+            tosc.partial("PROPERTY", "STRING", "name")
+        ),
+        (tosc.partial("VALUE", "FLOAT", "x"),
+        )
     )
 
+def create_fader(e: tosc.ElementTOSC, name, width, limit, i, msg):
+    """Create a Fader object, then convert it to XML"""
+    fader = tosc.Fader()
+    fader.set_prop(("name", name))
+    fader.set_prop(("frame", (int(width * i), 0, int(width), 1080)))
+    fader.set_prop(("color", (i / limit, 0, 1 - i / limit, 1)))
+    fader.messages.append(msg)
+    efader = tosc.ElementTOSC(tosc.xml_node(fader))
+    e.append(efader)
+    return efader
 
-def createFader(e: tosc.ElementTOSC, name, width, limit, i, msg):
-    fader = tosc.ElementTOSC(e.createChild(ControlType.FADER))
-    fader.setName(name)
-    fader.setFrame((width * i, 0, width, 1080))
-    fader.setColor((i / limit, 0, 1 - i / limit, 1))
-    fader.createOSC(message=msg)  # Creates a new message from custom tosc.OSC
-
+def create_group(e: tosc.ElementTOSC, name, frame, color):
+    group = tosc.Group()
+    group.set_prop(("name", name),("frame", frame),("color", color))
+    egroup = tosc.ElementTOSC(tosc.xml_node(group))
+    e.append(egroup)
+    return egroup
 
 def main(jsonFile, outputFile):
     root = tosc.createTemplate()
     base = tosc.ElementTOSC(root[0])
-    base.setName("template")
-    base.setFrame((0, 0, 1920, 1080))
+    base.add_prop(("name", "template"))
+    base.add_prop(("frame", (0, 0, 1920, 1080)))
 
-    # Group container for the faders
-    group = tosc.ElementTOSC(base.createChild(ControlType.GROUP))
-    group.setName("Controls")
-    group.setFrame((420, 0, 1080, 1080))
-    group.setColor((0.25, 0.25, 0.25, 1))
+    group = create_group(base,"Controls",(420, 0, 1080, 1080),(0.25, 0.25, 0.25, 1))
 
-    # Create faders based on Json data
-    jsonData = getJson(jsonFile)
+    jsonData = get_json(jsonFile)
     limit = 10
-    width = int(group.getPropertyParam("frame", "w").text) / limit
-    msg = oscMsg()
+    width = int(420 / limit)
+    msg = create_osc()
 
     for i, param in enumerate(jsonData):
-        createFader(group, param["name"], width, limit, i, msg)
+        create_fader(group, param["name"], width, limit, i, msg)
+        print(param["name"])
         if i == limit:
             break
 
-    print([tosc.ElementTOSC(i).getPropertyValue("name").text for i in group.children])
     tosc.write(root, outputFile)
 
 

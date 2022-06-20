@@ -39,7 +39,7 @@ class ImageConverter:
         root = tosc.load(self.input_path)
         main = tosc.ElementTOSC(root[0])
 
-        canvas = tosc.findChildByName(main.node, self.canvas_name)
+        canvas = tosc.find_child(main.node, self.canvas_name)
         canvas = tosc.ElementTOSC(canvas)
 
         # TO DO: Add ET.remove() for all elements inside canvas first!

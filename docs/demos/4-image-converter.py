@@ -31,16 +31,15 @@ class ImageConverter:
         """
         root = tosc.load(self.input_path)
         main = tosc.ElementTOSC(root[0])
-        canvas = tosc.ElementTOSC(main.findChildByName(self.canvas_name))
+        canvas = tosc.find_child(main.node, self.canvas_name)
+        ecanvas = tosc.ElementTOSC(canvas)
 
         pxs = self.pixel_size
         for iy, ix in np.ndindex(self.pixels.shape[:2]):
-            box = tosc.ElementTOSC(canvas.createChild(ControlType.BOX))
             (r, g, b) = self.pixels[iy, ix]
-            box.setName(f"p{ix}{iy}")
-            box.setColor((r, g, b, 1))
-            box.setFrame((ix * pxs, iy * pxs, pxs, pxs))
-
+            box = tosc.Box(name = f"p{ix}{iy}", color = (r, g, b, 1), frame = (ix * pxs, iy * pxs, pxs, pxs))
+            ecanvas.children.append(tosc.xml_node(box))
+            
         return tosc.write(root, self.output_path)
 
 

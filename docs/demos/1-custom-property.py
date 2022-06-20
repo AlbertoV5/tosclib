@@ -1,15 +1,13 @@
 import tosclib as tosc
 
-if __name__ == "__main__":
-
+def main():
     root = tosc.load("docs/demos/files/test2.tosc")
-    parent = tosc.ElementTOSC(root[0])
+    group = tosc.ElementTOSC(root[0])
 
-    # Set the property to the parent node, not the root node.
-    prop = tosc.Property("s", "CustomProperty", "Craig")
-    parent.createProperty(prop)
-
-    print("Added Property: ")
-    parent.showProperty("CustomProperty")
-
+    group.add_prop(("CustomProperty", "Craig"))
+    group.show_prop("CustomProperty")
+    
     tosc.write(root, "docs/demos/files/customProp.tosc")
+
+if __name__ == "__main__":
+    main()

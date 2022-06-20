@@ -21,6 +21,8 @@ __all__ = [
     "xml_localSrc",
     "xml_localDst",
     "xml_message",
+    # Node
+    "xml_node",
 ]
 
 def SENTINEL(origin:Callable)->Element:
@@ -211,4 +213,37 @@ def xml_message(msg: MessageOSC | MessageMIDI | MessageLOCAL) -> Element:
     #     case _:
     #         return None
     return message
+
+
+def xml_node(control: Control) -> Element:
+    """Convert Control to XML node, recursive for children.
+
+    Args:
+        control (Control): Fader, Button, Group, etc.
+
+    Returns:
+        Element: XML Element from Control.
+    """
+    node = Element("node")
+    node.attrib = {"type":control.type, "ID":control.id}
+    SubElement(node, "properties")
+    SubElement(node, "values")
+    SubElement(node, "messages")
+    SubElement(node, "children")
+
+    for property in vars(control):
+        if property in ("type", "id", "values", "messages", "children"):
+            continue
+        node[0].append(xml_property(getattr(control, property)))
+
+    for value in control.values:
+        node[1].append(xml_value(value))
+    
+    for message in control.messages:
+        node[2].append(xml_message(message))
+    
+    for child in control.children:
+        node[3].append(xml_node(child))
+
+    return node
 

@@ -1,9 +1,8 @@
 from tosclib import decode
-from tosclib import etosc2
-from tosclib import controls
+from tosclib import etosc
 import tosclib as tosc
 
-root = etosc2.load("docs/demos/files/msgs.tosc")
+root = etosc.load("docs/demos/files/msgs.tosc")
 e = root[0]
 
 b = e.find(".//node[@type='BUTTON']/messages/osc/../..")

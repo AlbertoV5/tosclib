@@ -11,12 +11,12 @@ __all__ = [
     "prop",
     "value",
     "msgconfig",
-    "msgtrigger",
-    "msgpartial",
-    "msgmidimsg",
-    "msgmidival",
-    "msglocalsrc",
-    "msglocaldst",
+    "trigger",
+    "partial",
+    "midimsg",
+    "midival",
+    "localsrc",
+    "localdst",
     "osc",
     "midi",
     "local",
@@ -52,7 +52,7 @@ def msgconfig(
     return MsgConfig((enabled, send, receive, feedback, connection))
 
 
-def msgtrigger(
+def trigger(
     key: Literal["x", "y", "touch", "text"] = "touch",
     condition: Literal["ANY", "RISE", "FALL"] = "ANY",
 ):
@@ -60,7 +60,7 @@ def msgtrigger(
     return Trigger((key, condition))
 
 
-def msgpartial(
+def partial(
     typ: Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"] = "CONSTANT",
     conv: Literal["BOOLEAN", "INTEGER", "FLOAT", "STRING"] = "STRING",
     value: str = "/",
@@ -71,7 +71,7 @@ def msgpartial(
     return Partial((typ, conv, value, scaleMin, scaleMax))
 
 
-def msgmidimsg(
+def midimsg(
     typ: Literal[
         "NOTE_OFF",
         "NOTE_ON",
@@ -90,7 +90,7 @@ def msgmidimsg(
     return MidiMsg((typ, channel, data1, data2))
 
 
-def msgmidival(
+def midival(
     key: str = "x",
     typ: Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"] = "VALUE",
     scaleMin: int = 0,
@@ -100,7 +100,7 @@ def msgmidival(
     return MidiValue((typ, key, scaleMin, scaleMax))
 
 
-def msglocalsrc(
+def localsrc(
     key: str = "x",
     typ: Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"] = "VALUE",
     conversion: Literal["BOOLEAN", "INTEGER", "FLOAT", "STRING"] = "FLOAT",
@@ -111,7 +111,7 @@ def msglocalsrc(
     return LocalSrc((typ, conversion, key, minRange, maxRange))
 
 
-def msglocaldst(
+def localdst(
     key: str = "x",
     id: str = " ",
     typ: Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"] = "VALUE",
@@ -130,15 +130,15 @@ def osc(
     if config is None:
         config = msgconfig()
     if triggers is None:
-        triggers = (msgtrigger(),)
+        triggers = (trigger(),)
     if address is None:
         address = (
-            msgpartial(),
-            msgpartial("PROPERTY", "STRING", "name"),
-            msgpartial(),
+            partial(),
+            partial("PROPERTY", "STRING", "name"),
+            partial(),
         )
     if arguments is None:
-        arguments = (msgpartial(),)
+        arguments = (partial(),)
     return MessageOSC(("osc", config, triggers, address, arguments))
 
 
@@ -152,11 +152,11 @@ def midi(
     if config is None:
         config = msgconfig()
     if triggers is None:
-        triggers = (msgtrigger(),)
+        triggers = (trigger(),)
     if message is None:
-        message = msgmidimsg()
+        message = midimsg()
     if values is None:
-        values = (msgmidival(),)
+        values = (midival(),)
     return MessageMIDI(("midi", config, triggers, message, values))
 
 
@@ -168,9 +168,9 @@ def local(
 ) -> MessageLOCAL:
     """LOCAL Message factory"""
     if triggers is None:
-        triggers = (msgtrigger(),)
+        triggers = (trigger(),)
     if source is None:
-        source = msglocalsrc()
+        source = localsrc()
     if destination is None:
-        destination = msglocaldst()
+        destination = localdst()
     return MessageLOCAL(("local", enabled, triggers, source, destination))

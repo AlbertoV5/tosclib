@@ -16,16 +16,16 @@ def main(inputFile, outputFile, sourceName, targetName):
         group = tosc.ElementTOSC(group)
 
         # Move on if the Property is not the target
-        if not re.fullmatch(group.getPropertyValue("name").text, targetName):
+        if re.fullmatch(group.get_prop("name")[1], targetName) is None:
             continue
 
         # Assuming the Element is the target, iterate through children
         for box in group.children:
             box = tosc.ElementTOSC(box)
-            if box.hasProperty("script"):
-                box.setProperty("script", script)
+            if box.has_prop("script"):
+                box.set_prop(("script", script))
             else:
-                box.createProperty(tosc.Property("s", "script", script))
+                box.add_prop(("script", script))
 
         tosc.write(root, outputFile)
 

@@ -30,13 +30,15 @@ All Layouts are currently built in top > bottom, left > right order.
 
 from typing import Any, Callable
 from .etosc import ElementTOSC
-from tosclib import etosc as etc
+from tosclib import etosc
 from .elements import (
+    Properties,
+    Control,
     controlType,
     ControlType,
 )
 from .controls import (
-    Properties,
+    ControlBuilder,
 )
 import numpy as np
 
@@ -73,26 +75,21 @@ LAYOUT FUNCTIONS
 
 
 def Layout(
-    layout: ElementTOSC,
-    controlT: controlType,
-    F: np.ndarray,
-    C: np.ndarray,
-    func: Callable[[list[ElementTOSC]], Properties],
+    layout: Control,
+    control_type: ControlType,
+    frame_array: np.ndarray,
+    color_array: np.ndarray,
+    func: Callable[[list[Control]], Properties],
 ):
     """Basic process to append multiple properties to a layout of controls"""
 
-    children = [
-        ElementTOSC(etc.createChild(layout, controlT)) for i in range(F.shape[0])
-    ]
-    for g, f, c in zip(children, F, C):
-        etc.setFrame(f.astype(int))
-        etc.setColor(layout, c)
+    children: list[Control] = []
+    for f, c in zip(frame_array, color_array):
+        children.append(ControlBuilder(control_type, frame = f.astype(int), color = c))
 
-    # Add extra properties to the parent, optional return
     properties: Properties = func(children)
     if properties is not None:
-        [etc.createProperty(layout, p) for p in properties]
-
+        [layout.set_prop(p) for p in properties]
     return layout
 
 
@@ -113,7 +110,7 @@ def column(func):
         colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
-        frame = etc.getFrame(parent)
+        frame = etosc.getFrame(parent)
 
         H = frame[3] * (np.asarray(size) / np.sum(size))
         W = [frame[2] for i in size]
@@ -144,7 +141,7 @@ def row(func):
         colors: tuple | str = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
-        frame = etc.getFrame(parent)
+        frame = etosc.getFrame(parent)
 
         H = np.resize(frame[3], len(size))  # type: ignore
         W = frame[2] * (np.asarray(size) / np.sum(size))
@@ -186,7 +183,7 @@ def grid(func):
         colorStyle: int = 0,
     ):
 
-        if (frame := etc.getFrame(parent)) is None:
+        if (frame := etosc.getFrame(parent)) is None:
             raise ValueError(f"{parent} has no frame.")
 
         colors = tuple(colorChecker(i) for i in colors)

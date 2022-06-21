@@ -25,14 +25,17 @@ __all__ = [
     "xml_node",
 ]
 
-def SENTINEL(origin:Callable)->Element:
+
+def SENTINEL(origin: Callable, msg: str = None) -> Element:
     """None/Invalid XML Element to allow chaining."""
     e = Element("none")
     e.text = str(origin)
     logging.warning(f"Sentinel {e} from {origin}")
+    logging.warning(f"{msg}")
     return e
 
-def xml_property(prop: Property) -> Element:    
+
+def xml_property(prop: Property) -> Element:
     """Get a Property type tuple and return XML Element
 
     Args:
@@ -47,20 +50,31 @@ def xml_property(prop: Property) -> Element:
     val = prop[1]
     match val:
         case bool() if val is True:
+            property.attrib = {"type":"b"}
             value.text = "1"
         case bool():
+            property.attrib = {"type":"b"}
             value.text = "0"
-        case int() | float() | str():
+        case str():
+            property.attrib = {"type":"s"}
             value.text = str(val)
+        case int():
+            property.attrib = {"type":"i"}
+            value.text = str(val)
+        case float():
+            property.attrib = {"type":"f"}
+            value.text = str(val)    
         case tuple():
             if isinstance(val[0], int):
-                keys = ("x","y","w","h")
+                property.attrib = {"type":"r"}
+                keys = ("x", "y", "w", "h")
             else:
-                keys = ("r","g","b","a")
-            for k,n in zip(keys, val):
+                property.attrib = {"type":"c"}
+                keys = ("r", "g", "b", "a")
+            for k, n in zip(keys, val):
                 SubElement(value, k).text = str(n)
         case _:
-            return SENTINEL()
+            return SENTINEL(xml_property, prop)
     return property
 
 
@@ -79,15 +93,16 @@ def xml_value(val: Value) -> Element:
     SubElement(value, "key").text = k
     SubElement(value, "locked").text = "1" if val[1] is True else "0"
     SubElement(value, "lockedDefaultCurrent").text = "1" if val[2] is True else "0"
-    SubElement(value, "defaultPull").text = str(val[4])
 
-    match k,v:
+    match k, v:
         case "x" | "y" | "text", float() | str():
-            SubElement(value, "valueDefault").text = str(v)
+            SubElement(value, "default").text = str(v)
         case "touch", bool():
-            SubElement(value, "valueDefault").text = "1" if v is True else "0"
+            SubElement(value, "default").text = "1" if v is True else "0"
         case _:
             return SENTINEL(xml_value)
+    
+    SubElement(value, "defaultPull").text = str(val[4])
 
     return value
 
@@ -169,6 +184,7 @@ def _xml_osc(message: Element, msg: MessageOSC) -> Element:
     xml_partials(SubElement(message, "arguments"), msg[4])
     return message
 
+
 def _xml_midi(message: Element, msg: MessageMIDI) -> Element:
     xml_msgconfig(message, msg[1])
     xml_triggers(SubElement(message, "triggers"), msg[2])
@@ -176,12 +192,14 @@ def _xml_midi(message: Element, msg: MessageMIDI) -> Element:
     xml_midivals(SubElement(message, "values"), msg[4])
     return message
 
+
 def _xml_local(message: Element, msg: MessageLOCAL) -> Element:
     SubElement(message, "enabled").text = "1" if msg[1] is True else "0"
     xml_triggers(SubElement(message, "triggers"), msg[2])
     xml_localSrc(message, msg[3])
     xml_localDst(message, msg[4])
     return message
+
 
 def xml_message(msg: MessageOSC | MessageMIDI | MessageLOCAL) -> Element:
     """Get any Message tuple and returns corresponding XML Element
@@ -203,7 +221,7 @@ def xml_message(msg: MessageOSC | MessageMIDI | MessageLOCAL) -> Element:
     else:
         return SENTINEL()
     # https://github.com/python/mypy/issues/12533
-    # match msg[0]: 
+    # match msg[0]:
     #     case "osc":
     #         _xml_osc(message, msg)
     #     case "midi":
@@ -225,7 +243,7 @@ def xml_node(control: Control) -> Element:
         Element: XML Element from Control.
     """
     node = Element("node")
-    node.attrib = {"type":control.type, "ID":control.id}
+    node.attrib = {"type": control.type, "ID": control.id}
     SubElement(node, "properties")
     SubElement(node, "values")
     SubElement(node, "messages")
@@ -238,12 +256,11 @@ def xml_node(control: Control) -> Element:
 
     for value in control.values:
         node[1].append(xml_value(value))
-    
+
     for message in control.messages:
         node[2].append(xml_message(message))
-    
+
     for child in control.children:
         node[3].append(xml_node(child))
 
     return node
-

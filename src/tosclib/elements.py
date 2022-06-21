@@ -142,9 +142,7 @@ PropertyType: TypeAlias = Literal["b", "c", "r", "f", "i", "s"]
 PropertyValue: TypeAlias = (
     str | int | float | bool | tuple[int, ...] | tuple[float, ...]
 )
-Property: TypeAlias = tuple[
-    str, PropertyValue
-]
+Property: TypeAlias = tuple[str, PropertyValue]
 """
 Property:
     [0] - Property Key(str): Name/key of the property.
@@ -175,10 +173,6 @@ Example:
     </property>
 
 """
-# Value = NewType(
-#     "Value",
-#     tuple[Literal["x", "y", "touch", "text"], bool, bool, float | bool | str, int],
-# )
 Value: TypeAlias = tuple[
     Literal["x", "y", "touch", "text"], bool, bool, float | bool | str, int
 ]
@@ -374,10 +368,10 @@ class Control(Protocol):
     def get_prop(self, key: str) -> Property:
         ...
 
-    def get_frame(self) -> tuple[int,...]:
+    def get_frame(self) -> tuple[int, ...]:
         ...
 
-    def get_color(self) -> tuple[float,...]:
+    def get_color(self) -> tuple[float, ...]:
         ...
 
     def set_prop(self, *args: Property) -> "Control":

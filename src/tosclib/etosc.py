@@ -6,13 +6,13 @@ from tosclib.decode import to_prop
 from tosclib.encode import SENTINEL, xml_node, xml_property
 from .elements import *
 from xml.etree.ElementTree import (
-    Element, 
-    SubElement, 
-    fromstring, 
-    indent, 
-    tostring, 
-    XMLPullParser
-    )
+    Element,
+    SubElement,
+    fromstring,
+    indent,
+    tostring,
+    XMLPullParser,
+)
 
 # __all__ = [
 #     "ElementTOSC",
@@ -65,7 +65,7 @@ class ElementTOSC:
             return s
         return SubElement(self.node, target)
 
-    def has_prop(self, key:str) -> bool:
+    def has_prop(self, key: str) -> bool:
         """Check if property with given key exists.
 
         Args:
@@ -74,13 +74,17 @@ class ElementTOSC:
         Returns:
             bool: true if finds key
         """
-        return True if self.properties.find(f".//property/[key='{key}']") is not None else False
+        return (
+            True
+            if self.properties.find(f".//property/[key='{key}']") is not None
+            else False
+        )
 
-    def get_prop(self, key:str) -> Property:
-        if (p:= self.properties.find(f".//property/[key='{key}']")) is not None:
-            if (prop:=to_prop(p)) is not None:
+    def get_prop(self, key: str) -> Property:
+        if (p := self.properties.find(f".//property/[key='{key}']")) is not None:
+            if (prop := to_prop(p)) is not None:
                 return prop
-        return ("","")
+        return ("", "")
 
     def add_prop(self, *props: Property) -> "ElementTOSC":
         """Get N number of Property, convert them to xml and append them.
@@ -91,7 +95,7 @@ class ElementTOSC:
         for prop in props:
             self.properties.append(xml_property(prop))
         return self
-    
+
     def set_prop(self, prop: Property) -> "ElementTOSC":
         """Finds a property by key and replaces it with a new one.
 
@@ -104,13 +108,13 @@ class ElementTOSC:
         Returns:
             ElementTOSC: chaining.
         """
-        if (p:= self.properties.find(f".//property/[key='{prop[0]}']")) is None:
+        if (p := self.properties.find(f".//property/[key='{prop[0]}']")) is None:
             raise KeyError(f"Element can't find property: {prop}")
         self.properties.remove(p)
         self.add_prop(prop)
         return self
 
-    def show_prop(self, key:str) -> "ElementTOSC":
+    def show_prop(self, key: str) -> "ElementTOSC":
         """Print XML of a Property
 
         Args:
@@ -158,25 +162,25 @@ def show(e: Element | None):
 PARSERS
 """
 
+
 def get_text_value_from_key(properties: Element, key: str) -> str:
     """Find the value.text from a known key"""
     if prop := properties.find(f"./property/[key='{key}']"):
         if (value := prop.find("value")) is not None:
             if (text := value.text) is not None:
-                return text 
+                return text
     return ""
 
 
 def find_child(e: Element, name: str) -> Element | None:
-    if (children:= e.find("children")) is None:
+    if (children := e.find("children")) is None:
         return None
     for child in children:
-        if (p:=child.find("./properties/property/[key='name']")) is None:
+        if (p := child.find("./properties/property/[key='name']")) is None:
             continue
         if p[1].text == name:
             return child
     return SENTINEL(find_child)
-
 
 
 def pullValueFromKey(
@@ -201,7 +205,7 @@ def pullValueFromKey(
         for _, e in parser.read_events():  # event, element
             if e.find("properties") is None:
                 continue
-            if (p:=e.find("properties")) is None:
+            if (p := e.find("properties")) is None:
                 continue
             if get_text_value_from_key(p, key) == value:
                 parser.close()

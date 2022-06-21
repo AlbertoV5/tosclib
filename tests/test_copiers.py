@@ -1,7 +1,7 @@
 import logging
 import tosclib as tosc
 import pytest
-from tosclib.node import ControlElements, ControlType
+from tosclib.tosc import ControlElements, ControlType
 from .profiler import profile
 
 

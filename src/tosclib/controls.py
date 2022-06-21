@@ -35,7 +35,7 @@ class ControlBuilder:
                 ...
 
             box = Box(name = "boxy") # with kwargs only
-            
+
             assert box.name == ("name", "boxy")
             assert box.type == "BOX"
         """
@@ -46,7 +46,7 @@ class ControlBuilder:
         self.children: Children = [] if children is None else children
 
         for k in kwargs:
-            setattr(self, k, (k,kwargs[k]))
+            setattr(self, k, (k, kwargs[k]))
 
     def __repr__(self):
         return f"""
@@ -61,7 +61,7 @@ Messages:
 Children:
     {self.children}
 """
-        
+
     def get_prop(self, key: str) -> Property:
         """Get the Property of a Control"""
         p: Property = getattr(self, key)
@@ -69,18 +69,18 @@ Children:
             return p
         raise KeyError(f"{p} is not a valid Property.")
 
-    def get_frame(self) -> tuple[int,...]:
-        return getattr(self, "frame")
+    def get_frame(self) -> tuple[int, ...]:
+        return getattr(self, "frame")[1]
 
-    def get_color(self) -> tuple[float,...]:
-        return getattr(self, "color")
+    def get_color(self) -> tuple[float, ...]:
+        return getattr(self, "color")[1]
 
     def set_prop(self, *args: Property) -> Control:
         """Set the Property of a Control"""
         for property in args:
             setattr(self, property[0], property)
         return self
-    
+
 
 class Box(ControlBuilder):
     def __init__(
@@ -239,7 +239,6 @@ class Xy(ControlBuilder):
         **kwargs: PropertyValue,
     ):
         super().__init__("XY", id, values, messages, None, **kwargs)
-
 
 
 """ DEPRECATED?? """

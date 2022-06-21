@@ -1,6 +1,7 @@
 import tosclib as tosc
 import json
 
+
 def get_json(fileName: str):
     with open(fileName, "r") as file:
         return json.loads(file.read())
@@ -15,11 +16,11 @@ def create_osc() -> tosc.MessageOSC:
             tosc.partial(),
             tosc.partial("PROPERTY", "STRING", "parent.name"),
             tosc.partial(),
-            tosc.partial("PROPERTY", "STRING", "name")
+            tosc.partial("PROPERTY", "STRING", "name"),
         ),
-        (tosc.partial("VALUE", "FLOAT", "x"),
-        )
+        (tosc.partial("VALUE", "FLOAT", "x"),),
     )
+
 
 def create_fader(e: tosc.ElementTOSC, name, width, limit, i, msg):
     """Create a Fader object, then convert it to XML"""
@@ -32,12 +33,14 @@ def create_fader(e: tosc.ElementTOSC, name, width, limit, i, msg):
     e.append(efader)
     return efader
 
+
 def create_group(e: tosc.ElementTOSC, name, frame, color):
     group = tosc.Group()
-    group.set_prop(("name", name),("frame", frame),("color", color))
+    group.set_prop(("name", name), ("frame", frame), ("color", color))
     egroup = tosc.ElementTOSC(tosc.xml_node(group))
     e.append(egroup)
     return egroup
+
 
 def main(jsonFile, outputFile):
     root = tosc.createTemplate()
@@ -45,7 +48,7 @@ def main(jsonFile, outputFile):
     base.add_prop(("name", "template"))
     base.add_prop(("frame", (0, 0, 1920, 1080)))
 
-    group = create_group(base,"Controls",(420, 0, 1080, 1080),(0.25, 0.25, 0.25, 1))
+    group = create_group(base, "Controls", (420, 0, 1080, 1080), (0.25, 0.25, 0.25, 1))
 
     jsonData = get_json(jsonFile)
     limit = 10

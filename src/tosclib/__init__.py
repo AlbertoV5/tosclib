@@ -4,3 +4,4 @@ from .controls import *
 from .decode import *
 from .encode import *
 from .etosc import *
+from .layout import *

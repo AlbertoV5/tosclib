@@ -80,13 +80,14 @@ def Layout(
 ):
     """Basic process to append multiple properties to a layout of controls"""
 
-    children: list[Control] = []
+    # children: list[Control] = []
     for f, c in zip(frame_array, color_array):
-        children.append(ControlBuilder(control_type, frame = f.astype(int), color = c))
+        layout.children.append(ControlBuilder(control_type, frame=tuple(f.astype(int)), color=tuple(c)))
 
-    properties: Properties = func(children)
+    properties: Properties = func(layout.children)
     if properties is not None:
         [layout.set_prop(p) for p in properties]
+
     return layout
 
 
@@ -107,8 +108,8 @@ def column(func):
         colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
-        frame: tuple[int,...] = parent.get_frame()
-        
+        frame: tuple[int, ...] = parent.get_frame()
+    
         H = frame[3] * (np.asarray(size) / np.sum(size))
         W = [frame[2] for i in size]
         Y = np.cumsum(np.concatenate(([0], H)))[:-1]
@@ -137,7 +138,7 @@ def row(func):
         colors: tuple | str = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
-        frame: tuple[int,...] = parent.get_frame()
+        frame: tuple[int, ...] = parent.get_frame()
 
         H = np.resize(frame[3], len(size))  # type: ignore
         W = frame[2] * (np.asarray(size) / np.sum(size))
@@ -180,7 +181,7 @@ def grid(func):
     ):
 
         colors = tuple(colorChecker(i) for i in colors)
-        frame: tuple[int,...] = parent.get_frame()
+        frame: tuple[int, ...] = parent.get_frame()
 
         w = frame[2] / size[0]
         h = frame[3] / size[1]
@@ -191,7 +192,7 @@ def grid(func):
                 for column in np.arange(stop=frame[3], step=h)  # type: ignore
             )
         ).T
-
+        
         X = M[0]
         Y = M[1]
         W = np.repeat(w, X.size)

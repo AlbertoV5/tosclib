@@ -24,7 +24,6 @@ def to_prop(e: Element) -> Property | None:
     value = e[1].text
     params = tuple(i.text for i in e[1] if i.text)
 
-    print(key, value)
     match e.attrib["type"]:
         case "s" if value is not None:
             return (key, value)

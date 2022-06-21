@@ -1,5 +1,5 @@
 import tosclib as tosc
-from PIL import Image # type: ignore
+from PIL import Image  # type: ignore
 import numpy as np
 import time
 
@@ -37,9 +37,13 @@ class ImageConverter:
         pxs = self.pixel_size
         for iy, ix in np.ndindex(self.pixels.shape[:2]):
             (r, g, b) = self.pixels[iy, ix]
-            box = tosc.Box(name = f"p{ix}{iy}", color = (r, g, b, 1), frame = (ix * pxs, iy * pxs, pxs, pxs))
+            box = tosc.Box(
+                name=f"p{ix}{iy}",
+                color=(r, g, b, 1),
+                frame=(ix * pxs, iy * pxs, pxs, pxs),
+            )
             ecanvas.children.append(tosc.xml_node(box))
-            
+
         return tosc.write(root, self.output_path)
 
 

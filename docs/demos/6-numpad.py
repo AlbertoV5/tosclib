@@ -1,4 +1,5 @@
 import cProfile
+from copy import deepcopy
 import logging
 import pstats
 import uuid
@@ -125,7 +126,7 @@ end"""
         tosc.Button(
             name="sendButton",
             color=controls[1].get_color(),
-            frame=controls[1].get_frame(),
+            frame=controls[0].get_frame(),
         )
     )
     controls[1].children.append(
@@ -133,7 +134,7 @@ end"""
             values=[("text", False, False, "SEND", 0)],
             name="sendLabel",
             color=controls[1].get_color(),
-            frame=controls[1].get_frame(),
+            frame=controls[0].get_frame(),
             textSize=60,
             background=False,
         )
@@ -163,8 +164,8 @@ def layoutNumbers(controls: list[tosc.Control]):
         label.set_prop(("name", str(n)))
         button.set_prop(("name", str(n)))
         button.set_prop(("color", c.get_color()))
-        c.children.append(button)
-        c.children.append(label)
+        c.children.append(deepcopy(button))
+        c.children.append(deepcopy(label))
 
     return ("outline", True), ("name", "numbers")
 
@@ -195,7 +196,7 @@ def layoutClear(controls: list[tosc.Control]):
     controls[1].set_prop(("name", "zero"))
     controls[1].children.append(
         tosc.Button(
-            name="0", frame=controls[1].get_frame(), color=controls[1].get_color()
+            name="0", frame=controls[0].get_frame(), color=controls[1].get_color()
         )
     )
     controls[1].children.append(
@@ -203,7 +204,7 @@ def layoutClear(controls: list[tosc.Control]):
             values=[("text", False, False, "0", 0)],
             name="0",
             outlineStyle=1,
-            frame=controls[1].get_frame(),
+            frame=controls[0].get_frame(),
             color=controls[1].get_color(),
             textSize=48,
             background=False,
@@ -222,7 +223,7 @@ def layoutClear(controls: list[tosc.Control]):
             values=[("text", False, False, "DEL", 0)],
             name="0",
             outlineStyle=1,
-            frame=controls[2].get_frame(),
+            frame=controls[0].get_frame(),
             color=controls[2].get_color(),
             textSize=48,
             background=False,

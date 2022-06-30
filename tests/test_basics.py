@@ -52,7 +52,7 @@ def test_basics():
         assert result.tag != "none"
 
     buttonBad: tosc.Control = tosc.Button(name="buttonBad")
-    logging.warning("Expected Sentinel Element:")
+    logging.debug("Expecting following Sentinel Element:")
     (sentinel := tosc.find_child(egroup, "buttonBad"))
     assert sentinel.tag is "none"
 

@@ -1,9 +1,7 @@
-from copy import deepcopy
-import logging
-from multiprocessing.sharedctypes import Value
-from tokenize import group
 import tosclib as tosc
 from tosclib.properties import *
+from copy import deepcopy
+import logging
 import pytest
 from .profiler import profile
 import inspect
@@ -15,8 +13,8 @@ class Copier(unittest.TestCase):
     template2: tosc.Control
     group1: tosc.Control
     group2: tosc.Control
-    proplist1: list = []
-    proplist2: list = []
+    proplist1: tosc.Properties = []
+    proplist2: tosc.Properties = []
 
     def create_different_groups(self):
         self.template1 = tosc.Group(name = "template1", frame = (0,0,800,800))
@@ -98,8 +96,9 @@ class Copier(unittest.TestCase):
 
     @profile
     def test_copiers(self,):
-        """Properties"""
+        """Controls"""
         self.create_different_groups()
+        """Properties"""
         self.create_properties_for_group1()
         self.copy_properties_from_group1_to_group2()
         self.assert_properties_of_group2()
@@ -112,32 +111,7 @@ class Copier(unittest.TestCase):
         self.remove_osc_messages_from_group1()
         self.look_for_osc_messages_in_group1()
         self.look_for_osc_messages_in_group2()
+        """Children"""
+        ...
+        # to-do: add copy children
         
-        # # COPY CHILDREN
-        # controlsList = []
-        # for c in ControlType:
-        #     child = tosc.Node(node.createChild(c))
-        #     child.setName(c.value)
-        #     controlsList.append(c.value)
-
-        # assert tosc.copyChildren(
-        #     node,
-        #     node2,
-        #     ControlType.BOX,
-        #     ControlType.BUTTON,
-        #     ControlType.ENCODER,
-        #     ControlType.GROUP,
-        # )
-
-        # with pytest.raises(ValueError):
-        #     assert tosc.copyChildren(node2, node2, ControlType.FADER)
-
-        # childList = []
-        # for n1 in node.children:
-        #     n1 = tosc.Node(n1)
-        #     childList.append(n1.getPropertyValue("name").text)
-        # for n2 in node2.children:
-        #     n2 = tosc.Node(n2)
-        #     childList.append(n2.getPropertyValue("name").text)
-
-        # assert controlsList.sort() == childList.sort()

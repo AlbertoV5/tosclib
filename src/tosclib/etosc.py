@@ -3,7 +3,14 @@ import re
 import zlib
 from tosclib.controls import Group
 from tosclib.decode import to_prop
-from tosclib.encode import SENTINEL, xml_control, xml_message, xml_property, property_matcher, xml_value
+from tosclib.encode import (
+    SENTINEL,
+    xml_control,
+    xml_message,
+    xml_property,
+    property_matcher,
+    xml_value,
+)
 from .elements import *
 from xml.etree.ElementTree import (
     Element,
@@ -20,9 +27,9 @@ from xml.etree.ElementTree import (
 # ]
 
 
-class Node():
+class Node:
     """
-    The XML Element version of the Control protocol. 
+    The XML Element version of the Control protocol.
     Creates sub XML Elements if not found.
     """
 
@@ -45,7 +52,7 @@ class Node():
         self.values: Element = self._getCreate("values")
         self.messages: Element = self._getCreate("messages")
         self.children: Element = self._getCreate("children")
-    
+
     def __iter__(self):
         """Return iter over children"""
         return iter(self.children)
@@ -54,10 +61,10 @@ class Node():
         """Index children as Elements"""
         return self.__class__(self.children[item])
 
-    # def append(self, e: "Node") -> "Node":
-    #     """Append an ElementTOSC's Node to this element's Children"""
-    #     self.children.append(e.node)
-    #     return self
+    def append(self, e: "Node") -> "Node":
+        """Append an ElementTOSC's Node to this element's Children"""
+        self.children.append(e.node)
+        return self
 
     def _getCreate(self, target):
         s = self.node.find(target)
@@ -113,10 +120,10 @@ class Node():
         if (p := self.properties.find(f".//property/[key='{prop[0]}']")) is None:
             # raise KeyError(f"Element can't find property: {prop}")
             return self.add_prop(prop)
-        
+
         if (value := p.find("value")) is not None:
             p.remove(value)
-        
+
         value = SubElement(p, "value")
         p = property_matcher(prop, p, value)
         return self
@@ -132,7 +139,7 @@ class Node():
         """
         show(self.properties.find(f".//property/[key='{key}']"))
         return self
-    
+
     def add_msg(self, msg: Message) -> "Node":
         """Append Message to list as XML Element
 
@@ -156,6 +163,7 @@ class Node():
         """
         self.values.append(xml_value(val))
         return self
+
 
 def createTemplate(frame: tuple = None) -> Element:
     """Generates a root xml Element and adds the base GROUP node to it."""
@@ -213,7 +221,7 @@ def find_child(e: Element, name: str) -> Element:
     return SENTINEL(find_child)
 
 
-def pullValueFromKey(
+def pull_value_from_key(
     inputFile: str, key: str, value: str, targetKey: str
 ) -> str | None:
     """If you know the name of an element but don't know its other properties.
@@ -244,7 +252,8 @@ def pullValueFromKey(
     parser.close()
     return None
 
-def pullValueFromKey2(
+
+def pull_value_from_key_2(
     root: Element, key: str, value: str, targetKey: str
 ) -> str | None:
     """If you know the name of an element but don't know its other properties.

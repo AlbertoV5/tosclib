@@ -62,11 +62,13 @@ def trigger(
     """Trigger factory"""
     return Trigger((key, condition))
 
+
 def triggers(*args: Trigger) -> Triggers:
     """Triggers factory"""
     if len(args) == 0:
         args = (trigger(),)
     return args
+
 
 def partial(
     typ: Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"] = "CONSTANT",
@@ -78,17 +80,20 @@ def partial(
     """Partial factory"""
     return Partial((typ, conv, value, scaleMin, scaleMax))
 
+
 def address(*args: Partial) -> Address:
     """Address factory"""
     if len(args) == 0:
-        args = (partial(),partial("PROPERTY", "STRING", "name"),partial())
+        args = (partial(), partial("PROPERTY", "STRING", "name"), partial())
     return args
+
 
 def arguments(*args: Partial) -> Arguments:
     """Arguments factory"""
     if len(args) == 0:
-        args = (partial(),partial("VALUE", "FLOAT", "x"),partial())
+        args = (partial(), partial("VALUE", "FLOAT", "x"), partial())
     return args
+
 
 def midimsg(
     typ: Literal[

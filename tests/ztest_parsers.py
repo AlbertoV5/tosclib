@@ -12,8 +12,8 @@ def test_parsers():
     root = tosc.load(sameFile)
 
     script0 = tosc.parseProperties(root, known, unknown)
-    script1 = tosc.pullValueFromKey(sameFile, known, sameName, unknown)
-    script2 = tosc.pullValueFromKey2(root, known, sameName, unknown)
+    script1 = tosc.pull_value_from_key(sameFile, known, sameName, unknown)
+    script2 = tosc.pull_value_from_key_2(root, known, sameName, unknown)
 
     for i in script0:
         if i["name"] == sameName:

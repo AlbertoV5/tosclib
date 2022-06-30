@@ -172,16 +172,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../demos/6-numpad.html">Numpad Module Recreation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../modules.html">Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/modules.html">Modules</a></li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/1-ElementEnums.html">Element Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/2-ControlEnums.html">Control Enumerations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/shortcuts.html">Shortcuts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/tglobals.html">Globals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/tosclib.tosc.html">tosclib.tosc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/5-tosclib.html">tosclib.tosc</a></li>
 </ul>
 </li>
 </ul>
@@ -217,579 +211,392 @@
         </div>
         <article role="main">
           <h1>Source code for tosclib.elements</h1><div class="highlight"><pre>
-<span></span><span class="sd">""" Enumerations for constructing XML Elements"""</span>
+<span></span><span class="sd">"""</span>
+<span class="sd">Types based on Hexler's Touch OSC Enumerations.</span>
 
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">unique</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">TypeGuard</span><span class="p">,</span> <span class="n">TypedDict</span>
+<span class="sd">Using typing to define specific tuple shapes and Literals.</span>
+
+<span class="sd">The result is no regular classes for these data structures,</span>
+<span class="sd">this means that most of the logical work relies on the factory</span>
+<span class="sd">and converter methods in other modules. </span>
+
+<span class="sd">The alternatives were dataclasses, slots or named tuples but</span>
+<span class="sd">I decided to bet on the newest python &gt;=3.10 typing features </span>
+<span class="sd">as a way to future-enable this library and have fun.</span>
+
+<span class="sd">A TouchOSC Control is divided into 4 parts:</span>
+
+<span class="sd">Control:</span>
+
+<span class="sd">    1. Properties: list[Property,...]</span>
+<span class="sd">    2. Values: list[Value,...]</span>
+<span class="sd">    3. Messages: list[Message,...]</span>
+<span class="sd">    4. Children: list[Control,...]</span>
+
+<span class="sd">From those parts the following are Type Aliases for tuples:</span>
+
+<span class="sd">    Property, Value</span>
+
+<span class="sd">Then the Message type is a Type Alias for any of these New Types:</span>
+
+<span class="sd">    MessageOSC, MessageMIDI, MessageLOCAL</span>
+
+<span class="sd">MessageOSC is made of these New Types:</span>
+
+<span class="sd">    MsgConfig: Tuple of various base types, bool, str etc.</span>
+<span class="sd">    Triggers: Tuple of Trigger.</span>
+<span class="sd">        Trigger: Tuple of Literal, Literal.</span>
+<span class="sd">    Address: Tuple of Partials.</span>
+<span class="sd">        Partial: Tuple of Literal, Literal, str, int, int</span>
+<span class="sd">    Arguments: Tuple of Partials.</span>
+
+<span class="sd">MessageMIDI is made of these New Types:</span>
+
+<span class="sd">    MsgConfig.</span>
+<span class="sd">    Triggers.</span>
+<span class="sd">    MidiMsg: New Type of tuple of Literal, Literal, etc.</span>
+<span class="sd">    MidiValues: Tuple of MidiValue.</span>
+<span class="sd">        MidiValue: Tuple of Literal, str, etc.</span>
+<span class="sd">    </span>
+<span class="sd">MessageLOCAL is made of:</span>
+
+<span class="sd">    Enabled: bool.</span>
+<span class="sd">    Triggers.</span>
+<span class="sd">    LocalSrc: Tuple of Literals, str, etc.</span>
+<span class="sd">    LocalDst: Tuple of Literals, str, etc.</span>
 
 <span class="sd">"""</span>
 
-<span class="sd">FIRST SECTION:</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">NewType</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">Callable</span>
 
-<span class="sd">Define Enumerations and Literal types from Hexler's Touch OSC design.</span>
-
-<span class="sd">SECOND SECTION:</span>
-
-<span class="sd">Define struct like classes that carry the data to create xml Elements.</span>
-<span class="sd">Plus Factory classes to create them.</span>
-
-<span class="sd">"""</span>
-
-
-<div class="viewcode-block" id="ControlElements"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.ControlElements">[docs]</a><span class="nd">@unique</span>
-<span class="k">class</span> <span class="nc">ControlElements</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">"""Valid xml tags for a Control"""</span>
-
-    <span class="n">PROPERTIES</span> <span class="o">=</span> <span class="s2">"properties"</span>  <span class="c1">#: &lt;properties&gt;</span>
-    <span class="n">VALUES</span> <span class="o">=</span> <span class="s2">"values"</span>  <span class="c1">#: &lt;values&gt;</span>
-    <span class="n">MESSAGES</span> <span class="o">=</span> <span class="s2">"messages"</span>  <span class="c1">#: &lt;messages&gt;</span>
-    <span class="n">CHILDREN</span> <span class="o">=</span> <span class="s2">"children"</span>  <span class="c1">#: &lt;children&gt;</span>
-    <span class="n">PROPERTY</span> <span class="o">=</span> <span class="s2">"property"</span>  <span class="c1">#: &lt;property type=&gt;</span>
-    <span class="n">VALUE</span> <span class="o">=</span> <span class="s2">"value"</span>  <span class="c1">#: &lt;value&gt;</span>
-    <span class="n">OSC</span> <span class="o">=</span> <span class="s2">"osc"</span>  <span class="c1">#: &lt;osc&gt;</span>
-    <span class="n">MIDI</span> <span class="o">=</span> <span class="s2">"midi"</span>  <span class="c1">#: &lt;midi&gt;</span>
-    <span class="n">LOCAL</span> <span class="o">=</span> <span class="s2">"local"</span>  <span class="c1">#: &lt;local&gt;</span>
-    <span class="n">GAMEPAD</span> <span class="o">=</span> <span class="s2">"gamepad"</span>  <span class="c1">#: &lt;gamepad&gt;</span>
-    <span class="n">NODE</span> <span class="o">=</span> <span class="s2">"node"</span>  <span class="c1">#: &lt;node type =&gt;</span></div>
-
-
-<div class="viewcode-block" id="ControlType"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.ControlType">[docs]</a><span class="nd">@unique</span>
-<span class="k">class</span> <span class="nc">ControlType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">"""Valid xml attrib = {"type":ControlType} for &lt;node&gt;"""</span>
-
-    <span class="n">BOX</span> <span class="o">=</span> <span class="s2">"BOX"</span>  <span class="c1">#: &lt;node type = "BOX"&gt;</span>
-    <span class="n">BUTTON</span> <span class="o">=</span> <span class="s2">"BUTTON"</span>  <span class="c1">#: &lt;node type = "BUTTON"&gt;</span>
-    <span class="n">LABEL</span> <span class="o">=</span> <span class="s2">"LABEL"</span>  <span class="c1">#: &lt;node type = "LABEL"&gt;</span>
-    <span class="n">TEXT</span> <span class="o">=</span> <span class="s2">"TEXT"</span>  <span class="c1">#: &lt;node type = "TEXT"&gt;</span>
-    <span class="n">FADER</span> <span class="o">=</span> <span class="s2">"FADER"</span>  <span class="c1">#: &lt;node type = "FADER"&gt;</span>
-    <span class="n">XY</span> <span class="o">=</span> <span class="s2">"XY"</span>  <span class="c1">#: &lt;node type = "XY"&gt;</span>
-    <span class="n">RADIAL</span> <span class="o">=</span> <span class="s2">"RADIAL"</span>  <span class="c1">#: &lt;node type = "RADIAL"&gt;</span>
-    <span class="n">ENCODER</span> <span class="o">=</span> <span class="s2">"ENCODER"</span>  <span class="c1">#: &lt;node type = "ENCODER"&gt;</span>
-    <span class="n">RADAR</span> <span class="o">=</span> <span class="s2">"RADAR"</span>  <span class="c1">#: &lt;node type = "RADAR"&gt;</span>
-    <span class="n">RADIO</span> <span class="o">=</span> <span class="s2">"RADIO"</span>  <span class="c1">#: &lt;node type = "RADIO"&gt;</span>
-    <span class="n">GROUP</span> <span class="o">=</span> <span class="s2">"GROUP"</span>  <span class="c1">#: &lt;node type = "GROUP"&gt;</span>
-    <span class="n">PAGER</span> <span class="o">=</span> <span class="s2">"PAGER"</span>  <span class="c1">#: &lt;node type = "PAGER"&gt;</span>
-    <span class="n">GRID</span> <span class="o">=</span> <span class="s2">"GRID"</span>  <span class="c1">#: &lt;node type = "GRID"&gt;</span></div>
-
-
-<div class="viewcode-block" id="PropertyType"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.PropertyType">[docs]</a><span class="nd">@unique</span>
-<span class="k">class</span> <span class="nc">PropertyType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">"""Valid xml attrib = {"type":PropertyType} for &lt;property&gt;"""</span>
-
-    <span class="n">STRING</span> <span class="o">=</span> <span class="s2">"s"</span>  <span class="c1">#: &lt;property type="s"&gt;</span>
-    <span class="n">BOOLEAN</span> <span class="o">=</span> <span class="s2">"b"</span>  <span class="c1">#: &lt;property type="b"&gt;</span>
-    <span class="n">INTEGER</span> <span class="o">=</span> <span class="s2">"i"</span>  <span class="c1">#: &lt;property type="i"&gt;</span>
-    <span class="n">FLOAT</span> <span class="o">=</span> <span class="s2">"f"</span>  <span class="c1">#: &lt;property type="f"&gt;</span>
-    <span class="n">FRAME</span> <span class="o">=</span> <span class="s2">"r"</span>  <span class="c1">#: &lt;property type="r"&gt;</span>
-    <span class="n">COLOR</span> <span class="o">=</span> <span class="s2">"c"</span>  <span class="c1">#: &lt;property type="c"&gt;</span></div>
-
-
-<span class="n">elementType</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
-    <span class="n">ControlElements</span><span class="o">.</span><span class="n">CHILDREN</span><span class="p">,</span>
-    <span class="n">ControlElements</span><span class="o">.</span><span class="n">GAMEPAD</span><span class="p">,</span>
-    <span class="n">ControlElements</span><span class="o">.</span><span class="n">LOCAL</span><span class="p">,</span>
-    <span class="n">ControlElements</span><span class="o">.</span><span class="n">MESSAGES</span><span class="p">,</span>
-    <span class="n">ControlElements</span><span class="o">.</span><span class="n">MIDI</span><span class="p">,</span>
-    <span class="n">ControlElements</span><span class="o">.</span><span class="n">NODE</span><span class="p">,</span>
-    <span class="n">ControlElements</span><span class="o">.</span><span class="n">OSC</span><span class="p">,</span>
-    <span class="n">ControlElements</span><span class="o">.</span><span class="n">PROPERTIES</span><span class="p">,</span>
-    <span class="n">ControlElements</span><span class="o">.</span><span class="n">PROPERTY</span><span class="p">,</span>
-    <span class="n">ControlElements</span><span class="o">.</span><span class="n">VALUES</span><span class="p">,</span>
-    <span class="n">ControlElements</span><span class="o">.</span><span class="n">VALUE</span><span class="p">,</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># Enums</span>
+    <span class="s2">"ElementTag"</span><span class="p">,</span>
+    <span class="s2">"ControlType"</span><span class="p">,</span>
+    <span class="s2">"ControlList"</span><span class="p">,</span>
+    <span class="c1"># Properties</span>
+    <span class="s2">"PropertyType"</span><span class="p">,</span>
+    <span class="s2">"PropertyValue"</span><span class="p">,</span>
+    <span class="s2">"Property"</span><span class="p">,</span>
+    <span class="c1"># Values</span>
+    <span class="s2">"Value"</span><span class="p">,</span>
+    <span class="s2">"Values"</span><span class="p">,</span>
+    <span class="c1"># Messages</span>
+    <span class="s2">"MsgConfig"</span><span class="p">,</span>
+    <span class="s2">"Partial"</span><span class="p">,</span>
+    <span class="s2">"Trigger"</span><span class="p">,</span>
+    <span class="s2">"MidiMsg"</span><span class="p">,</span>
+    <span class="s2">"MidiValue"</span><span class="p">,</span>
+    <span class="s2">"MidiValues"</span><span class="p">,</span>
+    <span class="s2">"LocalSrc"</span><span class="p">,</span>
+    <span class="s2">"LocalDst"</span><span class="p">,</span>
+    <span class="s2">"Triggers"</span><span class="p">,</span>
+    <span class="s2">"Address"</span><span class="p">,</span>
+    <span class="s2">"Arguments"</span><span class="p">,</span>
+    <span class="s2">"MessageOSC"</span><span class="p">,</span>
+    <span class="s2">"MessageMIDI"</span><span class="p">,</span>
+    <span class="s2">"MessageLOCAL"</span><span class="p">,</span>
+    <span class="s2">"Message"</span><span class="p">,</span>
+    <span class="s2">"Messages"</span><span class="p">,</span>
+    <span class="c1"># Children</span>
+    <span class="s2">"Children"</span><span class="p">,</span>
+    <span class="s2">"Control"</span><span class="p">,</span>
 <span class="p">]</span>
 
-
-<span class="n">controlType</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
-    <span class="n">ControlType</span><span class="o">.</span><span class="n">BOX</span><span class="p">,</span>
-    <span class="n">ControlType</span><span class="o">.</span><span class="n">BUTTON</span><span class="p">,</span>
-    <span class="n">ControlType</span><span class="o">.</span><span class="n">ENCODER</span><span class="p">,</span>
-    <span class="n">ControlType</span><span class="o">.</span><span class="n">FADER</span><span class="p">,</span>
-    <span class="n">ControlType</span><span class="o">.</span><span class="n">GRID</span><span class="p">,</span>
-    <span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span><span class="p">,</span>
-    <span class="n">ControlType</span><span class="o">.</span><span class="n">LABEL</span><span class="p">,</span>
-    <span class="n">ControlType</span><span class="o">.</span><span class="n">PAGER</span><span class="p">,</span>
-    <span class="n">ControlType</span><span class="o">.</span><span class="n">RADAR</span><span class="p">,</span>
-    <span class="n">ControlType</span><span class="o">.</span><span class="n">RADIAL</span><span class="p">,</span>
-    <span class="n">ControlType</span><span class="o">.</span><span class="n">RADIO</span><span class="p">,</span>
-    <span class="n">ControlType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span>
-    <span class="n">ControlType</span><span class="o">.</span><span class="n">XY</span><span class="p">,</span>
+<span class="n">ElementTag</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
+    <span class="s2">"node"</span><span class="p">,</span>
+    <span class="s2">"properties"</span><span class="p">,</span>
+    <span class="s2">"values"</span><span class="p">,</span>
+    <span class="s2">"messages"</span><span class="p">,</span>
+    <span class="s2">"children"</span><span class="p">,</span>
+    <span class="s2">"property"</span><span class="p">,</span>
+    <span class="s2">"value"</span><span class="p">,</span>
+    <span class="s2">"osc"</span><span class="p">,</span>
+    <span class="s2">"midi"</span><span class="p">,</span>
+    <span class="s2">"local"</span><span class="p">,</span>
+    <span class="s2">"gamepad"</span><span class="p">,</span>
 <span class="p">]</span>
-
-<span class="n">propertyType</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
-    <span class="n">PropertyType</span><span class="o">.</span><span class="n">BOOLEAN</span><span class="p">,</span>
-    <span class="n">PropertyType</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span>
-    <span class="n">PropertyType</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span>
-    <span class="n">PropertyType</span><span class="o">.</span><span class="n">FRAME</span><span class="p">,</span>
-    <span class="n">PropertyType</span><span class="o">.</span><span class="n">INTEGER</span><span class="p">,</span>
-    <span class="n">PropertyType</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
+<span class="sd">"""Valid literals for xml element tags."""</span>
+<span class="n">ControlType</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
+    <span class="s2">"BOX"</span><span class="p">,</span>
+    <span class="s2">"BUTTON"</span><span class="p">,</span>
+    <span class="s2">"ENCODER"</span><span class="p">,</span>
+    <span class="s2">"FADER"</span><span class="p">,</span>
+    <span class="s2">"GRID"</span><span class="p">,</span>
+    <span class="s2">"GROUP"</span><span class="p">,</span>
+    <span class="s2">"LABEL"</span><span class="p">,</span>
+    <span class="s2">"PAGER"</span><span class="p">,</span>
+    <span class="s2">"RADAR"</span><span class="p">,</span>
+    <span class="s2">"RADIAL"</span><span class="p">,</span>
+    <span class="s2">"RADIO"</span><span class="p">,</span>
+    <span class="s2">"TEXT"</span><span class="p">,</span>
+    <span class="s2">"XY"</span><span class="p">,</span>
 <span class="p">]</span>
+<span class="n">ControlList</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ControlType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"BOX"</span><span class="p">,</span>
+    <span class="s2">"BUTTON"</span><span class="p">,</span>
+    <span class="s2">"ENCODER"</span><span class="p">,</span>
+    <span class="s2">"FADER"</span><span class="p">,</span>
+    <span class="s2">"GRID"</span><span class="p">,</span>
+    <span class="s2">"GROUP"</span><span class="p">,</span>
+    <span class="s2">"LABEL"</span><span class="p">,</span>
+    <span class="s2">"PAGER"</span><span class="p">,</span>
+    <span class="s2">"RADAR"</span><span class="p">,</span>
+    <span class="s2">"RADIAL"</span><span class="p">,</span>
+    <span class="s2">"RADIO"</span><span class="p">,</span>
+    <span class="s2">"TEXT"</span><span class="p">,</span>
+    <span class="s2">"XY"</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="sd">"""Valid literals for &lt;node type:ControlType&gt;"""</span>
+<span class="n">PropertyType</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"b"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="s2">"f"</span><span class="p">,</span> <span class="s2">"i"</span><span class="p">,</span> <span class="s2">"s"</span><span class="p">]</span>
+<span class="sd">"""Valid literals for &lt;property type:PropertyType&gt; b: boolean, c: color, r: frame, f: float, i: int, s: string</span>
+<span class="sd">"""</span>
+<span class="n">PropertyValue</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">Property</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PropertyValue</span><span class="p">]</span>
+<span class="sd">"""</span>
+<span class="sd">Property:</span>
+<span class="sd">    [0] - Property Key(str): Name/key of the property.</span>
+<span class="sd">    [1] - PropertyValue: Any str, int, float, bool, PropertyFrame or PropertyColor.</span>
+<span class="sd">    The Python type/TypeAlias will be converted to a literal for XML.</span>
+<span class="sd">    Type str will be "s", bool will be "b", etc.</span>
+<span class="sd">    PropertyFrame converts to:</span>
+<span class="sd">        {"x":[1][0], "y":[1][1], "w":[1][2], "h":[1][3]}</span>
 
+<span class="sd">Example:</span>
+<span class="sd">    ("name", "Craig")</span>
 
-<span class="k">class</span> <span class="nc">Frame</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-    <span class="sd">"""Typed dictionary of 4 floats"""</span>
+<span class="sd">    &lt;property type="s"&gt;</span>
+<span class="sd">        &lt;key&gt;name&lt;/key&gt;</span>
+<span class="sd">        &lt;value&gt;Craig&lt;/value&gt;</span>
+<span class="sd">    &lt;/property&gt;</span>
 
-    <span class="n">x</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="n">y</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="n">w</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="n">h</span><span class="p">:</span> <span class="nb">int</span>
+<span class="sd">    ("frame",(0,0,100,100))</span>
 
-
-<span class="k">class</span> <span class="nc">Color</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-    <span class="sd">"""Typed dictionary of 4 floats"""</span>
-
-    <span class="n">r</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">g</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">b</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">a</span><span class="p">:</span> <span class="nb">float</span>
-
+<span class="sd">    &lt;property type="r"&gt;</span>
+<span class="sd">        &lt;key&gt;frame&lt;/key&gt;</span>
+<span class="sd">        &lt;value&gt;</span>
+<span class="sd">            &lt;x&gt;0&lt;/x&gt;</span>
+<span class="sd">            &lt;y&gt;0&lt;/y&gt;</span>
+<span class="sd">            &lt;w&gt;100&lt;/w&gt;</span>
+<span class="sd">            &lt;h&gt;100&lt;/h&gt;</span>
+<span class="sd">        &lt;/value&gt;</span>
+<span class="sd">    &lt;/property&gt;</span>
 
 <span class="sd">"""</span>
-
-<span class="sd">SECOND SECTION:</span>
-
+<span class="n">Value</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span>
+    <span class="n">Literal</span><span class="p">[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"touch"</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">],</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span>
+<span class="p">]</span>
+<span class="sd">""" </span>
+<span class="sd">Value:</span>
+<span class="sd">    [0] - ValueKey: Any of the allowed literals.</span>
+<span class="sd">    [1] - locked: Boolean.</span>
+<span class="sd">    [2] - lockedDefaultCurrent: Boolean.</span>
+<span class="sd">    [3] - ValueDefault: str, bool or float. "x" and "y" use floats, "touch" is bool, "text" is str.</span>
+<span class="sd">    [4] - defaultPull: Integer between 0 and 100.</span>
 <span class="sd">"""</span>
+<span class="n">Values</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="n">Value</span><span class="p">]</span>
+<span class="n">Partial</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span>
+    <span class="s2">"Partial"</span><span class="p">,</span>
+    <span class="nb">tuple</span><span class="p">[</span>
+        <span class="n">Literal</span><span class="p">[</span><span class="s2">"CONSTANT"</span><span class="p">,</span> <span class="s2">"INDEX"</span><span class="p">,</span> <span class="s2">"VALUE"</span><span class="p">,</span> <span class="s2">"PROPERTY"</span><span class="p">],</span>
+        <span class="n">Literal</span><span class="p">[</span><span class="s2">"BOOLEAN"</span><span class="p">,</span> <span class="s2">"INTEGER"</span><span class="p">,</span> <span class="s2">"FLOAT"</span><span class="p">,</span> <span class="s2">"STRING"</span><span class="p">],</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="sd">""" </span>
+<span class="sd">Partial:</span>
+<span class="sd">This is the unit with which the OSC message is constructed.</span>
+<span class="sd">So in a message like track/1/fx/8, the partials are: "track", "1", "fx", "8".</span>
+<span class="sd">They can be dynamic, so if the Control name is "fx" the partial would look like: track/1/name/8. </span>
 
+<span class="sd">    [0] - PartialType: Any of the allowed literals.</span>
+<span class="sd">    [1] - PartialConversion: Any of the allowed literals. </span>
+<span class="sd">    [2] - value: Depends on the Partial Type. </span>
+<span class="sd">            CONSTANT: Value is any string, frequently "/".</span>
+<span class="sd">            INDEX: Any int, as str.</span>
+<span class="sd">            VALUE: Any of the allowed ValueKey literals.</span>
+<span class="sd">            PROPERTY: Any str.</span>
+<span class="sd">    [3] - scaleMin: Range of Value.</span>
+<span class="sd">    [4] - scaleMax: Range of Value.</span>
+<span class="sd">"""</span>
+<span class="n">Trigger</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span>
+    <span class="s2">"Trigger"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"touch"</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"ANY"</span><span class="p">,</span> <span class="s2">"RISE"</span><span class="p">,</span> <span class="s2">"FALL"</span><span class="p">]]</span>
+<span class="p">)</span>
+<span class="sd">"""</span>
+<span class="sd">Trigger:</span>
 
-<div class="viewcode-block" id="Property"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.elements.Property">[docs]</a><span class="k">class</span> <span class="nc">Property</span><span class="p">:</span>
-    <span class="sd">"""Struct like object to carry the property values"""</span>
+<span class="sd">This is the Value that triggers the OSC/MIDI/LOCAL message.</span>
 
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"key"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Property.__init__"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.elements.Property.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">value</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">params</span> <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span></div>
-
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">"""</span>
-<span class="s2">Property:</span>
-<span class="s2">    type:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">    key:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">    value:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">    params:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="si">}</span><span class="s2">"""</span></div>
-
-<div class="viewcode-block" id="Value"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.Value">[docs]</a><span class="k">class</span> <span class="nc">Value</span><span class="p">:</span>
-    <span class="sd">"""Default Elements for &lt;value&gt;.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        key (str, optional): "x" or "touch". Defaults to "touch".</span>
-<span class="sd">        locked (str, optional): boolean. Defaults to "0".</span>
-<span class="sd">        lockedDefaultCurrent (str, optional): boolean. Defaults to "0".</span>
-<span class="sd">        default (str, optional): float or boolean. Defaults to "false".</span>
-<span class="sd">        defaultPull (str, optional): 0 to 100. Defaults to "0".</span>
-<span class="sd">    """</span>
-
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"key"</span><span class="p">,</span> <span class="s2">"locked"</span><span class="p">,</span> <span class="s2">"lockedDefaultCurrent"</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">,</span> <span class="s2">"defaultPull"</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Value.__init__"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.Value.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"touch"</span><span class="p">,</span>
-        <span class="n">locked</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">lockedDefaultCurrent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"false"</span><span class="p">,</span>
-        <span class="n">defaultPull</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">locked</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">locked</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lockedDefaultCurrent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">lockedDefaultCurrent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">default</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">defaultPull</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">defaultPull</span></div></div>
-
-
-<div class="viewcode-block" id="Partial"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.elements.Partial">[docs]</a><span class="k">class</span> <span class="nc">Partial</span><span class="p">:</span>
-    <span class="sd">"""Default Elements for &lt;partial&gt;</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        type (str, optional):</span>
-<span class="sd">        "CONSTANT", "INDEX", "VALUE", "PROPERTY". Defaults to "CONSTANT".</span>
-<span class="sd">        conversion (str, optional):</span>
-<span class="sd">        "BOOLEAN", "INTEGER", "FLOAT", "STRING". Defaults to "STRING".</span>
-<span class="sd">        value (str, optional): Depends on the context. Defaults to "/".</span>
-<span class="sd">        scaleMin (str, optional): If "VALUE", set range. Defaults to "0".</span>
-<span class="sd">        scaleMax (str, optional): If "VALUE", set range. Defaults to "1".</span>
-<span class="sd">    """</span>
-
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"conversion"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">,</span> <span class="s2">"scaleMin"</span><span class="p">,</span> <span class="s2">"scaleMax"</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Partial.__init__"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.elements.Partial.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"CONSTANT"</span><span class="p">,</span>
-        <span class="n">conversion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"STRING"</span><span class="p">,</span>
-        <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"/"</span><span class="p">,</span>
-        <span class="n">scaleMin</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">scaleMax</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">conversion</span> <span class="o">=</span> <span class="n">conversion</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scaleMin</span> <span class="o">=</span> <span class="n">scaleMin</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scaleMax</span> <span class="o">=</span> <span class="n">scaleMax</span></div></div>
-
-
-<div class="viewcode-block" id="Trigger"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.elements.Trigger">[docs]</a><span class="k">class</span> <span class="nc">Trigger</span><span class="p">:</span>
-    <span class="sd">"""Default Elements for &lt;trigger&gt;</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        var (str, optional): "x" or "touch". Defaults to "x".</span>
-<span class="sd">        con (str, optional): "ANY", "RISE" or "FALL". Defaults to "ANY".</span>
-<span class="sd">    """</span>
-
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"var"</span><span class="p">,</span> <span class="s2">"condition"</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Trigger.__init__"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.elements.Trigger.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"x"</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"ANY"</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">var</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span></div></div>
-
-
-<span class="k">class</span> <span class="nc">MidiMessage</span><span class="p">:</span>
-    <span class="sd">"""_summary_</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        type (str, optional): CONTROLCHANGE, NOTE_ON/OFF, etc.</span>
-<span class="sd">        Defaults to "CONTROLCHANGE".</span>
-<span class="sd">        channel (str, optional): Midi Channel. Defaults to "1".</span>
-<span class="sd">        data1 (str, optional): Depends on type. Defaults to "0".</span>
-<span class="sd">        data2 (str, optional): Depends on type. Defaults to "0".</span>
-<span class="sd">    """</span>
-
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"channel"</span><span class="p">,</span> <span class="s2">"data1"</span><span class="p">,</span> <span class="s2">"data2"</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"CONTROLCHANGE"</span><span class="p">,</span>
-        <span class="n">channel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">data1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">data2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="n">channel</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data1</span> <span class="o">=</span> <span class="n">data1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data2</span> <span class="o">=</span> <span class="n">data2</span>
-
-
-<span class="k">class</span> <span class="nc">MidiValue</span><span class="p">:</span>
-    <span class="sd">"""The Value of the control to send as Midi, generally 0-127 scale.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        type (str, optional): CONSTANT, INDEX, VALUE, PROPERTY.</span>
-<span class="sd">        Defaults to "VALUE".</span>
-<span class="sd">        key (str, optional): Value or Property of the control. Defaults to "x".</span>
-<span class="sd">        scaleMin (str, optional): Scale of the control. Defaults to "0".</span>
-<span class="sd">        scaleMax (str, optional): Scale of the control. Defaults to "127".</span>
-<span class="sd">    """</span>
-
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"key"</span><span class="p">,</span> <span class="s2">"scaleMin"</span><span class="p">,</span> <span class="s2">"scaleMax"</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"VALUE"</span><span class="p">,</span>
-        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"x"</span><span class="p">,</span>
-        <span class="n">scaleMin</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">scaleMax</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"127"</span><span class="p">,</span>
-    <span class="p">):</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scaleMin</span> <span class="o">=</span> <span class="n">scaleMin</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scaleMax</span> <span class="o">=</span> <span class="n">scaleMax</span>
-
-
-<div class="viewcode-block" id="OSC"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.elements.OSC">[docs]</a><span class="k">class</span> <span class="nc">OSC</span><span class="p">:</span>
-    <span class="sd">"""Default Elements and Sub Elements for &lt;osc&gt;</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        enabled (str, optional): Boolean. Defaults to "1".</span>
-<span class="sd">        send (str, optional): Boolean. Defaults to "1".</span>
-<span class="sd">        receive (str, optional): Boolean. Defaults to "1".</span>
-<span class="sd">        feedback (str, optional): Boolean. Defaults to "0".</span>
-<span class="sd">        connections (str, optional): Binary.</span>
-<span class="sd">        Defaults to "00001" (channel 1, "00011" means 1 and 2).</span>
-<span class="sd">        triggers (List[Trigger], optional): [Trigger].</span>
-<span class="sd">        Defaults to [Trigger()].</span>
-<span class="sd">        path (List[Partial], optional): [Partial].</span>
-<span class="sd">        Defaults to [Partial(), Partial(typ="PROPERTY", val="name")].</span>
-<span class="sd">        arguments (List[Partial], optional): [Partial].</span>
-<span class="sd">        Defaults to [Partial(typ="VALUE", con="FLOAT", val="x")].</span>
-<span class="sd">    """</span>
-
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">"enabled"</span><span class="p">,</span>
-        <span class="s2">"send"</span><span class="p">,</span>
-        <span class="s2">"receive"</span><span class="p">,</span>
-        <span class="s2">"feedback"</span><span class="p">,</span>
-        <span class="s2">"connections"</span><span class="p">,</span>
-        <span class="s2">"triggers"</span><span class="p">,</span>
-        <span class="s2">"path"</span><span class="p">,</span>
-        <span class="s2">"arguments"</span><span class="p">,</span>
-    <span class="p">)</span>
-
-<div class="viewcode-block" id="OSC.__init__"><a class="viewcode-back" href="../../guide/5-tosc-msg.html#tosclib.elements.OSC.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">enabled</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">send</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">receive</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">feedback</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">connections</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"00001"</span><span class="p">,</span>
-        <span class="n">triggers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Trigger</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Trigger</span><span class="p">()],</span>
-        <span class="n">path</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Partial</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Partial</span><span class="p">(),</span> <span class="n">Partial</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"PROPERTY"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">"name"</span><span class="p">)],</span>
-        <span class="n">arguments</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Partial</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">Partial</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"VALUE"</span><span class="p">,</span> <span class="n">conversion</span><span class="o">=</span><span class="s2">"FLOAT"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">"x"</span><span class="p">)</span>
+<span class="sd">    [0] - TriggerType: Any of the valid literals ["x", "y", "touch", "text"].</span>
+<span class="sd">    [1] - TriggerCondition: Any of the valid literals ["ANY", "RISE", "FALL"].</span>
+<span class="sd">"""</span>
+<span class="n">MidiMsg</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span>
+    <span class="s2">"MidiMsg"</span><span class="p">,</span>
+    <span class="nb">tuple</span><span class="p">[</span>
+        <span class="n">Literal</span><span class="p">[</span>
+            <span class="s2">"NOTE_OFF"</span><span class="p">,</span>
+            <span class="s2">"NOTE_ON"</span><span class="p">,</span>
+            <span class="s2">"POLYPRESSURE"</span><span class="p">,</span>
+            <span class="s2">"CONTROLCHANGE"</span><span class="p">,</span>
+            <span class="s2">"PROGRAMCHANGE"</span><span class="p">,</span>
+            <span class="s2">"CHANNELPRESSURE"</span><span class="p">,</span>
+            <span class="s2">"PITCHBEND"</span><span class="p">,</span>
+            <span class="s2">"SYSTEMEXCLUSIVE"</span><span class="p">,</span>
         <span class="p">],</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="n">enabled</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">send</span> <span class="o">=</span> <span class="n">send</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">receive</span> <span class="o">=</span> <span class="n">receive</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feedback</span> <span class="o">=</span> <span class="n">feedback</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">connections</span> <span class="o">=</span> <span class="n">connections</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">triggers</span> <span class="o">=</span> <span class="n">triggers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="n">arguments</span></div></div>
+        <span class="nb">int</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="sd">"""</span>
+<span class="sd">Midi Message:</span>
+
+<span class="sd">    [0] - MidiMessageType: One of the valid literals.</span>
+<span class="sd">    [1] - MidiChannel: Integer, typical 1-16 midi channel.</span>
+<span class="sd">    [2] - data1: Depends, WIP.</span>
+<span class="sd">    [3] - data2: Depends, WIP.</span>
+<span class="sd">"""</span>
+<span class="n">MidiValue</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span>
+    <span class="s2">"MidiValue"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"CONSTANT"</span><span class="p">,</span> <span class="s2">"INDEX"</span><span class="p">,</span> <span class="s2">"VALUE"</span><span class="p">,</span> <span class="s2">"PROPERTY"</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="sd">"""</span>
+<span class="sd">MidiValue:</span>
+
+<span class="sd">    [0] - MidiValueType: Any of the valid literals. ["CONSTANT", "INDEX", "VALUE", "PROPERTY"]</span>
+<span class="sd">    [1] - key: Depends on the MidiValueType. Can be a ValueType or PropertyKey, etc.</span>
+<span class="sd">    [2] - scaleMin: int 0 to 127 </span>
+<span class="sd">    [3] - scaleMax: int 0 to 127</span>
+<span class="sd">"""</span>
+<span class="n">MsgConfig</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span><span class="s2">"MsgConfig"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>
+<span class="sd">"""</span>
+<span class="sd">Connection: </span>
+
+<span class="sd">    [0] - Enabled: Bool.</span>
+<span class="sd">    [1] - Send: Bool.</span>
+<span class="sd">    [2] - Receive: Bool.</span>
+<span class="sd">    [3] - Feedback: Bool.</span>
+<span class="sd">    [4] - Connections (str as binary), so connection 1 is 00001, connection 2 is 00010, both are 00011.</span>
+<span class="sd">"""</span>
+<span class="n">Triggers</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Trigger</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="sd">"""Tuple of Trigger"""</span>
+<span class="n">Address</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Partial</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="sd">"""Tuple of Partial"""</span>
+<span class="n">Arguments</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Partial</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="sd">"""Tuple of Partial"""</span>
+<span class="n">MessageOSC</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span>
+    <span class="s2">"MessageOSC"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"osc"</span><span class="p">],</span> <span class="n">MsgConfig</span><span class="p">,</span> <span class="n">Triggers</span><span class="p">,</span> <span class="n">Address</span><span class="p">,</span> <span class="n">Arguments</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="sd">"""</span>
+<span class="sd">MessageOSC:</span>
+<span class="sd">    [0] - Tag: osc</span>
+<span class="sd">    [1] - MsgConfig: Tuple of Enabled, Send, Receive, Feedback, Connections.</span>
+<span class="sd">    [2] - Triggers: Tuple of Trigger.</span>
+<span class="sd">    [3] - Address: Construct a message with tuple of Partial.</span>
+<span class="sd">    [4] - Arguments: Construct arguments with tuple of Partial.</span>
+<span class="sd">"""</span>
+<span class="n">MidiValues</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">MidiValue</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="sd">"""Tuple of MidiValue"""</span>
+<span class="n">MessageMIDI</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span>
+    <span class="s2">"MessageMIDI"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"midi"</span><span class="p">],</span> <span class="n">MsgConfig</span><span class="p">,</span> <span class="n">Triggers</span><span class="p">,</span> <span class="n">MidiMsg</span><span class="p">,</span> <span class="n">MidiValues</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="sd">"""</span>
+<span class="sd">MessageMIDI:</span>
+
+<span class="sd">    [0] - Tag: midi.</span>
+<span class="sd">    [1] - MsgConfig: Tuple of Enabled, Send, Receive, Feedback, Connections.</span>
+<span class="sd">    [2] - Triggers (tuple). </span>
+<span class="sd">    [3] - Message: See MidiMessage.</span>
+<span class="sd">    [4] - Value (tuple): See :type:`tosclib.elements.MidiValue`</span>
+<span class="sd">"""</span>
+<span class="n">LocalSrc</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span>
+    <span class="s2">"LocalSrc"</span><span class="p">,</span>
+    <span class="nb">tuple</span><span class="p">[</span>
+        <span class="n">Literal</span><span class="p">[</span><span class="s2">"CONSTANT"</span><span class="p">,</span> <span class="s2">"INDEX"</span><span class="p">,</span> <span class="s2">"VALUE"</span><span class="p">,</span> <span class="s2">"PROPERTY"</span><span class="p">],</span>
+        <span class="n">Literal</span><span class="p">[</span><span class="s2">"BOOLEAN"</span><span class="p">,</span> <span class="s2">"INTEGER"</span><span class="p">,</span> <span class="s2">"FLOAT"</span><span class="p">,</span> <span class="s2">"STRING"</span><span class="p">],</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="sd">"""</span>
+<span class="sd">LocalSrc:</span>
+
+<span class="sd">    [0] - Valid Literal Type</span>
+<span class="sd">    [1] - Valid Literal Conversion</span>
+<span class="sd">    [2] - Source Value/Property/etc </span>
+<span class="sd">    [3] - Min range</span>
+<span class="sd">    [4] - Max range</span>
+<span class="sd">"""</span>
+<span class="n">LocalDst</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span>
+    <span class="s2">"LocalDst"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"CONSTANT"</span><span class="p">,</span> <span class="s2">"INDEX"</span><span class="p">,</span> <span class="s2">"VALUE"</span><span class="p">,</span> <span class="s2">"PROPERTY"</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="sd">"""</span>
+<span class="sd">LocalDst:</span>
+<span class="sd">    [0] - Destination Type</span>
+<span class="sd">    [1] - Destination Var</span>
+<span class="sd">    [2] - Destination ID</span>
+<span class="sd">"""</span>
+<span class="n">MessageLOCAL</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span>
+    <span class="s2">"MessageLOCAL"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"local"</span><span class="p">],</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Triggers</span><span class="p">,</span> <span class="n">LocalSrc</span><span class="p">,</span> <span class="n">LocalDst</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="sd">"""</span>
+<span class="sd">MessageLOCAL:</span>
+
+<span class="sd">    [0] - Tag: local.</span>
+<span class="sd">    [1] - Enabled: Bool.</span>
+<span class="sd">    [2] - Triggers: Tuple of Trigger. </span>
+<span class="sd">    [3] - Source: Tuple of value, valid literal.</span>
+<span class="sd">    [4] - Target: Tuple of value, id.</span>
+<span class="sd">"""</span>
+<span class="n">Message</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">MessageOSC</span> <span class="o">|</span> <span class="n">MessageMIDI</span> <span class="o">|</span> <span class="n">MessageLOCAL</span>
+<span class="n">Messages</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="n">MessageOSC</span> <span class="o">|</span> <span class="n">MessageMIDI</span> <span class="o">|</span> <span class="n">MessageLOCAL</span><span class="p">]</span>
+
+<span class="n">Properties</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="n">Property</span><span class="p">]</span>
+<span class="n">Children</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="MIDI"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.MIDI">[docs]</a><span class="k">class</span> <span class="nc">MIDI</span><span class="p">:</span>
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">"enabled"</span><span class="p">,</span>
-        <span class="s2">"send"</span><span class="p">,</span>
-        <span class="s2">"receive"</span><span class="p">,</span>
-        <span class="s2">"feedback"</span><span class="p">,</span>
-        <span class="s2">"connections"</span><span class="p">,</span>
-        <span class="s2">"triggers"</span><span class="p">,</span>
-        <span class="s2">"message"</span><span class="p">,</span>
-        <span class="s2">"values"</span><span class="p">,</span>
-    <span class="p">)</span>
+<div class="viewcode-block" id="Control"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.Control">[docs]</a><span class="k">class</span> <span class="nc">Control</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="sd">"""The Control Type Protocol. Touch OSC Control</span>
 
-<div class="viewcode-block" id="MIDI.__init__"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.MIDI.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">enabled</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">send</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">receive</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">feedback</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">connections</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"00001"</span><span class="p">,</span>
-        <span class="n">triggers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Trigger</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Trigger</span><span class="p">()],</span>
-        <span class="n">message</span><span class="p">:</span> <span class="n">MidiMessage</span> <span class="o">=</span> <span class="n">MidiMessage</span><span class="p">(),</span>
-        <span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MidiValue</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">MidiValue</span><span class="p">(),</span>
-            <span class="n">MidiValue</span><span class="p">(</span><span class="s2">"INDEX"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="s2">"0"</span><span class="p">,</span> <span class="s2">"1"</span><span class="p">),</span>
-            <span class="n">MidiValue</span><span class="p">(</span><span class="s2">"VALUE"</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">,</span> <span class="s2">"0"</span><span class="p">,</span> <span class="s2">"127"</span><span class="p">),</span>
-        <span class="p">],</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="n">enabled</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">send</span> <span class="o">=</span> <span class="n">send</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">receive</span> <span class="o">=</span> <span class="n">receive</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feedback</span> <span class="o">=</span> <span class="n">feedback</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">connections</span> <span class="o">=</span> <span class="n">connections</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">triggers</span> <span class="o">=</span> <span class="n">triggers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">values</span></div></div>
+<span class="sd">    Attributes:</span>
+<span class="sd">        type(ControlType): Any of the valid literals.</span>
+<span class="sd">        id(str): Any hash function result as str.</span>
+<span class="sd">        values(Values|[]]): The Control's Values.</span>
+<span class="sd">        messages(Values|[]]): The Control's Messages.</span>
+<span class="sd">        children(Children|[]]): The Control's Control children.</span>
 
-
-<div class="viewcode-block" id="LOCAL"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.LOCAL">[docs]</a><span class="k">class</span> <span class="nc">LOCAL</span><span class="p">:</span>
-    <span class="sd">"""Default elements for &lt;midi&gt;</span>
-<span class="sd">    Args:</span>
-<span class="sd">        enabled: bool</span>
-<span class="sd">        triggers : Trigger x or touch.</span>
-<span class="sd">        type : BOOL, INT, FLOAT, STRING. The Type of Trigger.x</span>
-<span class="sd">        conversion : BOOL, INT, FLOAT, STRING.</span>
-<span class="sd">        value : The value sent to the other local Control.</span>
-<span class="sd">        scaleMin : 0</span>
-<span class="sd">        scaleMax : 1</span>
-<span class="sd">        dstType : BOOL, INT, FLOAT, STRING of the target.</span>
-<span class="sd">        dstVar : The value you want to change in the target.</span>
-<span class="sd">        dstID : The node {ID} of the target.</span>
 <span class="sd">    """</span>
 
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">"enabled"</span><span class="p">,</span>
-        <span class="s2">"triggers"</span><span class="p">,</span>
-        <span class="s2">"type"</span><span class="p">,</span>
-        <span class="s2">"conversion"</span><span class="p">,</span>
-        <span class="s2">"value"</span><span class="p">,</span>
-        <span class="s2">"scaleMin"</span><span class="p">,</span>
-        <span class="s2">"scaleMax"</span><span class="p">,</span>
-        <span class="s2">"dstType"</span><span class="p">,</span>
-        <span class="s2">"dstVar"</span><span class="p">,</span>
-        <span class="s2">"dstID"</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">ControlType</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span>
+    <span class="n">children</span><span class="p">:</span> <span class="n">Children</span>
 
-<div class="viewcode-block" id="LOCAL.__init__"><a class="viewcode-back" href="../../api/1-ElementEnums.html#tosclib.elements.LOCAL.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">enabled</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">triggers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Trigger</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Trigger</span><span class="p">()],</span>
-        <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"VALUE"</span><span class="p">,</span>
-        <span class="n">conversion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"FLOAT"</span><span class="p">,</span>
-        <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"x"</span><span class="p">,</span>
-        <span class="n">scaleMin</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">scaleMax</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">,</span>
-        <span class="n">dstType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
-        <span class="n">dstVar</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
-        <span class="n">dstID</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="n">enabled</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">triggers</span> <span class="o">=</span> <span class="n">triggers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">conversion</span> <span class="o">=</span> <span class="n">conversion</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scaleMin</span> <span class="o">=</span> <span class="n">scaleMin</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scaleMax</span> <span class="o">=</span> <span class="n">scaleMax</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dstType</span> <span class="o">=</span> <span class="n">dstType</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dstVar</span> <span class="o">=</span> <span class="n">dstVar</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dstID</span> <span class="o">=</span> <span class="n">dstID</span></div></div>
+    <span class="k">def</span> <span class="nf">get_prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
+        <span class="o">...</span>
 
+    <span class="k">def</span> <span class="nf">get_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="o">...</span>
 
-<span class="k">class</span> <span class="nc">PropertyFactory</span><span class="p">:</span>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> 
-        <span class="n">key</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> 
-        <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="sd">"""_summary_</span>
+    <span class="k">def</span> <span class="nf">get_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="o">...</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            key (_type_): _description_</span>
-<span class="sd">            value (int | bool | float | str | tuple[int] | tuple[float]):</span>
-<span class="sd">            Whatever value with one of those python types.</span>
-<span class="sd">            Tuples of ints are considered Frames.</span>
-<span class="sd">            Tuples of floats are considered Colors.</span>
+    <span class="k">def</span> <span class="nf">set_prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Property</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Control"</span><span class="p">:</span>
+        <span class="o">...</span>
 
-<span class="sd">        Raises:</span>
-<span class="sd">            ValueError:</span>
-<span class="sd">            If value type is not compatible with TouchOSC's equivalent.</span>
+    <span class="k">def</span> <span class="nf">set_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">"Control"</span><span class="p">:</span>
+        <span class="o">...</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            Property: _description_</span>
-<span class="sd">        """</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildString</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildBoolean</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildInteger</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildFloat</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">cls</span><span class="o">.</span><span class="n">isTupleInts</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildFrame</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">value</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildColor</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""</span>
-<span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> type is not a valid PropertyType.</span>
-<span class="s2">Make sure all types in the tuples match."""</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">set_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">"Control"</span><span class="p">:</span>
+        <span class="o">...</span>
 
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">isTupleInts</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span><span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="o">...</span><span class="p">]]:</span>
-        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">val</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">buildBoolean</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">BOOLEAN</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">buildString</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">STRING</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">buildInteger</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">INTEGER</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">buildFloat</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Property</span><span class="p">(</span><span class="n">PropertyType</span><span class="o">.</span><span class="n">FLOAT</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">buildColor</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span><span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Property</span><span class="p">(</span>
-            <span class="n">PropertyType</span><span class="o">.</span><span class="n">COLOR</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-            <span class="n">key</span><span class="p">,</span>
-            <span class="s2">""</span><span class="p">,</span>
-            <span class="p">{</span>
-                <span class="s2">"r"</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-                <span class="s2">"g"</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-                <span class="s2">"b"</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
-                <span class="s2">"a"</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
-            <span class="p">},</span>
-        <span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">buildFrame</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Property</span><span class="p">(</span>
-            <span class="n">PropertyType</span><span class="o">.</span><span class="n">FRAME</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-            <span class="n">key</span><span class="p">,</span>
-            <span class="s2">""</span><span class="p">,</span>
-            <span class="p">{</span>
-                <span class="s2">"x"</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-                <span class="s2">"y"</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-                <span class="s2">"w"</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
-                <span class="s2">"h"</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
-            <span class="p">},</span>
-        <span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildString</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildString</span><span class="p">(</span><span class="s2">"tag"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">script</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildString</span><span class="p">(</span><span class="s2">"script"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">frame</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildFrame</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span><span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildColor</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">locked</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildBoolean</span><span class="p">(</span><span class="s2">"locked"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">visible</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildBoolean</span><span class="p">(</span><span class="s2">"visible"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">interactive</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildBoolean</span><span class="p">(</span><span class="s2">"interactive"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">background</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildBoolean</span><span class="p">(</span><span class="s2">"background"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">outline</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildBoolean</span><span class="p">(</span><span class="s2">"outline"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">outlineStyle</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildInteger</span><span class="p">(</span><span class="s2">"outline"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">textColor</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span><span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildColor</span><span class="p">(</span><span class="s2">"textColor"</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">textSize</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">buildInteger</span><span class="p">(</span><span class="s2">"textSize"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-
-<span class="k">class</span> <span class="nc">ValueFactory</span><span class="p">:</span>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> 
-        <span class="n">key</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> 
-        <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
-    <span class="p">):</span>
-        <span class="k">return</span>
+    <span class="k">def</span> <span class="nf">change_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typ</span><span class="p">:</span> <span class="n">ControlType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Control"</span><span class="p">:</span>
+        <span class="o">...</span></div>
 </pre></div>
         </article>
       </div>

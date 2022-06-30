@@ -170,19 +170,13 @@
 <li class="toctree-l2"><a class="reference internal" href="3-from-json.html">Elements from Json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4-image-converter.html">Image Converter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="5-reaper-tosclib.html">Reaper to Touch OSC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="6-numpad.html">Module: Numpad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6-numpad.html">Numpad Module Recreation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../modules/modules.html">Modules</a></li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/ControlEnums.html">Control Enumerations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/ElementEnums.html">Element Enumerations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/shortcuts.html">Shortcuts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/tglobals.html">Globals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/tosclib.tosc.html">tosclib.tosc</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/1-ElementEnums.html">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/2-ControlEnums.html">Control Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/5-tosclib.html">tosclib.tosc</a></li>
 </ul>
 </li>
 </ul>
@@ -222,19 +216,19 @@
 <p>Add a new custom Property to the parent Node.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
 
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"docs/demos/files/test2.tosc"</span><span class="p">)</span>
-    <span class="n">parent</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-    <span class="c1"># Set the property to the parent node, not the root node.</span>
-    <span class="n">prop</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Property</span><span class="p">(</span><span class="s2">"s"</span><span class="p">,</span> <span class="s2">"CustomProperty"</span><span class="p">,</span> <span class="s2">"Craig"</span><span class="p">)</span>
-    <span class="n">parent</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Added Property: "</span><span class="p">)</span>
-    <span class="n">parent</span><span class="o">.</span><span class="n">showProperty</span><span class="p">(</span><span class="s2">"CustomProperty"</span><span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_prop</span><span class="p">((</span><span class="s2">"CustomProperty"</span><span class="p">,</span> <span class="s2">"Craig"</span><span class="p">))</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">show_prop</span><span class="p">(</span><span class="s2">"CustomProperty"</span><span class="p">)</span>
 
     <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">"docs/demos/files/customProp.tosc"</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Then you can access that Property in Touch OSC Editor with .lua like this:</p>

@@ -11,7 +11,7 @@ def create_osc() -> tosc.MessageOSC:
     """Create a message with a path constructed with custom Partials"""
     return tosc.osc(
         tosc.msgconfig(),
-        (tosc.trigger()),
+        (tosc.trigger(),),
         (
             tosc.partial(),
             tosc.partial("PROPERTY", "STRING", "parent.name"),

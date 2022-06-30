@@ -3,6 +3,7 @@ from tosclib import etosc
 import tosclib as tosc
 from .profiler import profile
 
+
 @profile
 def test_decode():
     root = etosc.load("docs/demos/files/msgs.tosc")
@@ -33,4 +34,3 @@ def test_decode():
 
     print(xml_value)
     print(xml_property)
-

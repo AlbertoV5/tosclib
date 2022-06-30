@@ -172,16 +172,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../demos/6-numpad.html">Numpad Module Recreation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../modules.html">Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/modules.html">Modules</a></li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/1-ElementEnums.html">Element Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/2-ControlEnums.html">Control Enumerations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/shortcuts.html">Shortcuts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/tglobals.html">Globals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/tosclib.tosc.html">tosclib.tosc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/5-tosclib.html">tosclib.tosc</a></li>
 </ul>
 </li>
 </ul>
@@ -218,34 +212,284 @@
         <article role="main">
           <h1>Source code for tosclib.controls</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""</span>
-<span class="sd">Hexler's Enumerations</span>
+<span class="sd">Hexler's Controls</span>
 <span class="sd">"""</span>
 
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">UnionType</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Final</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">TypeGuard</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Final</span><span class="p">,</span> <span class="n">Literal</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">from</span> <span class="nn">.elements</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">MidiMessage</span><span class="p">,</span>
-    <span class="n">Property</span><span class="p">,</span>
-    <span class="n">Value</span><span class="p">,</span>
-    <span class="n">OSC</span><span class="p">,</span>
-    <span class="n">MIDI</span><span class="p">,</span>
-    <span class="n">LOCAL</span><span class="p">,</span>
-    <span class="n">PropertyFactory</span><span class="p">,</span>
-    <span class="n">controlType</span><span class="p">,</span>
-    <span class="n">ControlType</span><span class="p">,</span>
-    <span class="n">ControlElements</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.elements</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
-<span class="c1"># from lxml import etree as ET</span>
 
-<span class="n">Properties</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="n">Property</span><span class="p">]</span>
-<span class="n">Values</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="n">Value</span><span class="p">]</span>
-<span class="n">Message</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">OSC</span> <span class="o">|</span> <span class="n">MIDI</span> <span class="o">|</span> <span class="n">LOCAL</span>
-<span class="n">Messages</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="n">OSC</span> <span class="o">|</span> <span class="n">MIDI</span> <span class="o">|</span> <span class="n">LOCAL</span><span class="p">]</span>
+<div class="viewcode-block" id="ControlBuilder"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.ControlBuilder">[docs]</a><span class="k">class</span> <span class="nc">ControlBuilder</span><span class="p">:</span>
+<div class="viewcode-block" id="ControlBuilder.__init__"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.ControlBuilder.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">ControlType</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">children</span><span class="p">:</span> <span class="n">Children</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">"""Default factory for Control. Not an XML Element.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            type (ControlType): Required field. ControlType Literal.</span>
+<span class="sd">            id (str, optional): Random uuid4. Defaults to None.</span>
+<span class="sd">            values (Values, optional): Tuple of Value objects. Defaults to None.</span>
+<span class="sd">            messages (Messages, optional): Tuple of Message objects. Defaults to None.</span>
+<span class="sd">            children (tuple[&amp;quot;Node&amp;quot;], optional): Tuple of Node objects. Defaults to None.</span>
+<span class="sd">            kwargs (Property): Pass any extra Property types as keyword arguments.</span>
+
+<span class="sd">        Example (using a subclass of ControlBuilder):</span>
+
+<span class="sd">            class Box(ControlBuilder):</span>
+<span class="sd">                type: ControlType = "BOX"</span>
+<span class="sd">                ...</span>
+
+<span class="sd">            box = Box(name = "boxy") # with kwargs only</span>
+
+<span class="sd">            assert box.name == ("name", "boxy")</span>
+<span class="sd">            assert box.type == "BOX"</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span> <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span> <span class="n">ControlType</span> <span class="o">=</span> <span class="nb">type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">messages</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">messages</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span> <span class="n">Children</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">children</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">children</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">Control:</span>
+<span class="s2">    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">Values:</span>
+<span class="s2">    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">Properties:</span>
+<span class="s2">    </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"id"</span><span class="p">,</span><span class="s2">"type"</span><span class="p">,</span><span class="s2">"values"</span><span class="p">,</span><span class="s2">"messages"</span><span class="p">,</span><span class="s2">"children"</span><span class="p">))</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">Messages:</span>
+<span class="s2">    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">Children:</span>
+<span class="s2">    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">"""</span>
+
+<div class="viewcode-block" id="ControlBuilder.get_prop"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.ControlBuilder.get_prop">[docs]</a>    <span class="k">def</span> <span class="nf">get_prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
+        <span class="sd">"""Get the Property of a Control"""</span>
+        <span class="n">p</span><span class="p">:</span> <span class="n">Property</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">p</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> is not a valid Property."</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">get_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"frame"</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ControlBuilder.set_prop"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.ControlBuilder.set_prop">[docs]</a>    <span class="k">def</span> <span class="nf">set_prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Property</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+        <span class="sd">"""Set the Property of a Control"""</span>
+        <span class="k">for</span> <span class="nb">property</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">property</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">property</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="k">def</span> <span class="nf">set_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"frame"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="n">frame</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">set_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="n">color</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">change_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typ</span><span class="p">:</span> <span class="n">ControlType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"type"</span><span class="p">,</span> <span class="n">typ</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<span class="k">def</span> <span class="nf">copy_properties</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Control</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Control</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"values"</span><span class="p">,</span> <span class="s2">"messages"</span><span class="p">,</span> <span class="s2">"type"</span><span class="p">,</span> <span class="s2">"ID"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">target</span>
+
+
+<span class="k">def</span> <span class="nf">copy_values</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Control</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Control</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+    <span class="n">target</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">target</span>
+
+
+<span class="k">def</span> <span class="nf">copy_messages</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Control</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Control</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+    <span class="n">target</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">messages</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">target</span>
+
+
+<span class="k">def</span> <span class="nf">copy_children</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Control</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Control</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+    <span class="n">target</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">target</span>
+
+
+<span class="k">class</span> <span class="nc">Box</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"BOX"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Button</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"BUTTON"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Encoder</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"ENCODER"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Fader</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"FADER"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Grid</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">children</span><span class="p">:</span> <span class="n">Children</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"GRID"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Group</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">children</span><span class="p">:</span> <span class="n">Children</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"GROUP"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Label</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"LABEL"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Page</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">children</span><span class="p">:</span> <span class="n">Children</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"GROUP"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Pager</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">children</span><span class="p">:</span> <span class="n">Children</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="n">Children</span><span class="p">([</span><span class="n">Page</span><span class="p">(),</span> <span class="n">Page</span><span class="p">(),</span> <span class="n">Page</span><span class="p">()])</span> <span class="k">if</span> <span class="n">children</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">children</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"PAGER"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Radial</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"RADIAL"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Radar</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"RADAR"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Radio</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"RADIO"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Text</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"TEXT"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Xy</span><span class="p">(</span><span class="n">ControlBuilder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"XY"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="sd">""" DEPRECATED?? """</span>
 
 
 <span class="nd">@dataclass</span>
@@ -279,15 +523,15 @@
     <span class="n">orientation</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="sd">"""0,1,2,3 = North, East, South, West"""</span>
 
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Properties</span><span class="p">:</span>
-        <span class="sd">"""Build all Property objects of this class.</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            list[Property] from this class' attributes.</span>
-<span class="sd">        """</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+    <span class="c1"># def build(self, *args) -&gt; Properties:</span>
+    <span class="c1">#     """Build all Property objects of this class.</span>
+    <span class="c1">#     Returns:</span>
+    <span class="c1">#         list[Property] from this class' attributes.</span>
+    <span class="c1">#     """</span>
+    <span class="c1">#     if len(args) == 0:</span>
+    <span class="c1">#         args = tuple(key for key in vars(self))</span>
 
-        <span class="k">return</span> <span class="p">[</span><span class="n">PropertyFactory</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">))</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
+    <span class="c1">#     return [PropertyFactory.buildAny(arg, getattr(self, arg)) for arg in args]</span>
 
 
 <span class="nd">@dataclass</span>
@@ -485,369 +729,6 @@
     <span class="n">tabLabel</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"1"</span>
     <span class="n">textColorOff</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
     <span class="n">textColorOn</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Page</span><span class="p">:</span>
-    <span class="sd">"""Not a main control"""</span>
-
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="n">PageProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">())</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Box</span><span class="p">:</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">BOX</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">BoxProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">())</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Button</span><span class="p">:</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">BUTTON</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ButtonProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Label</span><span class="p">:</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">LABEL</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">LabelProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Text</span><span class="p">:</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">TEXT</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">TextProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Fader</span><span class="p">:</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">FADER</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">FaderProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Xy</span><span class="p">:</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">XY</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">XyProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">())</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Radial</span><span class="p">:</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">RADIAL</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">RadialProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Encoder</span><span class="p">:</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">ENCODER</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">EncoderProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Radar</span><span class="p">:</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">RADAR</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">RadarProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Radio</span><span class="p">:</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">RADIO</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">RadioProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Group</span><span class="p">:</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">GroupProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Grid</span><span class="p">:</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">GRID</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">GridProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Pager</span><span class="p">:</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span> <span class="o">=</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">PAGER</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">PagerProperties</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="n">Group</span><span class="p">(),</span> <span class="n">Group</span><span class="p">(),</span> <span class="n">Group</span><span class="p">()]</span>
-    <span class="p">)</span>
-
-
-<div class="viewcode-block" id="Control"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.Control">[docs]</a><span class="k">class</span> <span class="nc">Control</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-    <span class="sd">"""Protocol type of Control</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        controlT: Control Type</span>
-<span class="sd">        properties: List of Property</span>
-<span class="sd">        values: List of Value</span>
-<span class="sd">        messages: List of Message</span>
-<span class="sd">    """</span>
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">controlType</span><span class="p">]</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span>
-    <span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">"Control"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span></div>
-
-<span class="c1"># Control:TypeAlias = (</span>
-<span class="c1">#     Label | Text | Box | Button | Group | Encoder | Page |</span>
-<span class="c1">#     Grid | Fader | Pager | Radial | Radio | Radar | Xy)</span>
-
-
-<span class="k">class</span> <span class="nc">ControlProperties</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-    <span class="sd">"""Data structure to store control properties and defaults</span>
-<span class="sd">    for reference."""</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">script</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">frame</span><span class="p">:</span> <span class="nb">tuple</span>
-    <span class="n">color</span><span class="p">:</span> <span class="nb">tuple</span>
-
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Properties</span><span class="p">:</span>
-        <span class="o">...</span>
-
-
-
-<span class="k">class</span> <span class="nc">ControlFactory</span><span class="p">:</span>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> 
-    <span class="n">controlT</span><span class="p">:</span> <span class="n">controlType</span><span class="p">,</span> 
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">properties</span><span class="p">:</span> <span class="n">Properties</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
-        <span class="nb">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span> <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">id</span>
-        <span class="n">properties</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">properties</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">properties</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">values</span>
-        <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">messages</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">messages</span>
-        <span class="k">match</span> <span class="n">controlT</span><span class="p">:</span>
-            <span class="k">case</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">BOX</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Box</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
-            <span class="k">case</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">BUTTON</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Button</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
-            <span class="k">case</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">ENCODER</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Encoder</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
-            <span class="k">case</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">FADER</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Fader</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
-            <span class="k">case</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">GRID</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Grid</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
-            <span class="k">case</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
-            <span class="k">case</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">LABEL</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Label</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
-            <span class="k">case</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">PAGER</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Pager</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
-            <span class="k">case</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">RADAR</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Radar</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
-            <span class="k">case</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">RADIAL</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Radial</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
-            <span class="k">case</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">RADIO</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Radio</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
-            <span class="k">case</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Text</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
-            <span class="k">case</span> <span class="n">ControlType</span><span class="o">.</span><span class="n">XY</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Xy</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
-            <span class="k">case</span> <span class="k">_</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">controlT</span><span class="si">}</span><span class="s2"> not found."</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="ControlConverter"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.ControlConverter">[docs]</a><span class="k">class</span> <span class="nc">ControlConverter</span><span class="p">:</span>
-    <span class="sd">"""Convert from Control to XML"""</span>
-<div class="viewcode-block" id="ControlConverter.build"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.ControlConverter.build">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">control</span><span class="p">:</span> <span class="n">Control</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
-        <span class="sd">"""Generate the XML Element and its SubElements</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            control (Control): Control</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            ET.Element: XML</span>
-<span class="sd">        """</span>
-        <span class="n">node</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span>
-            <span class="n">ControlElements</span><span class="o">.</span><span class="n">NODE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-            <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">"ID"</span><span class="p">:</span> <span class="n">control</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">"type"</span><span class="p">:</span> <span class="n">control</span><span class="o">.</span><span class="n">controlT</span><span class="o">.</span><span class="n">value</span><span class="p">},</span>
-        <span class="p">)</span>
-        <span class="n">properties</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ControlElements</span><span class="o">.</span><span class="n">PROPERTIES</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ControlElements</span><span class="o">.</span><span class="n">VALUES</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        <span class="n">messages</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ControlElements</span><span class="o">.</span><span class="n">MESSAGES</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        
-        <span class="n">XmlFactory</span><span class="o">.</span><span class="n">buildProperties</span><span class="p">(</span><span class="n">properties</span><span class="p">,</span> <span class="n">control</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
-        <span class="n">XmlFactory</span><span class="o">.</span><span class="n">buildValues</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">control</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-        <span class="n">XmlFactory</span><span class="o">.</span><span class="n">buildMessages</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">control</span><span class="o">.</span><span class="n">messages</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">control</span><span class="o">.</span><span class="n">children</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">children</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ControlElements</span><span class="o">.</span><span class="n">CHILDREN</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">control</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-                <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
-        
-        <span class="k">return</span> <span class="n">node</span></div></div>
-
-
-<div class="viewcode-block" id="XmlFactory"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.XmlFactory">[docs]</a><span class="k">class</span> <span class="nc">XmlFactory</span><span class="p">:</span>
-    <span class="sd">"""Generate specific XML structures"""</span>
-<div class="viewcode-block" id="XmlFactory.buildProperties"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.XmlFactory.buildProperties">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">buildProperties</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">props</span><span class="p">:</span> <span class="n">Properties</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">"""Create many &lt;property&gt; XML</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            props (Properties): List of Properties</span>
-<span class="sd">            e (ET.Element): Element to append the properties to</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            bool: bool</span>
-<span class="sd">        """</span>
-        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
-            <span class="nb">property</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
-                <span class="n">e</span><span class="p">,</span> <span class="n">ControlElements</span><span class="o">.</span><span class="n">PROPERTY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="n">prop</span><span class="o">.</span><span class="n">type</span><span class="p">}</span>
-            <span class="p">)</span>
-            <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="s2">"key"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">key</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">)</span>
-            <span class="n">value</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">value</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">prop</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
-                <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-        <span class="k">return</span> <span class="kc">True</span></div>
-
-<div class="viewcode-block" id="XmlFactory.modifyProperty"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.XmlFactory.modifyProperty">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">modifyProperty</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">"""Modify an existing property XML</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            value (str): New value</span>
-<span class="sd">            params (dict): New params</span>
-<span class="sd">            p (ET.Element): &lt;property&gt;</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            bool: bool</span>
-<span class="sd">        """</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">v</span><span class="o">:=</span> <span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"value"</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">v</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">:=</span> <span class="n">v</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">p</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">buildValues</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">vals</span><span class="p">:</span> <span class="n">Values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">ControlElements</span><span class="o">.</span><span class="n">VALUE</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">:</span>
-                <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">True</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">modifyValue</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">v</span><span class="o">:=</span><span class="n">e</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">v</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">True</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">buildMessages</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">msgs</span><span class="p">:</span> <span class="n">Messages</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">msgs</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">message</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">:</span>
-                <span class="n">element</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-                <span class="n">v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                    <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
-                        <span class="n">e</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-                        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pt</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">:</span>
-                            <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">MidiMessage</span><span class="p">):</span>
-                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pt</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">:</span>
-                        <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">element</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">v</span>
-        <span class="k">return</span> <span class="kc">True</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">buildNode</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">controlT</span><span class="p">:</span> <span class="n">controlType</span><span class="p">,</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
-            <span class="n">e</span><span class="p">,</span>
-            <span class="n">ControlElements</span><span class="o">.</span><span class="n">NODE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-            <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">"ID"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="s2">"type"</span><span class="p">:</span> <span class="n">controlT</span><span class="o">.</span><span class="n">value</span><span class="p">},</span>
-        <span class="p">)</span></div>
 </pre></div>
         </article>
       </div>

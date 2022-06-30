@@ -26,6 +26,7 @@ __all__ = [
     "xml_control",
 ]
 
+
 def SENTINEL(origin: Callable, msg: str = None) -> Element:
     """None/Invalid XML Element to allow chaining."""
     e = Element("none")
@@ -48,26 +49,26 @@ def property_matcher(prop: Property, property: Element, value: Element) -> Eleme
     val = prop[1]
     match val:
         case bool() if val is True:
-            property.attrib = {"type":"b"}
+            property.attrib = {"type": "b"}
             value.text = "1"
         case bool():
-            property.attrib = {"type":"b"}
+            property.attrib = {"type": "b"}
             value.text = "0"
         case str():
-            property.attrib = {"type":"s"}
+            property.attrib = {"type": "s"}
             value.text = str(val)
         case int():
-            property.attrib = {"type":"i"}
+            property.attrib = {"type": "i"}
             value.text = str(val)
         case float():
-            property.attrib = {"type":"f"}
-            value.text = str(val)    
+            property.attrib = {"type": "f"}
+            value.text = str(val)
         case tuple():
             if isinstance(val[0], int):
-                property.attrib = {"type":"r"}
+                property.attrib = {"type": "r"}
                 keys = ("x", "y", "w", "h")
             else:
-                property.attrib = {"type":"c"}
+                property.attrib = {"type": "c"}
                 keys = ("r", "g", "b", "a")
             for k, n in zip(keys, val):
                 SubElement(value, k).text = str(n)
@@ -106,7 +107,7 @@ def xml_value(val: Value) -> Element:
     SubElement(value, "key").text = k
     SubElement(value, "locked").text = "1" if val[1] is True else "0"
     SubElement(value, "lockedDefaultCurrent").text = "1" if val[2] is True else "0"
-    
+
     match k, v:
         case "x" | "y" | "text", float() | str():
             SubElement(value, "default").text = str(v)

@@ -82,7 +82,9 @@ def Layout(
 
     # children: list[Control] = []
     for f, c in zip(frame_array, color_array):
-        layout.children.append(ControlBuilder(control_type, frame=tuple(f.astype(int)), color=tuple(c)))
+        layout.children.append(
+            ControlBuilder(control_type, frame=tuple(f.astype(int)), color=tuple(c))
+        )
 
     properties: Properties = func(layout.children)
     if properties is not None:
@@ -109,7 +111,7 @@ def column(func):
     ):
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
         frame: tuple[int, ...] = parent.get_frame()
-    
+
         H = frame[3] * (np.asarray(size) / np.sum(size))
         W = [frame[2] for i in size]
         Y = np.cumsum(np.concatenate(([0], H)))[:-1]
@@ -192,7 +194,7 @@ def grid(func):
                 for column in np.arange(stop=frame[3], step=h)  # type: ignore
             )
         ).T
-        
+
         X = M[0]
         Y = M[1]
         W = np.repeat(w, X.size)

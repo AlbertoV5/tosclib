@@ -5,9 +5,6 @@ Control Enumerations
     :members:
     
 
-.. autoclass:: tosclib.controls.ControlConverter
+.. autoclass:: tosclib.controls.ControlBuilder
     :members:
 
-
-.. autoclass:: tosclib.controls.XmlFactory
-    :members:

@@ -1,44 +1,22 @@
 ﻿tosclib.tosc
 ============
 
-.. automodule:: tosclib.tosc
-
-   
-   
-   
-
-   
+.. automodule:: tosclib
    
    .. rubric:: Functions
 
    .. autosummary::
    
-      createTemplate
-      findKey
-      getTextValueFromKey
+      get_text_value_from_key
       load
-      pullValueFromKey
-      pullValueFromKey2
-      showElement
-      write
-   
-   
-
-   
+      pull_value_from_key
+      pull_value_from_key_2
+      write   
    
    .. rubric:: Classes
 
    .. autosummary::
    
-      ControlElements
-      ControlType
-      ElementTOSC
-      OSC
-      Partial
-      Property
-      PropertyType
-      Trigger
-      Value
       tosclib.controls.Box
       tosclib.controls.Button
       tosclib.controls.Encoder

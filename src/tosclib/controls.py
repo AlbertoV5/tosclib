@@ -81,13 +81,13 @@ Children:
         for property in args:
             setattr(self, property[0], property)
         return self
-    
+
     def set_frame(self, frame: tuple[int, ...]) -> Control:
-        setattr(self, "frame", ("frame",frame))
+        setattr(self, "frame", ("frame", frame))
         return self
 
     def set_color(self, color: tuple[float, ...]) -> Control:
-        setattr(self, "color", ("color",color))
+        setattr(self, "color", ("color", color))
         return self
 
     def change_type(self, typ: ControlType) -> Control:
@@ -101,17 +101,21 @@ def copy_properties(source: Control, target: Control) -> Control:
             setattr(target, p, getattr(source, p))
     return target
 
+
 def copy_values(source: Control, target: Control) -> Control:
     target.values = deepcopy(source.values)
     return target
+
 
 def copy_messages(source: Control, target: Control) -> Control:
     target.messages = deepcopy(source.messages)
     return target
 
+
 def copy_children(source: Control, target: Control) -> Control:
     target.children = deepcopy(source.children)
     return target
+
 
 class Box(ControlBuilder):
     def __init__(

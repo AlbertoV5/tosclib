@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Modules" href="../modules.html" /><link rel="prev" title="Reaper to Touch OSC" href="5-reaper-tosclib.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="API" href="../api.html" /><link rel="prev" title="Reaper to Touch OSC" href="5-reaper-tosclib.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
         <title>Numpad Module Recreation - tosclib 0.3 documentation</title>
@@ -173,16 +173,10 @@
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Numpad Module Recreation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../modules/modules.html">Modules</a></li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/1-ElementEnums.html">Element Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/2-ControlEnums.html">Control Enumerations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/shortcuts.html">Shortcuts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/tglobals.html">Globals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/tosclib.tosc.html">tosclib.tosc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/5-tosclib.html">tosclib.tosc</a></li>
 </ul>
 </li>
 </ul>
@@ -226,289 +220,250 @@
 <img alt="../_images/numpad1.GIF" src="../_images/numpad1.GIF"/>
 <p>Code:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cProfile</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pstats</span>
-
+<span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
-<span class="kn">from</span> <span class="nn">tosclib</span> <span class="kn">import</span> <span class="n">controls</span>
-<span class="kn">from</span> <span class="nn">tosclib.elements</span> <span class="kn">import</span> <span class="n">LOCAL</span><span class="p">,</span> <span class="n">Trigger</span>
-<span class="kn">from</span> <span class="nn">tosclib.tosc</span> <span class="kn">import</span> <span class="n">ControlType</span><span class="p">,</span> <span class="n">Value</span>
-<span class="kn">from</span> <span class="nn">tosclib.controls</span> <span class="kn">import</span> <span class="n">PropertyFactory</span> <span class="k">as</span> <span class="n">pf</span>
-<span class="kn">from</span> <span class="nn">tosclib.controls</span> <span class="kn">import</span> <span class="n">ControlConverter</span> <span class="k">as</span> <span class="n">cc</span>
-<span class="kn">from</span> <span class="nn">tosclib.tosc</span> <span class="kn">import</span> <span class="n">ElementTOSC</span> <span class="k">as</span> <span class="n">et</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 
 <span class="n">bgGradient1</span> <span class="o">=</span> <span class="p">((</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
 <span class="n">bgGradient2</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-<span class="n">names</span> <span class="o">=</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">,)</span>
+<span class="n">names</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mi">7</span><span class="p">,</span>
+    <span class="mi">4</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="mi">8</span><span class="p">,</span>
+    <span class="mi">5</span><span class="p">,</span>
+    <span class="mi">2</span><span class="p">,</span>
+    <span class="mi">9</span><span class="p">,</span>
+    <span class="mi">6</span><span class="p">,</span>
+    <span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">id_label_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
 
 
 <span class="nd">@tosc</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">column</span>
-<span class="k">def</span> <span class="nf">layoutBase</span><span class="p">(</span><span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">et</span><span class="p">]):</span>
+<span class="k">def</span> <span class="nf">layoutBase</span><span class="p">(</span><span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">tosc</span><span class="o">.</span><span class="n">Control</span><span class="p">]):</span>
 
-    <span class="n">layoutTop</span><span class="p">:</span> <span class="n">et</span> <span class="o">=</span> <span class="n">layoutValues</span><span class="p">(</span>
+    <span class="n">layoutTop</span><span class="p">:</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Control</span> <span class="o">=</span> <span class="n">layoutValues</span><span class="p">(</span>
         <span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span><span class="p">,</span>
-        <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"GROUP"</span><span class="p">,</span>
+        <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="n">colors</span><span class="o">=</span><span class="n">bgGradient1</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">layoutMid</span><span class="p">:</span> <span class="n">et</span> <span class="o">=</span> <span class="n">layoutNumbers</span><span class="p">(</span>
-        <span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> 
-        <span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span><span class="p">,</span> 
-        <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> 
-        <span class="n">colors</span><span class="o">=</span><span class="n">bgGradient1</span><span class="p">,</span>
-        <span class="n">colorStyle</span><span class="o">=</span><span class="mi">2</span>
-        <span class="p">)</span>
-    
-    <span class="n">layoutBot</span><span class="p">:</span> <span class="n">et</span> <span class="o">=</span> <span class="n">layoutClear</span><span class="p">(</span>
+    <span class="n">layoutMid</span><span class="p">:</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Control</span> <span class="o">=</span> <span class="n">layoutNumbers</span><span class="p">(</span>
+        <span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"GROUP"</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">colors</span><span class="o">=</span><span class="n">bgGradient1</span><span class="p">,</span> <span class="n">colorStyle</span><span class="o">=</span><span class="mi">2</span>
+    <span class="p">)</span>
+
+    <span class="n">layoutBot</span><span class="p">:</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Control</span> <span class="o">=</span> <span class="n">layoutClear</span><span class="p">(</span>
         <span class="n">children</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-        <span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span><span class="p">,</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"GROUP"</span><span class="p">,</span>
+        <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="n">colors</span><span class="o">=</span><span class="n">bgGradient1</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="nb">id</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">pullIdfromName</span><span class="p">(</span><span class="n">layoutTop</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="s2">"valueLabel"</span><span class="p">)</span>
+    <span class="n">local_msg_0</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">local</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="n">triggers</span><span class="o">=</span><span class="p">(</span><span class="n">tosc</span><span class="o">.</span><span class="n">Trigger</span><span class="p">((</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"RISE"</span><span class="p">)),),</span>
+        <span class="n">source</span><span class="o">=</span><span class="n">tosc</span><span class="o">.</span><span class="n">LocalSrc</span><span class="p">((</span><span class="s2">"PROPERTY"</span><span class="p">,</span> <span class="s2">"STRING"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+        <span class="n">destination</span><span class="o">=</span><span class="n">tosc</span><span class="o">.</span><span class="n">LocalDst</span><span class="p">((</span><span class="s2">"VALUE"</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">,</span> <span class="n">id_label_value</span><span class="p">)),</span>
+    <span class="p">)</span>
 
-    <span class="n">local0</span> <span class="o">=</span> <span class="n">LOCAL</span><span class="p">(</span>
-        <span class="n">triggers</span><span class="o">=</span><span class="p">[</span><span class="n">Trigger</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"RISE"</span><span class="p">)],</span>
-        <span class="nb">type</span><span class="o">=</span><span class="s2">"PROPERTY"</span><span class="p">,</span>
-        <span class="n">conversion</span><span class="o">=</span><span class="s2">"STRING"</span><span class="p">,</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="s2">"name"</span><span class="p">,</span>
-        <span class="n">dstType</span><span class="o">=</span><span class="s2">"VALUE"</span><span class="p">,</span>
-        <span class="n">dstVar</span><span class="o">=</span><span class="s2">"text"</span><span class="p">,</span>
-        <span class="n">dstID</span><span class="o">=</span><span class="nb">id</span><span class="p">,)</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">layoutMid</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">child</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">local_msg_0</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">layoutMid</span><span class="p">:</span>
-        <span class="n">et</span><span class="p">(</span><span class="n">c</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">createLOCAL</span><span class="p">(</span><span class="n">local0</span><span class="p">)</span>
+    <span class="n">layoutBot</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">local_msg_0</span><span class="p">)</span>
 
-    <span class="n">layoutBot</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">createLOCAL</span><span class="p">(</span><span class="n">local0</span><span class="p">)</span>
+    <span class="n">local_msg_1</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">local</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">tosc</span><span class="o">.</span><span class="n">Trigger</span><span class="p">((</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"RISE"</span><span class="p">)),),</span>
+        <span class="n">source</span><span class="o">=</span><span class="n">tosc</span><span class="o">.</span><span class="n">LocalSrc</span><span class="p">(</span>
+            <span class="p">(</span><span class="s2">"CONSTANT"</span><span class="p">,</span> <span class="s2">"STRING"</span><span class="p">,</span> <span class="s2">"0"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">destination</span><span class="o">=</span><span class="n">tosc</span><span class="o">.</span><span class="n">LocalDst</span><span class="p">((</span><span class="s2">"PROPERTY"</span><span class="p">,</span> <span class="s2">"sum"</span><span class="p">,</span> <span class="n">id_label_value</span><span class="p">)),</span>
+    <span class="p">)</span>
 
-    <span class="n">local1</span> <span class="o">=</span> <span class="n">LOCAL</span><span class="p">(</span>
-        <span class="n">triggers</span><span class="o">=</span><span class="p">[</span><span class="n">Trigger</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"RISE"</span><span class="p">)],</span>
-        <span class="nb">type</span><span class="o">=</span><span class="s2">"CONSTANT"</span><span class="p">,</span>
-        <span class="n">conversion</span><span class="o">=</span><span class="s2">"STRING"</span><span class="p">,</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">,</span>
-        <span class="n">dstType</span><span class="o">=</span><span class="s2">"PROPERTY"</span><span class="p">,</span>
-        <span class="n">dstVar</span><span class="o">=</span><span class="s2">"sum"</span><span class="p">,</span>
-        <span class="n">dstID</span><span class="o">=</span><span class="nb">id</span><span class="p">,)</span>
+    <span class="n">local_msg_2</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">local</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">tosc</span><span class="o">.</span><span class="n">Trigger</span><span class="p">((</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"FALL"</span><span class="p">)),),</span>
+        <span class="n">source</span><span class="o">=</span><span class="n">tosc</span><span class="o">.</span><span class="n">LocalSrc</span><span class="p">(</span>
+            <span class="p">(</span><span class="s2">"CONSTANT"</span><span class="p">,</span> <span class="s2">"STRING"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">destination</span><span class="o">=</span><span class="n">tosc</span><span class="o">.</span><span class="n">LocalDst</span><span class="p">((</span><span class="s2">"VALUE"</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">,</span> <span class="n">id_label_value</span><span class="p">)),</span>
+    <span class="p">)</span>
 
-    <span class="n">local2</span> <span class="o">=</span> <span class="n">LOCAL</span><span class="p">(</span>
-        <span class="n">triggers</span><span class="o">=</span><span class="p">[</span><span class="n">Trigger</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"FALL"</span><span class="p">)],</span>
-        <span class="nb">type</span><span class="o">=</span><span class="s2">"CONSTANT"</span><span class="p">,</span>
-        <span class="n">conversion</span><span class="o">=</span><span class="s2">"STRING"</span><span class="p">,</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
-        <span class="n">dstType</span><span class="o">=</span><span class="s2">"VALUE"</span><span class="p">,</span>
-        <span class="n">dstVar</span><span class="o">=</span><span class="s2">"text"</span><span class="p">,</span>
-        <span class="n">dstID</span><span class="o">=</span><span class="nb">id</span><span class="p">,)</span>
+    <span class="n">layoutBot</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">local_msg_1</span><span class="p">)</span>
+    <span class="n">layoutBot</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">local_msg_2</span><span class="p">)</span>
+    <span class="n">layoutBot</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">local_msg_2</span><span class="p">)</span>
 
-    <span class="n">layoutBot</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">createLOCAL</span><span class="p">(</span><span class="n">local1</span><span class="p">)</span>
-    <span class="n">layoutBot</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">createLOCAL</span><span class="p">(</span><span class="n">local2</span><span class="p">)</span>
-
-    <span class="n">local3</span> <span class="o">=</span> <span class="n">LOCAL</span><span class="p">(</span>
-        <span class="n">triggers</span><span class="o">=</span><span class="p">[</span><span class="n">Trigger</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"FALL"</span><span class="p">)],</span>
-        <span class="nb">type</span><span class="o">=</span><span class="s2">"CONSTANT"</span><span class="p">,</span>
-        <span class="n">conversion</span><span class="o">=</span><span class="s2">"STRING"</span><span class="p">,</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
-        <span class="n">dstType</span><span class="o">=</span><span class="s2">"VALUE"</span><span class="p">,</span>
-        <span class="n">dstVar</span><span class="o">=</span><span class="s2">"text"</span><span class="p">,</span>
-        <span class="n">dstID</span><span class="o">=</span><span class="nb">id</span><span class="p">,)</span>
-        
-    <span class="n">layoutBot</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">createLOCAL</span><span class="p">(</span><span class="n">local3</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="p">[</span><span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"Numpad"</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">tosc</span><span class="o">.</span><span class="n">prop</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"numpad"</span><span class="p">)</span>
 
 
 <span class="nd">@tosc</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">row</span>
-<span class="k">def</span> <span class="nf">layoutValues</span><span class="p">(</span><span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">et</span><span class="p">]):</span>
+<span class="k">def</span> <span class="nf">layoutValues</span><span class="p">(</span><span class="n">controls</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">tosc</span><span class="o">.</span><span class="n">Control</span><span class="p">]):</span>
 
-    <span class="n">frame</span> <span class="o">=</span> <span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">getFrame</span><span class="p">()</span>
-    <span class="n">button0</span> <span class="o">=</span> <span class="n">controls</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
-        <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"valueButton"</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">getColor</span><span class="p">()),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-        <span class="p">]</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">))</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">tosc</span><span class="o">.</span><span class="n">controls</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"valueButton"</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span>
+            <span class="n">frame</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_frame</span><span class="p">(),</span>
+        <span class="p">)</span>
     <span class="p">)</span>
-    <span class="n">label0</span> <span class="o">=</span> <span class="n">controls</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
-        <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"valueLabel"</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">background</span><span class="p">(</span><span class="kc">False</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">getColor</span><span class="p">()),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="n">frame</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">textSize</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s2">"sum"</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s2">"max"</span><span class="p">,</span> <span class="s2">"127"</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">script</span><span class="p">(</span><span class="s2">"""</span>
-<span class="s2">self.sum = "0"</span>
-<span class="s2">self.values.text = self.sum</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">tosc</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">id_label_value</span><span class="p">,</span>
+            <span class="n">values</span><span class="o">=</span><span class="p">[(</span><span class="s2">"text"</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"valueLabel"</span><span class="p">,</span>
+            <span class="n">background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span>
+            <span class="n">frame</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_frame</span><span class="p">(),</span>
+            <span class="n">textSize</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+            <span class="nb">sum</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+            <span class="nb">max</span><span class="o">=</span><span class="s2">"127"</span><span class="p">,</span>
+            <span class="n">script</span><span class="o">=</span><span class="p">(</span>
+                <span class="sd">"""</span>
+<span class="sd">self.sum = "0"</span>
+<span class="sd">self.values.text = self.sum</span>
 
-<span class="s2">function onValueChanged(key,value)</span>
-<span class="s2">    self.sum = self.sum..self.values.text</span>
-<span class="s2">    if tonumber(self.sum) &gt;= tonumber(self.max) then</span>
-<span class="s2">        self.sum = self.max</span>
-<span class="s2">    end</span>
-<span class="s2">    if tonumber(self.sum) == 0 then</span>
-<span class="s2">        self.values.text = "0"</span>
-<span class="s2">    end</span>
-<span class="s2">    self.values.text = self.sum</span>
-<span class="s2">end"""</span><span class="p">)</span>
-        <span class="p">],</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">Value</span><span class="p">(</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"0"</span><span class="p">)]</span>
-    <span class="p">)</span>
-    
-    <span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="s2">"value"</span><span class="p">)</span>
-    <span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">button0</span><span class="p">))</span>
-    <span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">label0</span><span class="p">))</span>
-
-    <span class="n">label1</span> <span class="o">=</span> <span class="n">controls</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
-        <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"sendLabel"</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">getColor</span><span class="p">()),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">textSize</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">background</span><span class="p">(</span><span class="kc">False</span><span class="p">),</span>
-        <span class="p">],</span>
-        <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">Value</span><span class="p">(</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"SEND"</span><span class="p">)]</span>
-    <span class="p">)</span>
-    <span class="n">button1</span> <span class="o">=</span> <span class="n">controls</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
-        <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"sendButton"</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">getColor</span><span class="p">()),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span>
-        <span class="p">]</span>
+<span class="sd">function onValueChanged(key,value)</span>
+<span class="sd">    self.sum = self.sum..self.values.text</span>
+<span class="sd">    if tonumber(self.sum) &gt;= tonumber(self.max) then</span>
+<span class="sd">        self.sum = self.max</span>
+<span class="sd">    end</span>
+<span class="sd">    if tonumber(self.sum) == 0 then</span>
+<span class="sd">        self.values.text = "0"</span>
+<span class="sd">    end</span>
+<span class="sd">    self.values.text = self.sum</span>
+<span class="sd">end"""</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
     <span class="p">)</span>
 
-    <span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="s2">"send"</span><span class="p">)</span>
-    <span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">button1</span><span class="p">))</span>
-    <span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">label1</span><span class="p">))</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"send"</span><span class="p">))</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">tosc</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"sendButton"</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span>
+            <span class="n">frame</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_frame</span><span class="p">(),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">tosc</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+            <span class="n">values</span><span class="o">=</span><span class="p">[(</span><span class="s2">"text"</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"SEND"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"sendLabel"</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span>
+            <span class="n">frame</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_frame</span><span class="p">(),</span>
+            <span class="n">textSize</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+            <span class="n">background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
 
-    <span class="k">return</span> <span class="p">[</span><span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"Values"</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"Values"</span><span class="p">)</span>
 
 
 <span class="nd">@tosc</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">grid</span>
-<span class="k">def</span> <span class="nf">layoutNumbers</span><span class="p">(</span><span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">et</span><span class="p">]):</span>
+<span class="k">def</span> <span class="nf">layoutNumbers</span><span class="p">(</span><span class="n">controls</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">tosc</span><span class="o">.</span><span class="n">Control</span><span class="p">]):</span>
 
-    <span class="n">f</span> <span class="o">=</span> <span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">getFrame</span><span class="p">()</span>
-    <span class="n">framepad</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mf">0.1</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mf">0.1</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mf">0.8</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mf">0.8</span><span class="p">))</span>
-    <span class="n">label</span> <span class="o">=</span> <span class="n">controls</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
-        <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">framepad</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">textColor</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,)),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">textSize</span><span class="p">(</span><span class="mi">48</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">background</span><span class="p">(</span><span class="kc">False</span><span class="p">),</span>
-        <span class="p">]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_frame</span><span class="p">()</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">))</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+        <span class="n">frame</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span>
+        <span class="n">textColor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+        <span class="n">textSize</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span>
+        <span class="n">background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">button</span> <span class="o">=</span> <span class="n">controls</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
-        <span class="n">properties</span><span class="o">=</span><span class="p">[</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">f</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">outline</span><span class="p">(</span><span class="kc">False</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s2">"color2"</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,)),</span>
-        <span class="p">]</span>
+    <span class="n">button</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+        <span class="n">frame</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span>
+        <span class="n">outline</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">color2</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
     <span class="p">)</span>
-    
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">controls</span><span class="p">):</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">"text"</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
+        <span class="n">button</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
+        <span class="n">button</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"color"</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">get_color</span><span class="p">()))</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">button</span><span class="p">))</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
 
-    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">children</span><span class="p">):</span>
-
-        <span class="n">label</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Value</span><span class="p">(</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
-        <span class="n">label</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
-        <span class="n">button</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
-        <span class="n">button</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">getColor</span><span class="p">()))</span>
-
-        <span class="n">c</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">button</span><span class="p">))</span>
-        <span class="n">c</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
-        
-    <span class="k">return</span> <span class="p">[</span><span class="n">pf</span><span class="o">.</span><span class="n">outline</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span><span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"numbers"</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="s2">"outline"</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"numbers"</span><span class="p">)</span>
 
 
 <span class="nd">@tosc</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">row</span>
-<span class="k">def</span> <span class="nf">layoutClear</span><span class="p">(</span><span class="n">children</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">et</span><span class="p">]):</span>
+<span class="k">def</span> <span class="nf">layoutClear</span><span class="p">(</span><span class="n">controls</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">tosc</span><span class="o">.</span><span class="n">Control</span><span class="p">]):</span>
 
-    <span class="n">button0</span> <span class="o">=</span> <span class="n">controls</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
-        <span class="n">properties</span><span class="o">=</span> <span class="p">[</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"clearButton"</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">getFrame</span><span class="p">()),</span> <span class="c1">#type: ignore</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">getColor</span><span class="p">()),</span> <span class="c1">#type: ignore</span>
-        <span class="p">]</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"clear"</span><span class="p">))</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">tosc</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"clearButton"</span><span class="p">,</span>
+            <span class="n">frame</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_frame</span><span class="p">(),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span>
+        <span class="p">)</span>
     <span class="p">)</span>
-    <span class="n">label0</span> <span class="o">=</span> <span class="n">controls</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
-        <span class="n">properties</span><span class="o">=</span> <span class="p">[</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"clearLabel"</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">outlineStyle</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">getFrame</span><span class="p">()),</span> <span class="c1">#type: ignore</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">getColor</span><span class="p">()),</span> <span class="c1">#type: ignore</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">textSize</span><span class="p">(</span><span class="mi">48</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">background</span><span class="p">(</span><span class="kc">False</span><span class="p">),</span>
-        <span class="p">],</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">Value</span><span class="p">(</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"CLR"</span><span class="p">)]</span>
-    <span class="p">)</span>
-
-    <span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="s2">"clear"</span><span class="p">)</span>
-    <span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">button0</span><span class="p">))</span>
-    <span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">label0</span><span class="p">))</span>
-
-    <span class="n">frame</span> <span class="o">=</span> <span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">getFrame</span><span class="p">()</span>
-    <span class="n">button1</span> <span class="o">=</span> <span class="n">controls</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
-        <span class="n">properties</span><span class="o">=</span> <span class="p">[</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"0"</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">getColor</span><span class="p">()),</span>
-        <span class="p">]</span>
-    <span class="p">)</span>
-    <span class="n">label1</span> <span class="o">=</span> <span class="n">controls</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
-        <span class="n">properties</span><span class="o">=</span> <span class="p">[</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"0"</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">outlineStyle</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">getColor</span><span class="p">()),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">textSize</span><span class="p">(</span><span class="mi">48</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">background</span><span class="p">(</span><span class="kc">False</span><span class="p">),</span>
-        <span class="p">],</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">Value</span><span class="p">(</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"0"</span><span class="p">)]</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">tosc</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+            <span class="n">values</span><span class="o">=</span><span class="p">[(</span><span class="s2">"text"</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"CLR"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"clearLabel"</span><span class="p">,</span>
+            <span class="n">outlineStyle</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">frame</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_frame</span><span class="p">(),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span>
+            <span class="n">textSize</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span>
+            <span class="n">background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
     <span class="p">)</span>
 
-    <span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="s2">"zero"</span><span class="p">)</span>
-    <span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">button1</span><span class="p">))</span>
-    <span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">label1</span><span class="p">))</span>
-
-    <span class="n">button2</span> <span class="o">=</span> <span class="n">controls</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
-        <span class="n">properties</span><span class="o">=</span> <span class="p">[</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"0"</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">children</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">getColor</span><span class="p">()),</span>
-        <span class="p">]</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"zero"</span><span class="p">))</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">tosc</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"0"</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_frame</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_color</span><span class="p">()</span>
+        <span class="p">)</span>
     <span class="p">)</span>
-    <span class="n">label2</span> <span class="o">=</span> <span class="n">controls</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
-        <span class="n">properties</span><span class="o">=</span> <span class="p">[</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"0"</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">outlineStyle</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">children</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">getColor</span><span class="p">()),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">textSize</span><span class="p">(</span><span class="mi">48</span><span class="p">),</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">background</span><span class="p">(</span><span class="kc">False</span><span class="p">),</span>
-        <span class="p">],</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">Value</span><span class="p">(</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"DEL"</span><span class="p">)]</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">tosc</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+            <span class="n">values</span><span class="o">=</span><span class="p">[(</span><span class="s2">"text"</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"0"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"0"</span><span class="p">,</span>
+            <span class="n">outlineStyle</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">frame</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_frame</span><span class="p">(),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span>
+            <span class="n">textSize</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span>
+            <span class="n">background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
     <span class="p">)</span>
 
-    <span class="n">children</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="s2">"del"</span><span class="p">)</span>
-    <span class="n">children</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">button2</span><span class="p">))</span>
-    <span class="n">children</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">label2</span><span class="p">))</span>
-    
+    <span class="c1">#</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"del"</span><span class="p">))</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">tosc</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"0"</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">get_frame</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">get_color</span><span class="p">()</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">controls</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">tosc</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+            <span class="n">values</span><span class="o">=</span><span class="p">[(</span><span class="s2">"text"</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"DEL"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"0"</span><span class="p">,</span>
+            <span class="n">outlineStyle</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">frame</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_frame</span><span class="p">(),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">controls</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span>
+            <span class="n">textSize</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span>
+            <span class="n">background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
 
-    <span class="k">return</span> <span class="p">[</span><span class="n">pf</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">"ClearDel"</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"clearDel"</span><span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
 
     <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">createTemplate</span><span class="p">(</span><span class="n">frame</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">800</span><span class="p">))</span>
-    <span class="n">template</span> <span class="o">=</span> <span class="n">et</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-    <span class="n">layoutBase</span><span class="p">(</span>
-        <span class="n">template</span><span class="p">,</span> 
-        <span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span><span class="p">,</span> 
-        <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> 
-        <span class="n">colors</span><span class="o">=</span><span class="n">bgGradient1</span>
-        <span class="p">)</span>
+    <span class="n">template</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     
+    <span class="n">control</span><span class="p">:</span><span class="n">tosc</span><span class="o">.</span><span class="n">Control</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">to_ctrl</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
+
+    <span class="n">layoutBase</span><span class="p">(</span><span class="n">control</span><span class="p">,</span> <span class="s2">"GROUP"</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">colors</span><span class="o">=</span><span class="n">bgGradient1</span><span class="p">)</span>
+    <span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">xml_control</span><span class="p">(</span><span class="n">control</span><span class="p">)</span>
+
     <span class="sd">"""Save it as a template"""</span>
     <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">"docs/demos/numpad.tosc"</span><span class="p">)</span>
 
@@ -531,12 +486,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../modules.html">
+          <a class="next-page" href="../api.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Modules</div>
+                <div class="title">API</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>

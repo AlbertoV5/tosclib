@@ -136,8 +136,7 @@ ControlList: list[ControlType] = [
 ]
 """Valid literals for <node type:ControlType>"""
 PropertyType: TypeAlias = Literal["b", "c", "r", "f", "i", "s"]
-"""Valid literals for <property type:PropertyType>
-    b: boolean, c: color, r: frame, f: float, i: int, s: string
+"""Valid literals for <property type:PropertyType> b: boolean, c: color, r: frame, f: float, i: int, s: string
 """
 PropertyValue: TypeAlias = (
     str | int | float | bool | tuple[int, ...] | tuple[float, ...]
@@ -377,12 +376,11 @@ class Control(Protocol):
     def set_prop(self, *args: Property) -> "Control":
         ...
 
-    def set_frame(self, frame: tuple[int,...]) -> "Control":
+    def set_frame(self, frame: tuple[int, ...]) -> "Control":
         ...
 
-    def set_color(self, color: tuple[float,...]) -> "Control":
+    def set_color(self, color: tuple[float, ...]) -> "Control":
         ...
-        
+
     def change_type(self, typ: ControlType) -> "Control":
         ...
-

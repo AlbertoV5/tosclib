@@ -42,16 +42,13 @@ Classes and Functions
 
 Here are more details on the functions and methods we used:
 
-.. autofunction:: tosclib.tosc.load
+.. autofunction:: tosclib.etosc.load
 
-.. autoclass:: tosclib.tosc.ElementTOSC
+.. autoclass:: tosclib.etosc.Node
 
-.. autoclass:: tosclib.tosc.Property
+.. autoclass:: tosclib.elements.Property
    :noindex:
 
-.. autofunction:: tosclib.tosc.ElementTOSC.createProperty
+.. autofunction:: tosclib.etosc.Node.add_prop
 
-.. autofunction:: tosclib.tosc.ElementTOSC.setColor
-   :noindex:
-
-.. autofunction:: tosclib.tosc.write
+.. autofunction:: tosclib.etosc.write

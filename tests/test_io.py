@@ -25,7 +25,7 @@ class TestTemplate(unittest.TestCase):
     def test_io(self):
         self.template.children.append(tosc.xml_control(tosc.Group()))
         assert self.template.set_prop(("background", False))
-        assert self.template.set_prop(("color", (0.0,0.0,0.0,1.0)))
+        assert self.template.set_prop(("color", (0.0, 0.0, 0.0, 1.0)))
         assert self.template.set_prop(("cornerRadius", 0.0))
         assert self.template.set_prop(("frame", (0, 0, 640, 860)))
         assert self.template.set_prop(("grabFocus", False))

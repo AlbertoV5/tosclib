@@ -170,19 +170,13 @@
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Elements from Json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4-image-converter.html">Image Converter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="5-reaper-tosclib.html">Reaper to Touch OSC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="6-numpad.html">Module: Numpad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6-numpad.html">Numpad Module Recreation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../modules/modules.html">Modules</a></li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/ControlEnums.html">Control Enumerations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/ElementEnums.html">Element Enumerations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/shortcuts.html">Shortcuts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/tglobals.html">Globals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/tosclib.tosc.html">tosclib.tosc</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/1-ElementEnums.html">Element Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/2-ControlEnums.html">Control Enumerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/5-tosclib.html">tosclib.tosc</a></li>
 </ul>
 </li>
 </ul>
@@ -223,58 +217,66 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tosclib</span> <span class="k">as</span> <span class="nn">tosc</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
-<span class="kn">from</span> <span class="nn">tosclib.elements</span> <span class="kn">import</span> <span class="n">ControlElements</span><span class="p">,</span> <span class="n">ControlType</span>
 
-
-<span class="k">def</span> <span class="nf">getJson</span><span class="p">(</span><span class="n">fileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_json</span><span class="p">(</span><span class="n">fileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 
 
-<span class="k">def</span> <span class="nf">oscMsg</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">tosc</span><span class="o">.</span><span class="n">OSC</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">create_osc</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">tosc</span><span class="o">.</span><span class="n">MessageOSC</span><span class="p">:</span>
     <span class="sd">"""Create a message with a path constructed with custom Partials"""</span>
-    <span class="k">return</span> <span class="n">tosc</span><span class="o">.</span><span class="n">OSC</span><span class="p">(</span>
-        <span class="n">path</span><span class="o">=</span><span class="p">[</span>
-            <span class="n">tosc</span><span class="o">.</span><span class="n">Partial</span><span class="p">(),</span>  <span class="c1"># Default is the constant '/'</span>
-            <span class="n">tosc</span><span class="o">.</span><span class="n">Partial</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"PROPERTY"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">"parent.name"</span><span class="p">),</span>
-            <span class="n">tosc</span><span class="o">.</span><span class="n">Partial</span><span class="p">(),</span>
-            <span class="n">tosc</span><span class="o">.</span><span class="n">Partial</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"PROPERTY"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">"name"</span><span class="p">),</span>
-        <span class="p">]</span>
+    <span class="k">return</span> <span class="n">tosc</span><span class="o">.</span><span class="n">osc</span><span class="p">(</span>
+        <span class="n">tosc</span><span class="o">.</span><span class="n">msgconfig</span><span class="p">(),</span>
+        <span class="p">(</span><span class="n">tosc</span><span class="o">.</span><span class="n">trigger</span><span class="p">(),),</span>
+        <span class="p">(</span>
+            <span class="n">tosc</span><span class="o">.</span><span class="n">partial</span><span class="p">(),</span>
+            <span class="n">tosc</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="s2">"PROPERTY"</span><span class="p">,</span> <span class="s2">"STRING"</span><span class="p">,</span> <span class="s2">"parent.name"</span><span class="p">),</span>
+            <span class="n">tosc</span><span class="o">.</span><span class="n">partial</span><span class="p">(),</span>
+            <span class="n">tosc</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="s2">"PROPERTY"</span><span class="p">,</span> <span class="s2">"STRING"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="p">(</span><span class="n">tosc</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="s2">"VALUE"</span><span class="p">,</span> <span class="s2">"FLOAT"</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">),),</span>
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">createFader</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
-    <span class="n">fader</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">createChild</span><span class="p">(</span><span class="n">ControlType</span><span class="o">.</span><span class="n">FADER</span><span class="p">))</span>
-    <span class="n">fader</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">fader</span><span class="o">.</span><span class="n">setFrame</span><span class="p">((</span><span class="n">width</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="mi">1080</span><span class="p">))</span>
-    <span class="n">fader</span><span class="o">.</span><span class="n">setColor</span><span class="p">((</span><span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="n">fader</span><span class="o">.</span><span class="n">createOSC</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>  <span class="c1"># Creates a new message from custom tosc.OSC</span>
+<span class="k">def</span> <span class="nf">create_fader</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="sd">"""Create a Fader object, then convert it to XML"""</span>
+    <span class="n">fader</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Fader</span><span class="p">()</span>
+    <span class="n">fader</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+    <span class="n">fader</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"frame"</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">i</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">),</span> <span class="mi">1080</span><span class="p">)))</span>
+    <span class="n">fader</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"color"</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="n">fader</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">efader</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">tosc</span><span class="o">.</span><span class="n">xml_control</span><span class="p">(</span><span class="n">fader</span><span class="p">))</span>
+    <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">efader</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">efader</span>
+
+
+<span class="k">def</span> <span class="nf">create_group</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Group</span><span class="p">()</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="n">frame</span><span class="p">),</span> <span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="n">color</span><span class="p">))</span>
+    <span class="n">egroup</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">tosc</span><span class="o">.</span><span class="n">xml_control</span><span class="p">(</span><span class="n">group</span><span class="p">))</span>
+    <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">egroup</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">egroup</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">jsonFile</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">):</span>
     <span class="n">root</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">createTemplate</span><span class="p">()</span>
-    <span class="n">base</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">base</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="s2">"template"</span><span class="p">)</span>
-    <span class="n">base</span><span class="o">.</span><span class="n">setFrame</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">))</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">base</span><span class="o">.</span><span class="n">add_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"template"</span><span class="p">))</span>
+    <span class="n">base</span><span class="o">.</span><span class="n">add_prop</span><span class="p">((</span><span class="s2">"frame"</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">)))</span>
 
-    <span class="c1"># Group container for the faders</span>
-    <span class="n">group</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">createChild</span><span class="p">(</span><span class="n">ControlType</span><span class="o">.</span><span class="n">GROUP</span><span class="p">))</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="s2">"Controls"</span><span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">setFrame</span><span class="p">((</span><span class="mi">420</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1080</span><span class="p">))</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">setColor</span><span class="p">((</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">create_group</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s2">"Controls"</span><span class="p">,</span> <span class="p">(</span><span class="mi">420</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1080</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
-    <span class="c1"># Create faders based on Json data</span>
-    <span class="n">jsonData</span> <span class="o">=</span> <span class="n">getJson</span><span class="p">(</span><span class="n">jsonFile</span><span class="p">)</span>
+    <span class="n">jsonData</span> <span class="o">=</span> <span class="n">get_json</span><span class="p">(</span><span class="n">jsonFile</span><span class="p">)</span>
     <span class="n">limit</span> <span class="o">=</span> <span class="mi">10</span>
-    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">getPropertyParam</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">/</span> <span class="n">limit</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="n">oscMsg</span><span class="p">()</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">420</span> <span class="o">/</span> <span class="n">limit</span><span class="p">)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">create_osc</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">jsonData</span><span class="p">):</span>
-        <span class="n">createFader</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">param</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">width</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="n">create_fader</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">param</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">width</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="s2">"name"</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">limit</span><span class="p">:</span>
             <span class="k">break</span>
 
-    <span class="nb">print</span><span class="p">([</span><span class="n">tosc</span><span class="o">.</span><span class="n">ElementTOSC</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">getPropertyValue</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">children</span><span class="p">])</span>
     <span class="n">tosc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">)</span>
 
 

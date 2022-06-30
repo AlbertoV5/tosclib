@@ -17,7 +17,7 @@ def test_collisions():
     with pytest.raises(ValueError):
         assert element.add_prop(tosc.prop("name", "Craig"))
     assert element.add_prop(tosc.prop("name2", "craig"))
-    
+
     """No Error with collisions. Replace value."""
     fader = tosc.Fader()
     assert fader.set_frame((0, -200, 40, 200))
@@ -35,5 +35,5 @@ def test_collisions():
     address = tosc.address()
     msg = tosc.osc()
     assert fader.add_msg(msg)
-    assert fader.add_msg(tosc.osc(addrs = address))
-    assert fader.add_msg(tosc.osc(addrs = address))
+    assert fader.add_msg(tosc.osc(addrs=address))
+    assert fader.add_msg(tosc.osc(addrs=address))

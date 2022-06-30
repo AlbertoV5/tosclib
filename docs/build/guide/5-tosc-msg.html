@@ -173,16 +173,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../demos/6-numpad.html">Numpad Module Recreation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../modules/modules.html">Modules</a></li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/1-ElementEnums.html">Element Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/2-ControlEnums.html">Control Enumerations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/shortcuts.html">Shortcuts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/tglobals.html">Globals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/tosclib.tosc.html">tosclib.tosc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/5-tosclib.html">tosclib.tosc</a></li>
 </ul>
 </li>
 </ul>
@@ -220,136 +214,91 @@
           <section id="osc-message-elements">
 <h1>OSC Message Elements<a class="headerlink" href="#osc-message-elements" title="Permalink to this headline">#</a></h1>
 <p>In order to create a correct OSC message, we will use a few classes that set the specific Sub Elements of the &lt;osc&gt; Element.</p>
-<p>We can create a message from ElementTOSC with:</p>
+<p>We can create a message with:</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="tosclib.tosc.ElementTOSC.createOSC">
-<span class="sig-prename descclassname"><span class="pre">ElementTOSC.</span></span><span class="sig-name descname"><span class="pre">createOSC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message=&lt;tosclib.elements.OSC</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosc.html#ElementTOSC.createOSC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.ElementTOSC.createOSC" title="Permalink to this definition">#</a></dt>
-<dd><p>Builds and appends an OSC message</p>
+<dt class="sig sig-object py" id="tosclib.factory.osc">
+<span class="sig-prename descclassname"><span class="pre">factory.</span></span><span class="sig-name descname"><span class="pre">osc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triggs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.factory.osc" title="Permalink to this definition">#</a></dt>
+<dd><p>OSC message factory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>message</strong> (<a class="reference internal" href="../api/1-ElementEnums.html#tosclib.elements.OSC" title="tosclib.elements.OSC"><em>tosclib.elements.OSC</em></a>) – </p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><em>Optional</em></a><em>[</em><em>tosclib.elements.MsgConfig</em><em>]</em>) – </p></li>
+<li><p><strong>triggs</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><em>Optional</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference internal" href="#tosclib.elements.Trigger" title="tosclib.elements.Trigger"><em>tosclib.elements.Trigger</em></a><em>, </em><em>...</em><em>]</em><em>]</em>) – </p></li>
+<li><p><strong>addrs</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><em>Optional</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference internal" href="#tosclib.elements.Partial" title="tosclib.elements.Partial"><em>tosclib.elements.Partial</em></a><em>, </em><em>...</em><em>]</em><em>]</em>) – </p></li>
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><em>Optional</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference internal" href="#tosclib.elements.Partial" title="tosclib.elements.Partial"><em>tosclib.elements.Partial</em></a><em>, </em><em>...</em><em>]</em><em>]</em>) – </p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
+<dd class="field-even"><p><a class="reference internal" href="#tosclib.elements.MessageOSC" title="tosclib.elements.MessageOSC">tosclib.elements.MessageOSC</a></p>
 </dd>
 </dl>
 </dd></dl>
 <p>Then we can construct a custom osc message with the help of these classes:</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="tosclib.tosc.OSC">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">OSC</span></span><a class="reference internal" href="../_modules/tosclib/elements.html#OSC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.OSC" title="Permalink to this definition">#</a></dt>
-<dd><p>Default Elements and Sub Elements for &lt;osc&gt;</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>enabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Boolean. Defaults to “1”.</p></li>
-<li><p><strong>send</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Boolean. Defaults to “1”.</p></li>
-<li><p><strong>receive</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Boolean. Defaults to “1”.</p></li>
-<li><p><strong>feedback</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Boolean. Defaults to “0”.</p></li>
-<li><p><strong>connections</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Binary.</p></li>
-<li><p><strong>"00001"</strong> (<em>Defaults to</em>) – </p></li>
-<li><p><strong>triggers</strong> (<em>List</em><em>[</em><a class="reference internal" href="#tosclib.tosc.Trigger" title="tosclib.tosc.Trigger"><em>Trigger</em></a><em>]</em><em>, </em><em>optional</em>) – [Trigger].</p></li>
-<li><p><strong>[</strong><strong>Trigger</strong><strong>(</strong><strong>)</strong><strong>]</strong><strong>.</strong> (<em>Defaults to</em>) – </p></li>
-<li><p><strong>path</strong> (<em>List</em><em>[</em><a class="reference internal" href="#tosclib.tosc.Partial" title="tosclib.tosc.Partial"><em>Partial</em></a><em>]</em><em>, </em><em>optional</em>) – [Partial].</p></li>
-<li><p><strong>[</strong><strong>Partial</strong> (<em>Defaults to</em>) – </p></li>
-<li><p><strong>arguments</strong> (<em>List</em><em>[</em><a class="reference internal" href="#tosclib.tosc.Partial" title="tosclib.tosc.Partial"><em>Partial</em></a><em>]</em><em>, </em><em>optional</em>) – [Partial].</p></li>
-<li><p><strong>[</strong><strong>Partial</strong> – </p></li>
-</ul>
+<dt class="sig sig-object py" id="tosclib.elements.MessageOSC">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.elements.</span></span><span class="sig-name descname"><span class="pre">MessageOSC</span></span><a class="headerlink" href="#tosclib.elements.MessageOSC" title="Permalink to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>MessageOSC:</dt><dd><p>[0] - Tag: osc
+[1] - MsgConfig: Tuple of Enabled, Send, Receive, Feedback, Connections.
+[2] - Triggers: Tuple of Trigger.
+[3] - Address: Construct a message with tuple of Partial.
+[4] - Arguments: Construct arguments with tuple of Partial.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="tosclib.tosc.OSC.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">enabled='1',</span> <span class="pre">send='1',</span> <span class="pre">receive='1',</span> <span class="pre">feedback='0',</span> <span class="pre">connections='00001',</span> <span class="pre">triggers=[&lt;tosclib.elements.Trigger</span> <span class="pre">object&gt;],</span> <span class="pre">path=[&lt;tosclib.elements.Partial</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;tosclib.elements.Partial</span> <span class="pre">object&gt;],</span> <span class="pre">arguments=[&lt;tosclib.elements.Partial</span> <span class="pre">object&gt;]</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/elements.html#OSC.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.OSC.__init__" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>enabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-<li><p><strong>send</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-<li><p><strong>receive</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-<li><p><strong>feedback</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-<li><p><strong>connections</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-<li><p><strong>triggers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference internal" href="#tosclib.tosc.Trigger" title="tosclib.elements.Trigger"><em>tosclib.elements.Trigger</em></a><em>]</em>) – </p></li>
-<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference internal" href="#tosclib.tosc.Partial" title="tosclib.elements.Partial"><em>tosclib.elements.Partial</em></a><em>]</em>) – </p></li>
-<li><p><strong>arguments</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference internal" href="#tosclib.tosc.Partial" title="tosclib.elements.Partial"><em>tosclib.elements.Partial</em></a><em>]</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="tosclib.elements.MessageOSC.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.elements.MessageOSC.__init__" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="tosclib.tosc.OSC.__new__">
-<span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.OSC.__new__" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="tosclib.elements.MessageOSC.__new__">
+<span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.elements.MessageOSC.__new__" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 </dd></dl>
 <dl class="py class">
-<dt class="sig sig-object py" id="tosclib.tosc.Trigger">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">Trigger</span></span><a class="reference internal" href="../_modules/tosclib/elements.html#Trigger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.Trigger" title="Permalink to this definition">#</a></dt>
-<dd><p>Default Elements for &lt;trigger&gt;</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>var</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – “x” or “touch”. Defaults to “x”.</p></li>
-<li><p><strong>con</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – “ANY”, “RISE” or “FALL”. Defaults to “ANY”.</p></li>
-</ul>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="tosclib.elements.Trigger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.elements.</span></span><span class="sig-name descname"><span class="pre">Trigger</span></span><a class="headerlink" href="#tosclib.elements.Trigger" title="Permalink to this definition">#</a></dt>
+<dd><p>Trigger:</p>
+<p>This is the Value that triggers the OSC/MIDI/LOCAL message.</p>
+<blockquote>
+<div><p>[0] - TriggerType: Any of the valid literals [“x”, “y”, “touch”, “text”].
+[1] - TriggerCondition: Any of the valid literals [“ANY”, “RISE”, “FALL”].</p>
+</div></blockquote>
 <dl class="py method">
-<dt class="sig sig-object py" id="tosclib.tosc.Trigger.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ANY'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/elements.html#Trigger.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.Trigger.__init__" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>var</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-<li><p><strong>condition</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="tosclib.elements.Trigger.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.elements.Trigger.__init__" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="tosclib.tosc.Trigger.__new__">
-<span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.Trigger.__new__" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="tosclib.elements.Trigger.__new__">
+<span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.elements.Trigger.__new__" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 </dd></dl>
 <dl class="py class">
-<dt class="sig sig-object py" id="tosclib.tosc.Partial">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.tosc.</span></span><span class="sig-name descname"><span class="pre">Partial</span></span><a class="reference internal" href="../_modules/tosclib/elements.html#Partial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.Partial" title="Permalink to this definition">#</a></dt>
-<dd><p>Default Elements for &lt;partial&gt;</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>"CONSTANT"</strong> – </p></li>
-<li><p><strong>"INDEX"</strong> – </p></li>
-<li><p><strong>"VALUE"</strong> – </p></li>
-<li><p><strong>"CONSTANT".</strong> (<em>"PROPERTY". Defaults to</em>) – </p></li>
-<li><p><strong>conversion</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>"BOOLEAN"</strong> – </p></li>
-<li><p><strong>"INTEGER"</strong> – </p></li>
-<li><p><strong>"FLOAT"</strong> – </p></li>
-<li><p><strong>"STRING".</strong> (<em>"STRING". Defaults to</em>) – </p></li>
-<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Depends on the context. Defaults to “/”.</p></li>
-<li><p><strong>scaleMin</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – If “VALUE”, set range. Defaults to “0”.</p></li>
-<li><p><strong>scaleMax</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – If “VALUE”, set range. Defaults to “1”.</p></li>
-</ul>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="tosclib.elements.Partial">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.elements.</span></span><span class="sig-name descname"><span class="pre">Partial</span></span><a class="headerlink" href="#tosclib.elements.Partial" title="Permalink to this definition">#</a></dt>
+<dd><p>Partial:
+This is the unit with which the OSC message is constructed.
+So in a message like track/1/fx/8, the partials are: “track”, “1”, “fx”, “8”.
+They can be dynamic, so if the Control name is “fx” the partial would look like: track/1/name/8.</p>
+<blockquote>
+<div><p>[0] - PartialType: Any of the allowed literals.
+[1] - PartialConversion: Any of the allowed literals.
+[2] - value: Depends on the Partial Type.</p>
+<blockquote>
+<div><p>CONSTANT: Value is any string, frequently “/”.
+INDEX: Any int, as str.
+VALUE: Any of the allowed ValueKey literals.
+PROPERTY: Any str.</p>
+</div></blockquote>
+<p>[3] - scaleMin: Range of Value.
+[4] - scaleMax: Range of Value.</p>
+</div></blockquote>
 <dl class="py method">
-<dt class="sig sig-object py" id="tosclib.tosc.Partial.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CONSTANT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'STRING'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaleMin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaleMax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/elements.html#Partial.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.tosc.Partial.__init__" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-<li><p><strong>conversion</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-<li><p><strong>scaleMin</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-<li><p><strong>scaleMax</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="tosclib.elements.Partial.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.elements.Partial.__init__" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="tosclib.tosc.Partial.__new__">
-<span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.tosc.Partial.__new__" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="tosclib.elements.Partial.__new__">
+<span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.elements.Partial.__new__" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 </dd></dl>
 </section>

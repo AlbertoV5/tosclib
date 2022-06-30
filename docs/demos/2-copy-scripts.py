@@ -5,7 +5,7 @@ import re
 def main(inputFile, outputFile, sourceName, targetName):
 
     # Find the script string with a streaming parser
-    script = tosc.pullValueFromKey(
+    script = tosc.pull_value_from_key(
         inputFile=inputFile, key="name", value=sourceName, targetKey="script"
     )
 

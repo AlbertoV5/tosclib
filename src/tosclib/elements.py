@@ -54,7 +54,7 @@ MessageLOCAL is made of:
 
 """
 
-from typing import Literal, NewType, Protocol, TypeAlias, Callable
+from typing import Literal, NewType, TypeAlias, Protocol
 
 __all__ = [
     # Enums
@@ -347,7 +347,7 @@ Children: TypeAlias = list["Control"]
 
 
 class Control(Protocol):
-    """The Control Type Protocol. Touch OSC Control
+    """The Control Type Protocol. Touch OSC Control.
 
     Attributes:
         type(ControlType): Any of the valid literals.
@@ -382,5 +382,5 @@ class Control(Protocol):
     def set_color(self, color: tuple[float, ...]) -> "Control":
         ...
 
-    def change_type(self, typ: ControlType) -> "Control":
+    def set_type(self, typ: ControlType) -> "Control":
         ...

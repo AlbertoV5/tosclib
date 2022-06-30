@@ -63,7 +63,7 @@ def test_basics():
 
     assert (group2 := tosc.Group()) is not None
     assert tosc.copy_children(group, group2)
-    assert group2.change_type("GRID")
+    assert group2.set_type("GRID")
 
     tgroup = tosc.Node(egroup)
     for child in tgroup.children:

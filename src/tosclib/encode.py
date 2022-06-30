@@ -5,6 +5,7 @@ Python Typed-hinted-tuples to XML Converters
 import logging
 from typing import Callable
 from .elements import *
+from .controls import Control
 from xml.etree.ElementTree import Element, SubElement
 
 __all__ = [

@@ -1,2 +1,4 @@
 WARNING  root:test_basics.py:55 Expected Sentinel Element:
-WARNING  root:encode.py:35 Sentinel <Element 'none' at 0x7ff6592da980> from <function find_child at 0x7ff658aeef80> with None
+WARNING  root:encode.py:35 Sentinel <Element 'none' at 0x7fcd179fd6c0> from <function find_child at 0x7fcd168faf80> with None
+DEBUG    root:test_copiers.py:86 On GROUP, 9e39b72a-6a36-48c0-a590-0384e176f3af:
+Removed message osc: ('osc', (True, True, True, False, '11111'), (('touch', 'ANY'),), (('CONSTANT', 'STRING', '/', 0, 1), ('PROPERTY', 'STRING', 'name', 0, 1), ('CONSTANT', 'STRING', '/', 0, 1)), (('CONSTANT', 'STRING', '/', 0, 1), ('VALUE', 'FLOAT', 'x', 0, 1), ('CONSTANT', 'STRING', '/', 0, 1)))

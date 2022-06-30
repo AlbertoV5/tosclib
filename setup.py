@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="tosclib",
-    version="0.3.5",
+    version="0.5.0",
     author="Alberto Valdez",
     author_email="avq5ac1@gmail.com",
     description="Generate and edit Touch OSC .tosc files",

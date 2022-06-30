@@ -25,6 +25,12 @@ Installation
 Changelog
 ------------------
 
+- 0.5.0
+   - Refactored entire library to use type hints.
+   - Converting from XML to type-hinted tuples and back.
+   - Factories and functions for type-hinted tuples.
+   - Keeping some XML utilities.
+
 - 0.3.5
    - Moved to python 3.10 only for now. 
    - Added mypy support.

@@ -5,8 +5,8 @@ project = "tosclib"
 copyright = "2022, Alberto Valdez"
 author = "Alberto Valdez"
 
-release = "0.3"
-version = "0.3.5"
+release = "0.5"
+version = "0.5.0"
 
 # -- General configuration
 

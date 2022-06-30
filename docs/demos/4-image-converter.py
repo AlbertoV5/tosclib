@@ -30,9 +30,9 @@ class ImageConverter:
         The canvas is any {self.canvas_name} named object in the top layer.
         """
         root = tosc.load(self.input_path)
-        main = tosc.ElementTOSC(root[0])
+        main = tosc.Node(root[0])
         canvas = tosc.find_child(main.node, self.canvas_name)
-        ecanvas = tosc.ElementTOSC(canvas)
+        ecanvas = tosc.Node(canvas)
 
         pxs = self.pixel_size
         for iy, ix in np.ndindex(self.pixels.shape[:2]):

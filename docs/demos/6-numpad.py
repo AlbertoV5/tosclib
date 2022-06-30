@@ -236,7 +236,7 @@ def layoutClear(controls: list[tosc.Control]):
 def main():
 
     root = tosc.createTemplate(frame=(0, 0, 500, 800))
-    template = tosc.ElementTOSC(root[0])
+    template = tosc.Node(root[0])
     
     control:tosc.Control = tosc.to_ctrl(template.node)
 

@@ -3,7 +3,7 @@ import tosclib as tosc
 
 def main():
     root = tosc.load("docs/demos/files/test2.tosc")
-    group = tosc.ElementTOSC(root[0])
+    group = tosc.Node(root[0])
 
     group.add_prop(("CustomProperty", "Craig"))
     group.show_prop("CustomProperty")

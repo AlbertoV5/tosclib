@@ -10,10 +10,10 @@ def main(inputFile, outputFile, sourceName, targetName):
     )
 
     root = tosc.load(inputFile)
-    main = tosc.ElementTOSC(root[0])
+    main = tosc.Node(root[0])
 
     for group in main.children:
-        group = tosc.ElementTOSC(group)
+        group = tosc.Node(group)
 
         # Move on if the Property is not the target
         if re.fullmatch(group.get_prop("name")[1], targetName) is None:
@@ -21,7 +21,7 @@ def main(inputFile, outputFile, sourceName, targetName):
 
         # Assuming the Element is the target, iterate through children
         for box in group.children:
-            box = tosc.ElementTOSC(box)
+            box = tosc.Node(box)
             if box.has_prop("script"):
                 box.set_prop(("script", script))
             else:

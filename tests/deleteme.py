@@ -13,7 +13,7 @@ frame = PropertyFactory.buildAny("frame", (0,0,100,100))
 color = PropertyFactory.buildAny("color", (0.25, 0.25, 0.25, 1.0))
 
 root = tosc.createTemplate(frame = (0, 0, 800, 800))
-template = tosc.ElementTOSC(root[0])
+template = tosc.Node(root[0])
 
 
 box = tosc.asEtosc(template.createChild(ControlType.BOX))

@@ -5,7 +5,7 @@ from .profiler import profile
 @profile
 def test_basics():
     root = tosc.createTemplate()
-    base = tosc.ElementTOSC(root[0])
+    base = tosc.Node(root[0])
 
     name = "Craig"
     tag = "Scottish"
@@ -64,9 +64,9 @@ def test_basics():
     assert tosc.copy_children(group, group2)
     assert group2.change_type("GRID")
 
-    tgroup = tosc.ElementTOSC(egroup)
+    tgroup = tosc.Node(egroup)
     for child in tgroup.children:
-        echild = tosc.ElementTOSC(child)
+        echild = tosc.Node(child)
         echild.set_prop(("background", False))
         echild.set_prop(("background", True))
         echild.set_prop(("locked", False))

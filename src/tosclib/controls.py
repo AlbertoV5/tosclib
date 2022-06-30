@@ -81,7 +81,7 @@ Children:
         for property in args:
             setattr(self, property[0], property)
         return self
-
+    
     def set_frame(self, frame: tuple[int, ...]) -> Control:
         setattr(self, "frame", ("frame",frame))
         return self

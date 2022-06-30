@@ -8,10 +8,10 @@ from .profiler import profile
 def test_copiers():
 
     root = tosc.createTemplate()
-    node = tosc.ElementTOSC(root[0])
+    node = tosc.Node(root[0])
 
     root2 = tosc.createTemplate()
-    node2 = tosc.ElementTOSC(root2[0])
+    node2 = tosc.Node(root2[0])
 
     # COPY PROPERTIES
     assert node.setName("node1")
@@ -51,7 +51,7 @@ def test_copiers():
     # COPY CHILDREN
     controlsList = []
     for c in ControlType:
-        child = tosc.ElementTOSC(node.createChild(c))
+        child = tosc.Node(node.createChild(c))
         child.setName(c.value)
         controlsList.append(c.value)
 
@@ -69,10 +69,10 @@ def test_copiers():
 
     childList = []
     for n1 in node.children:
-        n1 = tosc.ElementTOSC(n1)
+        n1 = tosc.Node(n1)
         childList.append(n1.getPropertyValue("name").text)
     for n2 in node2.children:
-        n2 = tosc.ElementTOSC(n2)
+        n2 = tosc.Node(n2)
         childList.append(n2.getPropertyValue("name").text)
 
     assert controlsList.sort() == childList.sort()

@@ -3,7 +3,7 @@ import re
 import zlib
 from tosclib.controls import Group
 from tosclib.decode import to_prop
-from tosclib.encode import SENTINEL, xml_control, xml_property, property_matcher
+from tosclib.encode import SENTINEL, xml_control, xml_message, xml_property, property_matcher, xml_value
 from .elements import *
 from xml.etree.ElementTree import (
     Element,
@@ -15,15 +15,15 @@ from xml.etree.ElementTree import (
 )
 
 # __all__ = [
-#     "ElementTOSC",
+#     "ControlElement",
 
 # ]
 
 
-class ElementTOSC:
+class Node():
     """
-    Control as XML ElementTree, references Node and top layer children.
-    Creates them if not found.
+    The XML Element version of the Control protocol. 
+    Creates sub XML Elements if not found.
     """
 
     __slots__ = ("node", "properties", "values", "messages", "children")
@@ -45,7 +45,7 @@ class ElementTOSC:
         self.values: Element = self._getCreate("values")
         self.messages: Element = self._getCreate("messages")
         self.children: Element = self._getCreate("children")
-
+    
     def __iter__(self):
         """Return iter over children"""
         return iter(self.children)
@@ -54,10 +54,10 @@ class ElementTOSC:
         """Index children as Elements"""
         return self.__class__(self.children[item])
 
-    def append(self, e: "ElementTOSC") -> "ElementTOSC":
-        """Append an ElementTOSC's Node to this element's Children"""
-        self.children.append(e.node)
-        return self
+    # def append(self, e: "Node") -> "Node":
+    #     """Append an ElementTOSC's Node to this element's Children"""
+    #     self.children.append(e.node)
+    #     return self
 
     def _getCreate(self, target):
         s = self.node.find(target)
@@ -86,17 +86,19 @@ class ElementTOSC:
                 return prop
         return ("", "")
 
-    def add_prop(self, *props: Property) -> "ElementTOSC":
+    def add_prop(self, *props: Property) -> "Node":
         """Get N number of Property, convert them to xml and append them.
 
         Returns:
             ElementTOSC: chaining
         """
         for prop in props:
+            if self.has_prop(prop[0]):
+                raise ValueError(f"{prop} already exists.")
             self.properties.append(xml_property(prop))
         return self
 
-    def set_prop(self, prop: Property) -> "ElementTOSC":
+    def set_prop(self, prop: Property) -> "Node":
         """Finds a property by key and replaces it with a new one.
 
         Args:
@@ -111,12 +113,15 @@ class ElementTOSC:
         if (p := self.properties.find(f".//property/[key='{prop[0]}']")) is None:
             # raise KeyError(f"Element can't find property: {prop}")
             return self.add_prop(prop)
-
+        
         if (value := p.find("value")) is not None:
-            p = property_matcher(prop, p, value)
+            p.remove(value)
+        
+        value = SubElement(p, "value")
+        p = property_matcher(prop, p, value)
         return self
 
-    def show_prop(self, key: str) -> "ElementTOSC":
+    def show_prop(self, key: str) -> "Node":
         """Print XML of a Property
 
         Args:
@@ -127,7 +132,30 @@ class ElementTOSC:
         """
         show(self.properties.find(f".//property/[key='{key}']"))
         return self
+    
+    def add_msg(self, msg: Message) -> "Node":
+        """Append Message to list as XML Element
 
+        Args:
+            msg (Message): Message tuple type alias
+
+        Returns:
+            Node: Self
+        """
+        self.messages.append(xml_message(msg))
+        return self
+
+    def add_value(self, val: Value) -> "Node":
+        """Append Value to list as XML Element
+
+        Args:
+            val (Value): Value tuple type alias
+
+        Returns:
+            Node: Self
+        """
+        self.values.append(xml_value(val))
+        return self
 
 def createTemplate(frame: tuple = None) -> Element:
     """Generates a root xml Element and adds the base GROUP node to it."""

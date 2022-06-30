@@ -22,29 +22,29 @@ def create_osc() -> tosc.MessageOSC:
     )
 
 
-def create_fader(e: tosc.ElementTOSC, name, width, limit, i, msg):
+def create_fader(e: tosc.Node, name, width, limit, i, msg):
     """Create a Fader object, then convert it to XML"""
     fader = tosc.Fader()
     fader.set_prop(("name", name))
     fader.set_prop(("frame", (int(width * i), 0, int(width), 1080)))
     fader.set_prop(("color", (i / limit, 0, 1 - i / limit, 1)))
     fader.messages.append(msg)
-    efader = tosc.ElementTOSC(tosc.xml_control(fader))
+    efader = tosc.Node(tosc.xml_control(fader))
     e.append(efader)
     return efader
 
 
-def create_group(e: tosc.ElementTOSC, name, frame, color):
+def create_group(e: tosc.Node, name, frame, color):
     group = tosc.Group()
     group.set_prop(("name", name), ("frame", frame), ("color", color))
-    egroup = tosc.ElementTOSC(tosc.xml_control(group))
+    egroup = tosc.Node(tosc.xml_control(group))
     e.append(egroup)
     return egroup
 
 
 def main(jsonFile, outputFile):
     root = tosc.createTemplate()
-    base = tosc.ElementTOSC(root[0])
+    base = tosc.Node(root[0])
     base.add_prop(("name", "template"))
     base.add_prop(("frame", (0, 0, 1920, 1080)))
 

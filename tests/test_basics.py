@@ -1,101 +1,80 @@
+import logging
 import tosclib as tosc
 from .profiler import profile
-from tosclib import Value, Partial, ControlType, MessageOSC
-
 
 @profile
 def test_basics():
-    """Misc tests"""
     root = tosc.createTemplate()
-    element = tosc.ElementTOSC(root[0])
+    base = tosc.ElementTOSC(root[0])
 
-    element.setName("Craig")
+    name = "Craig"
     tag = "Scottish"
-    element.setTag(tag)
-    element.createValue(Value())
-
-    element.showValue("touch")
-    element.setValue(Value("touch", "1", "1", "true", "1"))
-
-    element.createOSC(
-        message=tosc.MessageOSC(
-            "0",
-            "0",
-            "0",
-            "1",
-            "00001",
-            [tosc.Trigger()],
-            [tosc.Partial(), tosc.Partial()],
-            [Partial(), Partial()],
-        )
-    )
-
-    element.setColor((1, 0, 0, 1))
-    element.setFrame((0, 0, 1, 1))
-
-    count = 0
-    for i in dir(tosc.ElementTOSC):
-        if "__" not in i:
-            count += 1
-
+    control = tosc.Group(name = name, tag = tag)
+    control.values.append(tosc.value())
+    control.messages = [tosc.osc()]
+    control.set_color((1.0,0.0,0.0,1.0))
+    control.set_frame((0,0,1,1))
+    base.children.append( tosc.xml_control(control))
+    
     tag2 = tosc.pullValueFromKey2(root, "name", "Craig", "tag")
-
+    name2 = tosc.pullValueFromKey2(root, "tag", tag2, "name")
     assert tag == tag2
+    assert name == name2
 
     """NESTED"""
 
-    root = tosc.createTemplate()
-    parent = tosc.ElementTOSC(root[0])
-
-    group = tosc.ElementTOSC(parent.createChild(ControlType.GROUP))
-    msg = MessageOSC(
-        arguments=[
-            Partial(),
-            Partial("PROPERTY", "parent.name"),
-            Partial(),
-            Partial("PROPERTY", "name"),
-        ]
+    arguments: tosc.Arguments = (
+        tosc.partial(),
+        tosc.partial("PROPERTY", "STRING", "parent.name"),
+        tosc.partial(),
+        tosc.partial("PROPERTY", "STRING", "name")
     )
+    osc = tosc.osc(args = arguments)
+    group = tosc.Group(messages=[osc])
 
     lim = 8
     for i in range(lim):
-        button = tosc.ElementTOSC(group.createChild(ControlType.BUTTON))
-        assert button.setName(f"button{i}") is not None
-        assert button.setFrame((i * 100, 0, 100, 50)) is not None
-        assert button.setColor((1 - i / lim, 0, lim, 1)) is not None
-        assert button.createValue(Value(key="x")) is not None
-        assert button.createOSC(msg) is not None
-        assert button.isControlType(ControlType.BUTTON)
+        button: tosc.Control = tosc.Button()
+        assert button.set_prop(("name",f"button{i}")) is not None
+        assert button.set_frame((i * 100, 0, 100, 50)) is not None
+        assert button.set_color((1 - i / lim, 0, lim, 1)) is not None
+        assert (value:=tosc.value("x", False, False, 0.0, 0)) is not None
+        button.values.append(value)
+        button.messages.append(osc)
+        assert isinstance(button, tosc.ControlBuilder)
+        group.children.append(button)
+
+    egroup: tosc.Element = tosc.xml_control(group)
 
     for i in range(lim):
-        assert group.findChildByName(f"button{i}") is not None
+        assert (result := tosc.find_child(egroup, f"button{i}"))
+        assert result.tag != "none" 
 
-    buttonBad = group.createChild(ControlType.BUTTON)
-    buttonBad.append(tosc.testFromString("<name>buttonBad</name>"))
-    assert group.findChildByName("buttonBad") is None
+    buttonBad: tosc.Control = tosc.Button(name = "buttonBad")
+    logging.warning("Expected Sentinel Element:")
+    (sentinel := tosc.find_child(egroup, "buttonBad"))
+    assert sentinel.tag is "none"
 
-    buttonBetter = tosc.ElementTOSC(buttonBad)
-    assert tosc.copyProperties(button, buttonBetter)
-    assert tosc.copyValues(button, buttonBetter)
-    assert tosc.copyMessages(button, buttonBetter)
+    assert tosc.copy_properties(button, buttonBad)
+    assert tosc.copy_values(button, buttonBad)
+    assert tosc.copy_messages(button, buttonBad)
+    buttonBetter = tosc.xml_control(buttonBad)
 
-    group2 = tosc.ElementTOSC(parent.createChild(ControlType.GROUP))
-    assert tosc.copyChildren(group, group2)
-    assert group2.setControlType(ControlType.GRID)
+    assert (group2 := tosc.Group()) is not None
+    assert tosc.copy_children(group, group2)
+    assert group2.change_type("GRID")
 
-    for child in group.children:
-        child = tosc.ElementTOSC(child)
-        child.setBackground(False)
-        child.setLocked(True)
-        child.setVisible(False)
-        child.setOutline(True)
-        child.setInteractive(False)
-        child.setScript(
-            """
+    tgroup = tosc.ElementTOSC(egroup)
+    for child in tgroup.children:
+        echild = tosc.ElementTOSC(child)
+        echild.set_prop(("background", False))
+        echild.set_prop(("background", True))
+        echild.set_prop(("locked", False))
+        echild.set_prop(("visible", False))
+        echild.set_prop(("outline", True))
+        echild.set_prop(("interactive", False))
+        echild.set_prop(("script", """
 function init()
     self.values.x = 1
 end
-"""
-        )
-
-    return "tests/test_basics.prof"
+        """))

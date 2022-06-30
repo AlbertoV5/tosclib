@@ -12,7 +12,10 @@ __all__ = [
     "value",
     "msgconfig",
     "trigger",
+    "triggers",
     "partial",
+    "address",
+    "arguments",
     "midimsg",
     "midival",
     "localsrc",
@@ -55,10 +58,15 @@ def msgconfig(
 def trigger(
     key: Literal["x", "y", "touch", "text"] = "touch",
     condition: Literal["ANY", "RISE", "FALL"] = "ANY",
-):
+) -> Trigger:
     """Trigger factory"""
     return Trigger((key, condition))
 
+def triggers(*args: Trigger) -> Triggers:
+    """Triggers factory"""
+    if len(args) == 0:
+        args = (trigger(),)
+    return args
 
 def partial(
     typ: Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"] = "CONSTANT",
@@ -70,6 +78,17 @@ def partial(
     """Partial factory"""
     return Partial((typ, conv, value, scaleMin, scaleMax))
 
+def address(*args: Partial) -> Address:
+    """Address factory"""
+    if len(args) == 0:
+        args = (partial(),partial("PROPERTY", "STRING", "name"),partial())
+    return args
+
+def arguments(*args: Partial) -> Arguments:
+    """Arguments factory"""
+    if len(args) == 0:
+        args = (partial(),partial("VALUE", "FLOAT", "x"),partial())
+    return args
 
 def midimsg(
     typ: Literal[
@@ -122,24 +141,20 @@ def localdst(
 
 def osc(
     config: MsgConfig = None,
-    triggers: Triggers = None,
-    address: Address = None,
-    arguments: Arguments = None,
+    triggs: Triggers = None,
+    addrs: Address = None,
+    args: Arguments = None,
 ) -> MessageOSC:
     """OSC message factory"""
     if config is None:
         config = msgconfig()
-    if triggers is None:
-        triggers = (trigger(),)
-    if address is None:
-        address = (
-            partial(),
-            partial("PROPERTY", "STRING", "name"),
-            partial(),
-        )
-    if arguments is None:
-        arguments = (partial(),)
-    return MessageOSC(("osc", config, triggers, address, arguments))
+    if triggs is None:
+        triggs = triggers()
+    if addrs is None:
+        addrs = address()
+    if args is None:
+        args = arguments()
+    return MessageOSC(("osc", config, triggs, addrs, args))
 
 
 def midi(

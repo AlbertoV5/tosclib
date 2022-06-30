@@ -241,7 +241,7 @@ def main():
     control:tosc.Control = tosc.to_ctrl(template.node)
 
     layoutBase(control, "GROUP", size=(1, 3, 1), colors=bgGradient1)
-    root[0] = tosc.xml_node(control)
+    root[0] = tosc.xml_control(control)
 
     """Save it as a template"""
     tosc.write(root, "docs/demos/numpad.tosc")

@@ -42,7 +42,7 @@ class ImageConverter:
                 color=(r, g, b, 1),
                 frame=(ix * pxs, iy * pxs, pxs, pxs),
             )
-            ecanvas.children.append(tosc.xml_node(box))
+            ecanvas.children.append(tosc.xml_control(box))
 
         return tosc.write(root, self.output_path)
 

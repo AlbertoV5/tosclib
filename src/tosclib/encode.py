@@ -9,6 +9,7 @@ from xml.etree.ElementTree import Element, SubElement
 
 __all__ = [
     # Property
+    "property_matcher",
     "xml_property",
     # Value
     "xml_value",
@@ -22,31 +23,28 @@ __all__ = [
     "xml_localDst",
     "xml_message",
     # Node
-    "xml_node",
+    "xml_control",
 ]
-
 
 def SENTINEL(origin: Callable, msg: str = None) -> Element:
     """None/Invalid XML Element to allow chaining."""
     e = Element("none")
     e.text = str(origin)
-    logging.warning(f"Sentinel {e} from {origin}")
-    logging.warning(f"{msg}")
+    logging.warning(f"Sentinel {e} from {origin} with {msg}")
     return e
 
 
-def xml_property(prop: Property) -> Element:
-    """Get a Property type tuple and return XML Element
+def property_matcher(prop: Property, property: Element, value: Element) -> Element:
+    """Specialized function to modify XML Elements with Property
 
     Args:
-        prop (Property): Tuple to convert to XML
+        prop (Property): Property
+        property (Element): <property>
+        value (Element): <value>
 
     Returns:
-        Element: <property> with <key> and <value>
+        Element: Modified <property>
     """
-    property = Element("property")
-    SubElement(property, "key").text = prop[0]
-    value = SubElement(property, "value")
     val = prop[1]
     match val:
         case bool() if val is True:
@@ -74,8 +72,23 @@ def xml_property(prop: Property) -> Element:
             for k, n in zip(keys, val):
                 SubElement(value, k).text = str(n)
         case _:
-            return SENTINEL(xml_property, prop)
+            return SENTINEL(xml_property, prop[0])
     return property
+
+
+def xml_property(prop: Property) -> Element:
+    """Get a Property type tuple and return XML Element
+
+    Args:
+        prop (Property): Tuple to convert to XML
+
+    Returns:
+        Element: <property> with <key> and <value>
+    """
+    property = Element("property")
+    SubElement(property, "key").text = prop[0]
+    value = SubElement(property, "value")
+    return property_matcher(prop, property, value)
 
 
 def xml_value(val: Value) -> Element:
@@ -93,7 +106,7 @@ def xml_value(val: Value) -> Element:
     SubElement(value, "key").text = k
     SubElement(value, "locked").text = "1" if val[1] is True else "0"
     SubElement(value, "lockedDefaultCurrent").text = "1" if val[2] is True else "0"
-
+    
     match k, v:
         case "x" | "y" | "text", float() | str():
             SubElement(value, "default").text = str(v)
@@ -101,7 +114,7 @@ def xml_value(val: Value) -> Element:
             SubElement(value, "default").text = "1" if v is True else "0"
         case _:
             return SENTINEL(xml_value)
-    
+
     SubElement(value, "defaultPull").text = str(val[4])
 
     return value
@@ -233,7 +246,7 @@ def xml_message(msg: MessageOSC | MessageMIDI | MessageLOCAL) -> Element:
     return message
 
 
-def xml_node(control: Control) -> Element:
+def xml_control(control: Control) -> Element:
     """Convert Control to XML node, recursive for children.
 
     Args:
@@ -261,6 +274,6 @@ def xml_node(control: Control) -> Element:
         node[2].append(xml_message(message))
 
     for child in control.children:
-        node[3].append(xml_node(child))
+        node[3].append(xml_control(child))
 
     return node

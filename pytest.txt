@@ -1,0 +1,2 @@
+WARNING  root:test_basics.py:54 Expected Sentinel Element:
+WARNING  root:encode.py:33 Sentinel <Element 'none' at 0x7fa0be268310> from <function find_child at 0x7fa0bca4e710> with None

@@ -376,3 +376,13 @@ class Control(Protocol):
 
     def set_prop(self, *args: Property) -> "Control":
         ...
+
+    def set_frame(self, frame: tuple[int,...]) -> "Control":
+        ...
+
+    def set_color(self, color: tuple[float,...]) -> "Control":
+        ...
+        
+    def change_type(self, typ: ControlType) -> "Control":
+        ...
+

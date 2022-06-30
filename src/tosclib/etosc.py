@@ -3,7 +3,7 @@ import re
 import zlib
 from tosclib.controls import Group
 from tosclib.decode import to_prop
-from tosclib.encode import SENTINEL, xml_node, xml_property
+from tosclib.encode import SENTINEL, xml_control, xml_property, property_matcher
 from .elements import *
 from xml.etree.ElementTree import (
     Element,
@@ -109,9 +109,11 @@ class ElementTOSC:
             ElementTOSC: chaining.
         """
         if (p := self.properties.find(f".//property/[key='{prop[0]}']")) is None:
-            raise KeyError(f"Element can't find property: {prop}")
-        self.properties.remove(p)
-        self.add_prop(prop)
+            # raise KeyError(f"Element can't find property: {prop}")
+            return self.add_prop(prop)
+
+        if (value := p.find("value")) is not None:
+            p = property_matcher(prop, p, value)
         return self
 
     def show_prop(self, key: str) -> "ElementTOSC":
@@ -133,7 +135,7 @@ def createTemplate(frame: tuple = None) -> Element:
     group = Group()
     if frame is not None:
         group.set_prop(("frame", frame))
-    root.append(xml_node(group))
+    root.append(xml_control(group))
     return root
 
 
@@ -172,9 +174,9 @@ def get_text_value_from_key(properties: Element, key: str) -> str:
     return ""
 
 
-def find_child(e: Element, name: str) -> Element | None:
+def find_child(e: Element, name: str) -> Element:
     if (children := e.find("children")) is None:
-        return None
+        return SENTINEL(find_child)
     for child in children:
         if (p := child.find("./properties/property/[key='name']")) is None:
             continue
@@ -212,4 +214,29 @@ def pullValueFromKey(
                 return get_text_value_from_key(p, targetKey)
 
     parser.close()
+    return None
+
+def pullValueFromKey2(
+    root: Element, key: str, value: str, targetKey: str
+) -> str | None:
+    """If you know the name of an element but don't know its other properties.
+    This parses an Element and has to convert it to string so its slower.
+
+    Args:
+        root (ET.Element): Parses the whole element, so you can feed the root.
+        key (str): Known key.
+        value (str): Known value.
+        targetKey (str): Known key of unknown value.
+
+    Returns:
+        str: Value
+    """
+    parser = XMLPullParser()
+    parser.feed(tostring(root, encoding="UTF-8"))
+    for _, e in parser.read_events():  # event, element
+        if (p := e.find("properties")) is None:
+            continue
+        if re.fullmatch(get_text_value_from_key(p, key), value):
+            parser.close()
+            return get_text_value_from_key(p, targetKey)
     return None

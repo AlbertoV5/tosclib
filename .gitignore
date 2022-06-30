@@ -7,3 +7,4 @@ venv
 .vscode
 htmlcov
 test.prof
+.DS_Store

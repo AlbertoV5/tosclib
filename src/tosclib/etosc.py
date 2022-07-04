@@ -1,6 +1,5 @@
 import logging
 import re
-from typing import Callable
 import zlib
 from tosclib.controls import Group
 from tosclib.decode import to_prop
@@ -27,13 +26,15 @@ from xml.etree.ElementTree import (
 
 # ]
 
+
 def compare_elements(e1: Element, e2: Element, depth: int) -> bool:
-    """_summary_
+    """Checks if both element's tags coincide, recursively.
 
     Args:
         e1 (Element): First element.
         e2 (Element): Second element.
-        depth (int): How deep into the tree, 0 is root, -1 is until the end.
+        depth (int): How deep into the tree,
+        0 is root, -1 is until the end.
 
     Returns:
         bool: If tag's match.

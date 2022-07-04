@@ -1,5 +1,41 @@
-#+title: Notes
+#+title:     CD/CI dev notes
+#+author:    Alberto Valdez
+#+email:     avq5ac1@gmail.com
 
-* TODO Fix tests.
-- Layout needs work.
+* TODO Test:
+- Fix layout tests needs work.
 - Some unit tests are not using self asserts.
+
+* TODO Library:
+- Improve numpy code in layout.
+
+* GUIDE for CI/CD commands.
+** Version number:
+ - For updating version number:
+   - tosclib/setup.py
+ - For docs version number:
+   - docs/source/conf.py release, version
+
+** Development:
+- For dev install:
+  - python -m pip install -e .
+- For documentation:
+  - docs/make html
+  - sphinx-build docs/ docs/build
+
+** Release:
+- Building src:
+  - python -m build
+- Uploading to pypi:
+  - twine upload dist/*
+
+** Virtual Envs:
+- Creating virtual environments:
+  - py -3.8 -m venv venv\38
+  - virtualenv venv/310
+
+** Tests:
+- Testing with coverage:
+  - pytest --cov --cov-report html
+- Open profiler files after tests:
+  - snakeviz test/test_nested.prof

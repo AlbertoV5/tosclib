@@ -1,38 +1,31 @@
 """
 Testing: Decoder.
 
-    load_correct_file_and_decode_all:	load .tosc file
-    create_incorrect_file_and_catch:	generate bad xml
+    eval_correct_mockup:
+        Load file from path.
+    eval_incorrect_mockup:
+        Generate file from strings.
+    edit_correct_and_eval_output:
+        Modify and save mockup, then load and eval.
 """
 import pytest
-from logging import debug
-from cProfile import Profile
-from unittest import TestCase
-from pstats import Stats, SortKey
+import logging
 
+log = logging.getLogger(__name__)
 
-def profile(func):
-    """Logs execution of wrapped func."""
-    def wrapper(*args, **kwargs):
-        with Profile() as pr:
-            func(*args, **kwargs)
-            stats = Stats(pr)
-            stats.sort_stats(SortKey.TIME)
-            name = func.__name__.replace("test", "prof")
-            stats.dump_stats(filename=f"tests/{name}.prof")
-    return wrapper
+def eval_correct_mockup():
+    """Load file from path."""
 
-class TestDecoder(TestCase):
-    
-    def load_correct_file_and_decode_all(self):
-        """load .tosc file"""
-        # breakpoint()
+def eval_incorrect_mockup():
+    """Generate file from strings."""
 
-    def create_incorrect_file_and_catch(self):
-        """generate bad xml"""
-        # breakpoint()
+def edit_correct_and_eval_output():
+    """Modify and save mockup, then load and eval."""
 
-    @profile
-    def test_decoder(self):
-        self.load_correct_file_and_decode_all()
-        self.create_incorrect_file_and_catch()
+def test_decoder():
+    """Prepare and execute tests."""
+    log.debug("hehe")
+    x = "abc" + "9"
+    eval_correct_mockup()
+    eval_incorrect_mockup()
+    edit_correct_and_eval_output()

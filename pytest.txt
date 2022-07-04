@@ -1,5 +1,0 @@
-DEBUG    root:test_basics.py:55 Expecting following Sentinel Element:
-WARNING  root:encode.py:35 Sentinel :
-        <none> None, from <function find_child at 0x105b0c430>.
-DEBUG    root:test_copiers.py:82 Removed message osc
-                    on GROUP, 3ec230c5-34c0-4ab0-9932-d149b7ae028d

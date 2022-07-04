@@ -1,0 +1,5 @@
+#+title: Notes
+
+* TODO Fix tests.
+- Layout needs work.
+- Some unit tests are not using self asserts.

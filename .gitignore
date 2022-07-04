@@ -8,3 +8,5 @@ venv
 htmlcov
 test.prof
 .DS_Store
+/tests/.projectile
+*.tmp

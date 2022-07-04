@@ -108,10 +108,9 @@ Children:
     def get_color(self) -> tuple[float, ...]:
         return getattr(self, "color")[1]
 
-    def set_prop(self, *args: Property) -> Control:
+    def set_prop(self, prop: Property) -> Control:
         """Set the Property of a Control"""
-        for property in args:
-            setattr(self, property[0], property)
+        setattr(self, prop[0], prop)
         return self
 
     def set_frame(self, frame: tuple[int, ...]) -> Control:

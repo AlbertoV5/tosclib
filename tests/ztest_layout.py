@@ -1,12 +1,7 @@
-from typing import List
-from tosclib.elements import ControlType, Property, PropertyFactory
-from tosclib.node import ElementTOSC, createTemplate, write
+"""provide layout decorators"""
 from tosclib import layout
+import tosclib as tosc
 from .profiler import profile
-from logging import debug
-import inspect
-
-# from memory_profiler import profile
 
 
 @layout.row
@@ -26,9 +21,11 @@ def layout2(children: list[ElementTOSC]):
 
 
 @layout.grid
-def mainLayout(children: list[ElementTOSC]):
+def mainLayout(children: list[tosc.Element]):
     """Decorator receives ElementTOSC, ControlType, size, colors and colorStyle"""
 
+    test = "test" + children[0].find("node").tag
+    print(test)
     # Create nested layouts
     layout2(children[4], ControlType.BUTTON, size=(1, 1, 1, 1), colors=bgColor)
     layout3(children[6], ControlType.FADER, size=(2, 2), colors=bgColor)
@@ -47,6 +44,8 @@ def test_layout():
 
     root = createTemplate(frame=frame)
     node = ElementTOSC(root[0])
+
+    test: str = 1
 
     assert mainLayout(node, ControlType.GROUP, (3, 3), ("#CE6A85", "#5C374C")) is node
     assert write(root, "tests/test_layout.tosc")

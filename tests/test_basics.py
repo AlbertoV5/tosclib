@@ -54,12 +54,12 @@ def test_basics():
     buttonBad: tosc.Control = tosc.Button(name="buttonBad")
     logging.debug("Expecting following Sentinel Element:")
     (sentinel := tosc.find_child(egroup, "buttonBad"))
-    assert sentinel.tag is "none"
+    assert sentinel.tag == "none"
 
     assert tosc.copy_properties(button, buttonBad)
     assert tosc.copy_values(button, buttonBad)
     assert tosc.copy_messages(button, buttonBad)
-    buttonBetter = tosc.xml_control(buttonBad)
+    # buttonBetter = tosc.xml_control(buttonBad)
 
     assert (group2 := tosc.Group()) is not None
     assert tosc.copy_children(group, group2)

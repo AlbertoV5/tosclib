@@ -1,5 +1,6 @@
 import logging
 import re
+from typing import Callable
 import zlib
 from tosclib.controls import Group
 from tosclib.decode import to_prop
@@ -26,6 +27,46 @@ from xml.etree.ElementTree import (
 
 # ]
 
+def compare_elements(e1: Element, e2: Element, depth: int) -> bool:
+    """_summary_
+
+    Args:
+        e1 (Element): First element.
+        e2 (Element): Second element.
+        depth (int): How deep into the tree, 0 is root, -1 is until the end.
+
+    Returns:
+        bool: If tag's match.
+    """
+    if len(e1) != len(e2) or e1.tag != e2.tag:
+        return False
+    for c1, c2, _ in zip(e1, e2, range(depth)):
+        if not compare_elements(c1, c2, depth - 1):
+            return False
+    return True
+
+
+def replace_element(old:Element, new:Element, match: bool = True) -> Element:
+    """ElementTree doesn't have a way to replace elements. This is one way.
+
+    Args:
+        old (Element): Element that will be replaced.
+        new (Element): Element that will take the original's Element place.
+        match (bool): Match tags of root and first set of children.
+
+    Raises:
+        ValueError: In case the shapes are different when matching shapes.
+
+    Returns:
+        Element: Returns "new".
+    """      
+    if match and not compare_elements(old, new, 0):
+        raise ValueError(f"{old.tag}'s doesn't match {new.tag}")
+
+    # TODO: ADD PROCESS FOR REPLACING TAGS, TEXT, ATTRS!
+    
+
+    return new
 
 class Node:
     """

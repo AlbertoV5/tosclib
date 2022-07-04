@@ -262,7 +262,6 @@ def xml_control(control: Control) -> Element:
     SubElement(node, "properties")
     SubElement(node, "values")
     SubElement(node, "messages")
-    SubElement(node, "children")
 
     for property in vars(control):
         if property in ("type", "id", "values", "messages", "children"):
@@ -275,7 +274,9 @@ def xml_control(control: Control) -> Element:
     for message in control.messages:
         node[2].append(xml_message(message))
 
-    for child in control.children:
-        node[3].append(xml_control(child))
+    if len(control.children) > 0:
+        SubElement(node, "children")
+        for child in control.children:
+            node[3].append(xml_control(child))        
 
     return node

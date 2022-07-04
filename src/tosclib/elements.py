@@ -65,6 +65,7 @@ __all__ = [
     "PropertyType",
     "PropertyValue",
     "Property",
+    "Properties",
     # Values
     "Value",
     "Values",
@@ -373,7 +374,7 @@ class Control(Protocol):
     def get_color(self) -> tuple[float, ...]:
         ...
 
-    def set_prop(self, *args: Property) -> "Control":
+    def set_prop(self, prop: Property) -> "Control":
         ...
 
     def set_frame(self, frame: tuple[int, ...]) -> "Control":

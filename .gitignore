@@ -10,3 +10,4 @@ test.prof
 .DS_Store
 /tests/.projectile
 *.tmp
+/.projectile

@@ -5,6 +5,7 @@
 * TODO Test:
 - Fix layout tests needs work.
 - Some unit tests are not using self asserts.
+- Implement debugging with [[https://docs.python.org/3/library/functions.html#breakpoint][breakpoint().]]
 
 * TODO Library:
 - Improve numpy code in layout.

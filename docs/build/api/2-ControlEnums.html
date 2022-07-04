@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="tosclib.tosc" href="5-tosclib.html" /><link rel="prev" title="Element Enumerations" href="1-ElementEnums.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>Control Enumerations - tosclib 0.3 documentation</title>
+        <title>Control Enumerations - tosclib 0.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">tosclib 0.3 documentation</div></a>
+      <a href="../index.html"><div class="brand">tosclib 0.5 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">tosclib 0.3 documentation</span>
+  <span class="sidebar-brand-text">tosclib 0.5 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -216,7 +216,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="tosclib.controls.Control">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.controls.</span></span><span class="sig-name descname"><span class="pre">Control</span></span><a class="reference internal" href="../_modules/tosclib/elements.html#Control"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.controls.Control" title="Permalink to this definition">#</a></dt>
-<dd><p>The Control Type Protocol. Touch OSC Control</p>
+<dd><p>The Control Type Protocol. Touch OSC Control.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tosclib.controls.Control.type">
 <span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#tosclib.controls.Control.type" title="Permalink to this definition">#</a></dt>
@@ -277,8 +277,10 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.controls.</span></span><span class="sig-name descname"><span class="pre">ControlBuilder</span></span><a class="reference internal" href="../_modules/tosclib/controls.html#ControlBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.controls.ControlBuilder" title="Permalink to this definition">#</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="tosclib.controls.ControlBuilder.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/controls.html#ControlBuilder.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.controls.ControlBuilder.__init__" title="Permalink to this definition">#</a></dt>
-<dd><p>Default factory for Control. Not an XML Element.</p>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/controls.html#ControlBuilder.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.controls.ControlBuilder.__init__" title="Permalink to this definition">#</a></dt>
+<dd><p>Control Factory.</p>
+<p>Not an XML Element. An Object with lists of type-hinted tuples.
+Pass either Property <a href="#id1"><span class="problematic" id="id2">*</span></a>args or PropertyValue <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs to create Property attributes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -287,7 +289,8 @@
 <li><p><strong>values</strong> (<em>Values</em><em>, </em><em>optional</em>) – Tuple of Value objects. Defaults to None.</p></li>
 <li><p><strong>messages</strong> (<em>Messages</em><em>, </em><em>optional</em>) – Tuple of Message objects. Defaults to None.</p></li>
 <li><p><strong>children</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><em>&amp;quot;Node&amp;quot;</em><em>]</em><em>, </em><em>optional</em>) – Tuple of Node objects. Defaults to None.</p></li>
-<li><p><strong>kwargs</strong> (<em>Property</em>) – Pass any extra Property types as keyword arguments.</p></li>
+<li><p><strong>args</strong> (<em>Property</em>) – Pass any Property to create extra Property attributes.</p></li>
+<li><p><strong>kwargs</strong> (<em>PropertyValue</em>) – Pass any keywords with PropertyValues to create extra Property attributes.</p></li>
 </ul>
 </dd>
 </dl>
@@ -298,7 +301,8 @@
 …</p>
 </dd>
 </dl>
-<p>box = Box(name = “boxy”) # with kwargs only</p>
+<p>box = Box((“name”, “boxy)) # with args
+box = Box(name = “boxy”) # with kwargs</p>
 <p>assert box.name == (“name”, “boxy”)
 assert box.type == “BOX”</p>
 </div></blockquote>
@@ -318,11 +322,11 @@ assert box.type == “BOX”</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="tosclib.controls.ControlBuilder.set_prop">
-<span class="sig-name descname"><span class="pre">set_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/controls.html#ControlBuilder.set_prop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.controls.ControlBuilder.set_prop" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">set_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/controls.html#ControlBuilder.set_prop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.controls.ControlBuilder.set_prop" title="Permalink to this definition">#</a></dt>
 <dd><p>Set the Property of a Control</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>...</em><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>...</em><em>]</em><em>]</em>) – </p>
+<dd class="field-odd"><p><strong>prop</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>...</em><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>...</em><em>]</em><em>]</em>) – </p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="#tosclib.controls.Control" title="tosclib.elements.Control">tosclib.elements.Control</a></p>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>tosclib.controls - tosclib 0.3 documentation</title>
+        <title>tosclib.controls - tosclib 0.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">tosclib 0.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">tosclib 0.5 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">tosclib 0.3 documentation</span>
+  <span class="sidebar-brand-text">tosclib 0.5 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -214,13 +214,36 @@
 <span></span><span class="sd">"""</span>
 <span class="sd">Hexler's Controls</span>
 <span class="sd">"""</span>
-
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Final</span><span class="p">,</span> <span class="n">Literal</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">from</span> <span class="nn">.elements</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
 
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"Control"</span><span class="p">,</span>
+    <span class="s2">"ControlBuilder"</span><span class="p">,</span>
+    <span class="s2">"copy_properties"</span><span class="p">,</span>
+    <span class="s2">"copy_values"</span><span class="p">,</span>
+    <span class="s2">"copy_messages"</span><span class="p">,</span>
+    <span class="s2">"copy_children"</span><span class="p">,</span>
+    <span class="s2">"NOT_PROPERTIES"</span><span class="p">,</span>
+    <span class="s2">"Box"</span><span class="p">,</span>
+    <span class="s2">"Button"</span><span class="p">,</span>
+    <span class="s2">"Encoder"</span><span class="p">,</span>
+    <span class="s2">"Fader"</span><span class="p">,</span>
+    <span class="s2">"Grid"</span><span class="p">,</span>
+    <span class="s2">"Group"</span><span class="p">,</span>
+    <span class="s2">"Label"</span><span class="p">,</span>
+    <span class="s2">"Page"</span><span class="p">,</span>
+    <span class="s2">"Pager"</span><span class="p">,</span>
+    <span class="s2">"Radial"</span><span class="p">,</span>
+    <span class="s2">"Radar"</span><span class="p">,</span>
+    <span class="s2">"Radio"</span><span class="p">,</span>
+    <span class="s2">"Text"</span><span class="p">,</span>
+    <span class="s2">"Xy"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">NOT_PROPERTIES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"values"</span><span class="p">,</span> <span class="s2">"messages"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">)</span>
+<span class="sd">"""Attributes that are not properties of a Control"""</span>
 
 <div class="viewcode-block" id="ControlBuilder"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.ControlBuilder">[docs]</a><span class="k">class</span> <span class="nc">ControlBuilder</span><span class="p">:</span>
 <div class="viewcode-block" id="ControlBuilder.__init__"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.ControlBuilder.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -230,9 +253,13 @@
         <span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">children</span><span class="p">:</span> <span class="n">Children</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Property</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">"""Default factory for Control. Not an XML Element.</span>
+        <span class="sd">"""Control Factory.</span>
+
+<span class="sd">        Not an XML Element. An Object with lists of type-hinted tuples.</span>
+<span class="sd">        Pass either Property *args or PropertyValue **kwargs to create Property attributes.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            type (ControlType): Required field. ControlType Literal.</span>
@@ -240,7 +267,8 @@
 <span class="sd">            values (Values, optional): Tuple of Value objects. Defaults to None.</span>
 <span class="sd">            messages (Messages, optional): Tuple of Message objects. Defaults to None.</span>
 <span class="sd">            children (tuple[&amp;quot;Node&amp;quot;], optional): Tuple of Node objects. Defaults to None.</span>
-<span class="sd">            kwargs (Property): Pass any extra Property types as keyword arguments.</span>
+<span class="sd">            args (Property): Pass any Property to create extra Property attributes.</span>
+<span class="sd">            kwargs (PropertyValue): Pass any keywords with PropertyValues to create extra Property attributes.</span>
 
 <span class="sd">        Example (using a subclass of ControlBuilder):</span>
 
@@ -248,7 +276,8 @@
 <span class="sd">                type: ControlType = "BOX"</span>
 <span class="sd">                ...</span>
 
-<span class="sd">            box = Box(name = "boxy") # with kwargs only</span>
+<span class="sd">            box = Box(("name", "boxy)) # with args</span>
+<span class="sd">            box = Box(name = "boxy") # with kwargs</span>
 
 <span class="sd">            assert box.name == ("name", "boxy")</span>
 <span class="sd">            assert box.type == "BOX"</span>
@@ -258,6 +287,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="p">:</span> <span class="n">Messages</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">messages</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">messages</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span> <span class="n">Children</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">children</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">children</span>
+
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span></div>
@@ -269,7 +301,7 @@
 <span class="s2">Values:</span>
 <span class="s2">    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="si">}</span><span class="s2"></span>
 <span class="s2">Properties:</span>
-<span class="s2">    </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"id"</span><span class="p">,</span><span class="s2">"type"</span><span class="p">,</span><span class="s2">"values"</span><span class="p">,</span><span class="s2">"messages"</span><span class="p">,</span><span class="s2">"children"</span><span class="p">))</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">    </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">NOT_PROPERTIES</span><span class="p">)</span><span class="si">}</span><span class="s2"></span>
 <span class="s2">Messages:</span>
 <span class="s2">    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="si">}</span><span class="s2"></span>
 <span class="s2">Children:</span>
@@ -289,10 +321,9 @@
     <span class="k">def</span> <span class="nf">get_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
-<div class="viewcode-block" id="ControlBuilder.set_prop"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.ControlBuilder.set_prop">[docs]</a>    <span class="k">def</span> <span class="nf">set_prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Property</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+<div class="viewcode-block" id="ControlBuilder.set_prop"><a class="viewcode-back" href="../../api/2-ControlEnums.html#tosclib.controls.ControlBuilder.set_prop">[docs]</a>    <span class="k">def</span> <span class="nf">set_prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">:</span> <span class="n">Property</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
         <span class="sd">"""Set the Property of a Control"""</span>
-        <span class="k">for</span> <span class="nb">property</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">property</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">property</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">prop</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
     <span class="k">def</span> <span class="nf">set_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
@@ -303,29 +334,65 @@
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="n">color</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">change_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typ</span><span class="p">:</span> <span class="n">ControlType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">set_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typ</span><span class="p">:</span> <span class="n">ControlType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"type"</span><span class="p">,</span> <span class="n">typ</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 
 <span class="k">def</span> <span class="nf">copy_properties</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Control</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Control</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+    <span class="sd">"""Getattr of all properties from one Control and setattr to another.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source (Control):</span>
+<span class="sd">        target (Control):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Control: target for chaining.</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"values"</span><span class="p">,</span> <span class="s2">"messages"</span><span class="p">,</span> <span class="s2">"type"</span><span class="p">,</span> <span class="s2">"ID"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">NOT_PROPERTIES</span><span class="p">:</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">target</span>
 
 
 <span class="k">def</span> <span class="nf">copy_values</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Control</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Control</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+    <span class="sd">"""Deep copy of values list.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source (Control):</span>
+<span class="sd">        target (Control):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Control: target for chaining.</span>
+<span class="sd">    """</span>
     <span class="n">target</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">target</span>
 
 
 <span class="k">def</span> <span class="nf">copy_messages</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Control</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Control</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+    <span class="sd">"""Deep copy of messages list.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source (Control):</span>
+<span class="sd">        target (Control):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Control: target for chaining.</span>
+<span class="sd">    """</span>
     <span class="n">target</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">messages</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">target</span>
 
 
 <span class="k">def</span> <span class="nf">copy_children</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Control</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Control</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
+    <span class="sd">"""Deep copy of children list.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source (Control):</span>
+<span class="sd">        target (Control):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Control: target for chaining.</span>
+<span class="sd">    """</span>
     <span class="n">target</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">target</span>
 
@@ -488,247 +555,6 @@
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">"XY"</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-
-<span class="sd">""" DEPRECATED?? """</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_ControlProperties</span><span class="p">:</span>
-    <span class="sd">"""Common properties across all Control Types</span>
-<span class="sd">    https://hexler.net/touchosc/manual/script-properties-and-values"""</span>
-
-    <span class="n">name</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">" "</span>
-    <span class="sd">"""Any string"""</span>
-    <span class="n">tag</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"tag"</span>
-    <span class="sd">"""Any string"""</span>
-    <span class="n">script</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">" "</span>
-    <span class="sd">"""Any string"""</span>
-    <span class="n">frame</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
-    <span class="sd">"""x,y,w,h float list"""</span>
-    <span class="n">color</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-    <span class="sd">"""r,g,b,a float list"""</span>
-    <span class="n">locked</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">visible</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">interactive</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">background</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">outline</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">outlineStyle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="sd">"""0,1,2, = Full, Corner, Edges"""</span>
-    <span class="n">grabFocus</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="sd">"""Depends on the control, groups are false"""</span>
-    <span class="n">pointerPriority</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1 = Oldest, Newest"""</span>
-    <span class="n">cornerRadius</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="sd">"""An integer number value ranging from 0 to 10"""</span>
-    <span class="n">orientation</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1,2,3 = North, East, South, West"""</span>
-
-    <span class="c1"># def build(self, *args) -&gt; Properties:</span>
-    <span class="c1">#     """Build all Property objects of this class.</span>
-    <span class="c1">#     Returns:</span>
-    <span class="c1">#         list[Property] from this class' attributes.</span>
-    <span class="c1">#     """</span>
-    <span class="c1">#     if len(args) == 0:</span>
-    <span class="c1">#         args = tuple(key for key in vars(self))</span>
-
-    <span class="c1">#     return [PropertyFactory.buildAny(arg, getattr(self, arg)) for arg in args]</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_BoxProperties</span><span class="p">:</span>
-    <span class="n">shape</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1,2,3,4,5 Rectangle, Circle, Triangle, Diamond, Pentagon, Hexagon"""</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_GroupProperties</span><span class="p">:</span>
-    <span class="n">outlineStyle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1,2, = Full, Corner, Edges"""</span>
-    <span class="n">grabFocus</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="sd">"""Depends on the control, groups are false"""</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_GridProperties</span><span class="p">:</span>
-    <span class="n">grid</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">gridSteps</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
-    <span class="sd">"""Size of grid"""</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_ResponseProperties</span><span class="p">:</span>
-    <span class="n">response</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1 = Absolute, Relative"""</span>
-    <span class="n">responseFactor</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
-    <span class="sd">"""An integer value ranging from 1 to 100."""</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_CursorProperties</span><span class="p">:</span>
-    <span class="n">cursor</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">cursorDisplay</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""Cursor display 0, 1, 2 = always, active, inactive"""</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_LineProperties</span><span class="p">:</span>
-    <span class="n">lines</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">linesDisplay</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""Cursor display 0, 1, 2 = always, active, inactive"""</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_XyProperties</span><span class="p">:</span>
-    <span class="n">lockX</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">lockY</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">gridX</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">gridY</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">gridStepsX</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
-    <span class="n">gridStepsY</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_TextProperties</span><span class="p">:</span>
-    <span class="n">font</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0, 1 = default, monospaced"""</span>
-    <span class="n">textSize</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span>
-    <span class="sd">"""Any int"""</span>
-    <span class="n">textColor</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="sd">"""rgba dict from 0 to 1 as str"""</span>
-    <span class="n">textAlignH</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="sd">"""1,2,3 = left, center, right"""</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">BoxProperties</span><span class="p">(</span><span class="n">_ControlProperties</span><span class="p">,</span> <span class="n">_BoxProperties</span><span class="p">):</span>
-    <span class="n">orientation</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1,2,3 = North, East, South, West"""</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">ButtonProperties</span><span class="p">(</span><span class="n">_ControlProperties</span><span class="p">,</span> <span class="n">_BoxProperties</span><span class="p">):</span>
-    <span class="n">buttonType</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1,2 Momentary, Toggle_Release, Toggle_Press"""</span>
-    <span class="n">press</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">release</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">valuePosition</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">LabelProperties</span><span class="p">(</span><span class="n">_ControlProperties</span><span class="p">,</span> <span class="n">_TextProperties</span><span class="p">):</span>
-    <span class="n">textLength</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0 is infinite length"""</span>
-    <span class="n">textClip</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">TextProperties</span><span class="p">(</span><span class="n">_ControlProperties</span><span class="p">,</span> <span class="n">_TextProperties</span><span class="p">):</span>
-    <span class="k">pass</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">FaderProperties</span><span class="p">(</span>
-    <span class="n">_ControlProperties</span><span class="p">,</span> <span class="n">_ResponseProperties</span><span class="p">,</span> <span class="n">_GridProperties</span><span class="p">,</span> <span class="n">_CursorProperties</span>
-<span class="p">):</span>
-    <span class="n">bar</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">barDisplay</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">XyProperties</span><span class="p">(</span>
-    <span class="n">_ControlProperties</span><span class="p">,</span>
-    <span class="n">_ResponseProperties</span><span class="p">,</span>
-    <span class="n">_CursorProperties</span><span class="p">,</span>
-    <span class="n">_XyProperties</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="k">pass</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">RadialProperties</span><span class="p">(</span>
-    <span class="n">_ControlProperties</span><span class="p">,</span>
-    <span class="n">_ResponseProperties</span><span class="p">,</span>
-    <span class="n">_GridProperties</span><span class="p">,</span>
-    <span class="n">_CursorProperties</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="n">outlineStyle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1,2, = Full, Corner, Edges"""</span>
-    <span class="n">inverted</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">centered</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">EncoderProperties</span><span class="p">(</span><span class="n">_ControlProperties</span><span class="p">,</span> <span class="n">_ResponseProperties</span><span class="p">,</span> <span class="n">_GridProperties</span><span class="p">):</span>
-    <span class="n">outlineStyle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1,2, = Full, Corner, Edges"""</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">RadarProperties</span><span class="p">(</span>
-    <span class="n">_ControlProperties</span><span class="p">,</span>
-    <span class="n">_CursorProperties</span><span class="p">,</span>
-    <span class="n">_LineProperties</span><span class="p">,</span>
-    <span class="n">_XyProperties</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="k">pass</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">RadioProperties</span><span class="p">(</span><span class="n">_ControlProperties</span><span class="p">):</span>
-    <span class="n">steps</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
-    <span class="sd">"""Amount of radio steps"""</span>
-    <span class="n">radioType</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1 = select, meter"""</span>
-    <span class="n">orientation</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1,2,3 = North, East, South, West"""</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">GroupProperties</span><span class="p">(</span><span class="n">_ControlProperties</span><span class="p">,</span> <span class="n">_GroupProperties</span><span class="p">):</span>
-    <span class="k">pass</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">GridProperties</span><span class="p">(</span><span class="n">_ControlProperties</span><span class="p">):</span>
-    <span class="n">grabFocus</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="sd">"""Depends on the control, groups are false"""</span>
-    <span class="n">exclusive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">gridNaming</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1,2 = Index, Column, Row"""</span>
-    <span class="n">gridOrder</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1 = Row, Column"""</span>
-    <span class="n">gridStart</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="sd">"""0,1,2,3 = Top left, Top right, Bottom Left, Bottom Right"""</span>
-    <span class="n">gridType</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
-    <span class="sd">"""0,1,2,3,4,5,6,7,8 See ControlType, can't hold groups"""</span>
-    <span class="n">gridX</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="sd">"""amount of elements on X"""</span>
-    <span class="n">gridY</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="sd">"""amount of elements on Y"""</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">PagerProperties</span><span class="p">(</span><span class="n">_ControlProperties</span><span class="p">,</span> <span class="n">_GroupProperties</span><span class="p">):</span>
-    <span class="sd">"""0,1,2, = Full, Corner, Edges"""</span>
-
-    <span class="n">tabLabels</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">tabbar</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">tabbarDoubleTap</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">tabbarSize</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">40</span>
-    <span class="sd">"""int from 10 to 300"""</span>
-    <span class="n">textSizeOff</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span>
-    <span class="sd">"""font size any int"""</span>
-    <span class="n">textSizeOn</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span>
-    <span class="sd">"""font size any int"""</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">PageProperties</span><span class="p">(</span><span class="n">_ControlProperties</span><span class="p">,</span> <span class="n">_GroupProperties</span><span class="p">):</span>
-    <span class="n">tabColorOff</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-    <span class="n">tabColorOn</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-    <span class="n">tabLabel</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"1"</span>
-    <span class="n">textColorOff</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="n">textColorOn</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 </pre></div>
         </article>
       </div>

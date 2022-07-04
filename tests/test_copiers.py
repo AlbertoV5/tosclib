@@ -7,8 +7,10 @@ from .profiler import profile
 import inspect
 import unittest
 
+
 class Copier(unittest.TestCase):
     """Create different groups, copy attrs and compare them."""
+
     template1: tosc.Control
     template2: tosc.Control
     group1: tosc.Control
@@ -17,10 +19,10 @@ class Copier(unittest.TestCase):
     proplist2: tosc.Properties = []
 
     def create_different_groups(self):
-        self.template1 = tosc.Group(name = "template1", frame = (0,0,800,800))
-        self.template2 = tosc.Group(name = "template2")
-        self.group1 = tosc.Group(name = "group1", frame = (0,0,400,400))
-        self.group2 = tosc.Group(name ="group2")
+        self.template1 = tosc.Group(name="template1", frame=(0, 0, 800, 800))
+        self.template2 = tosc.Group(name="template2")
+        self.group1 = tosc.Group(name="group1", frame=(0, 0, 400, 400))
+        self.group2 = tosc.Group(name="group2")
         self.template1.children.append(self.group1)
         self.template2.children.append(self.group2)
 
@@ -47,13 +49,13 @@ class Copier(unittest.TestCase):
         val_keys = ("touch", "x", "y", "text")
         val_defs = (False, 0.0, 0.55, "test")
         values = [
-            tosc.value(val_keys[0], default = val_defs[0]),
+            tosc.value(val_keys[0], default=val_defs[0]),
             tosc.value(val_keys[1], True, True, val_defs[1], 100),
             tosc.value(val_keys[2], True, False, val_defs[2], 50),
             tosc.value(val_keys[3], False, False, val_defs[3], 0),
         ]
         self.group1.values = values
-        for v,k,d in zip(self.group1.values, val_keys, val_defs):
+        for v, k, d in zip(self.group1.values, val_keys, val_defs):
             assert v
             assert v[0] == k
             assert v[3] == d
@@ -64,11 +66,7 @@ class Copier(unittest.TestCase):
 
     def create_messages_for_group1(self):
         msg_keys = ("osc", "midi", "local")
-        messages = [
-            tosc.osc(),
-            tosc.midi(),
-            tosc.local()
-        ]
+        messages = [tosc.osc(), tosc.midi(), tosc.local()]
         self.group1.messages = messages
         for m, k in zip(self.group1.messages, msg_keys):
             assert m
@@ -81,9 +79,12 @@ class Copier(unittest.TestCase):
     def remove_osc_messages_from_group1(self):
         for m in deepcopy(self.group1.messages):
             if m[0] == "osc":
-                logging.debug(f"On {self.group1.type}, {self.group1.id}:\nRemoved message {m[0]}: {m}")
+                logging.debug(
+                    f"""Removed message {m[0]}
+                    on {self.group1.type}, {self.group1.id}"""
+                )
                 self.group1.messages.remove(m)
-            
+
     def look_for_osc_messages_in_group1(self):
         with pytest.raises(ValueError):
             osc_msgs = [m for m in self.group1.messages if m[0] == "osc"]
@@ -95,7 +96,9 @@ class Copier(unittest.TestCase):
         assert len(osc_msgs) > 0
 
     @profile
-    def test_copiers(self,):
+    def test_copiers(
+        self,
+    ):
         """Controls"""
         self.create_different_groups()
         """Properties"""
@@ -114,4 +117,3 @@ class Copier(unittest.TestCase):
         """Children"""
         ...
         # to-do: add copy children
-        

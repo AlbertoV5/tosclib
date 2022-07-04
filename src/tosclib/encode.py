@@ -5,7 +5,7 @@ Python Typed-hinted-tuples to XML Converters
 import logging
 from typing import Callable
 from .elements import *
-from .controls import Control
+from .controls import NOT_PROPERTIES
 from xml.etree.ElementTree import Element, SubElement
 
 __all__ = [
@@ -29,10 +29,11 @@ __all__ = [
 
 
 def SENTINEL(origin: Callable, msg: str = None) -> Element:
-    """None/Invalid XML Element to allow chaining."""
+    """Returns None/Invalid XML Element to allow chaining."""
     e = Element("none")
     e.text = str(origin)
-    logging.warning(f"Sentinel {e} from {origin} with {msg}")
+    logging.warning(f"""Sentinel :
+        <{e.tag}> {msg}, from {origin}.""")
     return e
 
 
@@ -264,9 +265,8 @@ def xml_control(control: Control) -> Element:
     SubElement(node, "messages")
 
     for property in vars(control):
-        if property in ("type", "id", "values", "messages", "children"):
-            continue
-        node[0].append(xml_property(getattr(control, property)))
+        if property not in NOT_PROPERTIES:
+            node[0].append(xml_property(getattr(control, property)))
 
     for value in control.values:
         node[1].append(xml_value(value))
@@ -277,6 +277,6 @@ def xml_control(control: Control) -> Element:
     if len(control.children) > 0:
         SubElement(node, "children")
         for child in control.children:
-            node[3].append(xml_control(child))        
+            node[3].append(xml_control(child))
 
     return node

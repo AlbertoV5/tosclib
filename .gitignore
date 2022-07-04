@@ -6,7 +6,6 @@ src/tosclib.egg-info
 venv
 .vscode
 htmlcov
-test.prof
 .DS_Store
 /tests/.projectile
 *.tmp

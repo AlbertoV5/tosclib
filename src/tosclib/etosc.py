@@ -27,48 +27,6 @@ from xml.etree.ElementTree import (
 # ]
 
 
-def compare_elements(e1: Element, e2: Element, depth: int) -> bool:
-    """Checks if both element's tags coincide, recursively.
-
-    Args:
-        e1 (Element): First element.
-        e2 (Element): Second element.
-        depth (int): How deep into the tree,
-        0 is root, -1 is until the end.
-
-    Returns:
-        bool: If tag's match.
-    """
-    if len(e1) != len(e2) or e1.tag != e2.tag:
-        return False
-    for c1, c2, _ in zip(e1, e2, range(depth)):
-        if not compare_elements(c1, c2, depth - 1):
-            return False
-    return True
-
-
-def replace_element(old:Element, new:Element, match: bool = True) -> Element:
-    """ElementTree doesn't have a way to replace elements. This is one way.
-
-    Args:
-        old (Element): Element that will be replaced.
-        new (Element): Element that will take the original's Element place.
-        match (bool): Match tags of root and first set of children.
-
-    Raises:
-        ValueError: In case the shapes are different when matching shapes.
-
-    Returns:
-        Element: Returns "new".
-    """      
-    if match and not compare_elements(old, new, 0):
-        raise ValueError(f"{old.tag}'s doesn't match {new.tag}")
-
-    # TODO: ADD PROCESS FOR REPLACING TAGS, TEXT, ATTRS!
-    
-
-    return new
-
 class Node:
     """
     The XML Element version of the Control protocol.
@@ -319,3 +277,67 @@ def pull_value_from_key_2(
             parser.close()
             return get_text_value_from_key(p, targetKey)
     return None
+    
+
+def compare_elements(e1: Element, e2: Element, depth: int = 0) -> bool:
+    """Checks if both element's tags coincide.
+
+    Args:
+        e1 (Element): First element.
+        e2 (Element): Second element.
+        depth (int): How deep into the tree,
+        0 is root, -1 is until the end.
+
+    Returns:
+        bool: If tag's match.
+    """
+    if len(e1) != len(e2) or e1.tag != e2.tag:
+        return False
+    for c1, c2, _ in zip(e1, e2, range(depth)):
+        if not compare_elements(c1, c2, depth - 1):
+            return False
+    return True
+
+def replace_element_whole(old: Element, new: Element):
+    """Replaces old element's with new one. Keeping tags.
+
+    Args:
+        old (Element): 
+        new (Element): 
+    """
+    old.attrib = new.attrib
+    old.text = new.text
+    old.tail = new.tail
+    for e in old:
+        old.remove(e)
+    for e in new:
+        old.append(e)
+
+
+def replace_element(old: Element,
+                    new: Element,
+                    match_elements: bool = True,
+                    depth: int = 0) -> Element:
+    """
+    ElementTree doesn't have a way to replace elements.
+    
+    This compares element tags and sizes recursively.
+    It will only check until certain specified depth.
+    ElementTree doesn't provide a way to get the depth,
+    so pass any large integer for maximum depth.
+
+    Args:
+        old (Element): Element that will be replaced.
+        new (Element): Replacer Element.
+        match (bool): Match tags of root and first set of children.
+
+    Raises:
+        ValueError: In case of mismatch.
+
+    Returns:
+        Element: Returns "new".
+    """
+    if match_elements and not compare_elements(old, new, depth):
+        raise ValueError(f"{old.tag}'s doesn't match {new.tag}")
+    replace_element_whole(old, new)
+    return new

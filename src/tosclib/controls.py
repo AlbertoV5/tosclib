@@ -29,8 +29,15 @@ __all__ = [
     "Xy",
 ]
 
-NOT_PROPERTIES = ("type", "id", "values", "messages", "children")
+NOT_PROPERTIES = (
+    "type", 
+    "id", 
+    "values", 
+    "messages", 
+    "children",
+    "node")
 """Attributes that are not properties of a Control"""
+
 
 class ControlBuilder:
     def __init__(
@@ -110,7 +117,7 @@ Children:
 
     def set_prop(self, prop: Property) -> Control:
         """Set the Property of a Control"""
-        setattr(self, prop[0], prop)
+        setattr(self, prop[0], prop)            
         return self
 
     def set_frame(self, frame: tuple[int, ...]) -> Control:
@@ -341,4 +348,3 @@ class Xy(ControlBuilder):
         **kwargs: PropertyValue,
     ):
         super().__init__("XY", id, values, messages, None, **kwargs)
-

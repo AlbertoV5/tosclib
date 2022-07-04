@@ -1,8 +1,5 @@
 import cProfile
 import pstats
-from logging import debug
-import sys
-
 
 def profile(func):
     def wrapper(*args, **kwargs):
@@ -10,7 +7,8 @@ def profile(func):
             func(*args, **kwargs)
             stats = pstats.Stats(pr)
             stats.sort_stats(pstats.SortKey.TIME)
-            stats.dump_stats(filename=f"tests/profiler/{func.__name__}.prof")
+            name = func.__name__.replace("test", "prof")
+            stats.dump_stats(filename=f"tests/{name}.prof")
 
     return wrapper
 
@@ -21,6 +19,7 @@ def profile2(func):
             func(capture_stdout)
             stats = pstats.Stats(pr)
             stats.sort_stats(pstats.SortKey.TIME)
-            stats.dump_stats(filename=f"tests/profiler/{func.__name__}.prof")
-
+            name = func.__name__.replace("test", "prof")
+            stats.dump_stats(filename=f"tests/{name}.prof")
+            
     return wrapper

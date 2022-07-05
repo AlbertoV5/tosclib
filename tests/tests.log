@@ -1,7 +1,5 @@
-2022-07-04 18:49:33 [DEBUG] (test_basics.py:55): Expecting following Sentinel Element:
-2022-07-04 18:49:33 [WARNING] (encode.py:35): Sentinel :
-        <none> None, from <function find_child at 0x10d1c9ab0>.
-2022-07-04 18:49:33 [DEBUG] (test_copiers.py:82): Removed message osc
-                    on GROUP, d03a17fb-89dd-44a2-b980-a997e19a8695
-2022-07-04 18:49:33 [DEBUG] (test_decoder.py:27): hehe
-2022-07-04 18:49:33 [DEBUG] (test_deleteme.py:30): Hello there.
+2022-07-04 21:45:50 [DEBUG] (test_basics.py:55): Expecting following Sentinel Element:
+2022-07-04 21:45:50 [WARNING] (encode.py:35): Sentinel :
+        <none> None, from <function find_child at 0x106ca37f0>.
+2022-07-04 21:45:50 [DEBUG] (test_copiers.py:82): Removed message osc
+                    on GROUP, 3e58678a-a0a2-43dc-a89f-64d9a92a5fd6

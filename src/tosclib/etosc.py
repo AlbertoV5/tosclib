@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 import re
 import zlib
 from tosclib.controls import Group
@@ -175,9 +176,9 @@ def createTemplate(frame: tuple = None) -> Element:
     return root
 
 
-def load(inputPath: str) -> Element:
+def load(inputPath: str | Path) -> Element:
     """Reads a .tosc file and returns the XML root Element"""
-    with open(inputPath, "rb") as file:
+    with open(str(inputPath), "rb") as file:
         return fromstring(zlib.decompress(file.read()))
 
 

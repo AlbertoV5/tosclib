@@ -10,3 +10,5 @@ htmlcov
 /tests/.projectile
 *.tmp
 /.projectile
+/poetry.lock
+/.python-version

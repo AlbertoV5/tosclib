@@ -1,31 +1,28 @@
 """
 Testing: Decoder.
 
-    eval_correct_mockup:
-        Load file from path.
-    eval_incorrect_mockup:
-        Generate file from strings.
-    edit_correct_and_eval_output:
-        Modify and save mockup, then load and eval.
+    test_working_file:
+        load correct file
+
+    test_broken_file
+        load incorrect file
+
+    test_edited_working_case:
+        edit, save and verify correct file
+
 """
 import pytest
 import logging
 
 log = logging.getLogger(__name__)
 
-def eval_correct_mockup():
-    """Load file from path."""
 
-def eval_incorrect_mockup():
-    """Generate file from strings."""
+def test_working_file(tosc_default_controls):
+    """load correct file"""
+    root = tosc_default_controls
 
-def edit_correct_and_eval_output():
-    """Modify and save mockup, then load and eval."""
+def test_broken_file():
+    """load incorrect file"""
 
-def test_decoder():
-    """Prepare and execute tests."""
-    log.debug("hehe")
-    x = "abc" + "9"
-    eval_correct_mockup()
-    eval_incorrect_mockup()
-    edit_correct_and_eval_output()
+def test_edited_working_case():
+    """edit, save and verify correct file"""

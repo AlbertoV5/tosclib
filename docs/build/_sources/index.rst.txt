@@ -68,5 +68,6 @@ Contents
    
    guide
    demos
+   tests
    api
    

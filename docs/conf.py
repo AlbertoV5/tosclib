@@ -21,6 +21,8 @@ extensions = [
     "sphinx_copybutton",
 ]
 
+html_static_path = ['_static']
+
 exclude_patterns = ["build"]
 
 intersphinx_mapping = {

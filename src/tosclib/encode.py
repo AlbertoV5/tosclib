@@ -32,8 +32,10 @@ def SENTINEL(origin: Callable, msg: str = None) -> Element:
     """Returns None/Invalid XML Element to allow chaining."""
     e = Element("none")
     e.text = str(origin)
-    logging.warning(f"""Sentinel :
-        <{e.tag}> {msg}, from {origin}.""")
+    logging.warning(
+        f"""Sentinel :
+        <{e.tag}> {msg}, from {origin}."""
+    )
     return e
 
 

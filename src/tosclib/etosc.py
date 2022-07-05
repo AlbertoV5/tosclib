@@ -278,7 +278,7 @@ def pull_value_from_key_2(
             parser.close()
             return get_text_value_from_key(p, targetKey)
     return None
-    
+
 
 def compare_elements(e1: Element, e2: Element, depth: int = 0) -> bool:
     """Checks if both element's tags coincide.
@@ -299,12 +299,13 @@ def compare_elements(e1: Element, e2: Element, depth: int = 0) -> bool:
             return False
     return True
 
+
 def replace_element_whole(old: Element, new: Element):
     """Replaces old element's with new one. Keeping tags.
 
     Args:
-        old (Element): 
-        new (Element): 
+        old (Element):
+        new (Element):
     """
     old.attrib = new.attrib
     old.text = new.text
@@ -315,13 +316,12 @@ def replace_element_whole(old: Element, new: Element):
         old.append(e)
 
 
-def replace_element(old: Element,
-                    new: Element,
-                    match_elements: bool = True,
-                    depth: int = 0) -> Element:
+def replace_element(
+    old: Element, new: Element, match_elements: bool = True, depth: int = 0
+) -> Element:
     """
     ElementTree doesn't have a way to replace elements.
-    
+
     This compares element tags and sizes recursively.
     It will only check until certain specified depth.
     ElementTree doesn't provide a way to get the depth,

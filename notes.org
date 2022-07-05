@@ -3,14 +3,61 @@
 #+email:     avq5ac1@gmail.com
 
 * TODO Test:
-- Fix layout tests needs work.
-- Some unit tests are not using self asserts.
-- Implement debugging with [[https://docs.python.org/3/library/functions.html#breakpoint][breakpoint().]]
+- Move all tests from unittest to pytest.
+- Create pytest fixtures.
 
 * TODO Library:
 - Improve numpy code in layout.
 
-* GUIDE for CI/CD commands.
+* TODO Read about:
+- [[p][poetry-dynamic-versioning]]
+
+
+* Development with Pyenv, Poetry, Tox and Pytest:
+[[https://www.adaltas.com/en/2021/06/09/pyrepo-project-initialization/][
+Article reference]]
+
+Basically tox tells poetry to run pytest in multiple
+virtual environments. Depending on setup.
+
+Starts with pyenv setting up global or local environments.
+Then Poetry grabs the package and adds it as dependency in
+the TOML file. Then whenever Tox tells it to run a process,
+Poetry will create a virtual environment and install all
+the packages specified in the TOML file and then runs
+the subprocess in those environments.
+
+In this case the subprocess is pytest with coverage enabled.
+
+** Pyenv
+- For enabling global:
+  - pyenv global 3.10.5
+- For local environments:
+  - pyenv local 3.10.5
+- Creates .python-version file in dir.
+** Poetry
+- For starting project with .toml:
+  - Poetry init
+- For adding dependency:
+  - Poetry add "name of dependency"
+- For running subprocess:
+  - Poetry run "subprocess"
+  - Example: Poetry run pytest
+** Tox
+- Added Poetry depencency in tox.init
+- For testing in virtual environments:
+  - tox
+
+** Twine
+- After building with Poetry, Twine can upload to PyPi.
+  - twine upload dist/*
+
+** Github
+- Some github actions are enabled.
+- See [[https://www.youtube.com/watch?v=DhUpxWjOhME&t=730s&ab_channel=mCoding][mCoding video.]]
+
+
+* GUIDE for CI/CD commands (old).
 ** Version number:
  - For updating version number:
    - tosclib/setup.py

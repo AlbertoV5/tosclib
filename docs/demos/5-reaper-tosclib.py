@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from hashlib import sha1
 from pathlib import Path
-import asyncio
 import aiohttp
+import asyncio
 import time
 
 

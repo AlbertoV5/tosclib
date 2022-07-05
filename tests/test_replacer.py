@@ -6,6 +6,7 @@ from .profiler import profile
 import unittest
 from pathlib import Path
 
+
 class Replacer(unittest.TestCase):
     input_path: Path = Path("docs/demos/files/msgs.tosc")
     output_path: Path = Path("docs/demos/files/msgs_out.tosc")
@@ -81,13 +82,11 @@ class Replacer(unittest.TestCase):
         self.assertNotEqual(self.ebutton.tag, "none")
 
     def replace_new_button_in_root(self):
-        prop = self.ebutton_new.find(
-            ".//property/[key='verified']")
+        prop = self.ebutton_new.find(".//property/[key='verified']")
         self.assertEqual(prop[0].text, "verified")
         self.assertEqual(prop[1].text, "1")
         tosc.replace_element(self.ebutton, self.ebutton_new)
-        prop = self.ebutton.find(
-            ".//property/[key='verified']")
+        prop = self.ebutton.find(".//property/[key='verified']")
         self.assertEqual(prop[0].text, "verified")
         self.assertEqual(prop[1].text, "1")
 

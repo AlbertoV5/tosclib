@@ -172,7 +172,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../../demos/6-numpad.html">Numpad Module Recreation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tests.html">Tests</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference external" href="_static/cov#https://">Coverage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tests/design.html">Testing.</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/1-ElementEnums.html">Element Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/2-ControlEnums.html">Control Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/5-tosclib.html">tosclib.tosc</a></li>
@@ -212,8 +217,8 @@
         <article role="main">
           <h1>Source code for tosclib.etosc</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
 <span class="kn">import</span> <span class="nn">zlib</span>
 <span class="kn">from</span> <span class="nn">tosclib.controls</span> <span class="kn">import</span> <span class="n">Group</span>
 <span class="kn">from</span> <span class="nn">tosclib.decode</span> <span class="kn">import</span> <span class="n">to_prop</span>
@@ -240,46 +245,6 @@
 
 <span class="c1"># ]</span>
 
-<span class="k">def</span> <span class="nf">compare_elements</span><span class="p">(</span><span class="n">e1</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span> <span class="n">e2</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">"""_summary_</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        e1 (Element): First element.</span>
-<span class="sd">        e2 (Element): Second element.</span>
-<span class="sd">        depth (int): How deep into the tree, 0 is root, -1 is until the end.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        bool: If tag's match.</span>
-<span class="sd">    """</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">e1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">e2</span><span class="p">)</span> <span class="ow">or</span> <span class="n">e1</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="n">e2</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">for</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">depth</span><span class="p">)):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">compare_elements</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">depth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">return</span> <span class="kc">True</span>
-
-
-<span class="k">def</span> <span class="nf">replace_element</span><span class="p">(</span><span class="n">old</span><span class="p">:</span><span class="n">Element</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span><span class="n">Element</span><span class="p">,</span> <span class="n">match</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">:</span>
-    <span class="sd">"""ElementTree doesn't have a way to replace elements. This is one way.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        old (Element): Element that will be replaced.</span>
-<span class="sd">        new (Element): Element that will take the original's Element place.</span>
-<span class="sd">        match (bool): Match tags of root and first set of children.</span>
-
-<span class="sd">    Raises:</span>
-<span class="sd">        ValueError: In case the shapes are different when matching shapes.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        Element: Returns "new".</span>
-<span class="sd">    """</span>      
-    <span class="k">if</span> <span class="n">match</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">compare_elements</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">old</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="s2">'s doesn't match </span><span class="si">{</span><span class="n">new</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-    <span class="c1"># TODO: ADD PROCESS FOR REPLACING TAGS, TEXT, ATTRS!</span>
-    
-
-    <span class="k">return</span> <span class="n">new</span>
 
 <div class="viewcode-block" id="Node"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.etosc.Node">[docs]</a><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
     <span class="sd">"""</span>
@@ -429,9 +394,9 @@
     <span class="k">return</span> <span class="n">root</span>
 
 
-<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.etosc.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">inputPath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">:</span>
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../guide/3-tosclib.html#tosclib.etosc.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">inputPath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">:</span>
     <span class="sd">"""Reads a .tosc file and returns the XML root Element"""</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inputPath</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">inputPath</span><span class="p">),</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">fromstring</span><span class="p">(</span><span class="n">zlib</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span></div>
 
 
@@ -531,6 +496,70 @@
             <span class="n">parser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">get_text_value_from_key</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">targetKey</span><span class="p">)</span>
     <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">compare_elements</span><span class="p">(</span><span class="n">e1</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span> <span class="n">e2</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">"""Checks if both element's tags coincide.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        e1 (Element): First element.</span>
+<span class="sd">        e2 (Element): Second element.</span>
+<span class="sd">        depth (int): How deep into the tree,</span>
+<span class="sd">        0 is root, -1 is until the end.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: If tag's match.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">e1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">e2</span><span class="p">)</span> <span class="ow">or</span> <span class="n">e1</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="n">e2</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">depth</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">compare_elements</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">depth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">def</span> <span class="nf">replace_element_whole</span><span class="p">(</span><span class="n">old</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="n">Element</span><span class="p">):</span>
+    <span class="sd">"""Replaces old element's with new one. Keeping tags.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        old (Element):</span>
+<span class="sd">        new (Element):</span>
+<span class="sd">    """</span>
+    <span class="n">old</span><span class="o">.</span><span class="n">attrib</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">attrib</span>
+    <span class="n">old</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">text</span>
+    <span class="n">old</span><span class="o">.</span><span class="n">tail</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">tail</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">old</span><span class="p">:</span>
+        <span class="n">old</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">new</span><span class="p">:</span>
+        <span class="n">old</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">replace_element</span><span class="p">(</span>
+    <span class="n">old</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span> <span class="n">match_elements</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">:</span>
+    <span class="sd">"""</span>
+<span class="sd">    ElementTree doesn't have a way to replace elements.</span>
+
+<span class="sd">    This compares element tags and sizes recursively.</span>
+<span class="sd">    It will only check until certain specified depth.</span>
+<span class="sd">    ElementTree doesn't provide a way to get the depth,</span>
+<span class="sd">    so pass any large integer for maximum depth.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        old (Element): Element that will be replaced.</span>
+<span class="sd">        new (Element): Replacer Element.</span>
+<span class="sd">        match (bool): Match tags of root and first set of children.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: In case of mismatch.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Element: Returns "new".</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">match_elements</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">compare_elements</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">old</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="s2">'s doesn't match </span><span class="si">{</span><span class="n">new</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">replace_element_whole</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new</span>
 </pre></div>
         </article>
       </div>

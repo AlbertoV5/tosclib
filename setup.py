@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.5.0",
     author="Alberto Valdez",
     author_email="avq5ac1@gmail.com",
-    description="Generate and edit Touch OSC .tosc files",
+    description="Generate and edit Touch OSC .tosc files.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/AlbertoV5/tosclib",

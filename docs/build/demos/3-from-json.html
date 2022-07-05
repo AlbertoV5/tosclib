@@ -173,7 +173,12 @@
 <li class="toctree-l2"><a class="reference internal" href="6-numpad.html">Numpad Module Recreation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tests.html">Tests</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference external" href="_static/cov#https://">Coverage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tests/design.html">Testing.</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/1-ElementEnums.html">Element Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/2-ControlEnums.html">Control Enumerations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/5-tosclib.html">tosclib.tosc</a></li>
@@ -252,7 +257,9 @@
 
 <span class="k">def</span> <span class="nf">create_group</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
     <span class="n">group</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Group</span><span class="p">()</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="p">(</span><span class="s2">"frame"</span><span class="p">,</span> <span class="n">frame</span><span class="p">),</span> <span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="n">color</span><span class="p">))</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"frame"</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"color"</span><span class="p">,</span> <span class="n">color</span><span class="p">))</span>
     <span class="n">egroup</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">tosc</span><span class="o">.</span><span class="n">xml_control</span><span class="p">(</span><span class="n">group</span><span class="p">))</span>
     <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">egroup</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">egroup</span>

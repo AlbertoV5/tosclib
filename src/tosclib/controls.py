@@ -29,13 +29,7 @@ __all__ = [
     "Xy",
 ]
 
-NOT_PROPERTIES = (
-    "type", 
-    "id", 
-    "values", 
-    "messages", 
-    "children",
-    "node")
+NOT_PROPERTIES = ("type", "id", "values", "messages", "children", "node")
 """Attributes that are not properties of a Control"""
 
 
@@ -117,7 +111,7 @@ Children:
 
     def set_prop(self, prop: Property) -> Control:
         """Set the Property of a Control"""
-        setattr(self, prop[0], prop)            
+        setattr(self, prop[0], prop)
         return self
 
     def set_frame(self, frame: tuple[int, ...]) -> Control:

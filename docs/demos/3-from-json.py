@@ -36,7 +36,9 @@ def create_fader(e: tosc.Node, name, width, limit, i, msg):
 
 def create_group(e: tosc.Node, name, frame, color):
     group = tosc.Group()
-    group.set_prop(("name", name), ("frame", frame), ("color", color))
+    group.set_prop(("name", name)
+        ).set_prop(("frame", frame)
+        ).set_prop(("color", color))
     egroup = tosc.Node(tosc.xml_control(group))
     e.append(egroup)
     return egroup

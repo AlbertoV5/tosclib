@@ -11,7 +11,8 @@
 
 * TODO Read about:
 - [[p][poetry-dynamic-versioning]]
-
+- Pre-commit actions
+-
 
 * Development with Pyenv, Poetry, Tox and Pytest:
 [[https://www.adaltas.com/en/2021/06/09/pyrepo-project-initialization/][

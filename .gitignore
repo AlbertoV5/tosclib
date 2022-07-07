@@ -12,3 +12,4 @@ htmlcov
 /.projectile
 /poetry.lock
 /.python-version
+*DS_Store

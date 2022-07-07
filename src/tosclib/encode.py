@@ -4,8 +4,7 @@ Python Typed-hinted-tuples to XML Converters
 
 import logging
 from typing import Callable
-from .elements import *
-from .controls import NOT_PROPERTIES
+from .core import *
 from xml.etree.ElementTree import Element, SubElement
 
 __all__ = [
@@ -166,7 +165,7 @@ def xml_midimsg(parent: Element, msg: MidiMsg) -> Element:
     return parent
 
 
-def xml_midivals(parent: Element, vals: MidiValues) -> Element:
+def xml_midivals(parent: Element, vals: tuple[MidiValue, ...]) -> Element:
     """XML midi values converter. Returns parent, expects <values>"""
     for v in vals:
         value = SubElement(parent, "value")

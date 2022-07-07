@@ -2,8 +2,7 @@ import tosclib as tosc
 from PIL import Image  # type: ignore
 import numpy as np
 import time
-
-from tosclib.elements import ControlType
+from tosclib.core import ControlType
 
 
 class ImageConverter:

@@ -39,7 +39,10 @@ Pillow = "^9.1.1"
 aiohttp = "^3.8.1"
 
 [tool.pytest.ini_options]
-addopts = "--cov --cov-report html:docs/_static/cov"
+markers = [
+    "profile: marks tests for profiling."
+]
+#addopts = "--cov --cov-report html:docs/_static/cov"
 log_cli = true
 log_cli_level = "DEBUG"
 log_cli_format = "%(asctime)s [%(levelname)s] (%(filename)s:%(lineno)s): %(message)s"

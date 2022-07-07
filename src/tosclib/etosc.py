@@ -1,9 +1,8 @@
-import logging
-from pathlib import Path
 import re
 import zlib
-from tosclib.controls import Group
-from tosclib.decode import to_prop
+from pathlib import Path
+from .core import *
+from tosclib.decode import to_property
 from tosclib.encode import (
     SENTINEL,
     xml_control,
@@ -12,7 +11,6 @@ from tosclib.encode import (
     property_matcher,
     xml_value,
 )
-from .elements import *
 from xml.etree.ElementTree import (
     Element,
     SubElement,
@@ -90,7 +88,7 @@ class Node:
 
     def get_prop(self, key: str) -> Property:
         if (p := self.properties.find(f".//property/[key='{key}']")) is not None:
-            if (prop := to_prop(p)) is not None:
+            if (prop := to_property(p)) is not None:
                 return prop
         return ("", "")
 

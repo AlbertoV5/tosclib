@@ -5,9 +5,10 @@ Extra resource to create type-hinted Properties with default values.
 Based on: https://hexler.net/touchosc/manual/script-properties-and-values
 
 """
-from typing import Literal, final
+from typing import Literal
 
 __all__ = [
+    "PropsBase",
     "PropsBox",
     "PropsButton",
     "PropsEncoder",
@@ -26,7 +27,7 @@ __all__ = [
 
 
 """
-"PRIVATE" CLASSES
+"PRIVATE" CLASSES SECTION:
 
 General definitions that apply to more than one Control.
 """
@@ -246,6 +247,10 @@ PUBLIC CLASSES
 
 Controls with specific methods and different defaults.
 """
+
+
+class PropsBase(_ControlProperties):
+    pass
 
 
 class PropsBox(_ControlProperties, _BoxProperties):

@@ -2,7 +2,6 @@ import logging
 import unittest
 import tosclib as tosc
 from pathlib import Path
-from .profiler import profile
 
 
 class TestTemplate(unittest.TestCase):
@@ -21,7 +20,6 @@ class TestTemplate(unittest.TestCase):
         cls.template = tosc.Node(cls.root[0])
         tosc.write(cls.root, cls.directory / cls.fileName)
 
-    @profile
     def test_io(self):
         self.template.children.append(tosc.xml_control(tosc.Group()))
         assert self.template.set_prop(("background", False))

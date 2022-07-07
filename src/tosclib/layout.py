@@ -28,15 +28,8 @@ to the children.
 All Layouts are currently built in top > bottom, left > right order.
 """
 
-from typing import Any, Callable
-from .elements import (
-    Properties,
-    Control,
-    ControlType,
-)
-from .controls import (
-    ControlBuilder,
-)
+from typing import Any, Callable, Type
+from .core import *
 import numpy as np
 
 
@@ -76,17 +69,17 @@ def Layout(
     control_type: ControlType,
     frame_array: np.ndarray,
     color_array: np.ndarray,
-    func: Callable[[list[Control]], Properties],
+    func: Callable[[list[Control]], list[Property]],
 ):
     """Basic process to append multiple properties to a layout of controls"""
 
-    # children: list[Control] = []
     for f, c in zip(frame_array, color_array):
-        layout.children.append(
-            ControlBuilder(control_type, frame=tuple(f.astype(int)), color=tuple(c))
+        control = CONTROL_BUILDERS[control_type](
+            id=None, frame=tuple(f.astype(int)), color=tuple(c)
         )
+        layout.children.append(control)
 
-    properties: Properties = func(layout.children)
+    properties: list[Property] = func(layout.children)
     if properties is not None:
         [layout.set_prop(p) for p in properties]
 

@@ -21,7 +21,8 @@ extensions = [
     "sphinx_copybutton",
 ]
 
-html_static_path = ['_static']
+html_static_path = ["_static"]
+source_suffix = [".rst", ".md"]
 
 exclude_patterns = ["build"]
 

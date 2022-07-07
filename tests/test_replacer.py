@@ -1,8 +1,4 @@
-import inspect
-import logging
 import tosclib as tosc
-from tosclib.controls import NOT_PROPERTIES
-from .profiler import profile
 import unittest
 from pathlib import Path
 
@@ -16,7 +12,7 @@ class Replacer(unittest.TestCase):
     button: tosc.Control
     button2: tosc.Control
     frame: tosc.Property
-    msgs: tosc.Messages
+    msgs: list[tosc.Message]
     eframe: tosc.Element
     emidi: tosc.Element
 
@@ -93,7 +89,6 @@ class Replacer(unittest.TestCase):
     def write_file(self):
         self.assertTrue(tosc.write(self.eroot, self.output_path))
 
-    @profile
     def test_replacer(self):
         self.load_file()
         self.find_button_with_osc_msg()

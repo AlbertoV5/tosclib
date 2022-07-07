@@ -2,13 +2,10 @@
 Tuple factories for the types in .elements
 """
 
-from typing import Literal
-from .elements import *
-from logging import debug
-
+from .core import *
 
 __all__ = [
-    "prop",
+    "property",
     "value",
     "msgconfig",
     "trigger",
@@ -26,15 +23,13 @@ __all__ = [
 ]
 
 
-def prop(
-    key: str, value: str | int | float | bool | tuple[int, ...] | tuple[float, ...]
-) -> Property:
+def property(key: str, value: PropertyValue) -> Property:
     """Property factory"""
     return (key, value)
 
 
 def value(
-    key: Literal["x", "y", "touch", "text"] = "touch",
+    key: ValueType = "touch",
     locked: bool = False,
     lockedCD: bool = False,
     default: str | bool | float = True,
@@ -56,23 +51,23 @@ def msgconfig(
 
 
 def trigger(
-    key: Literal["x", "y", "touch", "text"] = "touch",
-    condition: Literal["ANY", "RISE", "FALL"] = "ANY",
+    key: ValueType = "touch",
+    condition: TriggerType = "ANY",
 ) -> Trigger:
     """Trigger factory"""
     return Trigger((key, condition))
 
 
-def triggers(*args: Trigger) -> Triggers:
-    """Triggers factory"""
+def triggers(*args: Trigger) -> tuple[Trigger, ...]:
+    """tuple[Trigger,...] factory"""
     if len(args) == 0:
         args = (trigger(),)
     return args
 
 
 def partial(
-    typ: Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"] = "CONSTANT",
-    conv: Literal["BOOLEAN", "INTEGER", "FLOAT", "STRING"] = "STRING",
+    typ: PartialType = "CONSTANT",
+    conv: ConversionType = "STRING",
     value: str = "/",
     scaleMin: int = 0,
     scaleMax: int = 1,
@@ -81,31 +76,22 @@ def partial(
     return Partial((typ, conv, value, scaleMin, scaleMax))
 
 
-def address(*args: Partial) -> Address:
-    """Address factory"""
+def address(*args: Partial) -> tuple[Partial, ...]:
+    """tuple[Partial, ...] factory"""
     if len(args) == 0:
         args = (partial(), partial("PROPERTY", "STRING", "name"), partial())
     return args
 
 
-def arguments(*args: Partial) -> Arguments:
-    """Arguments factory"""
+def arguments(*args: Partial) -> tuple[Partial, ...]:
+    """tuple[Partial, ...] factory"""
     if len(args) == 0:
         args = (partial(), partial("VALUE", "FLOAT", "x"), partial())
     return args
 
 
 def midimsg(
-    typ: Literal[
-        "NOTE_OFF",
-        "NOTE_ON",
-        "POLYPRESSURE",
-        "CONTROLCHANGE",
-        "PROGRAMCHANGE",
-        "CHANNELPRESSURE",
-        "PITCHBEND",
-        "SYSTEMEXCLUSIVE",
-    ] = "CONTROLCHANGE",
+    typ: MidiMsgType = "CONTROLCHANGE",
     channel: int = 1,
     data1: str = "",
     data2: str = "",
@@ -116,7 +102,7 @@ def midimsg(
 
 def midival(
     key: str = "x",
-    typ: Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"] = "VALUE",
+    typ: PartialType = "VALUE",
     scaleMin: int = 0,
     scaleMax: int = 127,
 ) -> MidiValue:
@@ -126,8 +112,8 @@ def midival(
 
 def localsrc(
     key: str = "x",
-    typ: Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"] = "VALUE",
-    conversion: Literal["BOOLEAN", "INTEGER", "FLOAT", "STRING"] = "FLOAT",
+    typ: PartialType = "VALUE",
+    conversion: ConversionType = "FLOAT",
     minRange: int = 0,
     maxRange: int = 1,
 ) -> LocalSrc:
@@ -138,7 +124,7 @@ def localsrc(
 def localdst(
     key: str = "x",
     id: str = " ",
-    typ: Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"] = "VALUE",
+    typ: PartialType = "VALUE",
 ) -> LocalDst:
     """Local Destination factory"""
     return LocalDst((typ, key, id))
@@ -146,9 +132,9 @@ def localdst(
 
 def osc(
     config: MsgConfig = None,
-    triggs: Triggers = None,
-    addrs: Address = None,
-    args: Arguments = None,
+    triggs: tuple[Trigger, ...] = None,
+    addrs: tuple[Partial, ...] = None,
+    args: tuple[Partial, ...] = None,
 ) -> MessageOSC:
     """OSC message factory"""
     if config is None:
@@ -164,9 +150,9 @@ def osc(
 
 def midi(
     config: MsgConfig = None,
-    triggers: Triggers = None,
+    triggers: tuple[Trigger, ...] = None,
     message: MidiMsg = None,
-    values: MidiValues = None,
+    values: tuple[MidiValue, ...] = None,
 ) -> MessageMIDI:
     """MIDI Message Factory"""
     if config is None:
@@ -182,7 +168,7 @@ def midi(
 
 def local(
     enabled: bool = True,
-    triggers: Triggers = None,
+    triggers: tuple[Trigger, ...] = None,
     source: LocalSrc = None,
     destination: LocalDst = None,
 ) -> MessageLOCAL:

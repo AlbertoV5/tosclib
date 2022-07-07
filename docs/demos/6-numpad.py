@@ -1,9 +1,9 @@
 import cProfile
 from copy import deepcopy
-import logging
 import pstats
 import uuid
 import tosclib as tosc
+from tosclib import layout
 import subprocess
 
 bgGradient1 = ((0.25, 0.25, 0.25, 1.0), (0.5, 0.25, 0.25, 1.0))
@@ -22,7 +22,7 @@ names = (
 id_label_value = str(uuid.uuid4())
 
 
-@tosc.layout.column
+@layout.column
 def layoutBase(children: list[tosc.Control]):
 
     layoutTop: tosc.Control = layoutValues(
@@ -77,15 +77,15 @@ def layoutBase(children: list[tosc.Control]):
     layoutBot.children[0].children[0].messages.append(local_msg_2)
     layoutBot.children[2].children[0].messages.append(local_msg_2)
 
-    return tosc.prop("name", "numpad")
+    return tosc.property("name", "numpad")
 
 
-@tosc.layout.row
+@layout.row
 def layoutValues(controls: list[tosc.Control]):
 
     controls[0].set_prop(("name", "value"))
     controls[0].children.append(
-        tosc.controls.Button(
+        tosc.Button(
             name="valueButton",
             color=controls[0].get_color(),
             frame=controls[0].get_frame(),
@@ -143,7 +143,7 @@ end"""
     return ("name", "Values")
 
 
-@tosc.layout.grid
+@layout.grid
 def layoutNumbers(controls: list[tosc.Control]):
 
     f = controls[0].get_frame()
@@ -170,7 +170,7 @@ def layoutNumbers(controls: list[tosc.Control]):
     return ("outline", True), ("name", "numbers")
 
 
-@tosc.layout.row
+@layout.row
 def layoutClear(controls: list[tosc.Control]):
 
     controls[0].set_prop(("name", "clear"))
@@ -237,8 +237,8 @@ def main():
 
     root = tosc.createTemplate(frame=(0, 0, 500, 800))
     template = tosc.Node(root[0])
-    
-    control:tosc.Control = tosc.to_ctrl(template.node)
+
+    control: tosc.Control = tosc.to_ctrl(template.node)
 
     layoutBase(control, "GROUP", size=(1, 3, 1), colors=bgGradient1)
     root[0] = tosc.xml_control(control)

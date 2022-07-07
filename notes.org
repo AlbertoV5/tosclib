@@ -12,7 +12,7 @@
 * TODO Read about:
 - [[p][poetry-dynamic-versioning]]
 - Pre-commit actions
--
+- Release in pypi when releasing in GitHub
 
 * Development with Pyenv, Poetry, Tox and Pytest:
 [[https://www.adaltas.com/en/2021/06/09/pyrepo-project-initialization/][
@@ -56,6 +56,17 @@ In this case the subprocess is pytest with coverage enabled.
 ** Github
 - Some github actions are enabled.
 - See [[https://www.youtube.com/watch?v=DhUpxWjOhME&t=730s&ab_channel=mCoding][mCoding video.]]
+
+
+* Custom Aliases for Testing Commands
+
+#+begin_src bash
+alias coverage='pytest --cov --cov-report html:docs/_static/cov && open docs/_static/cov/index.html'
+alias makedocs='sphinx-build docs/ docs/build'
+alias profile='pytest -m profile --profile-svg --cov --cov-report html:docs/_static/cov_prof'
+
+#+end_src
+
 
 
 * GUIDE for CI/CD commands (old).

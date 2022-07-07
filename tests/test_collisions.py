@@ -1,9 +1,7 @@
 import pytest
 import tosclib as tosc
-from .profiler import profile
 
 
-@profile
 def test_collisions():
     root = tosc.createTemplate()
     element = tosc.Node(root[0])
@@ -12,11 +10,11 @@ def test_collisions():
     assert control
 
     """Error with collisions. Raise exception."""
-    assert (prop := tosc.prop("name", "Geoff"))
+    assert (prop := tosc.property("name", "Geoff"))
     assert element.set_prop(prop)
     with pytest.raises(ValueError):
-        assert element.add_prop(tosc.prop("name", "Craig"))
-    assert element.add_prop(tosc.prop("name2", "craig"))
+        assert element.add_prop(tosc.property("name", "Craig"))
+    assert element.add_prop(tosc.property("name2", "craig"))
 
     """No Error with collisions. Replace value."""
     fader = tosc.Fader()

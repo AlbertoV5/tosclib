@@ -3,7 +3,6 @@ from tosclib.properties import *
 from copy import deepcopy
 import logging
 import pytest
-from .profiler import profile
 import inspect
 import unittest
 
@@ -15,8 +14,8 @@ class Copier(unittest.TestCase):
     template2: tosc.Control
     group1: tosc.Control
     group2: tosc.Control
-    proplist1: tosc.Properties = []
-    proplist2: tosc.Properties = []
+    proplist1: list[tosc.Property] = []
+    proplist2: list[tosc.Property] = []
 
     def create_different_groups(self):
         self.template1 = tosc.Group(name="template1", frame=(0, 0, 800, 800))
@@ -95,7 +94,6 @@ class Copier(unittest.TestCase):
         osc_msgs = [m for m in self.group2.messages if m[0] == "osc"]
         assert len(osc_msgs) > 0
 
-    @profile
     def test_copiers(
         self,
     ):

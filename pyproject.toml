@@ -25,18 +25,20 @@ tox = "^3.25.1"
 pytest = "^7.1.2"
 pytest-cov = "^3.0.0"
 pytest-sugar = "^0.9.4"
-setuptools = "^61.2.0"
-flake8 = "^4.0.1"
+pytest-profiling = "^1.7.0"
+pytest-doctestplus = "^0.12.0"
 black = "^22.6.0"
+snakeviz = "^2.1.1"
+setuptools = "^61.2.0"
 # Docs dependencies
+furo = "^2022.4.7"
 sphinx = "^4.5.0"
 sphinx_copybutton = "^0.5.0"
-furo = "^2022.4.7"
-snakeviz = "^2.1.1"
 # Demos dependencies
 numpy = "^1.22.3"
 Pillow = "^9.1.1"
 aiohttp = "^3.8.1"
+
 
 [tool.pytest.ini_options]
 markers = [

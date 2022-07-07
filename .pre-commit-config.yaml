@@ -5,3 +5,16 @@ repos:
     rev: 22.6.0
     hooks:
     - id: black
+
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0
+    hooks:
+    - id: check-added-large-files
+    - id: check-ast
+    - id: check-case-conflict
+    - id: check-json
+    - id: check-toml
+    - id: check-xml
+    - id: check-yaml
+    - id: debug-statements
+    - id: detect-private-key

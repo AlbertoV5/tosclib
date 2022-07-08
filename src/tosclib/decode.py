@@ -94,7 +94,7 @@ def to_value(e: Element) -> Value:
         Value: If all valid.
     """
     key, locked, lock_def, _default, pull = (e[i].text for i in range(0, 5))
-    default: ValueDefaultType | None = _default
+    default: ValueDefault | None = _default
 
     if not is_value_type(key):
         raise ParseXMLKeyError(e, "key", VALUE_TYPES)

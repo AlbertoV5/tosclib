@@ -19,6 +19,8 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
+    "sphinx_toolbox.more_autodoc.variables",
+    "sphinx_toolbox.more_autodoc.typehints",
 ]
 
 html_static_path = ["_static"]
@@ -38,6 +40,8 @@ napoleon_numpy_docstring = False
 napoleon_attr_annotations = True
 
 autodoc_typehints = "description"
+autodoc_typehints_description_target = "documented"
 autodoc_class_signature = "separated"
 
 html_theme = "furo"
+# https://sphinx-themes.org/sample-sites/furo/kitchen-sink/admonitions/

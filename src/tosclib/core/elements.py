@@ -53,10 +53,8 @@ MessageLOCAL is made of:
     LocalDst: Tuple of Literals, str, etc.
 
 """
-
 from typing import Literal, TypeAlias, NewType, Protocol
 import xml.etree.ElementTree as ET
-
 
 __all__ = [
     # Property
@@ -65,7 +63,7 @@ __all__ = [
     "Property",
     # Value
     "ValueType",
-    "ValueDefaultType",
+    "ValueDefault",
     "Value",
     # Messages
     "PartialType",
@@ -91,6 +89,7 @@ __all__ = [
 ]
 
 Element = ET.Element
+"""Alias for XML Element regarless of library used."""
 
 ControlType: TypeAlias = Literal[
     "BOX",
@@ -110,11 +109,11 @@ ControlType: TypeAlias = Literal[
 ]
 """Valid literals for <node type:ControlType>"""
 PropertyType: TypeAlias = Literal["b", "c", "r", "f", "i", "s"]
-"""Valid literals for <property type:PropertyType> b: boolean, c: color, r: frame, f: float, i: int, s: string
-"""
+"""Valid literals for <property type:PropertyType> b: boolean, c: color, r: frame, f: float, i: int, s: string"""
 PropertyValue: TypeAlias = (
     str | int | float | bool | tuple[int, ...] | tuple[float, ...]
 )
+"""Possible python types for a Property's value."""
 Property: TypeAlias = tuple[str, PropertyValue]
 """
 Property:
@@ -147,7 +146,7 @@ Example:
 
 """
 ValueType: TypeAlias = Literal["x", "y", "touch", "text", "page"]
-ValueDefaultType: TypeAlias = float | int | bool | str
+ValueDefault: TypeAlias = float | int | bool | str
 Value: TypeAlias = tuple[ValueType, bool, bool, float | int | bool | str, int]
 """ 
 Value:
@@ -173,21 +172,20 @@ Partial = NewType(
         int,
     ],
 )
-""" 
-Partial:
+""" Partial:
 This is the unit with which the OSC message is constructed.
 So in a message like track/1/fx/8, the partials are: "track", "1", "fx", "8".
 They can be dynamic, so if the Control name is "fx" the partial would look like: track/1/name/8. 
 
-    [0] - PartialType: Any of the allowed literals.
-    [1] - PartialConversion: Any of the allowed literals. 
-    [2] - value: Depends on the Partial Type. 
-            CONSTANT: Value is any string, frequently "/".
-            INDEX: Any int, as str.
-            VALUE: Any of the allowed ValueKey literals.
-            PROPERTY: Any str.
-    [3] - scaleMin: Range of Value.
-    [4] - scaleMax: Range of Value.
+[0] - PartialType: Any of the allowed literals.
+[1] - PartialConversion: Any of the allowed literals. 
+[2] - value: Depends on the Partial Type. 
+CONSTANT: Value is any string, frequently "/".
+INDEX: Any int, as str.
+VALUE: Any of the allowed ValueKey literals.
+PROPERTY: Any str.
+[3] - scaleMin: Range of Value.
+[4] - scaleMax: Range of Value.
 """
 TriggerType: TypeAlias = Literal["ANY", "RISE", "FALL"]
 Trigger = NewType("Trigger", tuple[ValueType, TriggerType])
@@ -330,15 +328,45 @@ CONTROL PROTOCOL
 
 
 class Control(Protocol):
-    """The Control Type Protocol. Touch OSC Control.
+    """Protocol for Control classes.
 
-    Attributes:
-        type(ControlType): Any of the valid literals.
-        id(str): Any hash function result as str.
-        values(Values|[]]): The Control's Values.
-        messages(Values|[]]): The Control's Messages.
-        children(Children|[]]): The Control's Control children.
+    Args:
+        type (ControlType): Required field. ControlType Literal.
+        id (str, optional): Random uuid4. Defaults to None.
+        values (list[Value], optional): List of Value objects. Defaults to None.
+        messages (list[Message], optional): List of Message objects. Defaults to None.
+        children (list[Control], optional): List of Node objects. Defaults to None.
+        args (Property): Pass any Property to create extra Property attributes.
+        kwargs (PropertyValue): Pass any keywords with PropertyValues to create extra Property attributes.
 
+    Note:
+
+        This represents a Touch OSC Control but it's not an XML Element.
+
+    Example:
+
+        .. code-block:: python
+
+            class Button:
+                type: ControlType = "BOX"
+                ...
+
+            class Group:
+                type: ControlType = "GROUP"
+                ...
+
+            button = Button(("name", "play")) # with args
+            group = Group(name = "menu") # with kwargs
+
+            assert button.name == ("name", "play")
+            assert group.name == ("name", "menu")
+            assert button.type != group.type
+
+            group.children.append(button)
+
+
+    Returns:
+        Control: Protocol.
     """
 
     type: ControlType
@@ -351,19 +379,46 @@ class Control(Protocol):
         ...
 
     def get_prop(self, key: str) -> Property:
+        """Get a Property (key, value) from its key."""
         ...
 
     def get_frame(self) -> tuple[int, ...]:
+        """Get a tuple of integers, xywh."""
         ...
 
     def get_color(self) -> tuple[float, ...]:
+        """Get a tuple of floats, rgba."""
         ...
 
     def set_prop(self, prop: Property) -> "Control":
+        """
+
+        Args:
+            prop (Property):
+
+        Returns:
+            Control: chain.
+        """
         ...
 
     def set_frame(self, frame: tuple[int, ...]) -> "Control":
+        """
+
+        Args:
+            frame (tuple[int, ...]):
+
+        Returns:
+            Control: chain.
+        """
         ...
 
     def set_color(self, color: tuple[float, ...]) -> "Control":
+        """
+
+        Args:
+            color (tuple[float, ...]):
+
+        Returns:
+            Control: chain.
+        """
         ...

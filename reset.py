@@ -1,8 +1,6 @@
-from typing import Literal, Protocol, TypeAlias, Any
+from typing import Literal, TypeAlias
 from pydantic import BaseModel
-from pprint import pprint
 import xmltodict
-import json
 
 PropertyType: TypeAlias = Literal["b", "c", "r", "f", "i", "s"]
 PropertyValue: TypeAlias = (
@@ -74,14 +72,14 @@ class MidiValue(BaseModel):
 
 
 class Property(BaseModel):
-    attr_type: PropertyType
+    at_type: PropertyType
     key: str
     value: PropertyValue
 
     # def __init__(__pydantic_self__, **data) -> None:
     #     # redundant
     #     super().__init__(**data)
-    #     match __pydantic_self__.attr_type:
+    #     match __pydantic_self__.at_type:
     #         case 'b':
     #             __pydantic_self__.value = bool(__pydantic_self__.value)
     #         case 'i':
@@ -152,8 +150,8 @@ Message: TypeAlias = OSC | MIDI | LOCAL
 
 
 class Node(BaseModel):
-    attr_ID: str
-    attr_type: NodeType
+    at_ID: str
+    at_type: NodeType
     properties: list[Property]
     values: list[Value]
     messages: dict[MessageType, list[Message]] | None
@@ -161,11 +159,13 @@ class Node(BaseModel):
 
 
 class Root(BaseModel):
-    attr_version: float
+    at_version: float
     node: Node
 
 
 class Template:
+    """Wrapper for loading and dumping xml <-> pydantic models"""
+
     root: Root
     filepath: str
     encoding: str = "UTF-8"
@@ -175,15 +175,23 @@ class Template:
         with open(filepath, "rb") as file:
             self.root = Root(
                 **xmltodict.parse(
-                    file, attr_prefix="attr_", postprocessor=self.postprocessor
+                    file, attr_prefix="at_", postprocessor=self.decode_postprocessor
                 )["lexml"]
             )
 
-    def __repr__(self):
-        return f"Template: {self.root.node.attr_ID}, {self.filepath}"
+    def dump(self, filepath: str):
+        with open(filepath, "w") as file:
+            file.write(
+                xmltodict.unparse(
+                    {"lexml": t.root.dict()}, pretty=True, attr_prefix="at_"
+                )
+            )
 
-    def postprocessor(self, path: tuple, key: str, value: str):
-        """Reorganize elements based on their structural patterns.
+    def __repr__(self):
+        return f"Template: {self.root.node.at_ID}, {self.filepath}"
+
+    def decode_postprocessor(self, path: tuple, key: str, value: str):
+        """Reorganize elements based on their patterns.
 
         Args:
             path (tuple): The structure of the path to the element.
@@ -241,11 +249,13 @@ class Template:
                 return key, value["value"]
         return key, value
 
+    def encode_postprocessor(self, path: tuple, key: str, value: str):
+        """TODO: Finish the encoding postprocessor whic will revert all the
+        decoding changes into a valid file."""
+        ...
+
 
 # XML to dict
 f = "docs/demos/files/msgs.xml"
 t = Template(f)
-print(t.root.node)
-# pprint(node['children'][0]['messages'])
-# nx = Node(**node)
-# pprint(nx.children[0].messages)
+t.dump("deleteme.xml")

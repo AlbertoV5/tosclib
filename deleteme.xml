@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lexml version="3.0">
+	<node ID="bb9bc648-da35-11ec-913f-2cf05d85548b" type="GROUP">
+		<properties type="b">
+			<key>background</key>
+			<value>True</value>
+		</properties>
+		<properties type="c">
+			<key>color</key>
+			<value>0.0</value>
+			<value>0.0</value>
+			<value>0.0</value>
+			<value>1.0</value>
+		</properties>
+		<properties type="f">
+			<key>cornerRadius</key>
+			<value>1</value>
+		</properties>
+		<properties type="r">
+			<key>frame</key>
+			<value>0.0</value>
+			<value>0.0</value>
+			<value>640.0</value>
+			<value>860.0</value>
+		</properties>
+		<properties type="b">
+			<key>grabFocus</key>
+			<value>False</value>
+		</properties>
+		<properties type="b">
+			<key>interactive</key>
+			<value>False</value>
+		</properties>
+		<properties type="b">
+			<key>locked</key>
+			<value>False</value>
+		</properties>
+		<properties type="s">
+			<key>name</key>
+			<value>group</value>
+		</properties>
+		<properties type="i">
+			<key>orientation</key>
+			<value>0</value>
+		</properties>
+		<properties type="b">
+			<key>outline</key>
+			<value>True</value>
+		</properties>
+		<properties type="i">
+			<key>outlineStyle</key>
+			<value>0</value>
+		</properties>
+		<properties type="i">
+			<key>pointerPriority</key>
+			<value>0</value>
+		</properties>
+		<properties type="i">
+			<key>shape</key>
+			<value>1</value>
+		</properties>
+		<properties type="b">
+			<key>visible</key>
+			<value>True</value>
+		</properties>
+		<values>
+			<name>touch</name>
+			<locked>false</locked>
+			<locked_dc>false</locked_dc>
+			<default>false</default>
+			<pull>0</pull>
+		</values>
+		<messages></messages>
+		<children ID="bd845c72-da35-11ec-894d-2cf05d85548b" type="BUTTON">
+			<properties type="b">
+				<key>background</key>
+				<value>True</value>
+			</properties>
+			<properties type="i">
+				<key>buttonType</key>
+				<value>0</value>
+			</properties>
+			<properties type="c">
+				<key>color</key>
+				<value>1.0</value>
+				<value>0.0</value>
+				<value>0.0</value>
+				<value>1.0</value>
+			</properties>
+			<properties type="f">
+				<key>cornerRadius</key>
+				<value>1</value>
+			</properties>
+			<properties type="r">
+				<key>frame</key>
+				<value>120.0</value>
+				<value>55.0</value>
+				<value>267.0</value>
+				<value>158.0</value>
+			</properties>
+			<properties type="b">
+				<key>grabFocus</key>
+				<value>True</value>
+			</properties>
+			<properties type="b">
+				<key>interactive</key>
+				<value>True</value>
+			</properties>
+			<properties type="b">
+				<key>locked</key>
+				<value>False</value>
+			</properties>
+			<properties type="s">
+				<key>name</key>
+				<value>button1</value>
+			</properties>
+			<properties type="i">
+				<key>orientation</key>
+				<value>0</value>
+			</properties>
+			<properties type="b">
+				<key>outline</key>
+				<value>True</value>
+			</properties>
+			<properties type="i">
+				<key>outlineStyle</key>
+				<value>1</value>
+			</properties>
+			<properties type="i">
+				<key>pointerPriority</key>
+				<value>0</value>
+			</properties>
+			<properties type="b">
+				<key>press</key>
+				<value>True</value>
+			</properties>
+			<properties type="b">
+				<key>release</key>
+				<value>True</value>
+			</properties>
+			<properties type="i">
+				<key>shape</key>
+				<value>1</value>
+			</properties>
+			<properties type="b">
+				<key>valuePosition</key>
+				<value>False</value>
+			</properties>
+			<properties type="b">
+				<key>visible</key>
+				<value>True</value>
+			</properties>
+			<values>
+				<name>touch</name>
+				<locked>false</locked>
+				<locked_dc>false</locked_dc>
+				<default>false</default>
+				<pull>0</pull>
+			</values>
+			<values>
+				<name>touch</name>
+				<locked>false</locked>
+				<locked_dc>false</locked_dc>
+				<default>false</default>
+				<pull>0</pull>
+			</values>
+			<messages>
+				<osc>
+					<enabled>true</enabled>
+					<send>true</send>
+					<receive>true</receive>
+					<feedback>false</feedback>
+					<connections>00001</connections>
+					<triggers>
+						<var>x</var>
+						<condition>ANY</condition>
+					</triggers>
+					<path>
+						<type>CONSTANT</type>
+						<conversion>STRING</conversion>
+						<value>/</value>
+						<scaleMin>0</scaleMin>
+						<scaleMax>1</scaleMax>
+					</path>
+					<path>
+						<type>PROPERTY</type>
+						<conversion>STRING</conversion>
+						<value>name</value>
+						<scaleMin>0</scaleMin>
+						<scaleMax>1</scaleMax>
+					</path>
+					<arguments>
+						<type>VALUE</type>
+						<conversion>FLOAT</conversion>
+						<value>x</value>
+						<scaleMin>0</scaleMin>
+						<scaleMax>1</scaleMax>
+					</arguments>
+				</osc>
+				<osc>
+					<enabled>true</enabled>
+					<send>true</send>
+					<receive>true</receive>
+					<feedback>false</feedback>
+					<connections>00001</connections>
+					<triggers>
+						<var>x</var>
+						<condition>ANY</condition>
+					</triggers>
+					<path>
+						<type>CONSTANT</type>
+						<conversion>STRING</conversion>
+						<value>/</value>
+						<scaleMin>0</scaleMin>
+						<scaleMax>1</scaleMax>
+					</path>
+					<path>
+						<type>VALUE</type>
+						<conversion>FLOAT</conversion>
+						<value>x</value>
+						<scaleMin>0</scaleMin>
+						<scaleMax>1</scaleMax>
+					</path>
+					<arguments>
+						<type>VALUE</type>
+						<conversion>FLOAT</conversion>
+						<value>x</value>
+						<scaleMin>0</scaleMin>
+						<scaleMax>1</scaleMax>
+					</arguments>
+				</osc>
+			</messages>
+			<children></children>
+		</children>
+		<children ID="f5025756-ecbb-11ec-bab7-8c8590bdd04f" type="FADER">
+			<properties type="b">
+				<key>background</key>
+				<value>True</value>
+			</properties>
+			<properties type="b">
+				<key>bar</key>
+				<value>True</value>
+			</properties>
+			<properties type="i">
+				<key>barDisplay</key>
+				<value>0</value>
+			</properties>
+			<properties type="c">
+				<key>color</key>
+				<value>1.0</value>
+				<value>0.0</value>
+				<value>0.0</value>
+				<value>1.0</value>
+			</properties>
+			<properties type="f">
+				<key>cornerRadius</key>
+				<value>1</value>
+			</properties>
+			<properties type="b">
+				<key>cursor</key>
+				<value>True</value>
+			</properties>
+			<properties type="i">
+				<key>cursorDisplay</key>
+				<value>0</value>
+			</properties>
+			<properties type="r">
+				<key>frame</key>
+				<value>110.0</value>
+				<value>272.0</value>
+				<value>50.0</value>
+				<value>200.0</value>
+			</properties>
+			<properties type="b">
+				<key>grabFocus</key>
+				<value>True</value>
+			</properties>
+			<properties type="b">
+				<key>grid</key>
+				<value>True</value>
+			</properties>
+			<properties type="i">
+				<key>gridSteps</key>
+				<value>13</value>
+			</properties>
+			<properties type="b">
+				<key>interactive</key>
+				<value>True</value>
+			</properties>
+			<properties type="b">
+				<key>locked</key>
+				<value>False</value>
+			</properties>
+			<properties type="s">
+				<key>name</key>
+				<value>fader1</value>
+			</properties>
+			<properties type="i">
+				<key>orientation</key>
+				<value>0</value>
+			</properties>
+			<properties type="b">
+				<key>outline</key>
+				<value>True</value>
+			</properties>
+			<properties type="i">
+				<key>outlineStyle</key>
+				<value>1</value>
+			</properties>
+			<properties type="i">
+				<key>pointerPriority</key>
+				<value>0</value>
+			</properties>
+			<properties type="i">
+				<key>response</key>
+				<value>0</value>
+			</properties>
+			<properties type="i">
+				<key>responseFactor</key>
+				<value>100</value>
+			</properties>
+			<properties type="i">
+				<key>shape</key>
+				<value>1</value>
+			</properties>
+			<properties type="b">
+				<key>visible</key>
+				<value>True</value>
+			</properties>
+			<values>
+				<name>touch</name>
+				<locked>false</locked>
+				<locked_dc>false</locked_dc>
+				<default>false</default>
+				<pull>0</pull>
+			</values>
+			<values>
+				<name>touch</name>
+				<locked>false</locked>
+				<locked_dc>false</locked_dc>
+				<default>false</default>
+				<pull>0</pull>
+			</values>
+			<messages>
+				<midi>
+					<enabled>true</enabled>
+					<send>true</send>
+					<receive>true</receive>
+					<feedback>false</feedback>
+					<connections>00001</connections>
+					<triggers>
+						<var>x</var>
+						<condition>ANY</condition>
+					</triggers>
+					<path>
+						<type>CONSTANT</type>
+						<conversion>STRING</conversion>
+						<value>/</value>
+						<scaleMin>0</scaleMin>
+						<scaleMax>1</scaleMax>
+					</path>
+					<path>
+						<type>PROPERTY</type>
+						<conversion>STRING</conversion>
+						<value>name</value>
+						<scaleMin>0</scaleMin>
+						<scaleMax>1</scaleMax>
+					</path>
+					<arguments>
+						<type>VALUE</type>
+						<conversion>FLOAT</conversion>
+						<value>x</value>
+						<scaleMin>0</scaleMin>
+						<scaleMax>1</scaleMax>
+					</arguments>
+				</midi>
+			</messages>
+			<children></children>
+		</children>
+		<children ID="fe5fe058-ecce-11ec-a90d-8c8590bdd04f" type="RADIAL">
+			<properties type="b">
+				<key>background</key>
+				<value>True</value>
+			</properties>
+			<properties type="b">
+				<key>centered</key>
+				<value>False</value>
+			</properties>
+			<properties type="c">
+				<key>color</key>
+				<value>1.0</value>
+				<value>0.0</value>
+				<value>0.0</value>
+				<value>1.0</value>
+			</properties>
+			<properties type="f">
+				<key>cornerRadius</key>
+				<value>1</value>
+			</properties>
+			<properties type="r">
+				<key>frame</key>
+				<value>240.0</value>
+				<value>300.0</value>
+				<value>150.0</value>
+				<value>150.0</value>
+			</properties>
+			<properties type="b">
+				<key>grabFocus</key>
+				<value>True</value>
+			</properties>
+			<properties type="b">
+				<key>grid</key>
+				<value>True</value>
+			</properties>
+			<properties type="i">
+				<key>gridSteps</key>
+				<value>20</value>
+			</properties>
+			<properties type="b">
+				<key>interactive</key>
+				<value>True</value>
+			</properties>
+			<properties type="b">
+				<key>inverted</key>
+				<value>False</value>
+			</properties>
+			<properties type="b">
+				<key>locked</key>
+				<value>False</value>
+			</properties>
+			<properties type="s">
+				<key>name</key>
+				<value>radial1</value>
+			</properties>
+			<properties type="i">
+				<key>orientation</key>
+				<value>0</value>
+			</properties>
+			<properties type="b">
+				<key>outline</key>
+				<value>True</value>
+			</properties>
+			<properties type="i">
+				<key>outlineStyle</key>
+				<value>0</value>
+			</properties>
+			<properties type="i">
+				<key>pointerPriority</key>
+				<value>0</value>
+			</properties>
+			<properties type="i">
+				<key>response</key>
+				<value>0</value>
+			</properties>
+			<properties type="i">
+				<key>responseFactor</key>
+				<value>100</value>
+			</properties>
+			<properties type="i">
+				<key>shape</key>
+				<value>2</value>
+			</properties>
+			<properties type="b">
+				<key>visible</key>
+				<value>True</value>
+			</properties>
+			<values>
+				<name>touch</name>
+				<locked>false</locked>
+				<locked_dc>false</locked_dc>
+				<default>false</default>
+				<pull>0</pull>
+			</values>
+			<values>
+				<name>touch</name>
+				<locked>false</locked>
+				<locked_dc>false</locked_dc>
+				<default>false</default>
+				<pull>0</pull>
+			</values>
+			<messages>
+				<local>
+					<enabled>true</enabled>
+					<send>true</send>
+					<receive>true</receive>
+					<feedback>false</feedback>
+					<connections>11111</connections>
+					<triggers>
+						<var>x</var>
+						<condition>ANY</condition>
+					</triggers>
+					<path>
+						<type>CONSTANT</type>
+						<conversion>STRING</conversion>
+						<value>/</value>
+						<scaleMin>0</scaleMin>
+						<scaleMax>1</scaleMax>
+					</path>
+					<path>
+						<type>PROPERTY</type>
+						<conversion>STRING</conversion>
+						<value>name</value>
+						<scaleMin>0</scaleMin>
+						<scaleMax>1</scaleMax>
+					</path>
+					<arguments>
+						<type>VALUE</type>
+						<conversion>FLOAT</conversion>
+						<value>x</value>
+						<scaleMin>0</scaleMin>
+						<scaleMax>1</scaleMax>
+					</arguments>
+				</local>
+			</messages>
+			<children></children>
+		</children>
+	</node>
+</lexml>

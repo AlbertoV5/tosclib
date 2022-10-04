@@ -21,11 +21,13 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_toolbox.more_autodoc.variables",
     "sphinx_toolbox.more_autodoc.typehints",
+    "sphinx_toolbox.more_autodoc.genericalias",
+    "sphinx_toolbox.more_autodoc.overloads",
 ]
 
 html_static_path = ["_static"]
 source_suffix = [".rst", ".md"]
-
+suppress_warnings = ["ref.python"]
 exclude_patterns = ["build"]
 
 intersphinx_mapping = {
@@ -42,6 +44,10 @@ napoleon_attr_annotations = True
 autodoc_typehints = "description"
 autodoc_typehints_description_target = "documented"
 autodoc_class_signature = "separated"
+autodoc_default_options = {
+    "member-order": "bysource",
+    "exclude-members": "__new__, __init__",
+}
 
 html_theme = "furo"
 # https://sphinx-themes.org/sample-sites/furo/kitchen-sink/admonitions/

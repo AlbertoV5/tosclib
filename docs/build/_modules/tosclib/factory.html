@@ -216,10 +216,12 @@
         <article role="main">
           <h1>Source code for tosclib.factory</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""</span>
-<span class="sd">Tuple factories for the types in .elements</span>
+<span class="sd">Factories for elements defined in core.</span>
 <span class="sd">"""</span>
 
-<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">overload</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span><span class="p">,</span> <span class="n">uuid4</span>
+<span class="kn">from</span> <span class="nn">.core.elements</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">"property"</span><span class="p">,</span>
@@ -240,25 +242,26 @@
 <span class="p">]</span>
 
 
+
 <div class="viewcode-block" id="property"><a class="viewcode-back" href="../../api/api.html#tosclib.property">[docs]</a><span class="k">def</span> <span class="nf">property</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">PropertyValue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Property</span><span class="p">:</span>
-    <span class="sd">"""Property factory: creates type-hinted tuples.</span>
+    <span class="sd">"""Property factory: Creates type-safe tuple.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        key (str): Key of the property. Like "tag", "outline", "frame", etc.</span>
-<span class="sd">        value (PropertyValue): </span>
+<span class="sd">        value (PropertyValue):</span>
 <span class="sd">            Any str, int, float, bool, tuple[float,...] or tuple[int,...]</span>
 <span class="sd">            that fits the key.</span>
 
-<span class="sd">    Important:        </span>
+<span class="sd">    Important:</span>
 
 <span class="sd">        - The Python type will dictate the "type" attribute for the XML Element.</span>
 
 <span class="sd">        - A str will become type = "s", bool will be "b", etc.</span>
-<span class="sd">        </span>
+
 <span class="sd">        - The value arg becomes the Element's text or sub elements depending on the value's type.</span>
 
 <span class="sd">        - tuple[int,...] converts to: {"x":v[0], "y":v[1], "w":v[2], "h":v[3]}</span>
-<span class="sd">        </span>
+
 <span class="sd">        - tuple[float,..] converts to the r,g,b,a equivalent.</span>
 
 <span class="sd">    Hint:</span>
@@ -270,44 +273,120 @@
 
 <span class="sd">    Examples:</span>
 
-<span class="sd">        ("name", "Craig")</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            name = property("name", "GeoffPeterson")</span>
 
 <span class="sd">        .. code-block:: XML</span>
 
 <span class="sd">            &lt;property type="s"&gt;</span>
 <span class="sd">                &lt;key&gt;name&lt;/key&gt;</span>
-<span class="sd">                &lt;value&gt;Craig&lt;/value&gt;</span>
+<span class="sd">                &lt;value&gt;GeoffPeterson&lt;/value&gt;</span>
 <span class="sd">            &lt;/property&gt;</span>
 
-<span class="sd">        ("frame",(0,0,100,100))</span>
+<span class="sd">        .. code-block:: python</span>
+<span class="sd">            </span>
+<span class="sd">            frame = property("frame", (0,0,100,100))</span>
 
 <span class="sd">        .. code-block:: XML</span>
 
 <span class="sd">            &lt;property type="r"&gt;</span>
-<span class="sd">                &lt;key&gt;frame&lt;/key&gt;</span>
+<span class="sd">                &lt;key&gt;</span>
+<span class="sd">                    frame</span>
+<span class="sd">                &lt;/key&gt;</span>
 <span class="sd">                &lt;value&gt;</span>
-<span class="sd">                &lt;x&gt;0&lt;/x&gt;</span>
-<span class="sd">                &lt;y&gt;0&lt;/y&gt;</span>
-<span class="sd">                &lt;w&gt;100&lt;/w&gt;</span>
-<span class="sd">                &lt;h&gt;100&lt;/h&gt;</span>
+<span class="sd">                    &lt;x&gt;0&lt;/x&gt;</span>
+<span class="sd">                    &lt;y&gt;0&lt;/y&gt;</span>
+<span class="sd">                    &lt;w&gt;100&lt;/w&gt;</span>
+<span class="sd">                    &lt;h&gt;100&lt;/h&gt;</span>
 <span class="sd">                &lt;/value&gt;</span>
 <span class="sd">            &lt;/property&gt;</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        Property: :class:`~tosclib.core.Property`</span>
 <span class="sd">    """</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">Property</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span></div>
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">value</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"touch"</span><span class="p">],</span> <span class="n">locked</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">locked_dc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> 
+    <span class="n">default</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">pull</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">value</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">],</span> <span class="n">locked</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">locked_dc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> 
+    <span class="n">default</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">pull</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">value</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"page"</span><span class="p">],</span> <span class="n">locked</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">locked_dc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> 
+    <span class="n">default</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pull</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">value</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"text"</span><span class="p">],</span> <span class="n">locked</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">locked_dc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> 
+    <span class="n">default</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pull</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span> <span class="o">...</span>
 
 
 <div class="viewcode-block" id="value"><a class="viewcode-back" href="../../api/api.html#tosclib.value">[docs]</a><span class="k">def</span> <span class="nf">value</span><span class="p">(</span>
-    <span class="n">key</span><span class="p">:</span> <span class="n">ValueType</span> <span class="o">=</span> <span class="s2">"touch"</span><span class="p">,</span>
-    <span class="n">locked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">lockedCD</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">key</span><span class="p">:</span> <span class="n">ValueKey</span> <span class="o">=</span> <span class="s2">"touch"</span><span class="p">,</span> <span class="n">locked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">locked_dc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="n">ValueDefault</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">pull</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
-    <span class="sd">"""Value factory"""</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">locked</span><span class="p">,</span> <span class="n">lockedCD</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">pull</span><span class="p">)</span></div>
+    <span class="sd">"""Value Factory: Creates type-safe tuple.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        key (ValueKey, optional): The key of the value. Default is "touch".</span>
+<span class="sd">        locked (bool, optional): Default is False.</span>
+<span class="sd">        locked_dc (bool, optional): Lock default current. Default is False.</span>
+<span class="sd">        default (ValueDefault, optional): This is the "value's value". </span>
+<span class="sd">        pull (int, optional): Int from 0 to 100. Defaults to 0.</span>
+
+<span class="sd">    Important:</span>
+
+<span class="sd">        - Just as Property, this will convert the Python types into XML strings.</span>
+
+<span class="sd">        - The default argument type must match the key:</span>
+<span class="sd">            - For "touch" use a boolean.</span>
+<span class="sd">            - For "page" use an int.</span>
+<span class="sd">            - For "x", "y" use a float.</span>
+<span class="sd">            - For "text" use a str.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            x = value(key = "x", default = 0.42)</span>
+
+<span class="sd">        .. code-block:: XML</span>
+
+<span class="sd">            &lt;value&gt;</span>
+<span class="sd">                &lt;key&gt;x&lt;/key&gt;</span>
+<span class="sd">                &lt;locked&gt;0&lt;/locked&gt;</span>
+<span class="sd">                &lt;lockedDefaultCurrent&gt;0&lt;/lockedDefaultCurrent&gt;</span>
+<span class="sd">                &lt;default&gt;0.42&lt;/default&gt;</span>
+<span class="sd">                &lt;defaultPull&gt;0&lt;/defaultPull&gt;</span>
+<span class="sd">            &lt;/value&gt;</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            text = value(key = "text", default = "Synth")</span>
+
+<span class="sd">        .. code-block:: XML</span>
+
+<span class="sd">            &lt;value&gt;</span>
+<span class="sd">                &lt;key&gt;text&lt;/key&gt;</span>
+<span class="sd">                &lt;locked&gt;0&lt;/locked&gt;</span>
+<span class="sd">                &lt;lockedDefaultCurrent&gt;0&lt;/lockedDefaultCurrent&gt;</span>
+<span class="sd">                &lt;default&gt;Synth&lt;/default&gt;</span>
+<span class="sd">                &lt;defaultPull&gt;0&lt;/defaultPull&gt;</span>
+<span class="sd">            &lt;/value&gt;</span>
+
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Value: :class:`~tosclib.core.Value`</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">Value</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">locked</span><span class="p">,</span> <span class="n">locked_dc</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">pull</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="msgconfig"><a class="viewcode-back" href="../../api/api.html#tosclib.msgconfig">[docs]</a><span class="k">def</span> <span class="nf">msgconfig</span><span class="p">(</span>
@@ -317,12 +396,23 @@
     <span class="n">feedback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">connection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"11111"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MsgConfig</span><span class="p">:</span>
-    <span class="sd">"""MessageConfig factory"""</span>
+    <span class="sd">"""Message config factory. </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        enabled (bool, optional): _description_. Defaults to True.</span>
+<span class="sd">        send (bool, optional): _description_. Defaults to True.</span>
+<span class="sd">        receive (bool, optional): _description_. Defaults to True.</span>
+<span class="sd">        feedback (bool, optional): _description_. Defaults to False.</span>
+<span class="sd">        connection (str, optional): _description_. Defaults to "11111".</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        MsgConfig: _description_</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">MsgConfig</span><span class="p">((</span><span class="n">enabled</span><span class="p">,</span> <span class="n">send</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">connection</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="trigger"><a class="viewcode-back" href="../../api/api.html#tosclib.trigger">[docs]</a><span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span>
-    <span class="n">key</span><span class="p">:</span> <span class="n">ValueType</span> <span class="o">=</span> <span class="s2">"touch"</span><span class="p">,</span>
+    <span class="n">key</span><span class="p">:</span> <span class="n">ValueKey</span> <span class="o">=</span> <span class="s2">"touch"</span><span class="p">,</span>
     <span class="n">condition</span><span class="p">:</span> <span class="n">TriggerType</span> <span class="o">=</span> <span class="s2">"ANY"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Trigger</span><span class="p">:</span>
     <span class="sd">"""Trigger factory"""</span>
@@ -382,41 +472,51 @@
 
 
 <div class="viewcode-block" id="localsrc"><a class="viewcode-back" href="../../api/api.html#tosclib.localsrc">[docs]</a><span class="k">def</span> <span class="nf">localsrc</span><span class="p">(</span>
-    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"x"</span><span class="p">,</span>
-    <span class="n">typ</span><span class="p">:</span> <span class="n">PartialType</span> <span class="o">=</span> <span class="s2">"VALUE"</span><span class="p">,</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">PartialType</span> <span class="o">=</span> <span class="s2">"VALUE"</span><span class="p">,</span>
     <span class="n">conversion</span><span class="p">:</span> <span class="n">ConversionType</span> <span class="o">=</span> <span class="s2">"FLOAT"</span><span class="p">,</span>
-    <span class="n">minRange</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="n">maxRange</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"x"</span><span class="p">,</span>
+    <span class="n">scaleMin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">scaleMax</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LocalSrc</span><span class="p">:</span>
     <span class="sd">"""Local Source factory"""</span>
-    <span class="k">return</span> <span class="n">LocalSrc</span><span class="p">((</span><span class="n">typ</span><span class="p">,</span> <span class="n">conversion</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">minRange</span><span class="p">,</span> <span class="n">maxRange</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">LocalSrc</span><span class="p">((</span><span class="nb">type</span><span class="p">,</span> <span class="n">conversion</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">scaleMin</span><span class="p">,</span> <span class="n">scaleMax</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="localdst"><a class="viewcode-back" href="../../api/api.html#tosclib.localdst">[docs]</a><span class="k">def</span> <span class="nf">localdst</span><span class="p">(</span>
-    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"x"</span><span class="p">,</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">" "</span><span class="p">,</span>
-    <span class="n">typ</span><span class="p">:</span> <span class="n">PartialType</span> <span class="o">=</span> <span class="s2">"VALUE"</span><span class="p">,</span>
+    <span class="n">dstType</span><span class="p">:</span> <span class="n">PartialType</span> <span class="o">=</span> <span class="s2">"VALUE"</span><span class="p">,</span>
+    <span class="n">dstVar</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"x"</span><span class="p">,</span>
+    <span class="n">dstID</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">" "</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LocalDst</span><span class="p">:</span>
     <span class="sd">"""Local Destination factory"""</span>
-    <span class="k">return</span> <span class="n">LocalDst</span><span class="p">((</span><span class="n">typ</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">id</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">LocalDst</span><span class="p">((</span><span class="n">dstType</span><span class="p">,</span> <span class="n">dstVar</span><span class="p">,</span> <span class="n">dstID</span><span class="p">))</span></div>
 
-
+    
 <div class="viewcode-block" id="osc"><a class="viewcode-back" href="../../api/api.html#tosclib.osc">[docs]</a><span class="k">def</span> <span class="nf">osc</span><span class="p">(</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">MsgConfig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">triggs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Trigger</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">triggers</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Trigger</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">addrs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Partial</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Partial</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MessageOSC</span><span class="p">:</span>
-    <span class="sd">"""OSC message factory"""</span>
+    <span class="sd">"""OSC Message Factory: Creates type-safe new-type tuple.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (MsgConfig, optional): Type-safe tuple. Defaults to None.</span>
+<span class="sd">        triggers (tuple[Trigger, ...], optional): Tuple of type-safe tuples. Defaults to None.</span>
+<span class="sd">        addrs (tuple[Partial, ...], optional): Tuple of type-safe tuples. Defaults to None.</span>
+<span class="sd">        args (tuple[Partial, ...], optional): Tuple of type-safe tuples. Defaults to None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        MessageOSC: _description_</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">msgconfig</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">triggs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">triggs</span> <span class="o">=</span> <span class="n">triggers</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">triggers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">triggers</span> <span class="o">=</span> <span class="p">(</span><span class="n">trigger</span><span class="p">(),)</span>
     <span class="k">if</span> <span class="n">addrs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">addrs</span> <span class="o">=</span> <span class="n">address</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">arguments</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">MessageOSC</span><span class="p">((</span><span class="s2">"osc"</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">triggs</span><span class="p">,</span> <span class="n">addrs</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">MessageOSC</span><span class="p">((</span><span class="s2">"osc"</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">triggers</span><span class="p">,</span> <span class="n">addrs</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="midi"><a class="viewcode-back" href="../../api/api.html#tosclib.midi">[docs]</a><span class="k">def</span> <span class="nf">midi</span><span class="p">(</span>

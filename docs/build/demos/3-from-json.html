@@ -242,12 +242,13 @@
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">create_fader</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">create_fader</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
     <span class="sd">"""Create a Fader object, then convert it to XML"""</span>
-    <span class="n">fader</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Fader</span><span class="p">()</span>
-    <span class="n">fader</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
-    <span class="n">fader</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"frame"</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">i</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">),</span> <span class="mi">1080</span><span class="p">)))</span>
-    <span class="n">fader</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"color"</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="n">fader</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Fader</span><span class="p">(</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">i</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">),</span> <span class="mi">1080</span><span class="p">),</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span> <span class="o">/</span> <span class="n">limit</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
     <span class="n">fader</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="n">efader</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">tosc</span><span class="o">.</span><span class="n">xml_control</span><span class="p">(</span><span class="n">fader</span><span class="p">))</span>
     <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">efader</span><span class="p">)</span>
@@ -255,10 +256,11 @@
 
 
 <span class="k">def</span> <span class="nf">create_group</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
-    <span class="n">group</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Group</span><span class="p">()</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"frame"</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">set_prop</span><span class="p">((</span><span class="s2">"color"</span><span class="p">,</span> <span class="n">color</span><span class="p">))</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="p">,</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">color</span>
+    <span class="p">)</span>
     <span class="n">egroup</span> <span class="o">=</span> <span class="n">tosc</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">tosc</span><span class="o">.</span><span class="n">xml_control</span><span class="p">(</span><span class="n">group</span><span class="p">))</span>
     <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">egroup</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">egroup</span>

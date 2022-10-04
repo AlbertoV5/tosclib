@@ -12,71 +12,57 @@ This library uses 4 categories of aliasing and hinting:
 4. `Protocol: <https://docs.python.org/3/library/typing.html#typing.Protocol>`_
     - Used for hinting classes that share the same structure.
 
+
 .. note:: 
     
     Because of how __annotations__ and __docs__ work, Sphinx has a hard time dealing with type aliases.
     As a result, the original docstrings reference TypeAlias, NewType, Literals docstrings. So I removed them.
     For more information on these types, go to the source or the `API <./api.html>`_
 
-.. tip::
-
-    Check out `mypy <http://mypy-lang.org/>`_.
-
 
 .. automodule:: tosclib.core
-    
-    .. rubric:: Core Tuples (Not Classes)
 
-    .. class:: Property
-    .. class:: Value
-    .. class:: Message
-
-    .. rubric:: Complex Type (Class)
+    .. rubric:: Highest Level (Class)
 
     .. autoclass:: Control
         
-        .. automethod:: Control.get_prop
+        .. automethod:: Control.get
+        .. automethod:: Control.set
         .. automethod:: Control.get_frame
         .. automethod:: Control.get_color
-        .. automethod:: Control.set_prop
         .. automethod:: Control.set_frame
         .. automethod:: Control.set_color
 
-    .. rubric:: Constant Types (Not Classes)
+    .. rubric:: Attributes of Control (Not Classes)
 
-Property Literals
+    .. autoclass:: Property
+    .. autoclass:: Value
+    .. autoclass:: Message
+
+    .. rubric:: Constant Literal Types (Not Classes)
+
     .. class:: PropertyType
-
-Value Literals
-    .. class:: ValueType
-
-Message Literals
+    .. class:: ValueKey
     .. class:: TriggerType
     .. class:: PartialType
     .. class:: ConversionType
     .. class:: MidiMsgType
-
-Control Literals
     .. class:: ControlType
     
     .. rubric:: Intermediary Types (Not Classes)
 
-Property Related
     .. class:: PropertyValue
-
-Value Related
-    .. class:: ValueDefaultType
-
-Message Related
+    .. class:: ValueDefault
     .. class:: Partial
     .. class:: Trigger
+    .. class:: MidiMsg
     .. class:: MidiValue
     .. class:: MsgConfig
     .. class:: LocalSrc
     .. class:: LocalDst
 
-    .. rubric:: Message Types (Not Classes)
+    .. rubric:: Message Types
 
-    .. class:: MessageMIDI
-    .. class:: MessageOSC
-    .. class:: MessageLOCAL
+    .. autoclass:: MessageOSC
+    .. autoclass:: MessageMIDI
+    .. autoclass:: MessageLOCAL

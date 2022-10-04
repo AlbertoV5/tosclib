@@ -1,7 +1,22 @@
 """
 Parse XML Elements and return tosclib types.
 """
+import uuid
 from .core import *
+from .factory import (
+    local,
+    localdst,
+    localsrc,
+    midi,
+    midimsg,
+    midival,
+    msgconfig,
+    osc,
+    partial,
+    property,
+    trigger,
+    value,
+)
 
 
 __all__ = ["to_property", "to_value", "to_message", "to_ctrl"]
@@ -63,18 +78,18 @@ def to_property(e: Element) -> Property:
         value = ""
         params = tuple(i.text for i in e[1] if i.text is not None)
 
-    if type is BOOLEAN:
-        return (key, True if value == "1" else False)
-    elif type is COLOR:
-        return (key, tuple(float(i) for i in params))
-    elif type is FLOAT:
-        return (key, float(value))
-    elif type is INTEGER:
-        return (key, int(value))
-    elif type is FRAME:
-        return (key, tuple(float(i) for i in params))
-    elif type is STRING:
-        return (key, value)
+    if type is PROPERTY_TYPES.BOOLEAN:
+        return property(key, eval_bool(value))
+    elif type is PROPERTY_TYPES.COLOR:
+        return property(key, tuple(float(i) for i in params))
+    elif type is PROPERTY_TYPES.FLOAT:
+        return property(key, float(value))
+    elif type is PROPERTY_TYPES.INTEGER:
+        return property(key, int(value))
+    elif type is PROPERTY_TYPES.FRAME:
+        return property(key, tuple(float(i) for i in params))
+    elif type is PROPERTY_TYPES.STRING:
+        return property(key, value)
     else:
         raise ParseXMLKeyError(e, "type", PROPERTY_TYPES)
 
@@ -93,32 +108,27 @@ def to_value(e: Element) -> Value:
     Returns:
         Value: If all valid.
     """
-    key, locked, lock_def, _default, pull = (e[i].text for i in range(0, 5))
-    default: ValueDefault | None = _default
+    key, locked, lock_def, default, pull = (e[i].text for i in range(0, 5))
 
-    if not is_value_type(key):
-        raise ParseXMLKeyError(e, "key", VALUE_TYPES)
+    if not is_value_key(key):
+        raise ParseXMLKeyError(e, "key", VALUE_KEYS)
     if default is None or pull is None:
         raise ParseXMLValueError(e, "default or pull")
 
-    if key in ("x", "y"):
-        default = float(default)
-    elif key == "page":
-        default = int(default)
-    elif default == "true":
-        default = True
-    elif default == "false":
-        default = False
+    if key == VALUE_KEYS.X or key == VALUE_KEYS.Y:
+        return value(
+            key, eval_bool(locked), eval_bool(lock_def), float(default), int(pull)
+        )
+    elif key == VALUE_KEYS.PAGE:
+        return value(
+            key, eval_bool(locked), eval_bool(lock_def), int(default), int(pull)
+        )
+    elif key == VALUE_KEYS.TOUCH:
+        return value(
+            key, eval_bool(locked), eval_bool(lock_def), eval_bool(default), int(pull)
+        )
     else:
-        default = str(default)
-
-    return (
-        key,
-        True if locked == "1" else False,
-        True if lock_def == "1" else False,
-        default,
-        int(pull),
-    )
+        return value(key, eval_bool(locked), eval_bool(lock_def), default, int(pull))
 
 
 def to_msgconfig(e: Element) -> MsgConfig:
@@ -133,12 +143,10 @@ def to_msgconfig(e: Element) -> MsgConfig:
     Returns:
         MsgConfig: If any is None, they default to False or '00000'.
     """
-    enab, send, receive, fbk = (
-        True if e[i].text == "1" else False for i in range(0, 4)
-    )
+    enab, send, receive, fbk = (eval_bool(e[i].text) for i in range(0, 4))
     connections = "00000" if e[4].text is None else e[4].text
 
-    return MsgConfig((enab, send, receive, fbk, connections))
+    return msgconfig(enab, send, receive, fbk, connections)
 
 
 def to_trigger(e: Element) -> Trigger:
@@ -156,12 +164,12 @@ def to_trigger(e: Element) -> Trigger:
     """
     var, condition = (e[i].text for i in range(0, 2))
 
-    if not is_value_type(var):
-        raise ParseXMLKeyError(e, "var", VALUE_TYPES)
+    if not is_value_key(var):
+        raise ParseXMLKeyError(e, "var", VALUE_KEYS)
     if not is_trigger_type(condition):
         raise ParseXMLKeyError(e, "condition", TRIGGER_TYPES)
 
-    return Trigger((var, condition))
+    return trigger(var, condition)
 
 
 def to_partial(e: Element) -> Partial:
@@ -189,7 +197,7 @@ def to_partial(e: Element) -> Partial:
     if value is None:
         value = ""
 
-    return Partial((type, conv, value, int(s_min), int(s_max)))
+    return partial(type, conv, value, int(s_min), int(s_max))
 
 
 def to_midimsg(e: Element) -> MidiMsg:
@@ -212,7 +220,7 @@ def to_midimsg(e: Element) -> MidiMsg:
     if chan is None or data1 is None or data2 is None:
         raise ParseXMLValueError(e, "channel or data1 or data2")
 
-    return MidiMsg((type, int(chan), data1, data2))
+    return midimsg(type, int(chan), data1, data2)
 
 
 def to_midivalue(e: Element) -> MidiValue:
@@ -237,7 +245,7 @@ def to_midivalue(e: Element) -> MidiValue:
     if key is None:
         key = ""
 
-    return MidiValue((type, key, int(s_min), int(s_max)))
+    return midival(key, type, int(s_min), int(s_max))
 
 
 def to_localsrc(e: Element) -> LocalSrc:
@@ -265,7 +273,7 @@ def to_localsrc(e: Element) -> LocalSrc:
     if value is None:
         value = ""
 
-    return LocalSrc((type, conv, value, int(s_min), int(s_max)))
+    return localsrc(type, conv, value, int(s_min), int(s_max))
 
 
 def to_localdst(e: Element) -> LocalDst:
@@ -287,7 +295,7 @@ def to_localdst(e: Element) -> LocalDst:
     if var is None or id is None:
         raise ParseXMLValueError(e, "var, or id")
 
-    return LocalDst((type, var, id))
+    return localdst(type, var, id)
 
 
 def to_message(e: Element) -> Message:
@@ -306,26 +314,26 @@ def to_message(e: Element) -> Message:
     if message_type not in MESSAGE_TYPES:
         raise ParseXMLKeyError(e, "message", MESSAGE_TYPES)
 
-    if message_type == OSC:
+    if message_type == MESSAGE_TYPES.OSC:
         msgconfig = to_msgconfig(e)
         triggers = tuple(to_trigger(t) for t in e[5])
         path = tuple(to_partial(p) for p in e[6])
         arguments = tuple(to_partial(a) for a in e[7])
-        return MessageOSC((OSC, msgconfig, triggers, path, arguments))
+        return osc(msgconfig, triggers, path, arguments)
 
-    elif message_type == MIDI:
+    elif message_type == MESSAGE_TYPES.MIDI:
         msgconfig = to_msgconfig(e)
         triggers = tuple(to_trigger(t) for t in e[5])
         midimsg = to_midimsg(e[6])
         midivals = tuple(to_midivalue(v) for v in e[7])
-        return MessageMIDI((MIDI, msgconfig, triggers, midimsg, midivals))
+        return midi(msgconfig, triggers, midimsg, midivals)
 
-    elif message_type == LOCAL:
-        enabled = True if e[0].text == "1" else False
+    elif message_type == MESSAGE_TYPES.LOCAL:
+        enabled = eval_bool(e[0].text)
         triggers = tuple(to_trigger(t) for t in e[5])
         src = to_localsrc(e)
         dst = to_localdst(e)
-        return MessageLOCAL((LOCAL, enabled, triggers, src, dst))
+        return local(enabled, triggers, src, dst)
     else:
         raise ParseXMLKeyError(e, message_type, MESSAGE_TYPES)
 
@@ -346,16 +354,18 @@ def to_ctrl(node: Element) -> Control:
     type = node.attrib["type"]
     if not is_control_type(type):
         raise ParseXMLKeyError(node, "type", CONTROL_TYPES)
-    control = CONTROL_BUILDERS[type](node.attrib["ID"])
+    control = CONTROLS[type](id=uuid.UUID(node.attrib["ID"]))
 
     for branch in node:
         tag = branch.tag
         if tag == PROPERTIES:
             for property in branch:
-                control.set_prop(to_property(property))
+                p = to_property(property)
+                control.props[p[0]] = p[1]
         elif tag == VALUES:
             for value in branch:
-                control.values.append(to_value(value))
+                v = to_value(value)
+                control.values[v[0]] = v
         elif tag == MESSAGES:
             for message in branch:
                 control.messages.append(to_message(message))

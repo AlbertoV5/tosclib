@@ -1,8 +1,10 @@
 """
-Tuple factories for the types in .elements
+Factories for elements defined in core.
 """
 
-from .core import *
+from typing import Literal, overload
+from uuid import UUID, uuid4
+from .core.elements import *
 
 __all__ = [
     "property",
@@ -24,7 +26,7 @@ __all__ = [
 
 
 def property(key: str, value: PropertyValue) -> Property:
-    """Property factory: creates type-hinted tuples.
+    """Property factory: Creates type-safe tuple.
 
     Args:
         key (str): Key of the property. Like "tag", "outline", "frame", etc.
@@ -53,44 +55,130 @@ def property(key: str, value: PropertyValue) -> Property:
 
     Examples:
 
-        ("name", "Craig")
+        .. code-block:: python
+
+            name = property("name", "GeoffPeterson")
 
         .. code-block:: XML
 
             <property type="s">
                 <key>name</key>
-                <value>Craig</value>
+                <value>GeoffPeterson</value>
             </property>
 
-        ("frame",(0,0,100,100))
+        .. code-block:: python
+
+            frame = property("frame", (0,0,100,100))
 
         .. code-block:: XML
 
             <property type="r">
-                <key>frame</key>
+                <key>
+                    frame
+                </key>
                 <value>
-                <x>0</x>
-                <y>0</y>
-                <w>100</w>
-                <h>100</h>
+                    <x>0</x>
+                    <y>0</y>
+                    <w>100</w>
+                    <h>100</h>
                 </value>
             </property>
 
     Returns:
         Property: :class:`~tosclib.core.Property`
     """
-    return (key, value)
+    return Property((key, value))
+
+
+@overload
+def value(
+    key: Literal["touch"], locked: bool, locked_dc: bool, default: bool, pull: int
+) -> Value:
+    ...
+
+
+@overload
+def value(
+    key: Literal["x", "y"], locked: bool, locked_dc: bool, default: float, pull: int
+) -> Value:
+    ...
+
+
+@overload
+def value(
+    key: Literal["page"], locked: bool, locked_dc: bool, default: int, pull: int
+) -> Value:
+    ...
+
+
+@overload
+def value(
+    key: Literal["text"], locked: bool, locked_dc: bool, default: str, pull: int
+) -> Value:
+    ...
 
 
 def value(
-    key: ValueType = "touch",
+    key: ValueKey = "touch",
     locked: bool = False,
-    lockedCD: bool = False,
-    default: str | bool | float = True,
+    locked_dc: bool = False,
+    default: ValueDefault = True,
     pull: int = 0,
 ) -> Value:
-    """Value factory"""
-    return (key, locked, lockedCD, default, pull)
+    """Value Factory: Creates type-safe tuple.
+
+    Args:
+        key (ValueKey, optional): The key of the value. Default is "touch".
+        locked (bool, optional): Default is False.
+        locked_dc (bool, optional): Lock default current. Default is False.
+        default (ValueDefault, optional): This is the "value's value".
+        pull (int, optional): Int from 0 to 100. Defaults to 0.
+
+    Important:
+
+        - Just as Property, this will convert the Python types into XML strings.
+
+        - The default argument type must match the key:
+            - For "touch" use a boolean.
+            - For "page" use an int.
+            - For "x", "y" use a float.
+            - For "text" use a str.
+
+    Examples:
+
+        .. code-block:: python
+
+            x = value(key = "x", default = 0.42)
+
+        .. code-block:: XML
+
+            <value>
+                <key>x</key>
+                <locked>0</locked>
+                <lockedDefaultCurrent>0</lockedDefaultCurrent>
+                <default>0.42</default>
+                <defaultPull>0</defaultPull>
+            </value>
+
+        .. code-block:: python
+
+            text = value(key = "text", default = "Synth")
+
+        .. code-block:: XML
+
+            <value>
+                <key>text</key>
+                <locked>0</locked>
+                <lockedDefaultCurrent>0</lockedDefaultCurrent>
+                <default>Synth</default>
+                <defaultPull>0</defaultPull>
+            </value>
+
+
+    Returns:
+        Value: :class:`~tosclib.core.Value`
+    """
+    return Value((key, locked, locked_dc, default, pull))
 
 
 def msgconfig(
@@ -100,12 +188,23 @@ def msgconfig(
     feedback: bool = False,
     connection: str = "11111",
 ) -> MsgConfig:
-    """MessageConfig factory"""
+    """Message config factory.
+
+    Args:
+        enabled (bool, optional): _description_. Defaults to True.
+        send (bool, optional): _description_. Defaults to True.
+        receive (bool, optional): _description_. Defaults to True.
+        feedback (bool, optional): _description_. Defaults to False.
+        connection (str, optional): _description_. Defaults to "11111".
+
+    Returns:
+        MsgConfig: _description_
+    """
     return MsgConfig((enabled, send, receive, feedback, connection))
 
 
 def trigger(
-    key: ValueType = "touch",
+    key: ValueKey = "touch",
     condition: TriggerType = "ANY",
 ) -> Trigger:
     """Trigger factory"""
@@ -165,41 +264,51 @@ def midival(
 
 
 def localsrc(
-    key: str = "x",
-    typ: PartialType = "VALUE",
+    type: PartialType = "VALUE",
     conversion: ConversionType = "FLOAT",
-    minRange: int = 0,
-    maxRange: int = 1,
+    value: str = "x",
+    scaleMin: int = 0,
+    scaleMax: int = 1,
 ) -> LocalSrc:
     """Local Source factory"""
-    return LocalSrc((typ, conversion, key, minRange, maxRange))
+    return LocalSrc((type, conversion, value, scaleMin, scaleMax))
 
 
 def localdst(
-    key: str = "x",
-    id: str = " ",
-    typ: PartialType = "VALUE",
+    dstType: PartialType = "VALUE",
+    dstVar: str = "x",
+    dstID: str = " ",
 ) -> LocalDst:
     """Local Destination factory"""
-    return LocalDst((typ, key, id))
+    return LocalDst((dstType, dstVar, dstID))
 
 
 def osc(
     config: MsgConfig = None,
-    triggs: tuple[Trigger, ...] = None,
+    triggers: tuple[Trigger, ...] = None,
     addrs: tuple[Partial, ...] = None,
     args: tuple[Partial, ...] = None,
 ) -> MessageOSC:
-    """OSC message factory"""
+    """OSC Message Factory: Creates type-safe new-type tuple.
+
+    Args:
+        config (MsgConfig, optional): Type-safe tuple. Defaults to None.
+        triggers (tuple[Trigger, ...], optional): Tuple of type-safe tuples. Defaults to None.
+        addrs (tuple[Partial, ...], optional): Tuple of type-safe tuples. Defaults to None.
+        args (tuple[Partial, ...], optional): Tuple of type-safe tuples. Defaults to None.
+
+    Returns:
+        MessageOSC: _description_
+    """
     if config is None:
         config = msgconfig()
-    if triggs is None:
-        triggs = triggers()
+    if triggers is None:
+        triggers = (trigger(),)
     if addrs is None:
         addrs = address()
     if args is None:
         args = arguments()
-    return MessageOSC(("osc", config, triggs, addrs, args))
+    return MessageOSC(("osc", config, triggers, addrs, args))
 
 
 def midi(

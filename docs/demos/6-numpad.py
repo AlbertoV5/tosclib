@@ -83,7 +83,7 @@ def layoutBase(children: list[tosc.Control]):
 @layout.row
 def layoutValues(controls: list[tosc.Control]):
 
-    controls[0].set_prop(("name", "value"))
+    controls[0].set_prop(tosc.property("name", "value"))
     controls[0].children.append(
         tosc.Button(
             name="valueButton",
@@ -160,10 +160,10 @@ def layoutNumbers(controls: list[tosc.Control]):
         color2=(0.5, 0.5, 0.5, 1.0),
     )
     for n, c in zip(names, controls):
-        label.values.append(("text", False, False, str(n), 0))
-        label.set_prop(("name", str(n)))
-        button.set_prop(("name", str(n)))
-        button.set_prop(("color", c.get_color()))
+        label.values.append(tosc.value("text", False, False, str(n), 0))
+        label.set_prop(tosc.property("name", str(n)))
+        button.set_prop(tosc.property("name", str(n)))
+        button.set_prop(tosc.property("color", c.get_color()))
         c.children.append(deepcopy(button))
         c.children.append(deepcopy(label))
 

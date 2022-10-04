@@ -2,6 +2,7 @@ import re
 import zlib
 from pathlib import Path
 from .core import *
+from .factory import property, value
 from tosclib.decode import to_property
 from tosclib.encode import (
     SENTINEL,
@@ -10,14 +11,6 @@ from tosclib.encode import (
     xml_property,
     property_matcher,
     xml_value,
-)
-from xml.etree.ElementTree import (
-    Element,
-    SubElement,
-    fromstring,
-    indent,
-    tostring,
-    XMLPullParser,
 )
 
 # __all__ = [
@@ -90,7 +83,7 @@ class Node:
         if (p := self.properties.find(f".//property/[key='{key}']")) is not None:
             if (prop := to_property(p)) is not None:
                 return prop
-        return ("", "")
+        return property("", "")
 
     def add_prop(self, *props: Property) -> "Node":
         """Get N number of Property, convert them to xml and append them.
@@ -169,7 +162,7 @@ def createTemplate(frame: tuple = None) -> Element:
     root = Element("lexml", attrib={"version": "3"})
     group = Group()
     if frame is not None:
-        group.set_prop(("frame", frame))
+        group.set_frame(frame)
     root.append(xml_control(group))
     return root
 

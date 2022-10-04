@@ -18,10 +18,12 @@ class Copier(unittest.TestCase):
     proplist2: list[tosc.Property] = []
 
     def create_different_groups(self):
-        self.template1 = tosc.Group(name="template1", frame=(0, 0, 800, 800))
-        self.template2 = tosc.Group(name="template2")
-        self.group1 = tosc.Group(name="group1", frame=(0, 0, 400, 400))
-        self.group2 = tosc.Group(name="group2")
+        self.template1 = tosc.Group(
+            props={"name": "template1", "frame": (0, 0, 800, 800)}
+        )
+        self.template2 = tosc.Group(props={"name": "template2"})
+        self.group1 = tosc.Group(props={"name": "group1", "frame": (0, 0, 400, 400)})
+        self.group2 = tosc.Group(props={"name": "group2"})
         self.template1.children.append(self.group1)
         self.template2.children.append(self.group2)
 
@@ -30,19 +32,19 @@ class Copier(unittest.TestCase):
             if "__" not in func[0]:
                 p = func[1]()
                 self.proplist1.append(p)
-                assert self.group1.set_prop(p)
+                assert self.group1.set(p[0], p[1])
 
     def copy_properties_from_group1_to_group2(self):
         assert self.group1 is not self.group2
-        assert tosc.copy_properties(self.group1, self.group2)
+        self.group2.props = self.group1.props
+        assert self.group2
         assert self.proplist1.sort() == self.proplist2.sort()
 
     def assert_properties_of_group2(self):
-        for p in vars(self.group2):
-            if p not in tosc.NOT_PROPERTIES:
-                prop = getattr(self.group2, p)
-                self.proplist2.append(p)
-                assert self.group2.get_prop(p) == prop
+        for p in self.group2.props:
+            prop = self.group2.props[p]
+            self.proplist2.append(p)
+            assert self.group2.get(p) == prop
 
     def create_values_for_group1(self):
         val_keys = ("touch", "x", "y", "text")

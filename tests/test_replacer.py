@@ -29,15 +29,15 @@ class Replacer(unittest.TestCase):
         self.assertIsNotNone(self.button)
 
     def get_ctrl_attributes(self):
-        self.frame = self.button.get_prop("frame")
+        self.frame = self.button.get("frame")
         self.msgs = self.button.messages
-        self.assertGreater(len(self.frame[1]), 0)
+        self.assertGreater(len(self.frame), 0)
         self.assertGreater(len(self.msgs), 0)
 
     def modify_ctrl_attributes(self):
-        self.button.set_prop(("frame", (50, 50, 450, 300)))
+        self.button.set_frame((50, 50, 450, 300))
         self.msgs.append(tosc.midi())
-        self.assertEqual(self.button.get_prop("frame")[1][3], 300)
+        self.assertEqual(self.button.get_frame()[3], 300)
         self.assertEqual(self.msgs[-1][0], "midi")
 
     def convert_ctrl_attributes_to_xml(self):
@@ -51,25 +51,19 @@ class Replacer(unittest.TestCase):
         self.assertIsNotNone(self.button2)
 
     def compare_buttons_as_ctrls(self):
-        for attr1, attr2 in zip(vars(self.button), vars(self.button2)):
-            b1, b2 = getattr(self.button, attr1), getattr(self.button2, attr2)
-            if attr1 in tosc.NOT_PROPERTIES:
-                if attr1 == "messages":
-                    self.assertNotEqual(b1, b2)
-                else:
-                    self.assertEqual(b1, b2)
+        for attr1, attr2 in zip(self.button.props, self.button2.props):
+            b1, b2 = self.button.props[attr1], self.button2.props[attr2]
+            if attr1 == "frame":
+                self.assertNotEqual(b1, b2)
             else:
-                if attr1 == "frame":
-                    self.assertNotEqual(b1, b2)
-                else:
-                    self.assertEqual(b1, b2)
+                self.assertEqual(b1, b2)
 
     def add_custom_properties_to_button(self):
         self.assertIsInstance(
-            self.button.set_prop(("custom1", "12345"))
-            .set_prop(("verified", True))
-            .set_prop(("color2", (0.1, 0.5, 1.0, 1.0)))
-            .set_prop(("frame2", (0, 1, 500, 500))),
+            self.button.set("custom1", "12345")
+            .set("verified", True)
+            .set("color2", (0.1, 0.5, 1.0, 1.0))
+            .set("frame2", (0, 1, 500, 500)),
             tosc.Button,
         )
 

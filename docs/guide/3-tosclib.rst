@@ -42,13 +42,3 @@ Classes and Functions
 
 Here are more details on the functions and methods we used:
 
-.. autofunction:: tosclib.etosc.load
-
-.. autoclass:: tosclib.etosc.Node
-
-.. autoclass:: tosclib.elements.Property
-   :noindex:
-
-.. autofunction:: tosclib.etosc.Node.add_prop
-
-.. autofunction:: tosclib.etosc.write

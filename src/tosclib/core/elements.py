@@ -7,54 +7,8 @@ The result is no regular classes for these data structures,
 this means that most of the logical work relies on the factory
 and converter methods in other modules. 
 
-The alternatives were dataclasses, slots or named tuples but
-I decided to bet on the newest python >=3.10 typing features 
-as a way to future-enable this library and have fun.
-
-A TouchOSC Control is divided into 4 parts:
-
-Control:
-
-    1. Properties: list[Property,...]
-    2. Values: list[Value,...]
-    3. Messages: list[Message,...]
-    4. Children: list[Control,...]
-
-From those parts the following are Type Aliases for tuples:
-
-    Property, Value
-
-Then the Message type is a Type Alias for any of these New Types:
-
-    MessageOSC, MessageMIDI, MessageLOCAL
-
-MessageOSC is made of these New Types:
-
-    MsgConfig: Tuple of various base types, bool, str etc.
-    Triggers: Tuple of Trigger.
-        Trigger: Tuple of Literal, Literal.
-    Address: Tuple of Partials.
-        Partial: Tuple of Literal, Literal, str, int, int
-    Arguments: Tuple of Partials.
-
-MessageMIDI is made of these New Types:
-
-    MsgConfig.
-    Triggers.
-    MidiMsg: New Type of tuple of Literal, Literal, etc.
-    MidiValues: Tuple of MidiValue.
-        MidiValue: Tuple of Literal, str, etc.
-    
-MessageLOCAL is made of:
-
-    Enabled: bool.
-    Triggers.
-    LocalSrc: Tuple of Literals, str, etc.
-    LocalDst: Tuple of Literals, str, etc.
-
 """
-from typing import Literal, TypeAlias, NewType, Protocol
-import xml.etree.ElementTree as ET
+from typing import ClassVar, Literal, TypeAlias, NewType, Protocol
 
 __all__ = [
     # Property
@@ -62,7 +16,7 @@ __all__ = [
     "PropertyValue",
     "Property",
     # Value
-    "ValueType",
+    "ValueKey",
     "ValueDefault",
     "Value",
     # Messages
@@ -81,15 +35,12 @@ __all__ = [
     "MessageMIDI",
     "MessageLOCAL",
     "Message",
+    "MessageType",
     # Control
     "ControlType",
     "Control",
-    # External
-    "Element",
 ]
 
-Element = ET.Element
-"""Alias for XML Element regarless of library used."""
 
 ControlType: TypeAlias = Literal[
     "BOX",
@@ -107,71 +58,30 @@ ControlType: TypeAlias = Literal[
     "TEXT",
     "XY",
 ]
-"""Valid literals for <node type:ControlType>"""
 PropertyType: TypeAlias = Literal["b", "c", "r", "f", "i", "s"]
-"""Valid literals for <property type:PropertyType> b: boolean, c: color, r: frame, f: float, i: int, s: string"""
+"""PropertyType"""
 PropertyValue: TypeAlias = (
     str | int | float | bool | tuple[int, ...] | tuple[float, ...]
 )
-"""Possible python types for a Property's value."""
-Property: TypeAlias = tuple[str, PropertyValue]
-"""
-Property:
-    [0] - Property Key(str): Name/key of the property.
-    [1] - PropertyValue: Any str, int, float, bool, PropertyFrame or PropertyColor.
-    The Python type/TypeAlias will be converted to a literal for XML.
-    Type str will be "s", bool will be "b", etc.
-    PropertyFrame converts to:
-        {"x":[1][0], "y":[1][1], "w":[1][2], "h":[1][3]}
-
-Example:
-    ("name", "Craig")
-
-    <property type="s">
-        <key>name</key>
-        <value>Craig</value>
-    </property>
-
-    ("frame",(0,0,100,100))
-
-    <property type="r">
-        <key>frame</key>
-        <value>
-            <x>0</x>
-            <y>0</y>
-            <w>100</w>
-            <h>100</h>
-        </value>
-    </property>
-
-"""
-ValueType: TypeAlias = Literal["x", "y", "touch", "text", "page"]
-ValueDefault: TypeAlias = float | int | bool | str
-Value: TypeAlias = tuple[ValueType, bool, bool, float | int | bool | str, int]
+"""PropertyValue"""
+# Property: TypeAlias = tuple[str, PropertyValue]
+Property = NewType("Property", tuple[str, PropertyValue])
 """ 
-Value:
-    [0] - ValueKey: Any of the allowed literals.
-    [1] - locked: Boolean.
-    [2] - lockedDefaultCurrent: Boolean.
-    [3] - ValueDefault: str, bool or float. "x" and "y" use floats, "touch" is bool, "text" is str.
-    [4] - defaultPull: Integer between 0 and 100.
+    - key: str
+    - value (str | int | float | bool | tuple[int,...] | tuple[float,...])
 """
-
-"""
-LOWER MESSAGE TYPES:
-"""
+ValueKey: TypeAlias = Literal["x", "y", "page", "touch", "text"]
+"""ValueKey"""
+ValueDefault: TypeAlias = float | int | bool | str
+"""ValueDefault"""
+# Value: TypeAlias = tuple[ValueKey, bool, bool, float | int | bool | str, int]
+Value = NewType("Value", tuple[ValueKey, bool, bool, float | int | bool | str, int])
+"""Value"""
 PartialType: TypeAlias = Literal["CONSTANT", "INDEX", "VALUE", "PROPERTY"]
+"""PartialType"""
 ConversionType: TypeAlias = Literal["BOOLEAN", "INTEGER", "FLOAT", "STRING"]
-Partial = NewType(
-    "Partial",
-    tuple[
-        PartialType,
-        ConversionType,
-        str,
-        int,
-        int,
-    ],
-)
+"""ConversionType"""
+Partial = NewType("Partial", tuple[PartialType, ConversionType, str, int, int])
 """ Partial:
 This is the unit with which the OSC message is constructed.
 So in a message like track/1/fx/8, the partials are: "track", "1", "fx", "8".
@@ -188,7 +98,7 @@ PROPERTY: Any str.
 [4] - scaleMax: Range of Value.
 """
 TriggerType: TypeAlias = Literal["ANY", "RISE", "FALL"]
-Trigger = NewType("Trigger", tuple[ValueType, TriggerType])
+Trigger = NewType("Trigger", tuple[ValueKey, TriggerType])
 """
 Trigger:
 
@@ -273,12 +183,6 @@ LocalDst:
 """ 
 HIGHER MESSAGE TYPES
 """
-MessageMIDI = NewType(
-    "MessageMIDI",
-    tuple[
-        Literal["midi"], MsgConfig, tuple[Trigger, ...], MidiMsg, tuple[MidiValue, ...]
-    ],
-)
 MessageOSC = NewType(
     "MessageOSC",
     tuple[
@@ -290,37 +194,42 @@ MessageOSC = NewType(
     ],
 )
 """
-MessageOSC:
-    [0] - Tag: osc
-    [1] - MsgConfig: Tuple of Enabled, Send, Receive, Feedback, Connections.
-    [2] - Triggers: Tuple of Trigger.
-    [3] - Address: Construct a message with tuple of Partial.
-    [4] - Arguments: Construct arguments with tuple of Partial.
+Args:
+    Tag ("osc")
+    MsgConfig (MsgConfig)
+    Triggers (tuple[Trigger, ...])
+    Path (tuple[Partial, ...])
+    Arguments (tuple[Partial, ...])
 """
+MessageMIDI = NewType(
+    "MessageMIDI",
+    tuple[
+        Literal["midi"], MsgConfig, tuple[Trigger, ...], MidiMsg, tuple[MidiValue, ...]
+    ],
+)
 """
-MessageMIDI:
+Args:
 
-    [0] - Tag: midi.
-    [1] - MsgConfig: Tuple of Enabled, Send, Receive, Feedback, Connections.
-    [2] - Triggers (tuple). 
-    [3] - Message: See MidiMessage.
-    [4] - Value (tuple): See :type:`tosclib.elements.MidiValue`
+    Tag ("midi")
+    MsgConfig (MsgConfig)
+    Triggers (tuple[Trigger,...])
+    Message (MidiMsg)
+    Value (tuple[MidiValue,...])
 """
 MessageLOCAL = NewType(
     "MessageLOCAL",
     tuple[Literal["local"], bool, tuple[Trigger, ...], LocalSrc, LocalDst],
 )
 """
-MessageLOCAL:
-
-    [0] - Tag: local.
-    [1] - Enabled: Bool.
-    [2] - Triggers: Tuple of Trigger. 
-    [3] - Source: Tuple of value, valid literal.
-    [4] - Target: Tuple of value, id.
+Args:
+    Tag ("local")
+    Enabled (bool)
+    Triggers (tuple[Trigger, ...])
+    LocalSrc (LocalSrc)
+    LocalDst (LocalDst)
 """
+MessageType: TypeAlias = Literal["osc", "midi", "local"]
 Message: TypeAlias = MessageOSC | MessageMIDI | MessageLOCAL
-"""Any of the possible message types."""
 
 """
 CONTROL PROTOCOL
@@ -330,18 +239,15 @@ CONTROL PROTOCOL
 class Control(Protocol):
     """Protocol for Control classes.
 
+    This represents a Touch OSC Control. It's not an XML Element.
+
     Args:
-        type (ControlType): Required field. ControlType Literal.
-        id (str, optional): Random uuid4. Defaults to None.
-        values (list[Value], optional): List of Value objects. Defaults to None.
-        messages (list[Message], optional): List of Message objects. Defaults to None.
-        children (list[Control], optional): List of Node objects. Defaults to None.
-        args (Property): Pass any Property to create extra Property attributes.
-        kwargs (PropertyValue): Pass any keywords with PropertyValues to create extra Property attributes.
-
-    Note:
-
-        This represents a Touch OSC Control but it's not an XML Element.
+        type (ControlType): Required Control class identifier, BOX, BUTTON, etc.
+        id (str, optional): Custom id, defaults to random uuid4.
+        props (dict[str, PropertyValue]): Dict of Property stored as {str, PropertyValue}.
+        values (list[Value], optional): List of Value type tuples.
+        messages (list[Message], optional): List of Message type tuples.
+        children (list[Control], optional): List of Control objects.
 
     Example:
 
@@ -366,59 +272,33 @@ class Control(Protocol):
 
 
     Returns:
-        Control: Protocol.
+        Control: Control.
     """
 
-    type: ControlType
     id: str
-    values: list[Value]
+    type: ClassVar[ControlType]
+    props: dict[str, PropertyValue]
+    values: dict[ValueKey, Value]
     messages: list[Message]
     children: list["Control"]
 
-    def __init__(self, id: str | None, *args: Property, **kwargs: PropertyValue):
+    def __init__(self, id=None, props=None, values=None, messages=None, children=None):
         ...
 
-    def get_prop(self, key: str) -> Property:
-        """Get a Property (key, value) from its key."""
+    def get(self, key: str) -> PropertyValue:
+        ...
+
+    def set(self, key: str, value: PropertyValue) -> "Control":
         ...
 
     def get_frame(self) -> tuple[int, ...]:
-        """Get a tuple of integers, xywh."""
         ...
 
     def get_color(self) -> tuple[float, ...]:
-        """Get a tuple of floats, rgba."""
-        ...
-
-    def set_prop(self, prop: Property) -> "Control":
-        """
-
-        Args:
-            prop (Property):
-
-        Returns:
-            Control: chain.
-        """
         ...
 
     def set_frame(self, frame: tuple[int, ...]) -> "Control":
-        """
-
-        Args:
-            frame (tuple[int, ...]):
-
-        Returns:
-            Control: chain.
-        """
         ...
 
     def set_color(self, color: tuple[float, ...]) -> "Control":
-        """
-
-        Args:
-            color (tuple[float, ...]):
-
-        Returns:
-            Control: chain.
-        """
         ...

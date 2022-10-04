@@ -254,45 +254,25 @@
 As a result, the original docstrings reference TypeAlias, NewType, Literals docstrings. So I removed them.
 For more information on these types, go to the source or the <a class="reference external" href="./api.html">API</a></p>
 </div>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>Check out <a class="reference external" href="http://mypy-lang.org/">mypy</a>.</p>
-</div>
-<span class="target" id="module-tosclib.core"></span><p class="rubric">Core Tuples (Not Classes)</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="tosclib.core.Property">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">Property</span></span><a class="headerlink" href="#tosclib.core.Property" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="tosclib.core.Value">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">Value</span></span><a class="headerlink" href="#tosclib.core.Value" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="tosclib.core.Message">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">Message</span></span><a class="headerlink" href="#tosclib.core.Message" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-<p class="rubric">Complex Type (Class)</p>
+<span class="target" id="module-tosclib.core"></span><p>Base elements of tosclib.</p>
+<p class="rubric">Highest Level (Class)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tosclib.core.Control">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">Control</span></span><a class="reference internal" href="../_modules/tosclib/core/elements.html#Control"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.core.Control" title="Permalink to this definition">#</a></dt>
 <dd><p>Protocol for Control classes.</p>
+<p>This represents a Touch OSC Control. It’s not an XML Element.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>type</strong> (<a class="reference internal" href="#tosclib.core.ControlType" title="tosclib.core.ControlType"><em>ControlType</em></a>) – Required field. ControlType Literal.</p></li>
-<li><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Random uuid4. Defaults to None.</p></li>
-<li><p><strong>values</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference internal" href="#tosclib.core.Value" title="tosclib.core.Value"><em>Value</em></a><em>]</em><em>, </em><em>optional</em>) – List of Value objects. Defaults to None.</p></li>
-<li><p><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference internal" href="#tosclib.core.Message" title="tosclib.core.Message"><em>Message</em></a><em>]</em><em>, </em><em>optional</em>) – List of Message objects. Defaults to None.</p></li>
-<li><p><strong>children</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference internal" href="#tosclib.core.Control" title="tosclib.core.Control"><em>Control</em></a><em>]</em><em>, </em><em>optional</em>) – List of Node objects. Defaults to None.</p></li>
-<li><p><strong>args</strong> (<a class="reference internal" href="#tosclib.core.Property" title="tosclib.core.Property"><em>Property</em></a>) – Pass any Property to create extra Property attributes.</p></li>
-<li><p><strong>kwargs</strong> (<a class="reference internal" href="#tosclib.core.PropertyValue" title="tosclib.core.PropertyValue"><em>PropertyValue</em></a>) – Pass any keywords with PropertyValues to create extra Property attributes.</p></li>
+<li><p><strong>type</strong> (<a class="reference internal" href="#tosclib.core.ControlType" title="tosclib.core.ControlType"><em>ControlType</em></a>) – Required Control class identifier, BOX, BUTTON, etc.</p></li>
+<li><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Custom id, defaults to random uuid4.</p></li>
+<li><p><strong>props</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference internal" href="#tosclib.core.PropertyValue" title="tosclib.core.PropertyValue"><em>PropertyValue</em></a><em>]</em>) – Dict of Property stored as {str, PropertyValue}.</p></li>
+<li><p><strong>values</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference internal" href="#tosclib.core.Value" title="tosclib.core.Value"><em>Value</em></a><em>]</em><em>, </em><em>optional</em>) – List of Value type tuples.</p></li>
+<li><p><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><em>Message</em><em>]</em><em>, </em><em>optional</em>) – List of Message type tuples.</p></li>
+<li><p><strong>children</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference internal" href="#tosclib.core.Control" title="tosclib.core.Control"><em>Control</em></a><em>]</em><em>, </em><em>optional</em>) – List of Control objects.</p></li>
 </ul>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This represents a Touch OSC Control but it’s not an XML Element.</p>
-</div>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Button</span><span class="p">:</span>
     <span class="nb">type</span><span class="p">:</span> <span class="n">ControlType</span> <span class="o">=</span> <span class="s2">"BOX"</span>
@@ -314,27 +294,34 @@ For more information on these types, go to the source or the <a class="reference
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Protocol.</p>
+<dd class="field-odd"><p>Control.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="#tosclib.core.Control" title="tosclib.core.Control">Control</a></p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="tosclib.core.Control.get_prop">
-<span class="sig-name descname"><span class="pre">get_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/core/elements.html#Control.get_prop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.core.Control.get_prop" title="Permalink to this definition">#</a></dt>
-<dd><p>Get a Property (key, value) from its key.</p>
-<dl class="field-list simple">
+<dt class="sig sig-object py" id="tosclib.core.Control.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/core/elements.html#Control.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.core.Control.get" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, …], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, …]]]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, …], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, …]]</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="tosclib.core.Control.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/core/elements.html#Control.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.core.Control.set" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#tosclib.core.Control" title="tosclib.core.elements.Control"><code class="xref py py-class docutils literal notranslate"><span class="pre">Control</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="tosclib.core.Control.get_frame">
 <span class="sig-name descname"><span class="pre">get_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/core/elements.html#Control.get_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.core.Control.get_frame" title="Permalink to this definition">#</a></dt>
-<dd><p>Get a tuple of integers, xywh.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, …]</p>
 </dd>
@@ -343,25 +330,9 @@ For more information on these types, go to the source or the <a class="reference
 <dl class="py method">
 <dt class="sig sig-object py" id="tosclib.core.Control.get_color">
 <span class="sig-name descname"><span class="pre">get_color</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/core/elements.html#Control.get_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.core.Control.get_color" title="Permalink to this definition">#</a></dt>
-<dd><p>Get a tuple of floats, rgba.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, …]</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="tosclib.core.Control.set_prop">
-<span class="sig-name descname"><span class="pre">set_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/core/elements.html#Control.set_prop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.core.Control.set_prop" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>prop</strong> (<a class="reference internal" href="#tosclib.core.Property" title="tosclib.core.Property"><em>Property</em></a>) – </p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>chain.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#tosclib.core.Control" title="tosclib.core.Control">Control</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -369,14 +340,8 @@ For more information on these types, go to the source or the <a class="reference
 <dt class="sig sig-object py" id="tosclib.core.Control.set_frame">
 <span class="sig-name descname"><span class="pre">set_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/core/elements.html#Control.set_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.core.Control.set_frame" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>frame</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>...</em><em>]</em>) – </p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>chain.</p>
-</dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#tosclib.core.Control" title="tosclib.core.Control">Control</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#tosclib.core.Control" title="tosclib.core.elements.Control"><code class="xref py py-class docutils literal notranslate"><span class="pre">Control</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -384,39 +349,41 @@ For more information on these types, go to the source or the <a class="reference
 <dt class="sig sig-object py" id="tosclib.core.Control.set_color">
 <span class="sig-name descname"><span class="pre">set_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/core/elements.html#Control.set_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.core.Control.set_color" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>...</em><em>]</em>) – </p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>chain.</p>
-</dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#tosclib.core.Control" title="tosclib.core.Control">Control</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#tosclib.core.Control" title="tosclib.core.elements.Control"><code class="xref py py-class docutils literal notranslate"><span class="pre">Control</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="tosclib.core.Control.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.core.Control.__init__" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="tosclib.core.Control.__new__">
-<span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tosclib.core.Control.__new__" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
 </dd></dl>
-<p class="rubric">Constant Types (Not Classes)</p>
-<dl>
-<dt>Property Literals</dt><dd><dl class="py class">
+<p class="rubric">Attributes of Control (Not Classes)</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tosclib.core.Property">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">Property</span></span><a class="headerlink" href="#tosclib.core.Property" title="Permalink to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>key: str</p></li>
+<li><p>value (str | int | float | bool | tuple[int,…] | tuple[float,…])</p></li>
+</ul>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="tosclib.core.Value">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">Value</span></span><a class="headerlink" href="#tosclib.core.Value" title="Permalink to this definition">#</a></dt>
+<dd><p>Value</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tosclib.core.Message">
+<span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">Message</span></span><a class="headerlink" href="#tosclib.core.Message" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference internal" href="#tosclib.core.MessageOSC" title="tosclib.core.elements.MessageOSC"><code class="xref py py-class docutils literal notranslate"><span class="pre">tosclib.core.elements.MessageOSC</span></code></a>, <a class="reference internal" href="#tosclib.core.MessageMIDI" title="tosclib.core.elements.MessageMIDI"><code class="xref py py-class docutils literal notranslate"><span class="pre">tosclib.core.elements.MessageMIDI</span></code></a>, <a class="reference internal" href="#tosclib.core.MessageLOCAL" title="tosclib.core.elements.MessageLOCAL"><code class="xref py py-class docutils literal notranslate"><span class="pre">tosclib.core.elements.MessageLOCAL</span></code></a>]</p>
+</dd></dl>
+<p class="rubric">Constant Literal Types (Not Classes)</p>
+<dl class="py class">
 <dt class="sig sig-object py" id="tosclib.core.PropertyType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">PropertyType</span></span><a class="headerlink" href="#tosclib.core.PropertyType" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
-</dd>
-<dt>Value Literals</dt><dd><dl class="py class">
-<dt class="sig sig-object py" id="tosclib.core.ValueType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">ValueType</span></span><a class="headerlink" href="#tosclib.core.ValueType" title="Permalink to this definition">#</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="tosclib.core.ValueKey">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">ValueKey</span></span><a class="headerlink" href="#tosclib.core.ValueKey" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
-</dd>
-<dt>Message Literals</dt><dd><dl class="py class">
+<dl class="py class">
 <dt class="sig sig-object py" id="tosclib.core.TriggerType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">TriggerType</span></span><a class="headerlink" href="#tosclib.core.TriggerType" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
@@ -432,30 +399,30 @@ For more information on these types, go to the source or the <a class="reference
 <dt class="sig sig-object py" id="tosclib.core.MidiMsgType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">MidiMsgType</span></span><a class="headerlink" href="#tosclib.core.MidiMsgType" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
-</dd>
-<dt>Control Literals</dt><dd><dl class="py class">
+<dl class="py class">
 <dt class="sig sig-object py" id="tosclib.core.ControlType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">ControlType</span></span><a class="headerlink" href="#tosclib.core.ControlType" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <p class="rubric">Intermediary Types (Not Classes)</p>
-</dd>
-<dt>Property Related</dt><dd><dl class="py class">
+<dl class="py class">
 <dt class="sig sig-object py" id="tosclib.core.PropertyValue">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">PropertyValue</span></span><a class="headerlink" href="#tosclib.core.PropertyValue" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
-</dd>
-<dt>Value Related</dt><dd><dl class="py class">
-<dt class="sig sig-object py" id="tosclib.core.ValueDefaultType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">ValueDefaultType</span></span><a class="headerlink" href="#tosclib.core.ValueDefaultType" title="Permalink to this definition">#</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="tosclib.core.ValueDefault">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">ValueDefault</span></span><a class="headerlink" href="#tosclib.core.ValueDefault" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
-</dd>
-<dt>Message Related</dt><dd><dl class="py class">
+<dl class="py class">
 <dt class="sig sig-object py" id="tosclib.core.Partial">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">Partial</span></span><a class="headerlink" href="#tosclib.core.Partial" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="tosclib.core.Trigger">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">Trigger</span></span><a class="headerlink" href="#tosclib.core.Trigger" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="tosclib.core.MidiMsg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">MidiMsg</span></span><a class="headerlink" href="#tosclib.core.MidiMsg" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="tosclib.core.MidiValue">
@@ -473,21 +440,52 @@ For more information on these types, go to the source or the <a class="reference
 <dt class="sig sig-object py" id="tosclib.core.LocalDst">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">LocalDst</span></span><a class="headerlink" href="#tosclib.core.LocalDst" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
-<p class="rubric">Message Types (Not Classes)</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="tosclib.core.MessageMIDI">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">MessageMIDI</span></span><a class="headerlink" href="#tosclib.core.MessageMIDI" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<p class="rubric">Message Types</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tosclib.core.MessageOSC">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">MessageOSC</span></span><a class="headerlink" href="#tosclib.core.MessageOSC" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Tag</strong> (<em>"osc"</em>) – </p></li>
+<li><p><strong>MsgConfig</strong> (<a class="reference internal" href="#tosclib.core.MsgConfig" title="tosclib.core.MsgConfig"><em>MsgConfig</em></a>) – </p></li>
+<li><p><strong>Triggers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference internal" href="#tosclib.core.Trigger" title="tosclib.core.Trigger"><em>Trigger</em></a><em>, </em><em>...</em><em>]</em>) – </p></li>
+<li><p><strong>Path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference internal" href="#tosclib.core.Partial" title="tosclib.core.Partial"><em>Partial</em></a><em>, </em><em>...</em><em>]</em>) – </p></li>
+<li><p><strong>Arguments</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference internal" href="#tosclib.core.Partial" title="tosclib.core.Partial"><em>Partial</em></a><em>, </em><em>...</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="tosclib.core.MessageMIDI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">MessageMIDI</span></span><a class="headerlink" href="#tosclib.core.MessageMIDI" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Tag</strong> (<em>"midi"</em>) – </p></li>
+<li><p><strong>MsgConfig</strong> (<a class="reference internal" href="#tosclib.core.MsgConfig" title="tosclib.core.MsgConfig"><em>MsgConfig</em></a>) – </p></li>
+<li><p><strong>Triggers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference internal" href="#tosclib.core.Trigger" title="tosclib.core.Trigger"><em>Trigger</em></a><em>,</em><em>...</em><em>]</em>) – </p></li>
+<li><p><strong>Message</strong> (<a class="reference internal" href="#tosclib.core.MidiMsg" title="tosclib.core.MidiMsg"><em>MidiMsg</em></a>) – </p></li>
+<li><p><strong>Value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference internal" href="#tosclib.core.MidiValue" title="tosclib.core.MidiValue"><em>MidiValue</em></a><em>,</em><em>...</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="tosclib.core.MessageLOCAL">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tosclib.core.</span></span><span class="sig-name descname"><span class="pre">MessageLOCAL</span></span><a class="headerlink" href="#tosclib.core.MessageLOCAL" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Tag</strong> (<em>"local"</em>) – </p></li>
+<li><p><strong>Enabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – </p></li>
+<li><p><strong>Triggers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference internal" href="#tosclib.core.Trigger" title="tosclib.core.Trigger"><em>Trigger</em></a><em>, </em><em>...</em><em>]</em>) – </p></li>
+<li><p><strong>LocalSrc</strong> (<a class="reference internal" href="#tosclib.core.LocalSrc" title="tosclib.core.LocalSrc"><em>LocalSrc</em></a>) – </p></li>
+<li><p><strong>LocalDst</strong> (<a class="reference internal" href="#tosclib.core.LocalDst" title="tosclib.core.LocalDst"><em>LocalDst</em></a>) – </p></li>
+</ul>
 </dd>
 </dl>
+</dd></dl>
 </section>
 
         </article>

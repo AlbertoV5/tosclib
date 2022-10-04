@@ -1,26 +1,20 @@
 """
 Hexler's Controls
 """
-from typing import Type, TypeAlias
-from .elements import *
-from .constants import (
-    NOT_PROPERTIES,
-    BOX,
-    BUTTON,
-    ENCODER,
-    FADER,
-    GRID,
-    GROUP,
-    LABEL,
-    PAGE,
-    PAGER,
-    RADAR,
-    RADIAL,
-    RADIO,
-    TEXT,
-    XY,
+from dataclasses import dataclass, field
+from typing import ClassVar, Type
+from .guards import is_color, is_frame
+from .elements import (
+    ControlType,
+    Value,
+    Message,
+    Property,
+    Control,
+    PropertyValue,
+    ValueKey,
 )
-import uuid
+from .constants import CONTROL_TYPES
+from uuid import UUID, uuid4
 
 
 __all__ = [
@@ -38,275 +32,138 @@ __all__ = [
     "Radio",
     "Text",
     "Xy",
-    "CONTROL_BUILDERS",
+    "CONTROLS",
 ]
 
 
+@dataclass
 class ControlBuilder:
-    def __init__(
-        self,
-        type: ControlType,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        children: list[Control] = None,
-        *args: Property,
-        **kwargs: PropertyValue,
-    ):
-        """Control Factory.
+    type: ClassVar[ControlType]
+    id: str = field(default_factory=lambda: str(uuid4()))
+    props: dict[str, PropertyValue] = field(default_factory=lambda: {})
+    values: dict[ValueKey, Value] = field(default_factory=lambda: {})
+    messages: list[Message] = field(default_factory=lambda: [])
+    children: list[Control] = field(default_factory=lambda: [])
 
-        Not an XML Element. An Object with lists of type-hinted tuples.
-        Pass either Property *args or PropertyValue **kwargs to create Property attributes.
+    def set(self, key: str, value: PropertyValue) -> Control:
+        self.props[key] = value
+        return self
 
-        Args:
-            type (ControlType): Required field. ControlType Literal.
-            id (str, optional): Random uuid4. Defaults to None.
-            values (Values, optional): Tuple of Value objects. Defaults to None.
-            messages (list[Message], optional): Tuple of Message objects. Defaults to None.
-            children (tuple[&quot;Node&quot;], optional): Tuple of Node objects. Defaults to None.
-            args (Property): Pass any Property to create extra Property attributes.
-            kwargs (PropertyValue): Pass any keywords with PropertyValues to create extra Property attributes.
-
-        Example (using a subclass of ControlBuilder):
-
-            class Box(ControlBuilder):
-                type: ControlType = "BOX"
-                ...
-
-            box = Box(("name", "boxy)) # with args
-            box = Box(name = "boxy") # with kwargs
-
-            assert box.name == ("name", "boxy")
-            assert box.type == "BOX"
-        """
-        self.id: str = str(uuid.uuid4()) if id is None else id
-        self.type: ControlType = type
-        self.values: list[Value] = [] if values is None else values
-        self.messages: list[Message] = [] if messages is None else messages
-        self.children: list[Control] = [] if children is None else children
-
-        for a in args:
-            setattr(self, a[0], a)
-
-        for k in kwargs:
-            setattr(self, k, (k, kwargs[k]))
-
-    def __repr__(self):
-        return f"""
-Control:
-    {self.type}, {self.id}
-Values:
-    {self.values}
-Properties:
-    {list(getattr(self, p) for p in vars(self) if p not in NOT_PROPERTIES)}
-Messages:
-    {self.messages}
-Children:
-    {self.children}
-"""
-
-    def get_prop(self, key: str) -> Property:
-        """Get the Property of a Control"""
-        p: Property = getattr(self, key)
-        if p is not None:
-            return p
-        raise KeyError(f"{p} is not a valid Property.")
+    def get(self, key: str) -> PropertyValue:
+        return self.props[key]
 
     def get_frame(self) -> tuple[int, ...]:
-        return getattr(self, "frame")[1]
+        frame = self.props["frame"]
+        if not is_frame(frame):
+            raise ValueError(f"{self} has no valid frame.")
+        return frame
 
     def get_color(self) -> tuple[float, ...]:
-        return getattr(self, "color")[1]
+        color = self.props["color"]
+        if not is_color(color):
+            raise ValueError(f"{self} has no valid color.")
+        return color
 
-    def set_prop(self, prop: Property) -> Control:
-        """Set the Property of a Control"""
-        setattr(self, prop[0], prop)
+    def set_frame(self, frame: tuple[int, ...]) -> "Control":
+        self.props["frame"] = frame
         return self
 
-    def set_frame(self, frame: tuple[int, ...]) -> Control:
-        setattr(self, "frame", ("frame", frame))
-        return self
-
-    def set_color(self, color: tuple[float, ...]) -> Control:
-        setattr(self, "color", ("color", color))
+    def set_color(self, color: tuple[float, ...]) -> "Control":
+        self.props["frame"] = color
         return self
 
 
+def is_ctrl(v: Control):
+    return v
+
+
+@dataclass
 class Box(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        **kwargs: PropertyValue,
-    ):
-        super().__init__(BOX, id, values, messages, None, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.BOX
 
 
+@dataclass
 class Button(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        **kwargs: PropertyValue,
-    ):
-        super().__init__(BUTTON, id, values, messages, None, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.BUTTON
 
 
+@dataclass
 class Encoder(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        **kwargs: PropertyValue,
-    ):
-        super().__init__(ENCODER, id, values, messages, None, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.ENCODER
 
 
+@dataclass
 class Fader(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        **kwargs: PropertyValue,
-    ):
-        super().__init__(FADER, id, values, messages, None, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.FADER
 
 
+@dataclass
 class Grid(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        children: list[Control] = None,
-        **kwargs: PropertyValue,
-    ):
-        super().__init__(GRID, id, values, messages, children, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.GRID
+    children: list[Control] = field(default_factory=lambda: [])
 
 
+@dataclass
 class Group(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        children: list[Control] = None,
-        **kwargs: PropertyValue,
-    ):
-        super().__init__(GROUP, id, values, messages, children, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.GROUP
+    children: list[Control] = field(default_factory=lambda: [])
 
 
+@dataclass
 class Label(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        **kwargs: PropertyValue,
-    ):
-        super().__init__(LABEL, id, values, messages, None, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.LABEL
 
 
+@dataclass
 class Page(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        children: list[Control] = None,
-        **kwargs: PropertyValue,
-    ):
-        super().__init__(GROUP, id, values, messages, children, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.GROUP
 
 
+@dataclass
 class Pager(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        children: list[Control] = None,
-        **kwargs: PropertyValue,
-    ):
-        children = (
-            list[Control]([Page(), Page(), Page()]) if children is None else children
-        )
-        super().__init__(PAGER, id, values, messages, children, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.PAGER
+    children: list[Control] = field(default_factory=lambda: [Page(), Page(), Page()])
 
 
+@dataclass
 class Radial(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        **kwargs: PropertyValue,
-    ):
-        super().__init__(RADIAL, id, values, messages, None, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.RADIAL
 
 
+@dataclass
 class Radar(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        **kwargs: PropertyValue,
-    ):
-        super().__init__(RADAR, id, values, messages, None, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.RADAR
 
 
+@dataclass
 class Radio(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        **kwargs: PropertyValue,
-    ):
-        super().__init__(RADIO, id, values, messages, None, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.RADIO
 
 
+@dataclass
 class Text(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        **kwargs: PropertyValue,
-    ):
-        super().__init__(TEXT, id, values, messages, None, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.TEXT
 
 
+@dataclass
 class Xy(ControlBuilder):
-    def __init__(
-        self,
-        id: str = None,
-        values: list[Value] = None,
-        messages: list[Message] = None,
-        **kwargs: PropertyValue,
-    ):
-        super().__init__(XY, id, values, messages, None, **kwargs)
+    type: ClassVar[ControlType] = CONTROL_TYPES.XY
 
 
-CONTROL_BUILDERS: dict[ControlType, Type[Control]] = {
-    BOX: Box,
-    BUTTON: Button,
-    ENCODER: Encoder,
-    FADER: Fader,
-    GRID: Grid,
-    GROUP: Group,
-    LABEL: Label,
-    PAGE: Page,
-    PAGER: Pager,
-    RADIAL: Radial,
-    RADAR: Radar,
-    RADIO: Radio,
-    TEXT: Text,
-    XY: Xy,
+CONTROLS: dict[ControlType, Type[Control]] = {
+    CONTROL_TYPES.BOX: Box,
+    CONTROL_TYPES.BUTTON: Button,
+    CONTROL_TYPES.ENCODER: Encoder,
+    CONTROL_TYPES.FADER: Fader,
+    CONTROL_TYPES.GRID: Grid,
+    CONTROL_TYPES.GROUP: Group,
+    CONTROL_TYPES.LABEL: Label,
+    CONTROL_TYPES.PAGE: Page,
+    CONTROL_TYPES.PAGER: Pager,
+    CONTROL_TYPES.RADIAL: Radial,
+    CONTROL_TYPES.RADAR: Radar,
+    CONTROL_TYPES.RADIO: Radio,
+    CONTROL_TYPES.TEXT: Text,
+    CONTROL_TYPES.XY: Xy,
 }
 """Dictionary of Control Builders."""

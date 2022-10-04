@@ -33,6 +33,6 @@ def test_layout():
 
     frame = (0, 0, 1600, 1600)
     root = tosc.createTemplate(frame=frame)
-    group = tosc.Group(root[0], frame=frame)
+    group = tosc.Group(root[0], props={"frame": frame})
     assert mainLayout(group, "GROUP", (3, 3), ("#CE6A85", "#5C374C"))
     assert tosc.write(root, "tests/output/test_layout.tosc")

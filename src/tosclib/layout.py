@@ -28,7 +28,7 @@ to the children.
 All Layouts are currently built in top > bottom, left > right order.
 """
 
-from typing import Any, Callable, Type
+from typing import Any, Callable
 from .core import *
 import numpy as np
 
@@ -74,15 +74,15 @@ def Layout(
     """Basic process to append multiple properties to a layout of controls"""
 
     for f, c in zip(frame_array, color_array):
-        control = CONTROL_BUILDERS[control_type](
-            id=None, frame=tuple(f.astype(int)), color=tuple(c)
+        control = CONTROLS[control_type](
+            props={"frame": tuple(int(i) for i in f), "color": tuple(c)}
         )
         layout.children.append(control)
 
     properties: list[Property] = func(layout.children)
     if properties is not None:
-        [layout.set_prop(p) for p in properties]
-
+        for p in properties:
+            layout.props[p[0]] = p[1]
     return layout
 
 
@@ -102,6 +102,7 @@ def column(func):
         size: tuple = (1, 2, 1),
         colors: tuple = ((0.25, 0.25, 0.25, 1.0), (0.25, 0.25, 0.25, 1.0)),
     ):
+
         colors = tuple(colorChecker(i) for i in colors)  # makes sure is normalized
         frame: tuple[int, ...] = parent.get_frame()
 
@@ -180,6 +181,7 @@ def grid(func):
 
         w = frame[2] / size[0]
         h = frame[3] / size[1]
+
         M = np.asarray(
             tuple(
                 (row, column)
@@ -192,7 +194,7 @@ def grid(func):
         Y = M[1]
         W = np.repeat(w, X.size)
         H = np.repeat(h, Y.size)
-        F = np.asarray((X, Y, W, H, X)).T
+        F = np.asarray((X, Y, W, H)).T
 
         # TO DO : Optimize
         if colorStyle == 0:  # horizontal

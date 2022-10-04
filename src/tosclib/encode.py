@@ -5,6 +5,7 @@ Python Typed-hinted-tuples to XML Converters
 import logging
 from typing import Callable
 from .core import *
+from .factory import *
 from xml.etree.ElementTree import Element, SubElement
 
 __all__ = [
@@ -190,7 +191,7 @@ def xml_localDst(parent: Element, msg: LocalDst) -> Element:
     """XML local destination converter. Returns parent, expects <local>, etc"""
     SubElement(parent, "dstType").text = msg[0]
     SubElement(parent, "dstVar").text = msg[1]
-    SubElement(parent, "dstID").text = msg[2]
+    SubElement(parent, "dstID").text = str(msg[2])
     return parent
 
 
@@ -260,16 +261,15 @@ def xml_control(control: Control) -> Element:
         Element: XML Element from Control.
     """
     node = Element("node")
-    node.attrib = {"type": control.type, "ID": control.id}
+    node.attrib = {"type": control.type, "ID": str(control.id)}
     SubElement(node, "properties")
     SubElement(node, "values")
     SubElement(node, "messages")
 
-    for property in vars(control):
-        if property not in NOT_PROPERTIES:
-            node[0].append(xml_property(getattr(control, property)))
+    for k, v in control.props.items():
+        node[0].append(xml_property(Property((k, v))))
 
-    for value in control.values:
+    for value in control.values.values():
         node[1].append(xml_value(value))
 
     for message in control.messages:

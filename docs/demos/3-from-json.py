@@ -22,12 +22,13 @@ def create_osc() -> tosc.MessageOSC:
     )
 
 
-def create_fader(e: tosc.Node, name, width, limit, i, msg):
+def create_fader(e: tosc.Node, name: str, width, limit, i, msg):
     """Create a Fader object, then convert it to XML"""
-    fader = tosc.Fader()
-    fader.set_prop(("name", name))
-    fader.set_prop(("frame", (int(width * i), 0, int(width), 1080)))
-    fader.set_prop(("color", (i / limit, 0, 1 - i / limit, 1)))
+    fader = tosc.Fader(
+        name=name,
+        frame=(int(width * i), 0, int(width), 1080),
+        color=(i / limit, 0.0, 1 - i / limit, 1),
+    )
     fader.messages.append(msg)
     efader = tosc.Node(tosc.xml_control(fader))
     e.append(efader)
@@ -35,10 +36,7 @@ def create_fader(e: tosc.Node, name, width, limit, i, msg):
 
 
 def create_group(e: tosc.Node, name, frame, color):
-    group = tosc.Group()
-    group.set_prop(("name", name)
-        ).set_prop(("frame", frame)
-        ).set_prop(("color", color))
+    group = tosc.Group(name=name, frame=frame, color=color)
     egroup = tosc.Node(tosc.xml_control(group))
     e.append(egroup)
     return egroup

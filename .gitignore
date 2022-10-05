@@ -13,3 +13,5 @@ htmlcov
 /poetry.lock
 /.python-version
 *DS_Store
+**/*.DS_Store
+**/*.mypy_cache

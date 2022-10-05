@@ -36,11 +36,11 @@ setuptools = "^61.2.0"
 furo = "^2022.4.7"
 sphinx = "^4.5.0"
 sphinx_copybutton = "^0.5.0"
+sphinx-toolbox = "^3.2.0"
 # Demos dependencies
 numpy = "^1.22.3"
 Pillow = "^9.1.1"
 aiohttp = "^3.8.1"
-
 
 [tool.pytest.ini_options]
 markers = [

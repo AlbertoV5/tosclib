@@ -40,7 +40,7 @@ MidiType: TypeAlias = Literal[
     "PITCHBEND",
     "SYSTEMEXCLUSIVE",
 ]
-NodeType = Literal[
+ControlType = Literal[
     "BOX",
     "BUTTON",
     "ENCODER",
@@ -58,6 +58,10 @@ NodeType = Literal[
 
 
 class Trigger(BaseModel):
+    """Model for Message's Trigger.
+    https://hexler.net/touchosc/manual/editor-messages-midi#trigger
+    """
+
     var: ValueKey = "x"
     condition: Condition = "ANY"
 
@@ -66,6 +70,10 @@ class Trigger(BaseModel):
 
 
 class Partial(BaseModel):
+    """Model for Argument and Path's Partial.
+    https://hexler.net/touchosc/manual/editor-messages-osc#partials
+    """
+
     type: SourceType = "CONSTANT"
     conversion: Conversion = "STRING"
     value: str = "/"
@@ -77,6 +85,10 @@ class Partial(BaseModel):
 
 
 class MidiMessage(BaseModel):
+    """Model for the Midi Message's Matching
+    https://hexler.net/touchosc/manual/editor-messages-midi#matching
+    """
+
     type: MidiType = "CONTROLCHANGE"
     channel: int = 0
     data1: str = "0"
@@ -87,6 +99,10 @@ class MidiMessage(BaseModel):
 
 
 class MidiValue(BaseModel):
+    """Model for the Midi Message's Type and its data.
+    https://hexler.net/touchosc/manual/editor-messages-midi#type
+    """
+
     type: SourceType = "CONSTANT"
     key: str | None = ""
     scaleMin: int = 0
@@ -97,6 +113,10 @@ class MidiValue(BaseModel):
 
 
 class Property(BaseModel):
+    """Model for the Control's Property.
+    https://hexler.net/touchosc/manual/editor-control-properties
+    """
+
     at_type: PropertyType
     key: str
     value: PropertyValue
@@ -133,6 +153,10 @@ class Property(BaseModel):
 
 
 class Value(BaseModel):
+    """Model for the Control's Values.
+    https://hexler.net/touchosc/manual/editor-control-values
+    """
+
     name: ValueKey = "touch"
     locked: bool = False
     locked_dc: bool = False
@@ -144,6 +168,10 @@ class Value(BaseModel):
 
 
 class Midi(BaseModel):
+    """Model for the Control's Midi Message
+    https://hexler.net/touchosc/manual/editor-messages-midi
+    """
+
     enabled: bool = True
     send: bool = True
     receive: bool = True
@@ -162,6 +190,10 @@ class Midi(BaseModel):
 
 
 class Osc(BaseModel):
+    """Model for the Control's Osc Message
+    https://hexler.net/touchosc/manual/editor-messages-osc
+    """
+
     enabled: bool = True
     send: bool = True
     receive: bool = True
@@ -179,6 +211,10 @@ class Osc(BaseModel):
 
 
 class Local(BaseModel):
+    """Model for the Control's Local Message.
+    https://hexler.net/touchosc/manual/editor-messages-local
+    """
+
     enabled: bool = True
     triggers: list[Trigger] = [Trigger()]
     type: SourceType = "VALUE"
@@ -202,8 +238,19 @@ Messages: TypeAlias = (
 
 
 class Control(BaseModel):
+    """Model for the Template's Control.
+    The XML file labels a 'control' as 'node'.
+
+    Access the Control's children via index notation.
+
+    Example:
+        child = control[0]
+
+    https://hexler.net/touchosc/manual/editor-control
+    """
+
     at_ID: str = str(uuid4())
-    at_type: NodeType = "GROUP"
+    at_type: ControlType = "GROUP"
     properties: list[Property] = Field(default_factory=lambda: [])
     values: list[Value] = Field(default_factory=lambda: [])
     messages: Messages = Field(default_factory=lambda: [])
@@ -220,15 +267,29 @@ class Control(BaseModel):
 
 
 class Root(BaseModel):
+    """Model for the XML root. Kept for structural consistency with XML."""
+
     at_version: float = 3.0
-    node: Control = Field(default_factory=lambda: Control())
+    control: Control = Field(default_factory=lambda: Control())
 
     class Config:
         validate_assignment = True
 
 
 class Template:
-    """Wrapper for roundtrip parsing of xml and pydantic models"""
+    """Represents a .tosc file.
+
+    It will parse and unparse the data from XML to Pydantic models and back.
+    It doesn't deal with the structural content of the file and will keep a Root model
+    before the first Control.
+
+    Example:
+
+        t = Template('myfile.tosc')
+        msg = Midi()
+        t.root.control[0].messages.append(msg)
+        t.save('newfile.tosc')
+    """
 
     root: Root
     encoding: str = "UTF-8"
@@ -313,7 +374,7 @@ class Template:
             )
 
     def __repr__(self):
-        return f"Template. Root: {self.root.node.at_ID}"
+        return f"Template. Root: {self.root.control.at_ID}"
 
     def decode_postprocessor(self, path: tuple, key: str, value: str):
         """Reorganize elements based on their patterns.

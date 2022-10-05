@@ -24,14 +24,14 @@ log = logging.getLogger(__name__)
 def test_working_file(file_default_messages: Template):
     """load correct file"""
     t = file_default_messages
-    assert t.root.node
+    assert t.root.control
 
 
 @pytest.mark.short
 def test_properties(template_empty: Template):
     """Create, modify and validate properties."""
     t = template_empty
-    node = t.root.node
+    node = t.root.control
     node.properties = [
         p.name("base"),
         p.frame(),

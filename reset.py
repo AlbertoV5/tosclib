@@ -10,6 +10,7 @@ TODO:
     2. Rewrite layouts
 """
 from typing import Literal, TypeAlias
+from uuid import uuid4
 from pydantic import BaseModel
 import xmltodict
 import zlib
@@ -88,7 +89,7 @@ class Property(BaseModel):
     value: PropertyValue
 
     def __init__(__pydantic_self__, **data) -> None:
-        # Enforce types
+        """Enforces types based on self.at_type property."""
         super().__init__(**data)
         match __pydantic_self__.at_type:
             case "b":
@@ -169,9 +170,9 @@ Messages: TypeAlias = (
 
 
 class Node(BaseModel):
-    at_ID: str
-    at_type: NodeType
-    properties: list[Property]
+    at_ID: str = str(uuid4())
+    at_type: NodeType = "GROUP"
+    properties: list[Property] | None
     values: list[Value] | None
     messages: Messages | None
     children: list["Node"] | None
@@ -357,3 +358,5 @@ t = Template(f)
 # print(t.root.node[2].messages)
 t.dump("deleteme.xml")
 t.save("deleteme.tosc")
+# n = Node()
+# print(n)

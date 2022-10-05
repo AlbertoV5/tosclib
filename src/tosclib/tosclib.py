@@ -9,9 +9,9 @@ TODO:
     1. Methods for models
     2. Rewrite layouts
 """
-from pathlib import Path
-from typing import Literal, TypeAlias
 from pydantic import BaseModel, Field
+from typing import Literal, TypeAlias
+from pathlib import Path
 from uuid import uuid4
 import xmltodict
 import zlib
@@ -143,7 +143,7 @@ class Value(BaseModel):
         validate_assignment = True
 
 
-class MIDI(BaseModel):
+class Midi(BaseModel):
     enabled: bool = True
     send: bool = True
     receive: bool = True
@@ -161,7 +161,7 @@ class MIDI(BaseModel):
         validate_assignment = True
 
 
-class OSC(BaseModel):
+class Osc(BaseModel):
     enabled: bool = True
     send: bool = True
     receive: bool = True
@@ -178,7 +178,7 @@ class OSC(BaseModel):
         validate_assignment = True
 
 
-class LOCAL(BaseModel):
+class Local(BaseModel):
     enabled: bool = True
     triggers: list[Trigger] = [Trigger()]
     type: SourceType = "VALUE"
@@ -195,19 +195,19 @@ class LOCAL(BaseModel):
 
 
 Messages: TypeAlias = (
-    dict[Literal["osc"], list[OSC]]
-    | dict[Literal["midi"], list[MIDI]]
-    | dict[Literal["local"], list[LOCAL]]
+    dict[Literal["osc"], list[Osc]]
+    | dict[Literal["midi"], list[Midi]]
+    | dict[Literal["local"], list[Local]]
 )
 
 
-class Node(BaseModel):
+class Control(BaseModel):
     at_ID: str = str(uuid4())
     at_type: NodeType = "GROUP"
     properties: list[Property] = Field(default_factory=lambda: [])
     values: list[Value] = Field(default_factory=lambda: [])
     messages: Messages = Field(default_factory=lambda: [])
-    children: list["Node"] = Field(default_factory=lambda: [], repr=False)
+    children: list["Control"] = Field(default_factory=lambda: [], repr=False)
 
     def __getitem__(self, item):
         return self.children[item]
@@ -221,7 +221,7 @@ class Node(BaseModel):
 
 class Root(BaseModel):
     at_version: float = 3.0
-    node: Node = Field(default_factory=lambda: Node())
+    node: Control = Field(default_factory=lambda: Control())
 
     class Config:
         validate_assignment = True

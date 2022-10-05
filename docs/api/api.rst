@@ -5,74 +5,32 @@
 
    .. autosummary::
 
-      property
-      value
-      msgconfig
-      trigger
-      triggers
-      partial
-      address
-      arguments
-      midimsg
-      midival
-      localsrc
-      localdst
-      osc
-      midi
-      local
-   
+      Template
+      Control
+      Root
+      Property
+      Value
+      Osc
+      Local
+      Midi
+      MidiValue
+      MidiMessage
+      Trigger
+      Partial
 
-   Property
-   -------------------
+   .. rubric:: Template
 
-   .. autofunction:: property
+   .. autoclass:: Template
 
-   Value
-   -------------------
+      .. automethod:: Template.dumps
+      .. automethod:: Template.dump
+      .. automethod:: Template.save
 
-   .. autofunction:: value
-
-   Message
-   -------------------
-
-   .. attention:: 
-
-      - Messages are very complex so they are constructed with a few different parts.
-      
-      - There are a few different types of messages and they share some of those parts.
-   
-   .. autofunction:: osc
-   .. autofunction:: midi
-   .. autofunction:: local
-
-   Message Parts
-   -------------------
-
-   .. autofunction:: msgconfig
-   .. autofunction:: trigger
-   .. autofunction:: triggers
-   .. autofunction:: partial
-   .. autofunction:: address
-   .. autofunction:: arguments
-   .. autofunction:: midimsg
-   .. autofunction:: midival
-   .. autofunction:: localsrc
-   .. autofunction:: localdst
+   .. autoclass:: Root
 
 
-   .. autosummary::
-   
-      load
-   
-   .. rubric:: Classes
-   
-   .. autosummary::
-   
-      
+   .. rubric:: Control
 
+   .. autoclass:: Control
 
-   
-   
-
-
-
+      .. automethod:: Control.dumps

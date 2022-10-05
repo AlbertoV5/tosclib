@@ -1,4 +1,4 @@
-import setuptools # type: ignore
+import setuptools  # type: ignore
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -21,7 +21,5 @@ setuptools.setup(
     packages=setuptools.find_packages(where="src"),
     package_data={"tosclib": ["py.typed"]},
     python_requires=">=3.10",
-    install_requires=[
-        "numpy>=1.22.3"
-    ]
+    install_requires=["numpy>=1.22.3"],
 )

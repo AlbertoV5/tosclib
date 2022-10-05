@@ -11,8 +11,8 @@ Testing: Decoder.
         edit, save and verify correct file
 
 """
+from tosclib import Template, p
 import pydantic
-from tosclib import Template, prop
 import tosclib
 import pytest
 import logging
@@ -27,18 +27,21 @@ def test_working_file(file_default_messages: Template):
     assert t.root.node
 
 
+@pytest.mark.short
 def test_properties(template_empty: Template):
     """Create, modify and validate properties."""
     t = template_empty
     node = t.root.node
     node.properties = [
-        prop.frame(),
-        prop.color(),
+        p.name("base"),
+        p.frame(),
+        p.color(),
     ]
-    for p in node.properties:
-        assert isinstance(p, tosclib.Property)
+    log.debug(node)
+    for prop in node.properties:
+        assert isinstance(prop, tosclib.Property)
         with pytest.raises(pydantic.ValidationError) as e_info:
-            p.at_type = "w"
+            prop.at_type = "w"
 
 
 def test_broken_file():

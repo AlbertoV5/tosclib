@@ -10,8 +10,8 @@ TODO:
     2. Rewrite layouts
 """
 from typing import Literal, TypeAlias
-from uuid import uuid4
 from pydantic import BaseModel
+from uuid import uuid4
 import xmltodict
 import zlib
 
@@ -222,7 +222,7 @@ class Template:
                 {"lexml": self.root.dict()},
                 pretty=pretty,
                 attr_prefix="at_",
-                preprocessor=self.encode_postprocessor,
+                preprocessor=self.encode_preprocessor,
                 output=file,
             )
 
@@ -236,7 +236,7 @@ class Template:
             {"lexml": self.root.dict()},
             pretty=pretty,
             attr_prefix="at_",
-            preprocessor=self.encode_postprocessor,
+            preprocessor=self.encode_preprocessor,
         )
 
     def save(self, filepath: str):
@@ -251,7 +251,7 @@ class Template:
                     xmltodict.unparse(
                         {"lexml": self.root.dict()},
                         attr_prefix="at_",
-                        preprocessor=self.encode_postprocessor,
+                        preprocessor=self.encode_preprocessor,
                     ).encode(self.encoding)
                 )
             )
@@ -317,7 +317,7 @@ class Template:
                 return key, value["value"]
         return key, value
 
-    def encode_postprocessor(self, key: str, value: str):
+    def encode_preprocessor(self, key: str, value: str):
         """Prepare encoding by key, value pattern matching.
         Reverts all the unpacking done from the encoding function.
 

@@ -6,10 +6,10 @@ Fixtures: Default templates and files.
 
 """
 import pytest
-import tosclib as tosc
+from tosclib import Template
 from pathlib import Path
 
-TESTS_PATH: Path = Path.cwd() / Path("tests")
+TESTS_PATH: Path = Path("tests").resolve()
 INPUT_PATH: Path = TESTS_PATH / "resources"
 OUTPUT_PATH: Path = TESTS_PATH / "output"
 
@@ -45,10 +45,25 @@ def output_path() -> Path:
 
 
 @pytest.fixture(scope="session")
-def file_default_controls() -> tosc.Element:
+def file_default_controls() -> Template:
     """
     Returns a template with all controls in their default state.
     """
-    template = tosc.load(Resources.DEFAULT_CONTROLS)
-    assert template
-    return template
+    t = Template(Resources.DEFAULT_CONTROLS)
+    assert t
+    return t
+
+
+@pytest.fixture(scope="session")
+def file_default_messages() -> Template:
+    """
+    Returns a template with all messages in their default state.
+    """
+    t = Template(Resources.DEFAULT_MESSAGES)
+    assert t
+    return t
+
+
+@pytest.fixture(scope="session")
+def template_empty() -> Template:
+    return Template()

@@ -1,11 +1,7 @@
 """
-Main Module for tosclib.
+tosclib
 """
-from .core import *
-from .decode import *
-from .encode import *
-from .factory import *
-from .util import *
-from .etosc import *
+from .tosclib import *
+from . import properties as prop
 
-__version__ = "0.5.0"
+__version__ = "1.0.0"

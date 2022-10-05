@@ -285,10 +285,12 @@ class Template:
 
     Example:
 
-        t = Template('myfile.tosc')
-        msg = Midi()
-        t.root.control[0].messages.append(msg)
-        t.save('newfile.tosc')
+        .. code-block::
+
+            t = Template('myfile.tosc')
+            msg = Midi()
+            t.root.control[0].messages.append(msg)
+            t.save('newfile.tosc')
     """
 
     root: Root

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="API" href="api.html" />
 
     <meta name="generator" content="sphinx-5.2.3, furo 2022.09.29"/>
-        <title>Type Hints - tosclib 1.0 documentation</title>
+        <title>Types - tosclib 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -166,7 +166,7 @@
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="api.html">API</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Type Hints</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Types</a></li>
 </ul>
 </li>
 </ul>
@@ -203,20 +203,20 @@
           </label>
         </div>
         <article role="main">
-          <section id="type-hints">
-<h1>Type Hints<a class="headerlink" href="#type-hints" title="Permalink to this heading">#</a></h1>
-<p>This library uses 4 categories of aliasing and hinting:</p>
+          <section id="types">
+<h1>Types<a class="headerlink" href="#types" title="Permalink to this heading">#</a></h1>
+<p>We are using the following type classes for validation:</p>
 <ol class="arabic simple">
 <li><dl class="simple">
 <dt><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literals:</a></dt><dd><ul class="simple">
-<li><p>Used for hinting constants and tuples of constants.</p></li>
+<li><p>Used for constants and tuples of constants.</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
 <dt><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeAlias">TypeAlias:</a></dt><dd><ul class="simple">
-<li><p>Used for hinting tuples of types.</p></li>
+<li><p>Used for reducing multiple types to a single variable.</p></li>
 </ul>
 </dd>
 </dl>
@@ -224,9 +224,7 @@
 </ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Because of how __annotations__ and __docs__ work, Sphinx has a hard time dealing with type aliases.
-As a result, the original docstrings reference TypeAlias, NewType, Literals docstrings. So I removed them.
-For more information on these types, go to the source or the <a class="reference external" href="./api.html">API</a></p>
+<p>For more information on where are these types used, go to the source or the <a class="reference external" href="./api.html">API</a></p>
 </div>
 <p class="rubric">Control Attributes</p>
 <dl class="py attribute">
@@ -334,7 +332,7 @@ For more information on these types, go to the source or the <a class="reference
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Type Hints</a><ul>
+<li><a class="reference internal" href="#">Types</a><ul>
 <li><a class="reference internal" href="#tosclib.PropertyType"><code class="docutils literal notranslate"><span class="pre">PropertyType</span></code></a></li>
 <li><a class="reference internal" href="#tosclib.PropertyValue"><code class="docutils literal notranslate"><span class="pre">PropertyValue</span></code></a></li>
 <li><a class="reference internal" href="#tosclib.ValueKey"><code class="docutils literal notranslate"><span class="pre">ValueKey</span></code></a></li>

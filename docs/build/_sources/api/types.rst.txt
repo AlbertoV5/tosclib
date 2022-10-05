@@ -1,20 +1,17 @@
-Type Hints
+Types
 ============
 
-This library uses 4 categories of aliasing and hinting:
+We are using the following type classes for validation:
 
 1. `Literals: <https://docs.python.org/3/library/typing.html#typing.Literal>`_
-    - Used for hinting constants and tuples of constants.
+    - Used for constants and tuples of constants.
 2. `TypeAlias: <https://docs.python.org/3/library/typing.html#typing.TypeAlias>`_
-    - Used for hinting tuples of types.
+    - Used for reducing multiple types to a single variable.
 
 
 .. note:: 
     
-    Because of how __annotations__ and __docs__ work, Sphinx has a hard time dealing with type aliases.
-    As a result, the original docstrings reference TypeAlias, NewType, Literals docstrings. So I removed them.
-    For more information on these types, go to the source or the `API <./api.html>`_
-
+    For more information on where are these types used, go to the source or the `API <./api.html>`_
 
 
 .. rubric:: Control Attributes

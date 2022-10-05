@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Type Hints" href="types.html" /><link rel="prev" title="API" href="../api.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Types" href="types.html" /><link rel="prev" title="API" href="../api.html" />
 
     <meta name="generator" content="sphinx-5.2.3, furo 2022.09.29"/>
         <title>API - tosclib 1.0 documentation</title>
@@ -166,7 +166,7 @@
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">API</a></li>
-<li class="toctree-l2"><a class="reference internal" href="types.html">Type Hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html">Types</a></li>
 </ul>
 </li>
 </ul>
@@ -261,10 +261,12 @@
 It doesn’t deal with the structural content of the file and will keep a Root model
 before the first Control.</p>
 <p class="rubric">Example</p>
-<p>t = Template(‘myfile.tosc’)
-msg = Midi()
-t.root.control[0].messages.append(msg)
-t.save(‘newfile.tosc’)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="s1">&#39;myfile.tosc&#39;</span><span class="p">)</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="n">Midi</span><span class="p">()</span>
+<span class="n">t</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">control</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="n">t</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;newfile.tosc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="tosclib.Template.dumps">
 <span class="sig-name descname"><span class="pre">dumps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pretty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tosclib/tosclib.html#Template.dumps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tosclib.Template.dumps" title="Permalink to this definition">#</a></dt>
@@ -403,7 +405,7 @@ The XML file labels a ‘control’ as ‘node’.</p>
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Type Hints</div>
+                <div class="title">Types</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

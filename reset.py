@@ -1,6 +1,7 @@
 from typing import Literal, TypeAlias
 from pydantic import BaseModel
 import xmltodict
+import zlib
 
 PropertyType: TypeAlias = Literal["b", "c", "r", "f", "i", "s"]
 PropertyValue: TypeAlias = (
@@ -65,10 +66,10 @@ class MidiMessage(BaseModel):
 
 
 class MidiValue(BaseModel):
-    key: str | None = ""
-    scaleMax: int = 15
-    scaleMin: int = 0
     type: SourceType = "CONSTANT"
+    key: str | None = ""
+    scaleMin: int = 0
+    scaleMax: int = 15
 
 
 class Property(BaseModel):
@@ -76,24 +77,28 @@ class Property(BaseModel):
     key: str
     value: PropertyValue
 
-    # def __init__(__pydantic_self__, **data) -> None:
-    #     # redundant
-    #     super().__init__(**data)
-    #     match __pydantic_self__.at_type:
-    #         case 'b':
-    #             __pydantic_self__.value = bool(__pydantic_self__.value)
-    #         case 'i':
-    #             __pydantic_self__.value = int(__pydantic_self__.value)
-    #         case 'f':
-    #             __pydantic_self__.value = float(__pydantic_self__.value)
-    #         case 's':
-    #             __pydantic_self__.value = str(__pydantic_self__.value)
-    #         case 'c':
-    #             __pydantic_self__.value = {k: float(v) for k, v in __pydantic_self__.value.items()}
-    #         case 'r':
-    #             __pydantic_self__.value = {k: int(v) for k, v in __pydantic_self__.value.items()}
-    #         case _:
-    #             __pydantic_self__.value = str(__pydantic_self__.value)
+    def __init__(__pydantic_self__, **data) -> None:
+        # Enforce types
+        super().__init__(**data)
+        match __pydantic_self__.at_type:
+            case "b":
+                __pydantic_self__.value = (
+                    True if __pydantic_self__.value == "1" else False
+                )
+            case "i":
+                __pydantic_self__.value = int(__pydantic_self__.value)
+            case "f":
+                __pydantic_self__.value = float(__pydantic_self__.value)
+            case "s":
+                __pydantic_self__.value = str(__pydantic_self__.value)
+            case "c":
+                __pydantic_self__.value = tuple(
+                    float(v) for v in __pydantic_self__.value
+                )
+            case "r":
+                __pydantic_self__.value = tuple(int(v) for v in __pydantic_self__.value)
+            case _:
+                __pydantic_self__.value = str(__pydantic_self__.value)
 
 
 class Value(BaseModel):
@@ -142,11 +147,15 @@ class LOCAL(BaseModel):
     scaleMin: int = 0
     scaleMax: int = 1
     dstType: SourceType = "VALUE"
-    dstVar: str = ""
-    dstID: str = ""
+    dstVar: str | None = None
+    dstID: str | None = None
 
 
-Message: TypeAlias = OSC | MIDI | LOCAL
+Messages: TypeAlias = (
+    dict[Literal["osc"], list[OSC]]
+    | dict[Literal["midi"], list[MIDI]]
+    | dict[Literal["local"], list[LOCAL]]
+)
 
 
 class Node(BaseModel):
@@ -154,8 +163,11 @@ class Node(BaseModel):
     at_type: NodeType
     properties: list[Property]
     values: list[Value]
-    messages: dict[MessageType, list[Message]] | None
+    messages: Messages | None
     children: list["Node"] | None
+
+    def __getitem__(self, item):
+        return self.children[item]
 
 
 class Root(BaseModel):
@@ -171,19 +183,66 @@ class Template:
     encoding: str = "UTF-8"
 
     def __init__(self, filepath: str):
+        """Load a compressed .tosc or uncompressed .xml file and parse it.
+        From XML to dictionary to Pydantic models.
+
+        Args:
+            filepath (str): .tosc file path.
+        """
         self.filepath = filepath
+        unzip = lambda x: zlib.decompress(x) if filepath.split(".")[1] == "tosc" else x
         with open(filepath, "rb") as file:
             self.root = Root(
                 **xmltodict.parse(
-                    file, attr_prefix="at_", postprocessor=self.decode_postprocessor
+                    unzip(file.read()),
+                    attr_prefix="at_",
+                    postprocessor=self.decode_postprocessor,
                 )["lexml"]
             )
 
-    def dump(self, filepath: str):
+    def dump(self, filepath: str, pretty=True):
+        """Write uncompressed .xml file.
+
+        Args:
+            filepath (str): XML file path.
+        """
         with open(filepath, "w") as file:
+            xmltodict.unparse(
+                {"lexml": self.root.dict()},
+                pretty=pretty,
+                attr_prefix="at_",
+                preprocessor=self.encode_postprocessor,
+                output=file,
+            )
+
+    def dumps(self, pretty=True):
+        """Returns a string representation.
+
+        Returns:
+            (str): XML string.
+        """
+        return xmltodict.unparse(
+            {"lexml": self.root.dict()},
+            pretty=pretty,
+            attr_prefix="at_",
+            preprocessor=self.encode_postprocessor,
+        )
+
+    def save(self, filepath: str):
+        """Write contents to a compressed file.
+
+        Args:
+            filepath (str): File path.
+        """
+        with open(filepath, "wb") as file:
             file.write(
-                xmltodict.unparse(
-                    {"lexml": t.root.dict()}, pretty=True, attr_prefix="at_"
+                zlib.compress(
+                    xmltodict.unparse(
+                        {"lexml": self.root.dict()},
+                        pretty=True,
+                        attr_prefix="at_",
+                        preprocessor=self.encode_postprocessor,
+                    ).encode(self.encoding)
                 )
             )
 
@@ -200,12 +259,22 @@ class Template:
 
         Returns:
             str, Any: Modified key, value structure.
+
+        Description:
+
+            1. One-step patterns.
+            Match all stages on which the last element is the desired one.
+            We are using this to fix nested dictionaries and dictionaries that
+            should be a list of dictionaries. So we are replacing key:value with value
+            as well as value with [value].
+
+            2. Two-step patterns.
+            If we want to change a pattern that appears with multiple parents, we can do it
+            by forcing a two step match where we match the parent and the element.
+            Here we use it for restructuring dictionaries into tuples and converting
+            strings to boolean, int or float, as well as similar procedures to the
+            one-step matching but making sure we are under a specific parent.
         """
-        # One-step patterns.
-        # Match all stages on which the last element is the desired one.
-        # We are using this to fix nested dictionaries and dictionaries that
-        # should be a list of dictionaries. So we are replacing key:value with value
-        # as well as value with [value].
         match path[-1]:
             case ("properties", None):
                 return key, value["property"]
@@ -216,23 +285,12 @@ class Template:
             case ("messages", None):
                 k = next(iter(value))
                 return key, value if isinstance(value[k], list) else {k: [value[k]]}
-        # Two-step patterns.
-        # If we want to change a pattern that appears with multiple parents, we can do it
-        # by forcing a two step match where we match the parent and the element.
-        # Here we use it for restructuring dictionaries into tuples and converting
-        # strings to boolean, int or float, as well as similar procedures to the
-        # one-step matching but making sure we are under a specific parent.
+
         match path[-2:]:
             case ((_, {"type": "c"}), ("value", None)):
-                return key, tuple(float(value[k]) for k in dict(value))
+                return key, tuple(value[k] for k in dict(value))
             case ((_, {"type": "r"}), ("value", None)):
-                return key, tuple(int(value[k]) for k in dict(value))
-            case ((_, {"type": "b"}), ("value", None)):
-                return key, True if value in ("1", "true") else False
-            case ((_, {"type": "i"}), ("value", None)):
-                return key, int(value)
-            case ((_, {"type": "f"}), ("value", None)):
-                return key, int(value)
+                return key, tuple(value[k] for k in dict(value))
             case (("node", _), ("values", None)):
                 return key, value["value"] if isinstance(value["value"], list) else [
                     value["value"]
@@ -249,13 +307,44 @@ class Template:
                 return key, value["value"]
         return key, value
 
-    def encode_postprocessor(self, path: tuple, key: str, value: str):
-        """TODO: Finish the encoding postprocessor whic will revert all the
-        decoding changes into a valid file."""
-        ...
+    def encode_postprocessor(self, key: str, value: str):
+        """Prepare encoding by key, value pattern matching.
+        Reverts all the unpacking done from the encoding function.
+
+        Args:
+            key (str): Dictionary key from pydantic model attr.
+            value (str): Dictionary value.
+
+        Returns:
+            (tuple): key, value pair with value modified.
+
+        Description:
+            The callback doesn't provide a path because the data is a dictionary
+            so we only have key, value to match against element tag and content.
+        """
+        match key, value:
+            case ("properties", list()):
+                return key, {"property": value}
+            case ("values", list()):
+                return key, {"value": value}
+            case ("children", list()):
+                return key, {"node": value}
+            case ("triggers", list()):
+                return key, {"trigger": value}
+            case ("path" | "arguments", list()):
+                return key, {"partial": value}
+            case ("value", (float(), float(), float(), float())):
+                return key, {"r": value[0], "g": value[1], "b": value[2], "a": value[3]}
+            case ("value", (int(), int(), int(), int())):
+                return key, {"x": value[0], "y": value[1], "w": value[2], "h": value[3]}
+            case ("value", bool()):
+                return key, "0" if value == False else "1"
+        return key, value
 
 
 # XML to dict
-f = "docs/demos/files/msgs.xml"
+f = "docs/demos/files/msgs.tosc"
 t = Template(f)
+# print(t.root.node[2].messages)
 t.dump("deleteme.xml")
+t.save("deleteme.tosc")

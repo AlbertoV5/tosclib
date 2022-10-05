@@ -1,3 +1,14 @@
+"""
+tosclib
+
+This file re-implements the entire tosclib parsing module using:
+    1. xmltodict
+    2. pydantic
+
+TODO:
+    1. Methods for models
+    2. Rewrite layouts
+"""
 from typing import Literal, TypeAlias
 from pydantic import BaseModel
 import xmltodict
@@ -42,7 +53,6 @@ NodeType = Literal[
     "TEXT",
     "XY",
 ]
-MessageType = Literal["osc", "midi", "local"]
 
 
 class Trigger(BaseModel):
@@ -162,7 +172,7 @@ class Node(BaseModel):
     at_ID: str
     at_type: NodeType
     properties: list[Property]
-    values: list[Value]
+    values: list[Value] | None
     messages: Messages | None
     children: list["Node"] | None
 
@@ -239,7 +249,6 @@ class Template:
                 zlib.compress(
                     xmltodict.unparse(
                         {"lexml": self.root.dict()},
-                        pretty=True,
                         attr_prefix="at_",
                         preprocessor=self.encode_postprocessor,
                     ).encode(self.encoding)

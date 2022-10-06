@@ -12,7 +12,7 @@ Testing: Decoder.
 
 """
 from tosclib import Template, Control, Property, Value
-from tosclib import String, Frame, Color
+from tosclib import String, Frame, Color, Integer, Float, Boolean
 import pydantic
 import tosclib
 import pytest
@@ -72,6 +72,11 @@ def test_properties(template_empty: Template):
 
 @pytest.mark.short
 def test_controls(template_empty: Template):
+    """Create controls and add them to an empty template.
+
+    Tests:
+        1. Create controls and their attributes programatically
+    """
     temp = template_empty.copy()
     parent = temp.root.node
     parent.children = [
@@ -86,7 +91,13 @@ def test_controls(template_empty: Template):
         )
         for x in range(0, 400, 100)
     ]
-    console.log(parent.children)
+    for control in parent.children:
+        console.log(type(control))
+        assert isinstance(control, Control)
+        with pytest.raises(TypeError) as e_info:
+            control.add_control(0)
+
+    console.log(parent.children[-1])
     temp.dump("tests/resources/deleteme.xml")
     temp.save("tests/resources/deleteme.tosc")
 

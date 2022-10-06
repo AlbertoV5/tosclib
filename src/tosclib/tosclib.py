@@ -8,7 +8,7 @@ This file re-implements the entire tosclib parsing module using:
 TODO:
     1. Rewrite layouts
 """
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, PydanticTypeError, ValidationError, validator
 from typing import Literal, TypeAlias
 from pathlib import Path
 from uuid import uuid4
@@ -348,11 +348,47 @@ class Control(BaseModel):
     def __getitem__(self, item):
         return self.children[item]
 
-    def add(self, item):
-        self.children.append(item)
+    def add_control(self, control: "Control") -> "Control":
+        """Append to this control's children.
+        Doing Pydantic validation with immutable data is not an option.
 
-    def remove(self, item):
-        self.children.pop(item)
+        Raises:
+            TypeError: If not a valid Control is given.
+        """
+        if not isinstance(control, Control):
+            raise TypeError(f"{control} is not a valid Control")
+        self.children.append(control)
+        return self
+
+    def add_property(self, property: Property) -> "Control":
+        if not isinstance(property, Property):
+            raise TypeError(f"{property} is not a valid Property")
+        self.properties.append(property)
+        return self
+
+    def add_value(self, value: Value) -> "Control":
+        if not isinstance(value, Value):
+            raise TypeError(f"{value} is not a valid Value")
+        self.values.append(value)
+        return self
+
+    def add_osc(self, osc: Osc) -> "Control":
+        if not isinstance(osc, Osc):
+            raise TypeError(f"{osc} is not a valid Osc")
+        self.messages["osc"].append(osc)
+        return self
+
+    def add_midi(self, midi: Osc) -> "Control":
+        if not isinstance(midi, Osc):
+            raise TypeError(f"{midi} is not a valid Midi")
+        self.messages["midi"].append(midi)
+        return self
+
+    def add_local(self, local: Osc) -> "Control":
+        if not isinstance(local, Osc):
+            raise TypeError(f"{local} is not a valid Local")
+        self.messages["local"].append(local)
+        return self
 
     def dumps(self, indent=2, exclude={"children"}, **kwargs):
         return self.json(indent=indent, exclude=exclude, **kwargs)

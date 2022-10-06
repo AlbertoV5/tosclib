@@ -9,7 +9,7 @@ import pytest
 from tosclib import Template
 from pathlib import Path
 
-TESTS_PATH: Path = Path("tests").resolve()
+TESTS_PATH: Path = Path.cwd() / Path("tests").resolve()
 INPUT_PATH: Path = TESTS_PATH / "resources"
 OUTPUT_PATH: Path = TESTS_PATH / "output"
 
@@ -66,4 +66,6 @@ def file_default_messages() -> Template:
 
 @pytest.fixture(scope="session")
 def template_empty() -> Template:
-    return Template()
+    t = Template()
+    assert t
+    return t

@@ -6,10 +6,9 @@ This file re-implements the entire tosclib parsing module using:
     2. pydantic
 
 TODO:
-    1. Methods for models
-    2. Rewrite layouts
+    1. Rewrite layouts
 """
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from typing import Literal, TypeAlias
 from pathlib import Path
 from uuid import uuid4
@@ -156,6 +155,86 @@ class Property(BaseModel):
     class Config:
         validate_assignment = True
 
+    def set(self, value: PropertyValue) -> "Property":
+        """Set value and return self"""
+        self.value = value
+        return self
+
+
+class Boolean(Property):
+    at_type: Literal["b"] = "b"
+    key: str
+    value: bool
+
+    def __init__(
+        __pydantic_self__, key: str, value: bool, at_type: Literal["b"] = "b"
+    ) -> None:
+        super().__init__(at_type=at_type, key=key, value=value)
+
+
+class Integer(Property):
+    at_type: Literal["i"] = "i"
+    key: str
+    value: int
+
+    def __init__(
+        __pydantic_self__, key: str, value: int, at_type: Literal["i"] = "i"
+    ) -> None:
+        super().__init__(at_type=at_type, key=key, value=value)
+
+
+class Float(Property):
+    at_type: Literal["f"] = "f"
+    key: str
+    value: float
+
+    def __init__(
+        __pydantic_self__, key: str, value: float, at_type: Literal["f"] = "f"
+    ) -> None:
+        super().__init__(at_type=at_type, key=key, value=value)
+
+
+class String(Property):
+    at_type: Literal["s"] = "s"
+    key: str
+    value: str
+
+    def __init__(
+        __pydantic_self__, key: str, value: str, at_type: Literal["s"] = "s"
+    ) -> None:
+        super().__init__(at_type=at_type, key=key, value=value)
+
+
+class Frame(Property):
+    at_type: Literal["r"] = "r"
+    key: str
+    value: tuple[int, int, int, int]
+
+    def __init__(
+        __pydantic_self__,
+        key: str,
+        value: tuple[int, int, int, int],
+        at_type: Literal["r"] = "r",
+    ) -> None:
+        super().__init__(at_type=at_type, key=key, value=value)
+
+
+class Color(Property):
+    at_type: Literal["c"] = "c"
+    key: str
+    value: tuple[float, float, float, float]
+
+    def __init__(
+        __pydantic_self__,
+        key: str,
+        value: tuple[float, float, float, float],
+        at_type: Literal["c"] = "c",
+    ) -> None:
+        super().__init__(at_type=at_type, key=key, value=value)
+
+
+PropertyOptions: TypeAlias = Boolean | Integer | Float | String | Frame | Color
+
 
 class Value(BaseModel):
     """Model for the Control's Values.
@@ -235,7 +314,7 @@ class Local(BaseModel):
         validate_assignment = True
 
 
-Messages: TypeAlias = (
+MessageOptions: TypeAlias = (
     dict[Literal["osc"], list[Osc]]
     | dict[Literal["midi"], list[Midi]]
     | dict[Literal["local"], list[Local]]
@@ -249,17 +328,20 @@ class Control(BaseModel):
     Access the Control's children via index notation.
 
     Example:
-        child = control[0]
+        first_child = control[0]
 
     https://hexler.net/touchosc/manual/editor-control
     """
 
     at_ID: str = str(uuid4())
     at_type: ControlType = "GROUP"
-    properties: list[Property] = Field(default_factory=lambda: [])
+    properties: list[PropertyOptions] = Field(default_factory=lambda: [])
     values: list[Value] = Field(default_factory=lambda: [])
-    messages: Messages = Field(default_factory=lambda: [])
+    messages: MessageOptions = Field(default_factory=lambda: [])
     children: list["Control"] = Field(default_factory=lambda: [], repr=False)
+
+    class Config:
+        validate_assignment = True
 
     def __getitem__(self, item):
         return self.children[item]
@@ -273,15 +355,18 @@ class Control(BaseModel):
     def dumps(self, indent=2, exclude={"children"}, **kwargs):
         return self.json(indent=indent, exclude=exclude, **kwargs)
 
-    class Config:
-        validate_assignment = True
+    def set_prop(self, key: str, value: PropertyValue) -> "Property":
+        self.properties = [p.set(value) if p.key == key else p for p in self.properties]
+        return self
 
 
 class Root(BaseModel):
-    """Model for the XML root. Kept for structural consistency with XML."""
+    """Model for the XML root. Kept for structural consistency with XML.
+    The Control is named 'node' in the XML.
+    """
 
     at_version: float = 3.0
-    control: Control = Field(default_factory=lambda: Control())
+    node: Control = Field(default_factory=lambda: Control())
 
     class Config:
         validate_assignment = True
@@ -300,37 +385,36 @@ class Template:
 
             t = Template('myfile.tosc')
             msg = Midi()
-            t.root.control[0].messages.append(msg)
+            t.root.node[0].messages.append(msg)
             t.save('newfile.tosc')
     """
 
     root: Root
     encoding: str = "UTF-8"
 
-    def __init__(self, filepath: str | Path | None = None, root: Root | None = None):
+    def __init__(self, source: str | Path | Root | None = None):
         """Load a compressed .tosc or uncompressed .xml file and parse it.
         From XML to dictionary to Pydantic models.
 
-        If filepath is None, it will create a new Template from defaults.
+        If filepath is None, it will create a new Template from a default Root.
+        Can raise Type Error if source is not compatible type.
 
         Args:
-            filepath (str, optional): .tosc file path.
-            root (Root, optional): optional root element.
+            source (str | Path | Root | None, optional): File or Root object. Defaults to None.
         """
-        if root is not None:
-            self.root = root
+        if isinstance(source, Root):
+            self.root = source
             return None
-        if filepath is None:
+        elif source is None:
             self.root = Root()
             return None
-        ext = (
-            filepath.suffix
-            if isinstance(filepath, Path)
-            else f".{filepath.split('.')[1]}"
-        )
-        if ext not in (".xml", ".tosc"):
-            raise ValueError(f"{ext} is not a valid file extension.")
-        with open(filepath, "rb") as file:
+        elif isinstance(source, str):
+            ext = f".{source.split('.')[1]}"
+        elif isinstance(source, Path):
+            ext = source.suffix
+        else:
+            raise TypeError(f"{source} is not a valid source.")
+        with open(source, "rb") as file:
             self.root = Root(
                 **xmltodict.parse(
                     zlib.decompress(file.read()) if ext == ".tosc" else file.read(),
@@ -391,11 +475,11 @@ class Template:
             )
 
     def __repr__(self):
-        return f"Template. Root: {self.root.control.at_ID}"
+        return f"Template. Root: {self.root.node.at_ID}"
 
     def copy(self):
         """Create a new Template object and call Pydantic's deep copy on the root."""
-        return Template(root=self.root.copy(deep=True))
+        return Template(self.root.copy(deep=True))
 
     def decode_postprocessor(self, path: tuple, key: str, value: str):
         """Reorganize elements based on their patterns.

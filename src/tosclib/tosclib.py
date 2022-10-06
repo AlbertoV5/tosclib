@@ -241,11 +241,11 @@ class Value(BaseModel):
     https://hexler.net/touchosc/manual/editor-control-values
     """
 
-    name: ValueKey = "touch"
+    key: ValueKey = "touch"
     locked: bool = False
-    locked_dc: bool = False
+    lockedDefaultCurrent: bool = False
     default: ValueDefault = False
-    pull: int = 0
+    defaultPull: int = 0
 
     class Config:
         validate_assignment = True
@@ -335,7 +335,9 @@ class Control(BaseModel):
 
     at_ID: str = str(uuid4())
     at_type: ControlType = "GROUP"
-    properties: list[PropertyOptions] = Field(default_factory=lambda: [])
+    properties: list[PropertyOptions] = Field(
+        default_factory=lambda: [Frame("frame", (0, 0, 400, 400))]
+    )
     values: list[Value] = Field(default_factory=lambda: [])
     messages: MessageOptions = Field(default_factory=lambda: [])
     children: list["Control"] = Field(default_factory=lambda: [], repr=False)
@@ -470,7 +472,7 @@ class Template:
                         attr_prefix="at_",
                         preprocessor=self.encode_preprocessor,
                         encoding=self.encoding,
-                    )
+                    ).encode(self.encoding)
                 )
             )
 
@@ -569,6 +571,6 @@ class Template:
                 return key, {"r": value[0], "g": value[1], "b": value[2], "a": value[3]}
             case ("value", (int(), int(), int(), int())):
                 return key, {"x": value[0], "y": value[1], "w": value[2], "h": value[3]}
-            case ("value", bool()):
+            case ("value" | "locked" | "lockedDefaultCurrent", bool()):
                 return key, "0" if value == False else "1"
         return key, value

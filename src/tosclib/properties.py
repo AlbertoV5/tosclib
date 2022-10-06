@@ -1,41 +1,20 @@
 """Property factory module"""
-from .tosclib import Property
+from pydantic import BaseModel
+from .tosclib import Property as p
 
 
-def boolean(key, value):
-    return Property(at_type="b", key=key, value=value)
+class Defaults(BaseModel):
+    name = p("s", "name", "")
+    tag = p("s", "tag", "")
+    script = p("s", "script", "")
+    frame = p("r", "frame", (100, 100, 0, 0))
+    color = p("c", "color", (0.25, 0.25, 0.25, 1.0))
+    locked = p("b", "locked", False)
+    visible = p("b", "visible", True)
+    interactive = p("b", "interactive", True)
+    background = p("b", "background", True)
+    outline = p("b", "outline", True)
+    outlineStyle = p("i", "outlineStyle", 1)
 
 
-def float(key, value):
-    return Property(at_type="f", key=key, value=value)
-
-
-def int(key, value):
-    return Property(at_type="i", key=key, value=value)
-
-
-def string(key, value):
-    return Property(at_type="s", key=key, value=value)
-
-
-def name(value=""):
-    return Property(at_type="s", key="name", value=value)
-
-
-def tag(value=""):
-    return Property(at_type="s", key="tag", value=value)
-
-
-def frame(key="frame", value=(640, 480, 0, 0)):
-    return Property(at_type="r", key=key, value=value)
-
-
-def color(key="color", value=(0.2, 0.2, 0.2, 1.0)):
-    return Property(at_type="c", key=key, value=value)
-
-
-# def x(value = 0):
-#     return Value(name="x", default=value)
-
-# def y(value = 0):
-#     return Value(name="y", default=value)
+defaults = Defaults()

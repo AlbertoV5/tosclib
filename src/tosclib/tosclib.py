@@ -49,6 +49,7 @@ ControlType = Literal[
     "GROUP",
     "LABEL",
     "PAGE",
+    "PAGER",
     "RADAR",
     "RADIAL",
     "RADIO",
@@ -121,13 +122,17 @@ class Property(BaseModel):
     key: str
     value: PropertyValue
 
-    def __init__(__pydantic_self__, **data) -> None:
+    def __init__(
+        __pydantic_self__, at_type: PropertyType, key: str, value: PropertyValue
+    ) -> None:
         """Enforces types based on self.at_type property.
-        at_type: PropertyType
-        key: str
-        value: PropertyValue
+
+        Args:
+            at_type: PropertyType
+            key: str
+            value: PropertyValue
         """
-        super().__init__(**data)
+        super().__init__(at_type=at_type, key=key, value=value)
         match __pydantic_self__.at_type:
             case "b":
                 __pydantic_self__.value = (
@@ -259,6 +264,12 @@ class Control(BaseModel):
     def __getitem__(self, item):
         return self.children[item]
 
+    def add(self, item):
+        self.children.append(item)
+
+    def remove(self, item):
+        self.children.pop(item)
+
     def dumps(self, indent=2, exclude={"children"}, **kwargs):
         return self.json(indent=indent, exclude=exclude, **kwargs)
 
@@ -296,15 +307,19 @@ class Template:
     root: Root
     encoding: str = "UTF-8"
 
-    def __init__(self, filepath: str | Path | None = None):
+    def __init__(self, filepath: str | Path | None = None, root: Root | None = None):
         """Load a compressed .tosc or uncompressed .xml file and parse it.
         From XML to dictionary to Pydantic models.
 
         If filepath is None, it will create a new Template from defaults.
 
         Args:
-            filepath (str): .tosc file path.
+            filepath (str, optional): .tosc file path.
+            root (Root, optional): optional root element.
         """
+        if root is not None:
+            self.root = root
+            return None
         if filepath is None:
             self.root = Root()
             return None
@@ -377,6 +392,10 @@ class Template:
 
     def __repr__(self):
         return f"Template. Root: {self.root.control.at_ID}"
+
+    def copy(self):
+        """Create a new Template object and call Pydantic's deep copy on the root."""
+        return Template(root=self.root.copy(deep=True))
 
     def decode_postprocessor(self, path: tuple, key: str, value: str):
         """Reorganize elements based on their patterns.

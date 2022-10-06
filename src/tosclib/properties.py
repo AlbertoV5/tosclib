@@ -2,7 +2,7 @@
 from pydantic import BaseModel
 from .tosclib import Property as p
 
-
+# https://github.com/AlbertoV5/tosclib/blob/main/src/tosclib/controls.py
 class Defaults(BaseModel):
     name = p("s", "name", "")
     tag = p("s", "tag", "")

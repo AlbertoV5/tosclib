@@ -1,5 +1,5 @@
 """Message Module"""
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, TypeAlias
 from pydantic import BaseModel, Field
 
 from .value import ValueKey
@@ -106,7 +106,7 @@ class Osc(BaseModel):
     send: bool = True
     receive: bool = True
     feedback: bool = False
-    connections: str = "11111"
+    connections: str = Field(default="11111", min_length=5, max_length=5)
     triggers: list[Trigger] = [Trigger()]
     path: list[Partial] = [
         Partial(),
@@ -138,14 +138,55 @@ class Local(BaseModel):
         validate_assignment = True
 
 
-# class MessageDirectory(TypedDict):
-#     osc: list[Osc]
-#     midi: list[Midi]
-#     local: list[Local]
+GamepadInput: TypeAlias = Literal[
+    "STICK_LEFT_X",
+    "STICK_LEFT_Y",
+    "STICK_RIGHT_X",
+    "STICK_RIGHT_Y",
+    "TRIGGER_LEFT",
+    "TRIGGER_RIGHT",
+    "BUTTON_UP",
+    "BUTTON_DOWN",
+    "BUTTON_LEFT",
+    "BUTTON_RIGHT",
+    "BUTTON_A",
+    "BUTTON_B",
+    "BUTTON_X",
+    "BUTTON_Y",
+    "BUTTON_STICK_LEFT",
+    "BUTTON_STICK_RIGHT",
+    "BUMPER_LEFT",
+    "BUMPER_RIGHT",
+    "BUTTON_START",
+    "BUTTON_SELECT",
+    "BUTTON_HOME",
+]
 
 
-MessageDirectory: TypeAlias = (
-    dict[Literal["osc"], list[Osc]]
-    | dict[Literal["midi"], list[Midi]]
-    | dict[Literal["local"], list[Local]]
-)
+class Gamepad(BaseModel):
+    """Model for the Control's Gamepad Message.
+    https://hexler.net/touchosc/manual/editor-messages-gamepad
+    """
+
+    enabled: bool = True
+    connections: str = Field(default="11111", min_length=5, max_length=5)
+    type: GamepadInput = "BUTTON_A"
+    conversion: Conversion = "FLOAT"
+    scaleMin: int = 0
+    scaleMax: int = 1
+    targetType: SourceType = "VALUE"
+    targetVar: ValueKey = "x"
+
+
+class Messages(BaseModel):
+    """Container for Osc, Midi, Local, Gamepad.
+    Iteration: [*self.midi, *self.osc, *self.local, *self.gamepad]
+    """
+
+    midi: list[Midi] = Field(default_factory=lambda: [])
+    osc: list[Osc] = Field(default_factory=lambda: [])
+    local: list[Local] = Field(default_factory=lambda: [])
+    gamepad: list[Gamepad] = Field(default_factory=lambda: [])
+
+    def __iter__(self):
+        return iter([*self.midi, *self.osc, *self.local, *self.gamepad])

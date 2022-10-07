@@ -68,7 +68,6 @@ alias profile='pytest -m profile --profile-svg --cov --cov-report html:docs/_sta
 #+end_src
 
 
-
 * GUIDE for CI/CD commands (old).
 ** Version number:
  - For updating version number:

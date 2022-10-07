@@ -1,6 +1,7 @@
 """
 Template Module
 """
+from uuid import UUID, uuid4
 from pydantic import BaseModel, Field
 from pathlib import Path
 import xmltodict
@@ -39,6 +40,7 @@ class Template:
     """
 
     root: Root
+    id: UUID
     encoding: str = "UTF-8"
 
     def __init__(self, source: str | Path | Root | None = None):
@@ -70,8 +72,10 @@ class Template:
                     attr_prefix="at_",
                     postprocessor=self.decode_postprocessor,
                     encoding=self.encoding,
+                    force_list=["midi", "osc", "local", "gamepad"],
                 )["lexml"]
             )
+        self.id = self.root.node.at_ID
 
     def dump(self, filepath: str, pretty=True):
         """Write uncompressed .xml file.
@@ -124,14 +128,14 @@ class Template:
             )
 
     def __repr__(self):
-        return f"Template. Root: {self.root.node.at_ID}"
+        return f"Template with Control ID: {self.root.node.at_ID}"
 
     def copy(self):
         """Create a new Template object and call Pydantic's deep copy on the root."""
         return Template(self.root.copy(deep=True))
 
     def decode_postprocessor(self, path: tuple, key: str, value: str):
-        """Reorganize elements based on their patterns.
+        """Reorganize and process elements based on path patterns.
 
         Args:
             path (tuple): The structure of the path to the element.
@@ -140,21 +144,6 @@ class Template:
 
         Returns:
             str, Any: Modified key, value structure.
-
-        Description:
-
-            1. One-step patterns.
-            Match all stages on which the last element is the desired one.
-            We are using this to fix nested dictionaries and dictionaries that
-            should be a list of dictionaries. So we are replacing key:value with value
-            as well as value with [value].
-
-            2. Two-step patterns.
-            If we want to change a pattern that appears with multiple parents, we can do it
-            by forcing a two step match where we match the parent and the element.
-            Here we use it for restructuring dictionaries into tuples and converting
-            strings to boolean, int or float, as well as similar procedures to the
-            one-step matching but making sure we are under a specific parent.
         """
         match path[-1]:
             case ("properties", None):
@@ -163,9 +152,6 @@ class Template:
                 return key, value["node"] if isinstance(value["node"], list) else [
                     value["node"]
                 ]
-            case ("messages", None):
-                k = next(iter(value))
-                return key, value if isinstance(value[k], list) else {k: [value[k]]}
 
         match path[-2:]:
             case ((_, {"type": "c"}), ("value", None)):
@@ -190,7 +176,7 @@ class Template:
 
     def encode_preprocessor(self, key: str, value: str):
         """Prepare encoding by key, value pattern matching.
-        Reverts all the unpacking done from the encoding function.
+        Reverts the processing done from the encoding function.
 
         Args:
             key (str): Dictionary key from pydantic model attr.

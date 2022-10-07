@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lexml version="3.0">
-  <node type="GROUP" ID="d2744a4e-a32a-415e-8fb3-3ea5d24ccf2e">
+  <node type="GROUP" ID="7b19bef8-96d4-44b2-96f9-cdd192f2c7c3">
     <properties>
       <property type="r">
         <key>frame</key>
@@ -14,8 +14,10 @@
     </properties>
     <values>
     </values>
+    <messages>
+    </messages>
     <children>
-      <node type="GROUP" ID="d2744a4e-a32a-415e-8fb3-3ea5d24ccf2e">
+      <node type="GROUP" ID="60bc0bbe-f89d-45ab-a025-2c07dfbac806">
         <properties>
           <property type="r">
             <key>frame</key>
@@ -29,8 +31,10 @@
         </properties>
         <values>
         </values>
+        <messages>
+        </messages>
         <children>
-          <node type="FADER" ID="d2744a4e-a32a-415e-8fb3-3ea5d24ccf2e">
+          <node type="FADER" ID="78808ca6-3321-4868-b2ec-162e9ad2e71b">
             <properties>
               <property type="c">
                 <key>color</key>
@@ -53,10 +57,12 @@
             </properties>
             <values>
             </values>
+            <messages>
+            </messages>
             <children>
             </children>
           </node>
-          <node type="FADER" ID="d2744a4e-a32a-415e-8fb3-3ea5d24ccf2e">
+          <node type="FADER" ID="7495616b-f3cb-4bfc-a9cf-8b4fda850a44">
             <properties>
               <property type="c">
                 <key>color</key>
@@ -79,12 +85,14 @@
             </properties>
             <values>
             </values>
+            <messages>
+            </messages>
             <children>
             </children>
           </node>
         </children>
       </node>
-      <node type="GROUP" ID="d2744a4e-a32a-415e-8fb3-3ea5d24ccf2e">
+      <node type="GROUP" ID="a6f393a8-4c76-4409-932f-584a681bb834">
         <properties>
           <property type="r">
             <key>frame</key>
@@ -98,8 +106,10 @@
         </properties>
         <values>
         </values>
+        <messages>
+        </messages>
         <children>
-          <node type="RADIAL" ID="d2744a4e-a32a-415e-8fb3-3ea5d24ccf2e">
+          <node type="RADIAL" ID="951a151b-35c8-41bf-af24-2f90770dda93">
             <properties>
               <property type="c">
                 <key>color</key>
@@ -122,10 +132,12 @@
             </properties>
             <values>
             </values>
+            <messages>
+            </messages>
             <children>
             </children>
           </node>
-          <node type="RADIAL" ID="d2744a4e-a32a-415e-8fb3-3ea5d24ccf2e">
+          <node type="RADIAL" ID="30da5aa0-0147-4bdd-abf4-6225cd46d7fe">
             <properties>
               <property type="c">
                 <key>color</key>
@@ -148,6 +160,8 @@
             </properties>
             <values>
             </values>
+            <messages>
+            </messages>
             <children>
             </children>
           </node>

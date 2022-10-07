@@ -1,9 +1,9 @@
 """Control Module"""
 from typing import Literal, TypeAlias
 from pydantic import BaseModel, Field
-from uuid import uuid4
+from uuid import UUID, uuid4
 
-from .message import Osc, Midi, Local, MessageDirectory
+from .message import Osc, Midi, Local, Messages
 from .value import Value, ValueOptions
 from .property import Property, Frame, PropertyValue, PropertyOptions
 
@@ -39,12 +39,12 @@ class Control(BaseModel):
     """
 
     at_type: ControlType = "GROUP"
-    at_ID: str = str(uuid4())
+    at_ID: UUID = Field(default_factory=uuid4)
     properties: list[PropertyOptions] = Field(
         default_factory=lambda: [Frame("frame", (0, 0, 400, 400))]
     )
     values: list[ValueOptions] = Field(default_factory=lambda: [])
-    messages: MessageDirectory = Field(default_factory=lambda: [])
+    messages: Messages = Field(default_factory=Messages)
     children: list["Control"] = Field(default_factory=lambda: [], repr=False)
 
     class Config:

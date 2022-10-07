@@ -8,15 +8,16 @@ from .message import (
     Osc,
     Midi,
     Local,
+    Gamepad,
     Trigger,
     Partial,
     MidiValue,
     MidiMessage,
-    MessageDirectory,
     MidiType,
     SourceType,
     Conversion,
     TriggerCondition,
+    GamepadInput,
 )
 from .value import Value, X, Y, Text, Touch, Page, ValueDefault, ValueKey, ValueOptions
 from .property import Property, PropertyType, PropertyValue, PropertyOptions

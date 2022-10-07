@@ -27,6 +27,7 @@ def test_working_file(file_default_messages: Template):
     """load correct file"""
     temp = file_default_messages
     assert temp.root.node
+    console.log(temp)
     temp.dump("tests/resources/deleteme.xml")
 
 
@@ -127,6 +128,16 @@ def test_nested_file(template_empty: Template):
     template.dump("tests/resources/nested.xml")
     template.save("tests/resources/nested.tosc")
     console.log(control.children)
+
+
+@pytest.mark.short
+def test_different_messages(file_different_messages: Template):
+    t = file_different_messages
+    c = t.root.node
+    for m in c[1].messages:
+        console.log(type(m))
+    t.dump("tests/resources/nested2.xml")
+    t.save("tests/resources/nested2.tosc")
 
 
 def test_broken_file():

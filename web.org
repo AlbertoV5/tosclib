@@ -1,0 +1,11 @@
+#+title:     WebAPI
+#+author:    Alberto Valdez
+#+email:     avq5ac1@gmail.com
+
+* API Plan
+
+** FastAPI, Pydantic and Mongodb
+
+Because we are dealing with tree structures, we want to use a document based database like Mongodb.
+
+So we need to store the Pydantic objects as Mongo db items.

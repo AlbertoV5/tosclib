@@ -20,6 +20,7 @@ python = "^3.10"
 numpy = "^1.22.3"
 pydantic = "^1.10.2"
 xmltodict = "^0.13.0"
+pymongo = "^4.2.0"
 
 [tool.poetry.dev-dependencies]
 # Testing dependencies
@@ -45,7 +46,8 @@ aiohttp = "^3.8.1"
 [tool.pytest.ini_options]
 markers = [
     "profile: marks tests for profiling.",
-    "short: fast tests with smaller CPU demands"
+    "short: fast tests with smaller CPU demands",
+    "io: open, modify and save files"
 ]
 #addopts = "--cov --cov-report html:docs/_static/cov"
 log_cli = true

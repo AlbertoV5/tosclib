@@ -65,6 +65,14 @@ class Control(BaseModel):
         self.children.append(control)
         return self
 
+    def add_children(self, children: list["Control"]) -> "Control":
+        """Append all controls in given list to this control's children."""
+        for control in children:
+            if not isinstance(control, Control):
+                raise TypeError(f"{control} is not a valid Control")
+            self.children.append(control)
+        return self
+
     def add_property(self, property: PropertyOptions) -> "Control":
         if not isinstance(property, Property):
             raise TypeError(f"{property} is not a valid Property")

@@ -12,15 +12,38 @@ Because we are dealing with tree structures, we want to use a document based dat
 
 So we need to store the Pydantic objects as Mongo db items.
 
-#+begin_src mongo
-show collections
+We will create a "toscdb" database that we will use for testing.
+
+#+begin_src shell :wrap example
+mongosh --eval "show dbs" | grep toscdb
 #+end_src
 
 #+RESULTS:
 #+begin_example
-toscdb> templates
-toscdb>
+toscdb      44.00 KiB
 #+end_example
+
+We have created a pytest mark for database tests, named "db".
+
+#+begin_src shell :wrap example :results output
+pytest -m db
+#+end_src
+
+#+RESULTS:
+#+begin_example
+============================= test session starts ==============================
+platform darwin -- Python 3.10.6, pytest-7.1.3, pluggy-1.0.0
+rootdir: /Users/albertovaldez/tosclib, configfile: pyproject.toml
+plugins: sugar-0.9.5, doctestplus-0.12.1, profiling-1.7.0, cov-3.0.0
+collected 10 items / 8 deselected / 2 selected
+
+tests/test_db.py::test_database_medium PASSED                            [ 50%]
+tests/test_db.py::test_database_base PASSED                              [100%]
+
+======================= 2 passed, 8 deselected in 0.23s ========================
+#+end_example
+
+We will use a "templates" collection for storing our Templates as objects. In the mongo shell, we will check for the Template object.
 
 #+begin_src mongo :wrap example typescript
 db.templates.find()
@@ -30,12 +53,12 @@ db.templates.find()
 #+begin_example typescript
 toscdb> [
   {
-    _id: ObjectId("634078d47f705789a723d8a7"),
+    _id: new UUID("ab9cc12c-4890-4489-8e6d-d8307a71d97b"),
     lexml: {
       at_version: 3,
       node: {
         at_type: 'GROUP',
-        at_ID: new UUID("d0690a4b-c58c-4888-abf0-2ece69b19c0f"),
+        at_ID: new UUID("ab9cc12c-4890-4489-8e6d-d8307a71d97b"),
         properties: [ { at_type: 'r', key: 'frame', value: [ 0, 0, 400, 400 ] } ],
         values: [],
         messages: { midi: [], osc: [], local: [], gamepad: [] },
@@ -46,3 +69,15 @@ toscdb> [
 ]
 toscdb>
 #+end_example
+
+We will construct tests for different-sized Templates.
+
+** The Template Size Problem
+
+Our hypothesis is that there is a point in a Template size that it becomes a problem for the database to process it and for its data to be send from one place to another.
+
+Because of that, we propose to limit the Template depth to a certain number. This means that once we hit a certain level of recursion in the =children= -> =control= hierarchy, we will suggest to treat a Control as a different Template. This will help us fragment the data and reduce heavily-nested-data problems.
+
+This leads us to present the project as a "Component-based" repository of Templates. Where we can combine them locally in a single Template if we want or add them as Controls to other Templates.
+
+Our first estimation is that a recursion level of =8= would be a good limit, counting the root Control. However we will test a range from =5 to 8= and try to find the best compromise for processing requirements and comfort.

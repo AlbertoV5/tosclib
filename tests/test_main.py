@@ -1,5 +1,6 @@
 """
 Testing: Tosclib.
+TODO: Test multiple message types in one control
 """
 from tosclib.template import Template
 from tosclib.control import Control

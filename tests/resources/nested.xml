@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lexml version="3.0">
-  <node type="GROUP" ID="bc0d9157-b047-46ad-bb92-539c44c84728">
+  <node type="GROUP" ID="310423a2-7e30-4c3d-b342-e00e9e149e30">
     <properties>
       <property type="r">
         <key>frame</key>
@@ -17,7 +17,7 @@
     <messages>
     </messages>
     <children>
-      <node type="GROUP" ID="e8681c35-3d2c-4d10-ace0-3457483fac92">
+      <node type="GROUP" ID="11feba71-8452-4e0b-87c5-96ba65df77db">
         <properties>
           <property type="r">
             <key>frame</key>
@@ -34,7 +34,7 @@
         <messages>
         </messages>
         <children>
-          <node type="FADER" ID="d4f1b88b-466f-46b4-8acb-93ef287cb9b6">
+          <node type="FADER" ID="ee69e3cd-15d3-42d5-9a26-0ec320d34877">
             <properties>
               <property type="c">
                 <key>color</key>
@@ -62,7 +62,7 @@
             <children>
             </children>
           </node>
-          <node type="FADER" ID="a8101352-80ab-45ef-b615-ee24dc404810">
+          <node type="FADER" ID="93d6f197-ae45-4d95-a3a6-e8e9d64c90e8">
             <properties>
               <property type="c">
                 <key>color</key>
@@ -92,7 +92,7 @@
           </node>
         </children>
       </node>
-      <node type="GROUP" ID="2ff01a8a-4f1a-42bf-b981-383ef9e03e81">
+      <node type="GROUP" ID="d7835248-44b3-41cb-b2ca-58c867236195">
         <properties>
           <property type="r">
             <key>frame</key>
@@ -109,7 +109,7 @@
         <messages>
         </messages>
         <children>
-          <node type="RADIAL" ID="c1103b37-e9cc-41d6-a5aa-b01ee1a37fb7">
+          <node type="RADIAL" ID="c1be2430-594c-4b31-a597-d95699550ef6">
             <properties>
               <property type="c">
                 <key>color</key>
@@ -137,7 +137,7 @@
             <children>
             </children>
           </node>
-          <node type="RADIAL" ID="32261752-f443-4642-b7af-598fd2ab371f">
+          <node type="RADIAL" ID="faa785de-d26f-45ae-8ae9-aa24e5fd52c5">
             <properties>
               <property type="c">
                 <key>color</key>

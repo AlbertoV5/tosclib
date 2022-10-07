@@ -39,7 +39,7 @@ class Partial(BaseModel):
 
     type: SourceType = "CONSTANT"
     conversion: Conversion = "STRING"
-    value: str = "/"
+    value: str | None = "/"
     scaleMin: int = 0
     scaleMax: int = 1
 

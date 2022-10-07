@@ -22,12 +22,18 @@ class Console:
 console = Console()
 
 
-@pytest.mark.profile
+@pytest.mark.io
 def test_working_file(file_default_messages: Template):
-    """load correct file"""
-    temp = file_default_messages
-    assert temp.node
-    console.log(temp)
+    """Load and validate basic file."""
+    template = file_default_messages
+    assert template.node
+
+
+@pytest.mark.io
+def test_default_controls(file_default_controls: Template):
+    """Load and validate all controls."""
+    template = file_default_controls
+    assert template.node
 
 
 @pytest.mark.short

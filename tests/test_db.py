@@ -25,8 +25,8 @@ def test_database_base(toscdb: Database, template_empty: Template):
 
 
 @pytest.mark.db
-def test_database_heavy(toscdb: Database, file_default_messages: Template):
-    """Load Heavy Template and insert it into database."""
+def test_database_medium(toscdb: Database, file_default_messages: Template):
+    """Insert medium-sized Template into database."""
     toscdb["templates"].drop()
     toscdb["templates"].insert_many([file_default_messages.dict(with_id=True)])
     _id = file_default_messages.node.at_ID

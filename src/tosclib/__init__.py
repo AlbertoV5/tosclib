@@ -2,7 +2,7 @@
 tosclib
 """
 # from .tosclib import *
-from .template import Root, Template
+from .template import Template
 from .control import Control, ControlType
 from .message import (
     Osc,

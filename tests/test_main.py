@@ -26,9 +26,8 @@ console = Console()
 def test_working_file(file_default_messages: Template):
     """load correct file"""
     temp = file_default_messages
-    assert temp.root.node
+    assert temp.node
     console.log(temp)
-    temp.dump("tests/resources/deleteme.xml")
 
 
 @pytest.mark.short
@@ -41,7 +40,7 @@ def test_properties(template_empty: Template):
         3. Expect pydantic validation error when trying to set invalid property param.
     """
     temp = template_empty.copy()
-    control = temp.root.node
+    control = temp.node
     props = {
         "s": {"name": "myControl", "tag": "tag1"},
         "r": {"frame": (100, 100, 0, 0)},
@@ -70,9 +69,9 @@ def test_controls(template_empty: Template):
     Tests:
         1. Create controls and their attributes programatically
     """
-    temp = template_empty.copy()
-    parent = temp.root.node
-    parent.children = [
+    template = template_empty.copy()
+    root = template.node
+    root.children = [
         Control(
             at_type="FADER",
             properties=[
@@ -84,7 +83,7 @@ def test_controls(template_empty: Template):
         )
         for x in range(0, 400, 100)
     ]
-    for control in parent.children:
+    for control in root.children:
         console.log(type(control))
         value = control.values[0]
         console.log(type(value))
@@ -93,17 +92,16 @@ def test_controls(template_empty: Template):
         with pytest.raises(TypeError) as e_info:
             control.add_control(0)
 
-    console.log(parent.children[-1])
-    temp.dump("tests/resources/deleteme.xml")
-    temp.save("tests/resources/deleteme.tosc")
+    console.log(root.children[-1])
+    template.save("tests/resources/deleteme.tosc", xml=True)
 
 
 def test_nested_file(template_empty: Template):
     """Create nested controls"""
     template = template_empty
-    control = template.root.node
+    root = template.node
     red = Color("color", (1.0, 0.2, 0.2, 1.0))
-    control.add_children(
+    root.add_children(
         [
             Control(properties=[Frame("frame", (0, 0, 200, 400))]).add_children(
                 [
@@ -125,19 +123,17 @@ def test_nested_file(template_empty: Template):
             ),
         ]
     )
-    template.dump("tests/resources/nested.xml")
-    template.save("tests/resources/nested.tosc")
-    console.log(control.children)
+    template.save("tests/resources/nested.tosc", xml=True)
+    console.log(root.children)
 
 
 @pytest.mark.short
 def test_different_messages(file_different_messages: Template):
     t = file_different_messages
-    c = t.root.node
+    c = t.node
     for m in c[1].messages:
         console.log(type(m))
-    t.dump("tests/resources/nested2.xml")
-    t.save("tests/resources/nested2.tosc")
+    t.save("tests/resources/nested2.tosc", xml=True)
 
 
 def test_broken_file():

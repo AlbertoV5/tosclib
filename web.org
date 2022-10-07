@@ -1,11 +1,48 @@
 #+title:     WebAPI
 #+author:    Alberto Valdez
 #+email:     avq5ac1@gmail.com
+#+PROPERTY: header-args:mongo :db toscdb :host localhost :port 27017 :mongoexec mongosh :wrap example
+
 
 * API Plan
 
-** FastAPI, Pydantic and Mongodb
+** Pydantic to MongoDB
 
 Because we are dealing with tree structures, we want to use a document based database like Mongodb.
 
 So we need to store the Pydantic objects as Mongo db items.
+
+#+begin_src mongo
+show collections
+#+end_src
+
+#+RESULTS:
+#+begin_example
+toscdb> templates
+toscdb>
+#+end_example
+
+#+begin_src mongo :wrap example typescript
+db.templates.find()
+#+end_src
+
+#+RESULTS:
+#+begin_example typescript
+toscdb> [
+  {
+    _id: ObjectId("634078d47f705789a723d8a7"),
+    lexml: {
+      at_version: 3,
+      node: {
+        at_type: 'GROUP',
+        at_ID: new UUID("d0690a4b-c58c-4888-abf0-2ece69b19c0f"),
+        properties: [ { at_type: 'r', key: 'frame', value: [ 0, 0, 400, 400 ] } ],
+        values: [],
+        messages: { midi: [], osc: [], local: [], gamepad: [] },
+        children: []
+      }
+    }
+  }
+]
+toscdb>
+#+end_example

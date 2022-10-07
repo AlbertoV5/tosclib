@@ -1,33 +1,29 @@
 """
 Template Module
 """
-from uuid import UUID, uuid4
-from pydantic import BaseModel, Field
 from pathlib import Path
+from bson import ObjectId
 import xmltodict
 import zlib
 
-from . import control
-
-
-class Root(BaseModel):
-    """Model for the XML root. Kept for structural consistency with XML.
-    The Control is named 'node' in the XML.
-    """
-
-    at_version: float = 3.0
-    node: control.Control = Field(default_factory=lambda: control.Control())
-
-    class Config:
-        validate_assignment = True
+from .control import Control
 
 
 class Template:
     """Represents a .tosc file.
 
-    It will parse and unparse the data from XML to Pydantic models and back.
-    It doesn't deal with the structural content of the file and will keep a Root model
-    before the first Control.
+    It will parse and unparse the data from XML to Pydantic models.
+
+    Template
+        |___version
+        |___encoding
+        |___control
+            |___properties
+            |___values
+            |___messages
+            |___children
+                |___control
+                |___...
 
     Example:
 
@@ -35,64 +31,56 @@ class Template:
 
             t = Template('myfile.tosc')
             msg = Midi()
-            t.root.node[0].messages.append(msg)
+            t.root[0].messages.append(msg)
             t.save('newfile.tosc')
     """
 
-    root: Root
-    id: UUID
+    # root: Root
+    at_version: float = 3.0
     encoding: str = "UTF-8"
+    node: Control
 
-    def __init__(self, source: str | Path | Root | None = None):
-        """Load a compressed .tosc or uncompressed .xml file and parse it.
-        From XML to dictionary to Pydantic models.
+    def __init__(
+        self, source: str | Path | Control | None = None, encoding: str = "UTF-8"
+    ):
+        """Load a .tosc or .xml file and parse it. Use xmltodict to Pydantic models.
 
-        If filepath is None, it will create a new Template from a default Root.
-        Can raise Type Error if source is not compatible type.
+        Depending on the source type, it will either:
+
+        1. None: Create an empty Control and attach it to the Template.
+        2. Control: Attach given Control to the Template.
+        3. Path | str: Load file from filepath and parse it.
+        4. Other: Raise TypeError.
 
         Args:
-            source (str | Path | Root | None, optional): File or Root object. Defaults to None.
+            source (str | Path | Control, optional): File or Control object. Defaults to None.
+            encoding (str): Defaults to "UTF-8".
         """
-        if isinstance(source, Root):
-            self.root = source
-            return None
-        elif source is None:
-            self.root = Root()
-            return None
-        elif isinstance(source, str):
-            ext = f".{source.split('.')[1]}"
-        elif isinstance(source, Path):
-            ext = source.suffix
-        else:
-            raise TypeError(f"{source} is not a valid source.")
+        self.encoding = encoding
+        match source:
+            case None:
+                self.node = Control()
+                return
+            case Control():
+                self.node = source
+                return
+            case str():
+                ext = f".{source.split('.')[1]}"
+            case Path():
+                ext = source.suffix
+            case _:
+                raise TypeError(f"{source} is not a valid source.")
+
         with open(source, "rb") as file:
-            self.root = Root(
-                **xmltodict.parse(
-                    zlib.decompress(file.read()) if ext == ".tosc" else file.read(),
-                    attr_prefix="at_",
-                    postprocessor=self.decode_postprocessor,
-                    encoding=self.encoding,
-                    force_list=["midi", "osc", "local", "gamepad"],
-                )["lexml"]
-            )
-        self.id = self.root.node.at_ID
-
-    def dump(self, filepath: str, pretty=True):
-        """Write uncompressed .xml file.
-
-        Args:
-            filepath (str): XML file path.
-        """
-        with open(filepath, "w") as file:
-            xmltodict.unparse(
-                {"lexml": self.root.dict()},
-                pretty=pretty,
-                indent="  ",
+            data = xmltodict.parse(
+                zlib.decompress(file.read()) if ext == ".tosc" else file.read(),
                 attr_prefix="at_",
-                preprocessor=self.encode_preprocessor,
-                output=file,
+                postprocessor=self.decode_postprocessor,
                 encoding=self.encoding,
+                force_list=["midi", "osc", "local", "gamepad"],
             )
+            self.at_version: float = data["lexml"]["at_version"]
+            self.node: Control = Control(**data["lexml"]["node"])
 
     def dumps(self, pretty=True):
         """Returns a string representation.
@@ -101,7 +89,7 @@ class Template:
             (str): XML string.
         """
         return xmltodict.unparse(
-            {"lexml": self.root.dict()},
+            self.dict(),
             pretty=pretty,
             indent="  ",
             attr_prefix="at_",
@@ -109,30 +97,58 @@ class Template:
             encoding=self.encoding,
         )
 
-    def save(self, filepath: str):
-        """Write contents to a compressed file.
+    def save(self, filepath: str | Path, xml: bool = False, pretty: bool = True):
+        """Write Template data to a .tosc file.
 
         Args:
-            filepath (str): File path.
+            filepath (str | Path): Filepath with whatever suffix.
+            xml (bool, optional): If also writes an XML file. Defaults to False.
+            pretty (bool, optional): If indent XML file. Defaults to True.
         """
-        with open(filepath, "wb") as file:
+        if isinstance(filepath, str):
+            filepath = Path(filepath)
+        with open(filepath.with_suffix(".tosc"), "wb") as file:
             file.write(
                 zlib.compress(
                     xmltodict.unparse(
-                        {"lexml": self.root.dict()},
+                        self.dict(),
                         attr_prefix="at_",
                         preprocessor=self.encode_preprocessor,
                         encoding=self.encoding,
                     ).encode(self.encoding)
                 )
             )
+        if xml:
+            with open(filepath.with_suffix(".xml"), "w") as file:
+                xmltodict.unparse(
+                    self.dict(),
+                    pretty=pretty,
+                    indent="  ",
+                    attr_prefix="at_",
+                    preprocessor=self.encode_preprocessor,
+                    output=file,
+                    encoding=self.encoding,
+                )
+
+    def dict(self, with_id: bool = False):
+        """Returns a dictionary of the Template.
+
+        Args:
+            with_id (bool, Optional): Includes self.node.at_ID as _id value for mongo databases. Default False.
+        """
+        if with_id:
+            return {
+                "_id": self.node.at_ID,
+                "lexml": {"at_version": self.at_version, "node": self.node.dict()},
+            }
+        return {"lexml": {"at_version": self.at_version, "node": self.node.dict()}}
 
     def __repr__(self):
-        return f"Template with Control ID: {self.root.node.at_ID}"
+        return f"Template with Root Control ID: {self.node.at_ID}"
 
     def copy(self):
         """Create a new Template object and call Pydantic's deep copy on the root."""
-        return Template(self.root.copy(deep=True))
+        return Template(self.node.copy(deep=True))
 
     def decode_postprocessor(self, path: tuple, key: str, value: str):
         """Reorganize and process elements based on path patterns.

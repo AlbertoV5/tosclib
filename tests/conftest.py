@@ -81,6 +81,7 @@ def template_empty() -> Template:
 @pytest.fixture(scope="session")
 def toscdb() -> Database:
     """Connect to the Mongo Database"""
-    db = MongoClient().toscdb
+    mongo_settings = {"uuidRepresentation": "standard"}
+    db = MongoClient(**mongo_settings)["toscdb"]
     assert db is not None
     return db

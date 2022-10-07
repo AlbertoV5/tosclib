@@ -26,14 +26,14 @@ console = Console()
 def test_working_file(file_default_messages: Template):
     """Load and validate basic file."""
     template = file_default_messages
-    assert template.node
+    assert template.control
 
 
 @pytest.mark.io
 def test_default_controls(file_default_controls: Template):
     """Load and validate all controls."""
     template = file_default_controls
-    assert template.node
+    assert template.control
 
 
 @pytest.mark.short
@@ -46,7 +46,7 @@ def test_properties(template_empty: Template):
         3. Expect pydantic validation error when trying to set invalid property param.
     """
     temp = template_empty.copy()
-    control = temp.node
+    control = temp.control
     props = {
         "s": {"name": "myControl", "tag": "tag1"},
         "r": {"frame": (100, 100, 0, 0)},
@@ -76,7 +76,7 @@ def test_controls(template_empty: Template):
         1. Create controls and their attributes programatically
     """
     template = template_empty.copy()
-    root = template.node
+    root = template.control
     root.children = [
         Control(
             at_type="FADER",
@@ -96,7 +96,7 @@ def test_controls(template_empty: Template):
         assert isinstance(control, Control)
         assert isinstance(value, Value)
         with pytest.raises(TypeError) as e_info:
-            control.add_control(0)
+            control.add_controls([0])
 
     console.log(root.children[-1])
     template.save("tests/resources/deleteme.tosc", xml=True)
@@ -105,11 +105,11 @@ def test_controls(template_empty: Template):
 def test_nested_file(template_empty: Template):
     """Create nested controls"""
     template = template_empty
-    root = template.node
+    root = template.control
     red = Color("color", (1.0, 0.2, 0.2, 1.0))
-    root.add_children(
+    root.add_controls(
         [
-            Control(properties=[Frame("frame", (0, 0, 200, 400))]).add_children(
+            Control(properties=[Frame("frame", (0, 0, 200, 400))]).add_controls(
                 [
                     Control(
                         at_type="FADER",
@@ -118,7 +118,7 @@ def test_nested_file(template_empty: Template):
                     for x in range(0, 200, 100)
                 ]
             ),
-            Control(properties=[Frame("frame", (200, 0, 200, 400))]).add_children(
+            Control(properties=[Frame("frame", (200, 0, 200, 400))]).add_controls(
                 [
                     Control(
                         at_type="RADIAL",
@@ -136,7 +136,7 @@ def test_nested_file(template_empty: Template):
 @pytest.mark.short
 def test_different_messages(file_different_messages: Template):
     t = file_different_messages
-    c = t.node
+    c = t.control
     for m in c[1].messages:
         console.log(type(m))
     t.save("tests/resources/nested2.tosc", xml=True)

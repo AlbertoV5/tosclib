@@ -5,11 +5,14 @@ Fixtures: Default templates and files.
         This file contains all objects in their default state.
 
 """
-import pytest
-from tosclib import Template
+from typing import Callable
 from pathlib import Path
 from pymongo.database import Database
 from pymongo import MongoClient
+import pytest
+
+from tosclib.template import Template
+from tosclib.control import Control
 
 
 TESTS_PATH: Path = Path.cwd() / Path("tests").resolve()
@@ -79,9 +82,28 @@ def template_empty() -> Template:
 
 
 @pytest.fixture(scope="session")
+def nested_controls() -> Callable[[int], Template]:
+    """
+    Add a given level of control hierarchies to a given control.
+
+    nested_controls(level, control)
+
+    If we add the Control to the hierarchy, we have level + 1.
+    """
+
+    def nested(level: int, control: Control = None):
+        if level == 0:
+            return control
+        return control.add_controls([nested(level - 1, Control())])
+
+    return nested
+
+
+@pytest.fixture(scope="session")
 def toscdb() -> Database:
     """Connect to the Mongo Database"""
     mongo_settings = {"uuidRepresentation": "standard"}
     db = MongoClient(**mongo_settings)["toscdb"]
+    db["templates"].drop()
     assert db is not None
     return db

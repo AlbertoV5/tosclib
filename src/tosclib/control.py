@@ -3,7 +3,7 @@ from typing import Literal, TypeAlias
 from pydantic import BaseModel, Field
 from uuid import UUID, uuid4
 
-from .message import Osc, Midi, Local, Messages
+from .message import Gamepad, Osc, Midi, Local, Messages
 from .value import Value, ValueOptions
 from .property import Property, Frame, PropertyValue, PropertyOptions
 
@@ -53,21 +53,9 @@ class Control(BaseModel):
     def __getitem__(self, item):
         return self.children[item]
 
-    def add_control(self, control: "Control") -> "Control":
-        """Append to this control's children.
-        Doing Pydantic validation with immutable data is not an option.
-
-        Raises:
-            TypeError: If not a valid Control is given.
-        """
-        if not isinstance(control, Control):
-            raise TypeError(f"{control} is not a valid Control")
-        self.children.append(control)
-        return self
-
-    def add_children(self, children: list["Control"]) -> "Control":
+    def add_controls(self, controls: list["Control"]) -> "Control":
         """Append all controls in given list to this control's children."""
-        for control in children:
+        for control in controls:
             if not isinstance(control, Control):
                 raise TypeError(f"{control} is not a valid Control")
             self.children.append(control)
@@ -88,19 +76,25 @@ class Control(BaseModel):
     def add_osc(self, osc: Osc) -> "Control":
         if not isinstance(osc, Osc):
             raise TypeError(f"{osc} is not a valid Osc")
-        self.messages["osc"].append(osc)
+        self.messages.osc.append(osc)
         return self
 
     def add_midi(self, midi: Midi) -> "Control":
         if not isinstance(midi, Midi):
             raise TypeError(f"{midi} is not a valid Midi")
-        self.messages["midi"].append(midi)
+        self.messages.midi.append(midi)
         return self
 
     def add_local(self, local: Local) -> "Control":
         if not isinstance(local, Local):
             raise TypeError(f"{local} is not a valid Local")
-        self.messages["local"].append(local)
+        self.messages.local.append(local)
+        return self
+
+    def add_gamepad(self, gamepad: Gamepad) -> "Control":
+        if not isinstance(gamepad, Gamepad):
+            raise TypeError(f"{gamepad} is not a valid Local")
+        self.messages.gamepad.append(gamepad)
         return self
 
     def dumps(self, indent=2, exclude={"children"}, **kwargs):

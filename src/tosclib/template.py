@@ -38,10 +38,10 @@ class Template:
     # root: Root
     at_version: float = 3.0
     encoding: str = "UTF-8"
-    node: Control
+    control: Control
 
     def __init__(
-        self, source: str | Path | Control | None = None, encoding: str = "UTF-8"
+        self, source: str | Path | Control | dict | None = None, encoding: str = "UTF-8"
     ):
         """Load a .tosc or .xml file and parse it. Use xmltodict to Pydantic models.
 
@@ -49,8 +49,9 @@ class Template:
 
         1. None: Create an empty Control and attach it to the Template.
         2. Control: Attach given Control to the Template.
-        3. Path | str: Load file from filepath and parse it.
-        4. Other: Raise TypeError.
+        3. dict: Create new data and Control via the Control constructor, pydantic validates it.
+        4. Path | str: Load file from filepath and parse it.
+        5. Other: Raise TypeError.
 
         Args:
             source (str | Path | Control, optional): File or Control object. Defaults to None.
@@ -59,10 +60,14 @@ class Template:
         self.encoding = encoding
         match source:
             case None:
-                self.node = Control()
+                self.control = Control()
                 return
             case Control():
-                self.node = source
+                self.control = source
+                return
+            case dict():
+                self.at_version: float = source["lexml"]["at_version"]
+                self.control: Control = Control(**source["lexml"]["node"])
                 return
             case str():
                 ext = f".{source.split('.')[1]}"
@@ -80,7 +85,7 @@ class Template:
                 force_list=["midi", "osc", "local", "gamepad"],
             )
             self.at_version: float = data["lexml"]["at_version"]
-            self.node: Control = Control(**data["lexml"]["node"])
+            self.control: Control = Control(**data["lexml"]["node"])
 
     def dumps(self, pretty=True):
         """Returns a string representation.
@@ -138,17 +143,17 @@ class Template:
         """
         if with_id:
             return {
-                "_id": self.node.at_ID,
-                "lexml": {"at_version": self.at_version, "node": self.node.dict()},
+                "_id": self.control.at_ID,
+                "lexml": {"at_version": self.at_version, "node": self.control.dict()},
             }
-        return {"lexml": {"at_version": self.at_version, "node": self.node.dict()}}
+        return {"lexml": {"at_version": self.at_version, "node": self.control.dict()}}
 
     def __repr__(self):
-        return f"Template with Root Control ID: {self.node.at_ID}"
+        return f"Template with Root Control ID: {self.control.at_ID}"
 
     def copy(self):
         """Create a new Template object and call Pydantic's deep copy on the root."""
-        return Template(self.node.copy(deep=True))
+        return Template(self.control.copy(deep=True))
 
     def decode_postprocessor(self, path: tuple, key: str, value: str):
         """Reorganize and process elements based on path patterns.

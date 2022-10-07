@@ -1,0 +1,223 @@
+{
+  "_id": {
+    "$uuid": "35407dabee884446939233d3ab6cd608"
+  },
+  "lexml": {
+    "at_version": 3.0,
+    "node": {
+      "at_type": "GROUP",
+      "at_ID": {
+        "$uuid": "35407dabee884446939233d3ab6cd608"
+      },
+      "properties": [
+        {
+          "at_type": "r",
+          "key": "frame",
+          "value": [
+            0,
+            0,
+            400,
+            400
+          ]
+        }
+      ],
+      "values": [],
+      "messages": {
+        "midi": [],
+        "osc": [],
+        "local": [],
+        "gamepad": []
+      },
+      "children": [
+        {
+          "at_type": "GROUP",
+          "at_ID": {
+            "$uuid": "8ce6533156b44ef8a9d23842422b0fe7"
+          },
+          "properties": [
+            {
+              "at_type": "r",
+              "key": "frame",
+              "value": [
+                0,
+                0,
+                400,
+                400
+              ]
+            }
+          ],
+          "values": [],
+          "messages": {
+            "midi": [],
+            "osc": [],
+            "local": [],
+            "gamepad": []
+          },
+          "children": [
+            {
+              "at_type": "GROUP",
+              "at_ID": {
+                "$uuid": "cee34bf80e16467686ce49b1f8fd78fe"
+              },
+              "properties": [
+                {
+                  "at_type": "r",
+                  "key": "frame",
+                  "value": [
+                    0,
+                    0,
+                    400,
+                    400
+                  ]
+                }
+              ],
+              "values": [],
+              "messages": {
+                "midi": [],
+                "osc": [],
+                "local": [],
+                "gamepad": []
+              },
+              "children": [
+                {
+                  "at_type": "GROUP",
+                  "at_ID": {
+                    "$uuid": "3c264c93b9054fa8b714430eb2ee5528"
+                  },
+                  "properties": [
+                    {
+                      "at_type": "r",
+                      "key": "frame",
+                      "value": [
+                        0,
+                        0,
+                        400,
+                        400
+                      ]
+                    }
+                  ],
+                  "values": [],
+                  "messages": {
+                    "midi": [],
+                    "osc": [],
+                    "local": [],
+                    "gamepad": []
+                  },
+                  "children": [
+                    {
+                      "at_type": "GROUP",
+                      "at_ID": {
+                        "$uuid": "f104194bdd7b4480a05ed29f5fdd6136"
+                      },
+                      "properties": [
+                        {
+                          "at_type": "r",
+                          "key": "frame",
+                          "value": [
+                            0,
+                            0,
+                            400,
+                            400
+                          ]
+                        }
+                      ],
+                      "values": [],
+                      "messages": {
+                        "midi": [],
+                        "osc": [],
+                        "local": [],
+                        "gamepad": []
+                      },
+                      "children": [
+                        {
+                          "at_type": "GROUP",
+                          "at_ID": {
+                            "$uuid": "86097d195a8d40e397c3602e9fb5c97f"
+                          },
+                          "properties": [
+                            {
+                              "at_type": "r",
+                              "key": "frame",
+                              "value": [
+                                0,
+                                0,
+                                400,
+                                400
+                              ]
+                            }
+                          ],
+                          "values": [],
+                          "messages": {
+                            "midi": [],
+                            "osc": [],
+                            "local": [],
+                            "gamepad": []
+                          },
+                          "children": [
+                            {
+                              "at_type": "GROUP",
+                              "at_ID": {
+                                "$uuid": "1ab4d032a04f42b184ca6542a2c43a48"
+                              },
+                              "properties": [
+                                {
+                                  "at_type": "r",
+                                  "key": "frame",
+                                  "value": [
+                                    0,
+                                    0,
+                                    400,
+                                    400
+                                  ]
+                                }
+                              ],
+                              "values": [],
+                              "messages": {
+                                "midi": [],
+                                "osc": [],
+                                "local": [],
+                                "gamepad": []
+                              },
+                              "children": [
+                                {
+                                  "at_type": "GROUP",
+                                  "at_ID": {
+                                    "$uuid": "e216ba1978444a92ae0fdfdba9943171"
+                                  },
+                                  "properties": [
+                                    {
+                                      "at_type": "r",
+                                      "key": "frame",
+                                      "value": [
+                                        0,
+                                        0,
+                                        400,
+                                        400
+                                      ]
+                                    }
+                                  ],
+                                  "values": [],
+                                  "messages": {
+                                    "midi": [],
+                                    "osc": [],
+                                    "local": [],
+                                    "gamepad": []
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

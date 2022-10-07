@@ -11,10 +11,11 @@ Testing: Decoder.
         edit, save and verify correct file
 
 """
-from tosclib import Template, Control, Property, Value
-from tosclib import String, Frame, Color, Integer, Float, Boolean
+from tosclib.template import Template
+from tosclib.control import Control
+from tosclib.value import Value, X
+from tosclib.property import Property, String, Frame, Color
 import pydantic
-import tosclib
 import pytest
 import logging
 
@@ -87,19 +88,28 @@ def test_controls(template_empty: Template):
                 Frame("frame", (x, 0, 100, 400)),
                 Color("color", (1.0, 0.3, 0.3, 1.0)),
             ],
-            values=[Value(key="x", default=0.5)],
+            values=[X(default=0.5)],
         )
         for x in range(0, 400, 100)
     ]
     for control in parent.children:
         console.log(type(control))
+        value = control.values[0]
+        console.log(type(value))
         assert isinstance(control, Control)
+        assert isinstance(value, Value)
         with pytest.raises(TypeError) as e_info:
             control.add_control(0)
 
     console.log(parent.children[-1])
     temp.dump("tests/resources/deleteme.xml")
     temp.save("tests/resources/deleteme.tosc")
+
+
+def test_nested_file(template_empty: Template):
+    ...
+    # temp = template_empty
+    # control = temp.root.node.add_control()
 
 
 def test_broken_file():

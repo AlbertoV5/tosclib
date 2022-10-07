@@ -1,13 +1,7 @@
 """
 tosclib
 
-Modules:
-
-    template:
-    control:
-    message:
-    value:
-    property:
+TODO: Test multiple message types in one control
 """
 # from .tosclib import *
 from .template import Root, Template

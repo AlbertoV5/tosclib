@@ -1,15 +1,5 @@
 """
-Testing: Decoder.
-
-    test_working_file:
-        load correct file
-
-    test_broken_file
-        load incorrect file
-
-    test_edited_working_file:
-        edit, save and verify correct file
-
+Testing: Tosclib.
 """
 from tosclib.template import Template
 from tosclib.control import Control

@@ -1,5 +1,5 @@
 """Control Module"""
-from typing import Any, Literal, TypeAlias
+from typing import Literal, TypeAlias
 from pydantic import BaseModel, Field
 from uuid import uuid4
 

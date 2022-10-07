@@ -1,5 +1,5 @@
 """Control Module"""
-from typing import Literal, TypeAlias
+from typing import Any, Literal, TypeAlias
 from pydantic import BaseModel, Field
 from uuid import uuid4
 
@@ -38,8 +38,8 @@ class Control(BaseModel):
     https://hexler.net/touchosc/manual/editor-control
     """
 
-    at_ID: str = str(uuid4())
     at_type: ControlType = "GROUP"
+    at_ID: str = str(uuid4())
     properties: list[PropertyOptions] = Field(
         default_factory=lambda: [Frame("frame", (0, 0, 400, 400))]
     )

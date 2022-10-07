@@ -12,7 +12,7 @@ Testing: Decoder.
 
 """
 from tosclib.template import Template
-from tosclib.control import Control
+from tosclib.control import Control, ControlType
 from tosclib.value import Value, X
 from tosclib.property import Property, String, Frame, Color
 import pydantic
@@ -107,9 +107,52 @@ def test_controls(template_empty: Template):
 
 
 def test_nested_file(template_empty: Template):
-    ...
-    # temp = template_empty
-    # control = temp.root.node.add_control()
+    """Create many nested controls"""
+    template = template_empty
+    control = template.root.node
+
+    def add_children(parent: Control, children: list[Control, list]):
+        if len(children) == 0:
+            return None
+        for child in children:
+            parent.add_control(child[0])
+            add_children(child[0], child[1])
+
+    red = Color("color", (1.0, 0.3, 0.3, 1.0))
+    add_children(
+        control,
+        [
+            [
+                Control(properties=[Frame("frame", (0, 0, 200, 400))]),
+                [
+                    [
+                        Control(
+                            at_type="FADER",
+                            properties=[red, Frame("frame", (x, 0, 100, 400))],
+                        ),
+                        [],
+                    ]
+                    for x in range(0, 200, 100)
+                ],
+            ],
+            [
+                Control(properties=[Frame("frame", (200, 0, 200, 400))]),
+                [
+                    [
+                        Control(
+                            at_type="RADIAL",
+                            properties=[red, Frame("frame", (x, 0, 100, 400))],
+                        ),
+                        [],
+                    ]
+                    for x in range(0, 200, 100)
+                ],
+            ],
+        ],
+    )
+    console.log(control.children)
+    template.dump("tests/resources/nested.xml")
+    template.save("tests/resources/nested.tosc")
 
 
 def test_broken_file():

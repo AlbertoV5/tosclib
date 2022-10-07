@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lexml version="3.0">
+  <node type="GROUP" ID="8316f6ae-e63d-42b8-96d8-5f1847c9f222">
+    <properties>
+      <property type="r">
+        <key>frame</key>
+        <value>
+          <x>0</x>
+          <y>0</y>
+          <w>400</w>
+          <h>400</h>
+        </value>
+      </property>
+    </properties>
+    <values>
+    </values>
+    <children>
+      <node type="GROUP" ID="8316f6ae-e63d-42b8-96d8-5f1847c9f222">
+        <properties>
+          <property type="r">
+            <key>frame</key>
+            <value>
+              <x>0</x>
+              <y>0</y>
+              <w>200</w>
+              <h>400</h>
+            </value>
+          </property>
+        </properties>
+        <values>
+        </values>
+        <children>
+          <node type="FADER" ID="8316f6ae-e63d-42b8-96d8-5f1847c9f222">
+            <properties>
+              <property type="c">
+                <key>color</key>
+                <value>
+                  <r>1.0</r>
+                  <g>0.3</g>
+                  <b>0.3</b>
+                  <a>1.0</a>
+                </value>
+              </property>
+              <property type="r">
+                <key>frame</key>
+                <value>
+                  <x>0</x>
+                  <y>0</y>
+                  <w>100</w>
+                  <h>400</h>
+                </value>
+              </property>
+            </properties>
+            <values>
+            </values>
+            <children>
+            </children>
+          </node>
+          <node type="FADER" ID="8316f6ae-e63d-42b8-96d8-5f1847c9f222">
+            <properties>
+              <property type="c">
+                <key>color</key>
+                <value>
+                  <r>1.0</r>
+                  <g>0.3</g>
+                  <b>0.3</b>
+                  <a>1.0</a>
+                </value>
+              </property>
+              <property type="r">
+                <key>frame</key>
+                <value>
+                  <x>100</x>
+                  <y>0</y>
+                  <w>100</w>
+                  <h>400</h>
+                </value>
+              </property>
+            </properties>
+            <values>
+            </values>
+            <children>
+            </children>
+          </node>
+        </children>
+      </node>
+      <node type="GROUP" ID="8316f6ae-e63d-42b8-96d8-5f1847c9f222">
+        <properties>
+          <property type="r">
+            <key>frame</key>
+            <value>
+              <x>200</x>
+              <y>0</y>
+              <w>200</w>
+              <h>400</h>
+            </value>
+          </property>
+        </properties>
+        <values>
+        </values>
+        <children>
+          <node type="RADIAL" ID="8316f6ae-e63d-42b8-96d8-5f1847c9f222">
+            <properties>
+              <property type="c">
+                <key>color</key>
+                <value>
+                  <r>1.0</r>
+                  <g>0.3</g>
+                  <b>0.3</b>
+                  <a>1.0</a>
+                </value>
+              </property>
+              <property type="r">
+                <key>frame</key>
+                <value>
+                  <x>0</x>
+                  <y>0</y>
+                  <w>100</w>
+                  <h>400</h>
+                </value>
+              </property>
+            </properties>
+            <values>
+            </values>
+            <children>
+            </children>
+          </node>
+          <node type="RADIAL" ID="8316f6ae-e63d-42b8-96d8-5f1847c9f222">
+            <properties>
+              <property type="c">
+                <key>color</key>
+                <value>
+                  <r>1.0</r>
+                  <g>0.3</g>
+                  <b>0.3</b>
+                  <a>1.0</a>
+                </value>
+              </property>
+              <property type="r">
+                <key>frame</key>
+                <value>
+                  <x>100</x>
+                  <y>0</y>
+                  <w>100</w>
+                  <h>400</h>
+                </value>
+              </property>
+            </properties>
+            <values>
+            </values>
+            <children>
+            </children>
+          </node>
+        </children>
+      </node>
+    </children>
+  </node>
+</lexml>

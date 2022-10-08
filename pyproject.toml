@@ -48,7 +48,8 @@ markers = [
     "profile: marks tests for profiling.",
     "short: fast tests with smaller CPU demands",
     "io: open, modify and save files",
-    "db: connect to mongodb"
+    "db: connect to mongodb",
+    "template: creates a complete template"
 ]
 #addopts = "--cov --cov-report html:docs/_static/cov"
 log_cli = true

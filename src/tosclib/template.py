@@ -15,6 +15,7 @@ class Template:
     It will parse and unparse the data from XML to Pydantic models.
 
     Template
+        |___name
         |___version
         |___encoding
         |___control
@@ -35,13 +36,14 @@ class Template:
             t.save('newfile.tosc')
     """
 
-    # root: Root
     at_version: float = 3.0
     encoding: str = "UTF-8"
     control: Control
 
     def __init__(
-        self, source: str | Path | Control | dict | None = None, encoding: str = "UTF-8"
+        self,
+        source: str | Path | Control | dict | None = None,
+        encoding: str = "UTF-8",
     ):
         """Load a .tosc or .xml file and parse it. Use xmltodict to Pydantic models.
 
@@ -49,7 +51,7 @@ class Template:
 
         1. None: Create an empty Control and attach it to the Template.
         2. Control: Attach given Control to the Template.
-        3. dict: Create new data and Control via the Control constructor, pydantic validates it.
+        3. dict: Create new data and Control via Control(**source[][]), pydantic validates it.
         4. Path | str: Load file from filepath and parse it.
         5. Other: Raise TypeError.
 
@@ -144,12 +146,20 @@ class Template:
         if with_id:
             return {
                 "_id": self.control.at_ID,
-                "lexml": {"at_version": self.at_version, "node": self.control.dict()},
+                "lexml": {
+                    "at_version": self.at_version,
+                    "node": self.control.dict(),
+                },
             }
-        return {"lexml": {"at_version": self.at_version, "node": self.control.dict()}}
+        return {
+            "lexml": {
+                "at_version": self.at_version,
+                "node": self.control.dict(),
+            },
+        }
 
     def __repr__(self):
-        return f"Template with Root Control ID: {self.control.at_ID}"
+        return f"Template with Control: {self.control.at_ID}"
 
     def copy(self):
         """Create a new Template object and call Pydantic's deep copy on the root."""

@@ -5,7 +5,7 @@ from uuid import UUID, uuid4
 
 from .message import Gamepad, Osc, Midi, Local, Messages
 from .value import Value, ValueOptions
-from .property import Property, Frame, PropertyValue, PropertyOptions
+from .property import Property, Frame, PropertyOptions
 
 
 ControlType: TypeAlias = Literal[
@@ -61,45 +61,49 @@ class Control(BaseModel):
             self.children.append(control)
         return self
 
-    def add_property(self, property: PropertyOptions) -> "Control":
-        if not isinstance(property, Property):
-            raise TypeError(f"{property} is not a valid Property")
-        self.properties.append(property)
+    def add_properties(self, properties: list[PropertyOptions]) -> "Control":
+        """Append all properties in given list to this Control's properties."""
+        for property in properties:
+            if not isinstance(property, Property):
+                raise TypeError(f"{property} is not a valid Property")
+            self.properties.append(property)
         return self
 
-    def add_value(self, value: ValueOptions) -> "Control":
-        if not isinstance(value, Value):
-            raise TypeError(f"{value} is not a valid Value")
-        self.values.append(value)
+    def add_values(self, values: list[ValueOptions]) -> "Control":
+        """Append all values in given list to this Control's values."""
+        for value in values:
+            if not isinstance(value, Value):
+                raise TypeError(f"{value} is not a valid Value")
+            self.values.append(value)
         return self
 
-    def add_osc(self, osc: Osc) -> "Control":
-        if not isinstance(osc, Osc):
-            raise TypeError(f"{osc} is not a valid Osc")
-        self.messages.osc.append(osc)
+    def add_osc_messages(self, messages: list[Osc]) -> "Control":
+        for osc in messages:
+            if not isinstance(osc, Osc):
+                raise TypeError(f"{osc} is not a valid Osc")
+            self.messages.osc.append(osc)
         return self
 
-    def add_midi(self, midi: Midi) -> "Control":
-        if not isinstance(midi, Midi):
-            raise TypeError(f"{midi} is not a valid Midi")
-        self.messages.midi.append(midi)
+    def add_midi_messages(self, messages: list[Midi]) -> "Control":
+        for midi in messages:
+            if not isinstance(midi, Midi):
+                raise TypeError(f"{midi} is not a valid Midi")
+            self.messages.midi.append(midi)
         return self
 
-    def add_local(self, local: Local) -> "Control":
-        if not isinstance(local, Local):
-            raise TypeError(f"{local} is not a valid Local")
-        self.messages.local.append(local)
+    def add_local_messages(self, messages: list[Local]) -> "Control":
+        for local in messages:
+            if not isinstance(local, Local):
+                raise TypeError(f"{local} is not a valid Local")
+            self.messages.local.append(local)
         return self
 
-    def add_gamepad(self, gamepad: Gamepad) -> "Control":
-        if not isinstance(gamepad, Gamepad):
-            raise TypeError(f"{gamepad} is not a valid Local")
-        self.messages.gamepad.append(gamepad)
+    def add_gamepad_messages(self, messages: list[Gamepad]) -> "Control":
+        for gamepad in messages:
+            if not isinstance(gamepad, Gamepad):
+                raise TypeError(f"{gamepad} is not a valid Local")
+            self.messages.gamepad.append(gamepad)
         return self
 
     def dumps(self, indent=2, exclude={"children"}, **kwargs):
         return self.json(indent=indent, exclude=exclude, **kwargs)
-
-    def set_prop(self, key: str, value: PropertyValue) -> "Control":
-        self.properties = [p.set(value) if p.key == key else p for p in self.properties]
-        return self

@@ -26,7 +26,7 @@ class X(Value):
     key: Literal["x"] = "x"
     locked: bool = False
     lockedDefaultCurrent: bool = False
-    default: float = 0
+    default: float | None = 0
     defaultPull: int = 0
 
     def __init__(
@@ -50,7 +50,7 @@ class Y(Value):
     key: Literal["y"] = "y"
     locked: bool = False
     lockedDefaultCurrent: bool = False
-    default: float = 0
+    default: float | None = 0
     defaultPull: int = 0
 
     def __init__(
@@ -74,7 +74,7 @@ class Text(Value):
     key: Literal["text"] = "text"
     locked: bool = False
     lockedDefaultCurrent: bool = False
-    default: str = ""
+    default: str | None = ""
     defaultPull: int = 0
 
     def __init__(
@@ -98,7 +98,7 @@ class Touch(Value):
     key: Literal["touch"] = "touch"
     locked: bool = False
     lockedDefaultCurrent: bool = False
-    default: bool = False
+    default: bool | None = False
     defaultPull: int = 0
 
     def __init__(
@@ -122,7 +122,7 @@ class Page(Value):
     key: Literal["page"] = "page"
     locked: bool = False
     lockedDefaultCurrent: bool = False
-    default: int = 0
+    default: int | None = 0
     defaultPull: int = 0
 
     def __init__(

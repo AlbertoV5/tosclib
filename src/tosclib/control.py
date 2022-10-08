@@ -53,57 +53,48 @@ class Control(BaseModel):
     def __getitem__(self, item):
         return self.children[item]
 
-    # def add_controls(self, controls: list["Control"]) -> "Control":
-    #     """Append all controls in given list to this control's children."""
-    #     if not all((isinstance(control) for control in controls)):
-    #         raise TypeError(f"{control} is not a valid Control")
-    #     for control in controls:
-    #         self.children.append(control)
-    #     return self
+    def __iter__(self):
+        return iter(self.children)
 
-    # def add_properties(self, properties: list[PropertyOptions]) -> "Control":
-    #     """Append all properties in given list to this Control's properties."""
-    #     for property in properties:
-    #         if not isinstance(property, Property):
-    #             raise TypeError(f"{property} is not a valid Property")
-    #         self.properties.append(property)
-    #     return self
+    def add_controls(self, data: list["Control"], validate: bool = False) -> "Control":
+        """Append all controls in given list to this control's children."""
+        for d in data:
+            self.children.append(d)
+        return self.validate(self.dict()) if validate else self
 
-    # def add_values(self, values: list[ValueOptions]) -> "Control":
-    #     """Append all values in given list to this Control's values."""
-    #     for value in values:
-    #         if not isinstance(value, Value):
-    #             raise TypeError(f"{value} is not a valid Value")
-    #         self.values.append(value)
-    #     return self
+    def add_properties(
+        self, data: list[PropertyOptions], validate: bool = False
+    ) -> "Control":
+        """Append all properties in given list to this Control's properties."""
+        for d in data:
+            self.properties.append(d)
+        return self.validate(self.dict()) if validate else self
 
-    # def add_osc_messages(self, messages: list[Osc]) -> "Control":
-    #     for osc in messages:
-    #         if not isinstance(osc, Osc):
-    #             raise TypeError(f"{osc} is not a valid Osc")
-    #         self.messages.osc.append(osc)
-    #     return self
+    def add_values(self, data: list[ValueOptions], validate: bool = False) -> "Control":
+        """Append all values in given list to this Control's values."""
+        for d in data:
+            self.values.append(d)
+        return self.validate(self.dict()) if validate else self
 
-    # def add_midi_messages(self, messages: list[Midi]) -> "Control":
-    #     for midi in messages:
-    #         if not isinstance(midi, Midi):
-    #             raise TypeError(f"{midi} is not a valid Midi")
-    #         self.messages.midi.append(midi)
-    #     return self
+    def add_midi(self, data: list[Midi], validate: bool = False) -> "Control":
+        for d in data:
+            self.messages.midi.append(d)
+        return self.validate(self.dict()) if validate else self
 
-    # def add_local_messages(self, messages: list[Local]) -> "Control":
-    #     for local in messages:
-    #         if not isinstance(local, Local):
-    #             raise TypeError(f"{local} is not a valid Local")
-    #         self.messages.local.append(local)
-    #     return self
+    def add_osc(self, data: list[Osc], validate: bool = False) -> "Control":
+        for d in data:
+            self.messages.osc.append(d)
+        return self.validate(self.dict()) if validate else self
 
-    # def add_gamepad_messages(self, messages: list[Gamepad]) -> "Control":
-    #     for gamepad in messages:
-    #         if not isinstance(gamepad, Gamepad):
-    #             raise TypeError(f"{gamepad} is not a valid Local")
-    #         self.messages.gamepad.append(gamepad)
-    #     return self
+    def add_local(self, data: list[Local], validate: bool = False) -> "Control":
+        for d in data:
+            self.messages.local.append(d)
+        return self.validate(self.dict()) if validate else self
 
-    def dumps(self, indent=2, exclude={"children"}, **kwargs):
+    def add_gamepad(self, data: list[Gamepad], validate: bool = False) -> "Control":
+        for d in data:
+            self.messages.gamepad.append(d)
+        return self.validate(self.dict()) if validate else self
+
+    def dumps(self, indent=2, exclude={"children"}, **kwargs) -> str:
         return self.json(indent=indent, exclude=exclude, **kwargs)

@@ -47,9 +47,8 @@ aiohttp = "^3.8.1"
 markers = [
     "profile: marks tests for profiling.",
     "short: fast tests with smaller CPU demands",
-    "io: open, modify and save files",
-    "db: connect to mongodb",
-    "template: creates a complete template"
+    "long: computation-heavy tests, large files",
+    "db: connect to mongodb"
 ]
 #addopts = "--cov --cov-report html:docs/_static/cov"
 log_cli = true

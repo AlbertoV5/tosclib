@@ -40,8 +40,8 @@ class Partial(BaseModel):
     type: SourceType = "CONSTANT"
     conversion: Conversion = "STRING"
     value: str | None = "/"
-    scaleMin: int = 0
-    scaleMax: int = 1
+    scaleMin: float = 0
+    scaleMax: float = 1
 
     class Config:
         validate_assignment = True
@@ -68,8 +68,8 @@ class MidiValue(BaseModel):
 
     type: SourceType = "CONSTANT"
     key: str | None = ""
-    scaleMin: int = 0
-    scaleMax: int = 15
+    scaleMin: float = 0
+    scaleMax: float = 15
 
     class Config:
         validate_assignment = True
@@ -128,8 +128,8 @@ class Local(BaseModel):
     type: SourceType = "VALUE"
     conversion: Conversion = "FLOAT"
     value: str = "x"
-    scaleMin: int = 0
-    scaleMax: int = 1
+    scaleMin: float = 0
+    scaleMax: float = 1
     dstType: SourceType = "VALUE"
     dstVar: str | None = None
     dstID: str | None = None
@@ -172,8 +172,8 @@ class Gamepad(BaseModel):
     connections: str = Field(default="11111", min_length=5, max_length=5)
     type: GamepadInput = "BUTTON_A"
     conversion: Conversion = "FLOAT"
-    scaleMin: int = 0
-    scaleMax: int = 1
+    scaleMin: float = 0
+    scaleMax: float = 1
     targetType: SourceType = "VALUE"
     targetVar: ValueKey = "x"
 

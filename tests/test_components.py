@@ -11,12 +11,9 @@ Requirements:
         2. Will hide main fader and display 8 buttons.
 """
 
-from typing import Callable
 import pytest
 import logging
-import numpy as np
-from pymongo.database import Database
-
+from conftest import Toscdb
 
 from tosclib.template import Template
 from tosclib.control import Control
@@ -47,9 +44,9 @@ def component_fader() -> Control:
     return container
 
 
-@pytest.mark.template
-def test_template(toscdb: Database, component_fader: Control):
+@pytest.mark.long
+def test_template(db: Toscdb, component_fader: Control):
     """Roundtrip"""
     template = Template(component_fader)
-    toscdb["templates"].insert_one(template.dict(with_id=True))
+    db.component.insert_one(template.dict(with_id=True))
     console.log(template.control.children[0])

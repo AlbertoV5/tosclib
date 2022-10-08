@@ -1,6 +1,5 @@
 """
-Testing: Tosclib.
-TODO: Test multiple message types in one control
+General parsing tests.
 """
 from tosclib.template import Template
 from tosclib.control import Control
@@ -22,14 +21,14 @@ class Console:
 console = Console()
 
 
-@pytest.mark.io
+@pytest.mark.short
 def test_working_file(file_default_messages: Template):
     """Load and validate basic file."""
     template = file_default_messages
     assert template.control
 
 
-@pytest.mark.io
+@pytest.mark.short
 def test_default_controls(file_default_controls: Template):
     """Load and validate all controls."""
     template = file_default_controls
@@ -64,8 +63,6 @@ def test_properties(template_empty: Template):
     for prop in control.properties:
         console.log(type(prop))
         assert isinstance(prop, Property)
-        with pytest.raises(pydantic.ValidationError) as e_info:
-            prop.at_type = "w"
 
 
 @pytest.mark.short
@@ -76,8 +73,8 @@ def test_controls(template_empty: Template):
         1. Create controls and their attributes programatically
     """
     template = template_empty.copy()
-    root = template.control
-    root.children = [
+    control = template.control
+    control.children = [
         Control(
             at_type="FADER",
             properties=[
@@ -89,16 +86,16 @@ def test_controls(template_empty: Template):
         )
         for x in range(0, 400, 100)
     ]
-    for control in root.children:
-        console.log(type(control))
-        value = control.values[0]
+    for fader in control:
+        console.log(type(fader))
+        value = fader.values[0]
         console.log(type(value))
-        assert isinstance(control, Control)
+        assert isinstance(fader, Control)
         assert isinstance(value, Value)
-        with pytest.raises(TypeError) as e_info:
-            control.add_controls([0])
+        with pytest.raises(pydantic.ValidationError) as e:
+            fader.add_controls([0], validate=True)
 
-    console.log(root.children[-1])
+    console.log(control[-1])
     template.save("tests/resources/deleteme.tosc", xml=True)
 
 
@@ -135,16 +132,8 @@ def test_nested_file(template_empty: Template):
 
 @pytest.mark.short
 def test_different_messages(file_different_messages: Template):
-    t = file_different_messages
-    c = t.control
-    for m in c[1].messages:
-        console.log(type(m))
-    t.save("tests/resources/nested2.tosc", xml=True)
-
-
-def test_broken_file():
-    """load incorrect file"""
-
-
-def test_edited_working_file():
-    """edit, save and verify correct file"""
+    template = file_different_messages
+    control = template.control
+    for msg in control[1].messages:
+        console.log(type(msg))
+    template.save("tests/resources/nested2.tosc", xml=True)

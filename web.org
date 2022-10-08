@@ -46,27 +46,25 @@ tests/test_db.py::test_database_base PASSED                              [100%]
 We will use a "templates" collection for storing our Templates as objects. In the mongo shell, we will check for the Template object.
 
 #+begin_src mongo :wrap example typescript
-db.templates.find()
+db.test.findOne()
 #+end_src
 
 #+RESULTS:
 #+begin_example typescript
-toscdb> [
-  {
-    _id: new UUID("ab9cc12c-4890-4489-8e6d-d8307a71d97b"),
-    lexml: {
-      at_version: 3,
-      node: {
-        at_type: 'GROUP',
-        at_ID: new UUID("ab9cc12c-4890-4489-8e6d-d8307a71d97b"),
-        properties: [ { at_type: 'r', key: 'frame', value: [ 0, 0, 400, 400 ] } ],
-        values: [],
-        messages: { midi: [], osc: [], local: [], gamepad: [] },
-        children: []
-      }
+toscdb> {
+  _id: new UUID("69436d8f-46b0-4ca7-8b51-beff06701887"),
+  lexml: {
+    at_version: 3,
+    node: {
+      at_type: 'GROUP',
+      at_ID: new UUID("69436d8f-46b0-4ca7-8b51-beff06701887"),
+      properties: [ { at_type: 'r', key: 'frame', value: [ 0, 0, 400, 400 ] } ],
+      values: [],
+      messages: { midi: [], osc: [], local: [], gamepad: [] },
+      children: []
     }
   }
-]
+}
 toscdb>
 #+end_example
 
@@ -76,7 +74,7 @@ We will construct tests for different-sized Templates.
 
 Our hypothesis is that there is a point in a Template size that it becomes a problem for the database to process it and for its data to be send from one place to another.
 
-Because of that, we propose to limit the Template depth to a certain number. This means that once we hit a certain level of recursion in the =children= -> =control= hierarchy, we will suggest to treat a Control as a different Template. This will help us fragment the data and reduce heavily-nested-data problems.
+Because of that, we propose to limit the Template depth to a certain number. This means that once we hit a certain level of recursion in the =children= -> =control= hierarchy, we will suggest to treat a Control as a different Template. This will help us fragment the data and reduce problems from heavily-nested data.
 
 This leads us to present the project as a "Component-based" repository of Templates. Where we can combine them locally in a single Template if we want or add them as Controls to other Templates.
 

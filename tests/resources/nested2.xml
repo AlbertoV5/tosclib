@@ -221,20 +221,20 @@
               <value>
                 <type>CONSTANT</type>
                 <key></key>
-                <scaleMin>0</scaleMin>
-                <scaleMax>15</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>15.0</scaleMax>
               </value>
               <value>
                 <type>INDEX</type>
                 <key></key>
-                <scaleMin>0</scaleMin>
-                <scaleMax>1</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>1.0</scaleMax>
               </value>
               <value>
                 <type>VALUE</type>
                 <key>x</key>
-                <scaleMin>0</scaleMin>
-                <scaleMax>127</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>127.0</scaleMax>
               </value>
             </values>
           </midi>
@@ -255,15 +255,15 @@
                 <type>CONSTANT</type>
                 <conversion>STRING</conversion>
                 <value>/</value>
-                <scaleMin>0</scaleMin>
-                <scaleMax>1</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>1.0</scaleMax>
               </partial>
               <partial>
                 <type>PROPERTY</type>
                 <conversion>STRING</conversion>
                 <value>name</value>
-                <scaleMin>0</scaleMin>
-                <scaleMax>1</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>1.0</scaleMax>
               </partial>
             </path>
             <arguments>
@@ -271,8 +271,8 @@
                 <type>VALUE</type>
                 <conversion>FLOAT</conversion>
                 <value>x</value>
-                <scaleMin>0</scaleMin>
-                <scaleMax>1</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>1.0</scaleMax>
               </partial>
             </arguments>
           </osc>
@@ -287,8 +287,8 @@
             <type>VALUE</type>
             <conversion>FLOAT</conversion>
             <value>x</value>
-            <scaleMin>0</scaleMin>
-            <scaleMax>1</scaleMax>
+            <scaleMin>0.0</scaleMin>
+            <scaleMax>1.0</scaleMax>
             <dstType>VALUE</dstType>
             <dstVar></dstVar>
             <dstID></dstID>
@@ -298,8 +298,8 @@
             <connections>11111</connections>
             <type>BUTTON_A</type>
             <conversion>FLOAT</conversion>
-            <scaleMin>0</scaleMin>
-            <scaleMax>1</scaleMax>
+            <scaleMin>0.0</scaleMin>
+            <scaleMax>1.0</scaleMax>
             <targetType>VALUE</targetType>
             <targetVar>x</targetVar>
           </gamepad>
@@ -439,20 +439,20 @@
               <value>
                 <type>CONSTANT</type>
                 <key></key>
-                <scaleMin>0</scaleMin>
-                <scaleMax>15</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>15.0</scaleMax>
               </value>
               <value>
                 <type>INDEX</type>
                 <key></key>
-                <scaleMin>0</scaleMin>
-                <scaleMax>1</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>1.0</scaleMax>
               </value>
               <value>
                 <type>VALUE</type>
                 <key>x</key>
-                <scaleMin>0</scaleMin>
-                <scaleMax>127</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>127.0</scaleMax>
               </value>
             </values>
           </midi>
@@ -478,20 +478,20 @@
               <value>
                 <type>CONSTANT</type>
                 <key></key>
-                <scaleMin>0</scaleMin>
-                <scaleMax>15</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>15.0</scaleMax>
               </value>
               <value>
                 <type>INDEX</type>
                 <key></key>
-                <scaleMin>0</scaleMin>
-                <scaleMax>1</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>1.0</scaleMax>
               </value>
               <value>
                 <type>VALUE</type>
                 <key>x</key>
-                <scaleMin>0</scaleMin>
-                <scaleMax>127</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>127.0</scaleMax>
               </value>
             </values>
           </midi>
@@ -517,20 +517,20 @@
               <value>
                 <type>CONSTANT</type>
                 <key></key>
-                <scaleMin>0</scaleMin>
-                <scaleMax>15</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>15.0</scaleMax>
               </value>
               <value>
                 <type>INDEX</type>
                 <key></key>
-                <scaleMin>0</scaleMin>
-                <scaleMax>1</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>1.0</scaleMax>
               </value>
               <value>
                 <type>VALUE</type>
                 <key>x</key>
-                <scaleMin>0</scaleMin>
-                <scaleMax>127</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>127.0</scaleMax>
               </value>
             </values>
           </midi>
@@ -551,15 +551,15 @@
                 <type>CONSTANT</type>
                 <conversion>STRING</conversion>
                 <value>/</value>
-                <scaleMin>0</scaleMin>
-                <scaleMax>1</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>1.0</scaleMax>
               </partial>
               <partial>
                 <type>PROPERTY</type>
                 <conversion>STRING</conversion>
                 <value>name</value>
-                <scaleMin>0</scaleMin>
-                <scaleMax>1</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>1.0</scaleMax>
               </partial>
             </path>
             <arguments>
@@ -567,8 +567,8 @@
                 <type>VALUE</type>
                 <conversion>FLOAT</conversion>
                 <value>x</value>
-                <scaleMin>0</scaleMin>
-                <scaleMax>1</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>1.0</scaleMax>
               </partial>
             </arguments>
           </osc>
@@ -589,15 +589,15 @@
                 <type>CONSTANT</type>
                 <conversion>STRING</conversion>
                 <value>/</value>
-                <scaleMin>0</scaleMin>
-                <scaleMax>1</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>1.0</scaleMax>
               </partial>
               <partial>
                 <type>PROPERTY</type>
                 <conversion>STRING</conversion>
                 <value>name</value>
-                <scaleMin>0</scaleMin>
-                <scaleMax>1</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>1.0</scaleMax>
               </partial>
             </path>
             <arguments>
@@ -605,8 +605,8 @@
                 <type>VALUE</type>
                 <conversion>FLOAT</conversion>
                 <value>x</value>
-                <scaleMin>0</scaleMin>
-                <scaleMax>1</scaleMax>
+                <scaleMin>0.0</scaleMin>
+                <scaleMax>1.0</scaleMax>
               </partial>
             </arguments>
           </osc>
@@ -621,8 +621,8 @@
             <type>VALUE</type>
             <conversion>FLOAT</conversion>
             <value>x</value>
-            <scaleMin>0</scaleMin>
-            <scaleMax>1</scaleMax>
+            <scaleMin>0.0</scaleMin>
+            <scaleMax>1.0</scaleMax>
             <dstType>VALUE</dstType>
             <dstVar></dstVar>
             <dstID></dstID>
@@ -632,8 +632,8 @@
             <connections>11111</connections>
             <type>BUTTON_A</type>
             <conversion>FLOAT</conversion>
-            <scaleMin>0</scaleMin>
-            <scaleMax>1</scaleMax>
+            <scaleMin>0.0</scaleMin>
+            <scaleMax>1.0</scaleMax>
             <targetType>VALUE</targetType>
             <targetVar>x</targetVar>
           </gamepad>

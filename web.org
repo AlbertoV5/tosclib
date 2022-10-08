@@ -4,15 +4,13 @@
 #+PROPERTY: header-args:mongo :db toscdb :host localhost :port 27017 :mongoexec mongosh :wrap example
 
 
-* API Plan
+* Pydantic to MongoDB
 
-** Pydantic to MongoDB
+** Database
 
 Because we are dealing with tree structures, we want to use a document based database like Mongodb.
 
-So we need to store the Pydantic objects as Mongo db items.
-
-We will create a "toscdb" database that we will use for testing.
+So we need to store the Pydantic objects as Mongo db items. We will create a "toscdb" database that we will use for testing.
 
 #+begin_src shell :wrap example
 mongosh --eval "show dbs" | grep toscdb
@@ -79,3 +77,34 @@ Because of that, we propose to limit the Template depth to a certain number. Thi
 This leads us to present the project as a "Component-based" repository of Templates. Where we can combine them locally in a single Template if we want or add them as Controls to other Templates.
 
 Our first estimation is that a recursion level of =8= would be a good limit, counting the root Control. However we will test a range from =5 to 8= and try to find the best compromise for processing requirements and comfort.
+
+
+** Measurements
+
+1. It takes about 2 seconds for parsing a 94kb template file with complex tree structures and multiple script strings. The roundtrip being 4 seconds with inserting and retrieving from the database.
+
+* FastAPI
+
+** CRUD
+
+Now that the parsing, validation, connection and rountrip work, we will create endpoints for CRUD operations. We will start with simple actions.
+
+1. Upload a Template to the database.
+2. Get a Template from the database.
+
+We need to use the Template ID or name to retrieve it from the server. So we have to figure out how are we going to relate the UUID and a name.
+
+The UUID has to be used because that's how Templates generate their ids by default. However, for user experience, we want to have a name and author for each Template. The complete schema for a component table can be:
+
+#+begin_src sql :eval no
+CREATE TABLE component (
+            id SERIAL,
+            author VARCHAR(40) NOT NULL,
+            name VARCHAR(40) NOT NULL,
+            uuid UUID NOT NULL -- Template uuid
+);
+INSERT INTO template(id, author, name, uuid)
+VALUES (0, 'bob', 'mytemplate', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11');
+#+end_src
+
+This is an SQL representation but we could solve the problem with NoSQL too by adding the data to the Template object.

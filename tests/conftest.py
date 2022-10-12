@@ -76,7 +76,7 @@ class Toscdb(Database):
 def db() -> Toscdb:
     """Connect to the Mongo Database"""
     mongo_settings = {"uuidRepresentation": "standard"}
-    db: Toscdb = MongoClient(**mongo_settings)["toscdb"]
+    db: Toscdb = MongoClient(**mongo_settings).toscdb
     assert db is not None
     # Drop test collection by default
     db.test.drop()

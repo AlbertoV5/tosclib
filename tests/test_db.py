@@ -2,8 +2,11 @@
 Mongo db tests.
 """
 from typing import Callable
+from pymongo.errors import DuplicateKeyError
 from bson.json_util import dumps, LEGACY_JSON_OPTIONS
+from bson.objectid import ObjectId
 import logging
+import pymongo
 import pytest
 
 from tosclib.template import Template
@@ -26,18 +29,21 @@ console = Console()
 def test_database_base(db: Toscdb, template_empty: Template):
     """Insert empty Template into database."""
     template = template_empty
-    db.test.insert_one(template.dict(with_id=True))
-    _id = template.control.at_ID
-    assert db.test.find_one({"_id": _id}) is not None
+    console.log(template)
+    fix_id = ObjectId()
+    db.test.insert_one(template.dict(_id=fix_id))
+    roundtrip = db.test.find_one({"_id": fix_id})
+    assert Template(roundtrip) == template
 
 
 @pytest.mark.db
 def test_database_medium(db: Toscdb, file_default_controls: Template):
     """Insert medium-sized Template into database."""
     template = file_default_controls
-    db.test.insert_one(template.dict(with_id=True))
-    _id = template.control.at_ID
-    assert db.test.find_one({"_id": _id}) is not None
+    fix_id = ObjectId()
+    db.test.insert_one(template.dict(_id=fix_id))
+    roundtrip = db.test.find_one({"_id": fix_id})
+    assert Template(roundtrip) == template
 
 
 @pytest.mark.db
@@ -46,23 +52,27 @@ def test_database_nested(
 ):
     template = Template()
     nested_controls(7, template.control)
-    db.test.insert_one(template.dict(with_id=True))
-    _id = template.control.at_ID
-    data: dict = db.test.find_one({"_id": _id})
-    assert data is not None
-    # test json for compatibility
+    fix_id = ObjectId()
+    db.test.insert_one(template.dict(_id=fix_id))
+    roundtrip = db.test.find_one({"_id": fix_id})
+    # JSON
     with open("tests/resources/nested.json", "w") as file:
-        file.write(dumps(data, json_options=LEGACY_JSON_OPTIONS, indent=2))
-    # roundtrip
-    roundtrip = Template(data)
-    assert isinstance(roundtrip.control, Control)
+        file.write(dumps(roundtrip, json_options=LEGACY_JSON_OPTIONS, indent=2))
+    assert Template(roundtrip) == template
 
 
 @pytest.mark.long
 def test_database_complex(db: Toscdb, template_complex: Template):
+    """Uploads a complex template to the template database.
+    Then it fetches it and asserts that parsing is OK.
+    Then it deletes it and asserts that it was deleted."""
     template = template_complex
-    assert template.control is not None
-    _id = template.control.at_ID
-    db.template.insert_one(template.dict(with_id=True))
-    roundtrip = Template(db.template.find_one({"_id": _id}))
-    assert isinstance(roundtrip.control, Control)
+    fix_id = ObjectId()
+    try:
+        db.template.insert_one(template.dict(_id=fix_id))
+    except DuplicateKeyError:
+        console.log(f"Template {fix_id} was not deleted.")
+    roundtrip = db.template.find_one({"_id": fix_id})
+    assert Template(roundtrip) == template
+    result = db.template.delete_one({"_id": fix_id})
+    assert result.deleted_count == 1

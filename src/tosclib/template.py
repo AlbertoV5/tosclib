@@ -2,6 +2,7 @@
 Template Module
 """
 from pathlib import Path
+from typing import Literal
 from bson import ObjectId
 import xmltodict
 import zlib
@@ -89,20 +90,46 @@ class Template:
             self.at_version: float = data["lexml"]["at_version"]
             self.control: Control = Control(**data["lexml"]["node"])
 
-    def dumps(self, pretty=True):
-        """Returns a string representation.
-
-        Returns:
-            (str): XML string.
-        """
+    def __repr__(self):
         return xmltodict.unparse(
             self.dict(),
-            pretty=pretty,
+            pretty=True,
             indent="  ",
             attr_prefix="at_",
             preprocessor=self.encode_preprocessor,
             encoding=self.encoding,
         )
+
+    def __eq__(self, other: "Template"):
+        return self.control == other.control
+
+    def dict(self, **kwargs) -> dict[str, dict]:
+        """Returns a dictionary of the Template.
+
+        Leverages Pydantic's dict for the Control and wraps it with "lexml" dict.
+        Any other keyword arguments are added as key, value pairs before "lexml".
+
+        Example:
+
+            {
+                **kwargs,
+                "lexml": {
+                    "at_version": self.at_version,
+                    "node": self.control.dict(),
+                }
+            }
+        """
+        return {
+            **kwargs,
+            "lexml": {
+                "at_version": self.at_version,
+                "node": self.control.dict(),
+            },
+        }
+
+    def copy(self):
+        """Create a new Template object and call Pydantic's deep copy on the root."""
+        return Template(self.control.copy(deep=True))
 
     def save(self, filepath: str | Path, xml: bool = False, pretty: bool = True):
         """Write Template data to a .tosc file.
@@ -136,34 +163,6 @@ class Template:
                     output=file,
                     encoding=self.encoding,
                 )
-
-    def dict(self, with_id: bool = False):
-        """Returns a dictionary of the Template.
-
-        Args:
-            with_id (bool, Optional): Includes self.node.at_ID as _id value for mongo databases. Default False.
-        """
-        if with_id:
-            return {
-                "_id": self.control.at_ID,
-                "lexml": {
-                    "at_version": self.at_version,
-                    "node": self.control.dict(),
-                },
-            }
-        return {
-            "lexml": {
-                "at_version": self.at_version,
-                "node": self.control.dict(),
-            },
-        }
-
-    def __repr__(self):
-        return f"Template with Control: {self.control.at_ID}"
-
-    def copy(self):
-        """Create a new Template object and call Pydantic's deep copy on the root."""
-        return Template(self.control.copy(deep=True))
 
     def decode_postprocessor(self, path: tuple, key: str, value: str):
         """Reorganize and process elements based on path patterns.

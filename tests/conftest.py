@@ -1,9 +1,5 @@
 """
 Fixtures: Default templates and files.
-
-    file_default_controls: version 1.1.4.143
-        This file contains all objects in their default state.
-
 """
 from typing import Callable
 from pathlib import Path

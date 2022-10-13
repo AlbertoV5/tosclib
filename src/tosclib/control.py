@@ -1,11 +1,13 @@
 """Control Module"""
-from typing import Literal, TypeAlias
+# Parsing
 from pydantic import BaseModel, Field
+from typing import Literal, TypeAlias
 from uuid import UUID, uuid4
 
+# Local
 from .message import Gamepad, Osc, Midi, Local, Messages
-from .value import Value, ValueOptions
-from .property import Property, Frame, PropertyOptions
+from .value import ValueOptions
+from .property import Frame, PropertyOptions
 
 
 ControlType: TypeAlias = Literal[

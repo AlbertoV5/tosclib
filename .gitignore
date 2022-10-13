@@ -12,6 +12,6 @@ htmlcov
 /.projectile
 /poetry.lock
 /.python-version
-*DS_Store
 **/*.DS_Store
+tests/.DS_Store
 **/*.mypy_cache

@@ -17,10 +17,8 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-numpy = "^1.22.3"
 pydantic = "^1.10.2"
 xmltodict = "^0.13.0"
-pymongo = "^4.2.0"
 
 [tool.poetry.dev-dependencies]
 # Testing dependencies
@@ -33,6 +31,7 @@ pytest-doctestplus = "^0.12.0"
 black = "^22.6.0"
 snakeviz = "^2.1.1"
 setuptools = "^61.2.0"
+pymongo = "^4.2.0"
 # Docs dependencies
 furo = "^2022.4.7"
 sphinx = "^4.5.0"
@@ -46,7 +45,7 @@ aiohttp = "^3.8.1"
 [tool.pytest.ini_options]
 markers = [
     "profile: marks tests for profiling.",
-    "short: fast tests with smaller CPU demands",
+    "short: fast tests with smaller CPU load",
     "long: computation-heavy tests, large files",
     "db: connect to mongodb"
 ]

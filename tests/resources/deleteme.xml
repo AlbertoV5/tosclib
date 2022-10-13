@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lexml version="3.0">
-  <node type="GROUP" ID="ce0cc5c4-9fb5-4a46-a0d9-9a70ed3bd402">
+  <node type="GROUP" ID="bbac4a31-1dd5-4b5e-b124-5d4da90d18de">
     <properties>
       <property type="r">
         <key>frame</key>
@@ -17,7 +17,7 @@
     <messages>
     </messages>
     <children>
-      <node type="FADER" ID="2f5fd2a5-9836-48cb-94cb-d23d5acab76a">
+      <node type="FADER" ID="c025504e-0216-4765-966c-2c772121b92e">
         <properties>
           <property type="s">
             <key>name</key>
@@ -57,7 +57,7 @@
           <node>0</node>
         </children>
       </node>
-      <node type="FADER" ID="68ea3b76-49ea-4117-8071-e9ee47a9bb98">
+      <node type="FADER" ID="cc3a4e28-04eb-446e-9ce6-950d89be1f76">
         <properties>
           <property type="s">
             <key>name</key>
@@ -97,7 +97,7 @@
           <node>0</node>
         </children>
       </node>
-      <node type="FADER" ID="6c4835ad-d554-40f8-9d38-406f7b57a689">
+      <node type="FADER" ID="5723e6fe-682f-419d-982c-a475fa50305f">
         <properties>
           <property type="s">
             <key>name</key>
@@ -137,7 +137,7 @@
           <node>0</node>
         </children>
       </node>
-      <node type="FADER" ID="c78cd653-0aaa-46a6-923d-deaa95810adc">
+      <node type="FADER" ID="8564e99e-bbf2-477a-8d25-8af1b5debbe0">
         <properties>
           <property type="s">
             <key>name</key>

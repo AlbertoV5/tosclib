@@ -1,25 +1,12 @@
 """
 tosclib
 """
-# from .tosclib import *
-from .template import Template
-from .control import Control, ControlType
-from .message import (
-    Osc,
-    Midi,
-    Local,
-    Gamepad,
-    Trigger,
-    Partial,
-    MidiValue,
-    MidiMessage,
-    MidiType,
-    SourceType,
-    Conversion,
-    TriggerCondition,
-    GamepadInput,
-)
-from .value import Value, X, Y, Text, Touch, Page, ValueDefault, ValueKey, ValueOptions
-from .property import Property, PropertyType, PropertyValue, PropertyOptions
+from . import template
+from . import control
+from . import message
+from . import value
+from . import property
+
+__all__ = ["template", "control", "message", "value", "property"]
 
 __version__ = "1.0.0"

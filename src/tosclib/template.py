@@ -1,13 +1,23 @@
 """
 Template Module
+
+Wrapper class for loading XML data into a Pydantic model.
+
+https://docs.python.org/3/library/xml.html#xml-vulnerabilities
 """
 # File Reading
+from pathlib import Path
 import xmltodict
 import zlib
-from pathlib import Path
 
 # Local
 from .control import Control
+
+__all__ = ["InvalidSourceException", "Template"]
+
+
+class InvalidSourceException(BaseException):
+    pass
 
 
 class Template:
@@ -43,7 +53,7 @@ class Template:
 
     def __init__(
         self,
-        source: str | Path | Control | dict | None = None,
+        source: str | Path | Control | dict | bytes | None = None,
         encoding: str = "UTF-8",
     ):
         """Load a .tosc or .xml file and parse it. Use xmltodict to Pydantic models.
@@ -54,51 +64,54 @@ class Template:
         2. Control: Attach given Control to the Template.
         3. dict: Create new data and Control via Control(**source[][]), pydantic validates it.
         4. Path | str: Load file from filepath and parse it.
+        5. Bytes: Parse the file directly.
         5. Other: Raise TypeError.
 
         Args:
-            source (str | Path | Control, optional): File or Control object. Defaults to None.
+            source (str | Path | Control | dict | bytes | None): File or Control object. Defaults to None.
             encoding (str): Defaults to "UTF-8".
         """
         self.encoding = encoding
         match source:
             case None:
                 self.control = Control()
-                return
             case Control():
                 self.control = source
-                return
-            case dict():
-                self.at_version: float = source["lexml"]["at_version"]
-                self.control: Control = Control(**source["lexml"]["node"])
-                return
+            case bytes() | dict():
+                self.parse(source)
             case str():
-                ext = f".{source.split('.')[1]}"
+                with open(source, "rb") as file:
+                    self.parse(file.read())
             case Path():
-                ext = source.suffix
+                with open(source, "rb") as file:
+                    self.parse(zlib.decompress(file.read()))
             case _:
-                raise TypeError(f"{source} is not a valid source.")
+                raise InvalidSourceException(f"{source} is not a valid source type.")
 
-        with open(source, "rb") as file:
+    def parse(self, data: bytes | dict) -> None:
+        if isinstance(data, bytes):
             data = xmltodict.parse(
-                zlib.decompress(file.read()) if ext == ".tosc" else file.read(),
+                data,
                 attr_prefix="at_",
                 postprocessor=self.decode_postprocessor,
                 encoding=self.encoding,
                 force_list=["midi", "osc", "local", "gamepad"],
             )
-            self.at_version: float = data["lexml"]["at_version"]
-            self.control: Control = Control(**data["lexml"]["node"])
+        self.at_version: float = data["lexml"]["at_version"]
+        self.control: Control = Control(**data["lexml"]["node"])
 
-    def __repr__(self):
+    def unparse(self, pretty: bool, indent: str = "  ") -> str:
         return xmltodict.unparse(
             self.dict(),
-            pretty=True,
-            indent="  ",
+            pretty=pretty,
+            indent=indent,
             attr_prefix="at_",
             preprocessor=self.encode_preprocessor,
             encoding=self.encoding,
         )
+
+    def __repr__(self):
+        return self.unparse(pretty=True, indent="  ")
 
     def __eq__(self, other: "Template"):
         return self.control == other.control
@@ -106,18 +119,8 @@ class Template:
     def dict(self, **kwargs) -> dict[str, dict]:
         """Returns a dictionary of the Template.
 
-        Leverages Pydantic's dict for the Control and wraps it with "lexml" dict.
+        Leverages Pydantic's dict for the Control and wraps it in a "lexml" dict.
         Any other keyword arguments are added as key, value pairs before "lexml".
-
-        Example:
-
-            {
-                **kwargs,
-                "lexml": {
-                    "at_version": self.at_version,
-                    "node": self.control.dict(),
-                }
-            }
         """
         return {
             **kwargs,
@@ -135,34 +138,19 @@ class Template:
         """Write Template data to a .tosc file.
 
         Args:
-            filepath (str | Path): Filepath with whatever suffix.
-            xml (bool, optional): If also writes an XML file. Defaults to False.
+            filepath (str | Path): Filepath with any suffix.
+            xml (bool, optional): Also write an XML file. Defaults to False.
             pretty (bool, optional): If indent XML file. Defaults to True.
         """
         if isinstance(filepath, str):
             filepath = Path(filepath)
+        data = self.unparse(pretty)
         with open(filepath.with_suffix(".tosc"), "wb") as file:
-            file.write(
-                zlib.compress(
-                    xmltodict.unparse(
-                        self.dict(),
-                        attr_prefix="at_",
-                        preprocessor=self.encode_preprocessor,
-                        encoding=self.encoding,
-                    ).encode(self.encoding)
-                )
-            )
-        if xml:
-            with open(filepath.with_suffix(".xml"), "w") as file:
-                xmltodict.unparse(
-                    self.dict(),
-                    pretty=pretty,
-                    indent="  ",
-                    attr_prefix="at_",
-                    preprocessor=self.encode_preprocessor,
-                    output=file,
-                    encoding=self.encoding,
-                )
+            file.write(zlib.compress(data.encode(self.encoding)))
+        if not xml:
+            return
+        with open(filepath.with_suffix(".xml"), "w") as file:
+            file.write(data)
 
     def decode_postprocessor(self, path: tuple, key: str, value: str):
         """Reorganize and process elements based on path patterns.

@@ -1,7 +1,7 @@
-2022-10-12 23:19:24 [DEBUG] (test_components.py:30): at_type='FADER' at_ID=UUID('5c14191f-4922-4244-bb49-83fd468df7c3') properties=[Frame(at_type='r', key='frame', value=(0, 0, 400, 400))] values=[] messages=Messages(midi=[], osc=[], local=[], gamepad=[])
-2022-10-12 23:19:24 [DEBUG] (test_db.py:22): <?xml version="1.0" encoding="UTF-8"?>
+2022-11-14 14:10:51 [DEBUG] (test_components.py:30): at_type='FADER' at_ID=UUID('9953ce48-c902-442b-b582-0c1a82e0a7c1') properties=[Frame(at_type='r', key='frame', value=(0, 0, 400, 400))] values=[] messages=Messages(midi=[], osc=[], local=[], gamepad=[])
+2022-11-14 14:10:51 [DEBUG] (test_db.py:22): <?xml version="1.0" encoding="UTF-8"?>
 <lexml version="3.0">
-  <node type="GROUP" ID="bbac4a31-1dd5-4b5e-b124-5d4da90d18de">
+  <node type="GROUP" ID="fe36a0d4-497f-4a4f-be52-6bb513ea3049">
     <properties>
       <property type="r">
         <key>frame</key>
@@ -21,28 +21,28 @@
     </children>
   </node>
 </lexml>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): [String(at_type='s', key='name', value='myControl'), String(at_type='s', key='tag', value='tag1'), Frame(at_type='r', key='frame', value=(100, 100, 0, 0)), Color(at_type='c', key='color', value=(0.5, 0.3, 0.2, 1.0)), Boolean(at_type='b', key='outline', value=False), Integer(at_type='i', key='outlineStyle', value=1), Float(at_type='f', key='cornerRadius', value=0.5)]
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.property.String'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.property.String'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.property.Frame'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.property.Color'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.property.Boolean'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.property.Integer'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.property.Float'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.control.Control'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.value.X'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.control.Control'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.value.X'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.control.Control'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.value.X'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.control.Control'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.value.X'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): at_type='FADER' at_ID=UUID('8564e99e-bbf2-477a-8d25-8af1b5debbe0') properties=[String(at_type='s', key='name', value='myFader'), Frame(at_type='r', key='frame', value=(300, 0, 100, 400)), Color(at_type='c', key='color', value=(1.0, 0.3, 0.3, 1.0))] values=[X(key='x', locked=False, lockedDefaultCurrent=False, default=0.5, defaultPull=0)] messages=Messages(midi=[], osc=[], local=[], gamepad=[])
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): [Control(at_type='GROUP', at_ID=UUID('4887176d-8727-4ae1-b18c-c06119757561'), properties=[Frame(at_type='r', key='frame', value=(0, 0, 200, 400))], values=[], messages=Messages(midi=[], osc=[], local=[], gamepad=[])), Control(at_type='GROUP', at_ID=UUID('9577a1fc-750f-4a84-9169-ab7314605543'), properties=[Frame(at_type='r', key='frame', value=(200, 0, 200, 400))], values=[], messages=Messages(midi=[], osc=[], local=[], gamepad=[]))]
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.message.Midi'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.message.Midi'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.message.Midi'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.message.Osc'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.message.Osc'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.message.Local'>
-2022-10-12 23:19:29 [DEBUG] (test_main.py:18): <class 'tosclib.message.Gamepad'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): [String(at_type='s', key='name', value='myControl'), String(at_type='s', key='tag', value='tag1'), Frame(at_type='r', key='frame', value=(100, 100, 0, 0)), Color(at_type='c', key='color', value=(0.5, 0.3, 0.2, 1.0)), Boolean(at_type='b', key='outline', value=False), Integer(at_type='i', key='outlineStyle', value=1), Float(at_type='f', key='cornerRadius', value=0.5)]
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.property.String'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.property.String'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.property.Frame'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.property.Color'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.property.Boolean'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.property.Integer'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.property.Float'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.control.Control'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.value.X'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.control.Control'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.value.X'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.control.Control'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.value.X'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.control.Control'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.value.X'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): at_type='FADER' at_ID=UUID('be18542b-ea76-4613-8a95-aaf52a90c55e') properties=[String(at_type='s', key='name', value='myFader'), Frame(at_type='r', key='frame', value=(300, 0, 100, 400)), Color(at_type='c', key='color', value=(1.0, 0.3, 0.3, 1.0))] values=[X(key='x', locked=False, lockedDefaultCurrent=False, default=0.5, defaultPull=0)] messages=Messages(midi=[], osc=[], local=[], gamepad=[])
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): [Control(at_type='GROUP', at_ID=UUID('f62acd33-e3e9-4529-9f82-ba991afe9ccb'), properties=[Frame(at_type='r', key='frame', value=(0, 0, 200, 400))], values=[], messages=Messages(midi=[], osc=[], local=[], gamepad=[])), Control(at_type='GROUP', at_ID=UUID('7dd894cc-77f4-4111-b955-2adf588cafe2'), properties=[Frame(at_type='r', key='frame', value=(200, 0, 200, 400))], values=[], messages=Messages(midi=[], osc=[], local=[], gamepad=[]))]
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.message.Midi'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.message.Midi'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.message.Midi'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.message.Osc'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.message.Osc'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.message.Local'>
+2022-11-14 14:10:57 [DEBUG] (test_main.py:18): <class 'tosclib.message.Gamepad'>

@@ -64,7 +64,7 @@ class Template:
         2. Control: Attach given Control to the Template.
         3. dict: Create new data and Control via Control(**source[][]), pydantic validates it.
         4. Path | str: Load file from filepath and parse it.
-        5. Bytes: Parse the file directly.
+        5. Bytes: XML bytes, must decompress BEFORE calling this constructor.
         5. Other: Raise TypeError.
 
         Args:
